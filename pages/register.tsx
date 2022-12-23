@@ -1,0 +1,445 @@
+/* --------------------------- 회원가입 페이지 --------------------------- */
+
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { NavTopBar, SelectBox, SelectBoxCountryCodeNum } from "../components";
+import axios from "axios";
+import Link from "next/link";
+
+
+
+/** 국가, 카테고리 객체 타입 */
+export interface List {
+  name: string; // 이름
+  code: string; // 코드
+  code_num?: string; // 코드 번호
+}
+
+/** 국가, 카테고리 객체타입을 배열 형태로 확장 */
+export interface ListCountryArray extends Array<List> {}
+
+const register = () => {
+  const [firstName, setFirstName] = useState<string>(""); // 성
+  const [lastName, setLastName] = useState<string>(""); // 이름
+  const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
+  const [companyName, setCompanyName] = useState<string>(""); // 회사이름
+  const [industryCode, setIndustryCode] = useState<string | undefined>(""); // 회사 업종구분 코드
+  const [homepageUrl, setHomepageUrl] = useState<string>(""); // 회사 홈페이지 url
+  const [countryPhoneNumber, setCountryPhoneNumber] = useState<
+    string | undefined
+  >(""); // 국가 전화코드
+  const [phoneNumber, setPhoneNumber] = useState<string>(""); // 전화번호
+  const [userId, setUserId] = useState<string>(""); // 유저ID(이메일주소)
+  const [password, setPassowrd] = useState<string>(""); // 비밀번호
+  const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
+  const [role, setRole] = useState<string>("test"); // 유저 권한
+
+  /** 나라 리스트 숫자 코드는 업데이트 필요 */
+  const countryList: ListCountryArray = [
+    { name: "Republic of Korea", code: "KR", code_num: "82" },
+    { name: "United States of America", code: "US", code_num: "1" },
+    { name: "Greece", code: "GR", code_num: "99" },
+    { name: "Netherlands", code: "NL", code_num: "99" },
+    { name: "Nepal", code: "NP", code_num: "22" },
+    { name: "Norway", code: "NO", code_num: "22" },
+    { name: "Danmark", code: "DK", code_num: "22" },
+    { name: "Germany", code: "DE", code_num: "49" },
+    { name: "Laos", code: "LA", code_num: "22" },
+    { name: "Malaysia", code: "MY", code_num: "22" },
+    { name: "Mexico", code: "MX", code_num: "22" },
+    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
+    { name: "Bangladesh", code: "BD", code_num: "22" },
+    { name: "Viet Nam", code: "VN", code_num: "84" },
+    { name: "Belgium", code: "BE", code_num: "22" },
+    {
+      name: "United Kingdom of Great Britain and Northern Ireland",
+      code: "GB",
+      code_num: "44",
+    },
+    { name: "Australia", code: "AU", code_num: "61" },
+    { name: "Austria", code: "AT", code_num: "22" },
+    { name: "Uzbekistan", code: "UZ", code_num: "22" },
+    { name: "Egypt", code: "EG", code_num: "22" },
+    { name: "Italy", code: "IT", code_num: "22" },
+    { name: "India", code: "IN", code_num: "91" },
+    { name: "Indonesia", code: "ID", code_num: "22" },
+    { name: "Japan", code: "JP", code_num: "22" },
+    { name: "China", code: "CN", code_num: "86" },
+    { name: "Cambodia", code: "KH", code_num: "22" },
+    { name: "Canada", code: "CA", code_num: "1" },
+    { name: "Taiwan", code: "TW", code_num: "22" },
+    { name: "Thailand", code: "TH", code_num: "886" },
+    { name: "Turkey", code: "TR", code_num: "22" },
+    { name: "Portugal", code: "PT", code_num: "22" },
+    { name: "Poland", code: "PL", code_num: "22" },
+    { name: "Puerto Rico", code: "PR", code_num: "22" },
+    { name: "France", code: "FR", code_num: "33" },
+    { name: "Finland", code: "FI", code_num: "22" },
+    { name: "Philippines", code: "PH", code_num: "63" },
+    { name: "Hong Kong", code: "HK", code_num: "852" },
+  ];
+  /** 회사 카테고리 리스트 업데이트 필요 */
+  const companyCategoryList: ListCountryArray = [
+    { name: "empty", code: "empty1" },
+    { name: "empty1", code: "empty2" },
+    { name: "empty2", code: "empty3" },
+    { name: "empty3", code: "empty4" },
+    { name: "empty4", code: "empty5" },
+  ];
+
+  const test = () => {
+    console.log(firstName);
+    console.log(lastName);
+    console.log(countryCode);
+    console.log(companyName);
+    console.log(industryCode);
+    console.log(homepageUrl);
+    console.log(countryPhoneNumber);
+    console.log(phoneNumber);
+    console.log(userId);
+    console.log(password);
+    console.log(passwordConfirm);
+    console.log(role);
+  };
+
+  /** 회원가입 요청 api */
+  const registerApiRequest = () => {
+    axios({
+      method: "POST", 
+      url: process.env.NEXT_PUBLIC_API_KEY + "signup", 
+      data: {
+        firstName: firstName,
+        lastName: lastName,
+        countryCode: countryCode,
+        companyName: companyName,
+        industryCode: industryCode,
+        homepageUrl: homepageUrl,
+        countryPhoneNumber: countryPhoneNumber,
+        phoneNumber: phoneNumber,
+        userId: userId,
+        password: password,
+        passwordConfirm: passwordConfirm,
+        role: role,
+      },
+    })
+      .then(function (response) {
+        console.log("통신 성공");
+        console.log(response);
+        test();
+      })
+      .catch(function (error) {
+        console.log("통신 실패");
+        test();
+        console.log(error);
+      });
+  };
+
+  /** 국가코드에따라 국가 전화 코드 할당하는 함수 */
+  const phoneNumberHandler = () => {
+    countryList.forEach((i) => {
+      i.code == countryCode ? setCountryPhoneNumber(i.code_num) : "";
+    });
+  };
+
+  /** 인풋 숫자만 되게하는 함수 */
+  const inputHandlerOnlyNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onlyNumber = e.target.value.replace(/[^0-9]/g, "");
+    setPhoneNumber(onlyNumber);
+  };
+
+  /**값 비어있는지 검사 후에 회원가입 요청 api 호출 */
+  const registerApiRequestHandler = () => {
+    if (firstName.length == 0) {
+      alert("값을 모두 채워주세요");
+    } else if (lastName.length == 0) {
+      alert("값을 모두 채워주세요");
+    } else if (countryCode ? false : true) {
+      alert("값을 모두 채워주세요");
+    } else if (countryPhoneNumber ? false : true) {
+      alert("값을 모두 채워주세요");
+    } else if (phoneNumber.length == 0) {
+      alert("값을 모두 채워주세요");
+    } else if (userId.length == 0) {
+      alert("값을 모두 채워주세요");
+    } else if (password.length == 0) {
+      alert("값을 모두 채워주세요");
+    } else if (passwordConfirm.length == 0) {
+      alert("값을 모두 채워주세요");
+    } else if (role.length == 0) {
+      alert("값을 모두 채워주세요");
+    } else {
+      registerApiRequest();
+    }
+  };
+
+  /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
+  useEffect(() => {
+    phoneNumberHandler();
+  }, [countryCode]);
+
+  return (
+    <>
+      <NavTopBar />
+      <Container>
+        <Title>Register</Title>
+        <WelcomeText>Welcome to Repunch</WelcomeText>
+        <Wrapper>
+          <InputContainer>
+            <InputTitle>First name</InputTitle>
+            <Input type="text" onChange={(e) => setFirstName(e.target.value)} />
+          </InputContainer>
+          <InputContainer>
+            <InputTitle>Last name</InputTitle>
+            <Input type="text" onChange={(e) => setLastName(e.target.value)} />
+          </InputContainer>
+        </Wrapper>
+        <InputContainer>
+          <InputTitle>Country</InputTitle>
+          <SelectBox list={countryList} setValue={setCounryCode} />
+        </InputContainer>
+        <InputContainer>
+          <InputTitle>Company name</InputTitle>
+          <InputOptionalText>(Optional)</InputOptionalText>
+          <Input type="text" onChange={(e) => setCompanyName(e.target.value)} />
+        </InputContainer>
+        <InputContainer>
+          <InputTitle>Company Category</InputTitle>
+          <InputOptionalText>(Optional)</InputOptionalText>
+          <SelectBox list={companyCategoryList} setValue={setIndustryCode} />
+        </InputContainer>
+        <InputContainer>
+          <InputTitle>Company URL</InputTitle>
+          <InputOptionalText>(Optional)</InputOptionalText>
+          <Input type="text" onChange={(e) => setHomepageUrl(e.target.value)} />
+        </InputContainer>
+        <InputContainer>
+          <InputTitle>Phone number</InputTitle>
+          <Wrapper>
+            <SelectBoxCountryCodeNum
+              list={countryList}
+              value={countryPhoneNumber}
+              setValue={setCountryPhoneNumber}
+            />
+            <Input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => inputHandlerOnlyNumber(e)}
+            />
+          </Wrapper>
+        </InputContainer>
+        {/**삭제할것인지 아닌지 체크필요 id와 email 입력이 둘다 email로 받기 때문 */}
+        {/* <InputContainer>
+          <InputTitle>Email</InputTitle>
+
+          <Input type="email" onChange={(e) => setUserId(e.target.value)}/>
+        </InputContainer> */}
+        <Line />
+        <InputContainer>
+          <InputTitle>ID</InputTitle>
+          <InputOptionalText>(Mail Address)</InputOptionalText>
+          <Input type="email" onChange={(e) => setUserId(e.target.value)} />
+        </InputContainer>
+        <InputContainer>
+          <InputTitle>Password</InputTitle>
+
+          <Input
+            type="password"
+            onChange={(e) => setPassowrd(e.target.value)}
+          />
+        </InputContainer>
+        <InputContainer>
+          <InputTitle>Password confirm</InputTitle>
+
+          <Input
+            type="password"
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+          />
+        </InputContainer>
+        <Wrapper>
+          <Button>
+            <Link href="/" style={{ textDecoration: "none" }}>
+              <LinkStyling>Cancel</LinkStyling>
+            </Link>
+          </Button>
+          <Button onClick={() => registerApiRequestHandler()}>Confirm</Button>
+        </Wrapper>
+        <TextContainer>
+          <Text>
+            By Apply(Sign up as a member), you agree to our <br />
+          </Text>
+          <LinkText href="https://www.naver.com" target="_blank">
+            Terms of Service
+          </LinkText>
+          <Text>and</Text>
+          <LinkText href="https://www.naver.com" target="_blank">
+            Privacy Policy
+          </LinkText>
+        </TextContainer>
+      </Container>
+    </>
+  );
+};
+
+const Container = styled.div`
+  position: relative;
+  margin: 0 auto;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  max-width: 427px;
+
+  color: #0a4459;
+`;
+const Title = styled.div`
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  text-align: left;
+
+  @media screen and (max-width: 767px) {
+    margin-bottom: 4px;
+  }
+`;
+const WelcomeText = styled.div`
+  position: absolute;
+  top: 28px;
+  right: 20px;
+  margin-bottom: 20px;
+
+  font-family: "Roboto Slab";
+  font-style: normal;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 100%;
+  color: #a4abba;
+
+  @media screen and (max-width: 767px) {
+    position: static;
+    font-family: "Roboto";
+    font-size: 12px;
+    line-height: 130%;
+  }
+`;
+const Wrapper = styled.div`
+  display: flex;
+`;
+const InputContainer = styled.div`
+  margin-bottom: 20px;
+  width: 100%;
+
+  &:nth-of-type(1) {
+    margin-right: 10px;
+  }
+`;
+const InputTitle = styled.div`
+  display: inline-block;
+  margin-right: 3.8px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0em;
+  text-align: left;
+`;
+
+const InputOptionalText = styled.div`
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0em;
+  text-align: left;
+
+  color: #a4abba;
+`;
+const Input = styled.input`
+  display: inline-block;
+  padding-left: 16px;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 14px;
+`;
+const Line = styled.div`
+  margin-bottom: 20px;
+  border-top: 1px dashed #dee8ec;
+`;
+
+const Button = styled.button`
+  display: flex;
+  margin-bottom: 20px;
+  height: 48px;
+  width: 100%;
+  box-sizing: border-box;
+
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Roboto";
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 130%;
+  color: #ffffff;
+
+  background-color: #0a4459;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+
+  overflow: hidden;
+  cursor: pointer;
+
+  &:nth-of-type(1) {
+    margin-right: 12px;
+    font-weight: 400;
+    color: #0a4459;
+    background-color: #f2f6f8;
+
+    @media screen and (max-width: 767px) {
+      margin-right: 11px;
+    }
+  }
+`;
+
+const LinkStyling = styled.div`
+  display: flex;
+  height: 48px;
+  width: 208px;
+  box-sizing: border-box;
+
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Roboto";
+  font-weight: 400;
+  color: #0a4459;
+  line-height: 130%;
+`;
+
+const TextContainer = styled.div`
+  margin-bottom: 40px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 130%;
+  color: #a4abba;
+  text-align: center;
+`;
+const Text = styled.span`
+  margin-left: 3.8px;
+  margin-right: 3.8px;
+`;
+const LinkText = styled.a`
+  font-weight: 700;
+  text-decoration: none;
+  text-decoration-line: underline;
+
+  color: #a4abba;
+`;
+
+export default register;
