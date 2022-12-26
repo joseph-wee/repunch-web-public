@@ -32,7 +32,9 @@ const register = () => {
   const [userId, setUserId] = useState<string>(""); // 유저ID(이메일주소)
   const [password, setPassowrd] = useState<string>(""); // 비밀번호
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
-  const [role, setRole] = useState<string>("test"); // 유저 권한
+  const [role, setRole] = useState<string>("USER"); // 유저 권한
+
+
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -363,9 +365,11 @@ const Input = styled.input`
   border: 1px solid #dee8ec;
   border-radius: 2px;
 
+  font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
-  line-height: 14px;
+ 
+  
 `;
 const Line = styled.div`
   margin-bottom: 20px;
