@@ -7,7 +7,7 @@ import { ic_check_wht } from "../assets";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const register = () => {
+const useLogin = () => {
   const [userId, setUserId] = useState<string>("");
   const [password, setPaswword] = useState<string>("");
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -316,4 +316,4 @@ const LinkStyling = styled.div`
   line-height: 130%;
 `;
 
-export default register;
+export default useLogin;

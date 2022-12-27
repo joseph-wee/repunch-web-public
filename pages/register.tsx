@@ -19,7 +19,7 @@ export interface List {
 /** 국가, 카테고리 객체타입을 배열 형태로 확장 */
 export interface ListCountryArray extends Array<List> {}
 
-const register = () => {
+const useRegister = () => {
   const [firstName, setFirstName] = useState<string>(""); // 성
   const [lastName, setLastName] = useState<string>(""); // 이름
   const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
@@ -451,4 +451,4 @@ const LinkText = styled.a`
   color: #a4abba;
 `;
 
-export default register;
+export default useRegister;
