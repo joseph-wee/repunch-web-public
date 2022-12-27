@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { NavTopBar, SelectBox, SelectBoxCountryCodeNum } from "../components";
+import { SelectBox, SelectBoxCountryCodeNum } from "../components";
 import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 
 
@@ -33,6 +34,8 @@ const register = () => {
   const [password, setPassowrd] = useState<string>(""); // 비밀번호
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
   const [role, setRole] = useState<string>("USER"); // 유저 권한
+
+  const router = useRouter()
 
 
 
@@ -125,13 +128,16 @@ const register = () => {
       },
     })
       .then(function (response) {
-        console.log("통신 성공");
-        console.log(response);
-        test();
+        if(response.data.status == 200) {
+          alert("회원가입에 성공하였습니다.(임시 메세지)")
+          router.push("/login")
+        }
+        else if(response.data.status == 500){
+          alert("중복된 아이디 입니다.(임시 메세지)")
+        }
       })
       .catch(function (error) {
-        console.log("통신 실패");
-        test();
+        alert("통신에 실패하였습니다.(임시 메세지)")
         console.log(error);
       });
   };
