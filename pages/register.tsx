@@ -181,7 +181,6 @@ const register = () => {
 
   return (
     <>
-      <NavTopBar />
       <Container>
         <Title>Register</Title>
         <WelcomeText>Welcome to Repunch</WelcomeText>
