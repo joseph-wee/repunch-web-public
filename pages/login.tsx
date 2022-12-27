@@ -5,11 +5,14 @@ import styled from "styled-components";
 import axios from "axios";
 import { ic_check_wht } from "../assets";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const register = () => {
   const [userId, setUserId] = useState<string>("");
   const [password, setPaswword] = useState<string>("");
   const [isChecked, setIsChecked] = useState<boolean>(false);
+
+  const router = useRouter();
 
   /** 로그인 요청 api */
   const loginApiRequest = () => {
@@ -20,11 +23,16 @@ const register = () => {
         `login?userId=${userId}&password=${password}&role=USER`,
     })
       .then(function (response) {
-        console.log("통신 성공");
-        console.log(response);
+        if(response.data.status == 200) {
+          alert("로그인 성공하였습니다.(임시 메세지)")
+          router.push("/")
+        }
+        else if(response.data.status == 401){
+          alert("로그인에 실패하였습니다.(임시 메세지)")
+        }
       })
       .catch(function (error) {
-        console.log("통신 실패");
+        alert("통신 실패(임시 메세지)");
 
         console.log(error);
       });
