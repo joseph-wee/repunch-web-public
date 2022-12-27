@@ -96,7 +96,7 @@ const NavMobileBar = ({
             <MenuButton>
               <Link
               onClick={()=>setIsActive(false)}
-                href="/login"
+                href="/register"
                 style={{ textDecoration: "none", color: "#FFFFFF" }}
               >
                 <LinkBox>Sign in</LinkBox>
