@@ -15,7 +15,7 @@ export interface List {
 /** 국가, 카테고리 객체타입을 배열 형태로 확장 */
 export interface ListCountryArray extends Array<List> {}
 
-const lost_id = () => {
+const useLost_id = () => {
   const [firstName, setFirstName] = useState<string>(""); // 성
   const [lastName, setLastName] = useState<string>(""); // 이름
   const [countryPhoneNumber, setCountryPhoneNumber] = useState<
@@ -390,4 +390,4 @@ const LinkStylingHome = styled.div`
   color: #ffffff;
 `;
 
-export default lost_id;
+export default useLost_id;

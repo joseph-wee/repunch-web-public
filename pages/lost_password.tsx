@@ -5,7 +5,7 @@ import { SelectBoxCountryCodeNum } from "../components";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const lost_password = () => {
+const useLost_password = () => {
   const [email, setEmail] = useState(""); // 이메일
   const [isActive, setIsActive] = useState(false); // 이메일 입력완료후 체크 임시용
 
@@ -278,4 +278,4 @@ const LinkStylingHome = styled.div`
   color: #ffffff;
 `;
 
-export default lost_password;
+export default useLost_password;
