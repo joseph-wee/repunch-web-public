@@ -84,7 +84,7 @@ const NavMobileBar = ({
 
             <MenuButton>
               <Link
-              onClick={()=>setIsActive(false)}
+                onClick={() => setIsActive(false)}
                 href="/login"
                 style={{ textDecoration: "none", color: "#FFFFFF" }}
               >
@@ -95,8 +95,8 @@ const NavMobileBar = ({
             <Circle></Circle>
             <MenuButton>
               <Link
-              onClick={()=>setIsActive(false)}
-                href="/login"
+                onClick={() => setIsActive(false)}
+                href="/register"
                 style={{ textDecoration: "none", color: "#FFFFFF" }}
               >
                 <LinkBox>Sign in</LinkBox>
