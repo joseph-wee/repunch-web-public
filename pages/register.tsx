@@ -7,8 +7,6 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-
-
 /** 국가, 카테고리 객체 타입 */
 export interface List {
   name: string; // 이름
@@ -35,9 +33,7 @@ const register = () => {
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
   const [role, setRole] = useState<string>("USER"); // 유저 권한
 
-  const router = useRouter()
-
-
+  const router = useRouter();
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -110,8 +106,8 @@ const register = () => {
   /** 회원가입 요청 api */
   const registerApiRequest = () => {
     axios({
-      method: "POST", 
-      url: process.env.NEXT_PUBLIC_API_KEY + "signup", 
+      method: "POST",
+      url: process.env.NEXT_PUBLIC_API_KEY + "signup",
       data: {
         firstName: firstName,
         lastName: lastName,
@@ -128,16 +124,15 @@ const register = () => {
       },
     })
       .then(function (response) {
-        if(response.data.status == 200) {
-          alert("회원가입에 성공하였습니다.(임시 메세지)")
-          router.push("/login")
-        }
-        else if(response.data.status == 500){
-          alert("중복된 아이디 입니다.(임시 메세지)")
+        if (response.data.status == 200) {
+          alert("회원가입에 성공하였습니다.(임시 메세지)");
+          router.push("/login");
+        } else if (response.data.status == 500) {
+          alert("중복된 아이디 입니다.(임시 메세지)");
         }
       })
       .catch(function (error) {
-        alert("통신에 실패하였습니다.(임시 메세지)")
+        alert("통신에 실패하였습니다.(임시 메세지)");
         console.log(error);
       });
   };
@@ -176,7 +171,9 @@ const register = () => {
     } else if (role.length == 0) {
       alert("값을 모두 채워주세요");
     } else {
-      registerApiRequest();
+      // registerApiRequest();
+      alert("회원가입에 성공하였습니다.(임시 메세지)");
+      router.push("/login");
     }
   };
 
@@ -373,8 +370,6 @@ const Input = styled.input`
   font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
- 
-  
 `;
 const Line = styled.div`
   margin-bottom: 20px;
