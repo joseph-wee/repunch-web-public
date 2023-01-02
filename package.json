@@ -8,7 +8,7 @@
     "start": "next start -p 8080",
     "lint": "next lint",
     "clean": "rm -rf .next",
-    "deploy-dev": "npm install && npm run build && eb deploy repunch-web"
+    "deploy-dev": "npm install && npm run build && eb deploy repunch-web-dev"
   },
   "dependencies": {
     "@next/font": "13.0.7",
