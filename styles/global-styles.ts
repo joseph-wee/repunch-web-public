@@ -7,4 +7,7 @@ export const GlobalStyle = createGlobalStyle`
         font-family: 'Roboto';
         padding-top: 64px;
     }
+    * {
+        font-family: 'Roboto';
+    }
 `;

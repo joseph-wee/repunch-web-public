@@ -23,12 +23,11 @@ const useLogin = () => {
         `login?userId=${userId}&password=${password}&role=USER`,
     })
       .then(function (response) {
-        if(response.data.status == 200) {
-          alert("로그인 성공하였습니다.(임시 메세지)")
-          router.push("/")
-        }
-        else if(response.data.status == 401){
-          alert("로그인에 실패하였습니다.(임시 메세지)")
+        if (response.data.status == 200) {
+          alert("로그인 성공하였습니다.(임시 메세지)");
+          router.push("/");
+        } else if (response.data.status == 401) {
+          alert("로그인에 실패하였습니다.(임시 메세지)");
         }
       })
       .catch(function (error) {
@@ -45,7 +44,8 @@ const useLogin = () => {
     } else if (password.length == 0) {
       alert("값을 모두 채워주세요");
     } else {
-      loginApiRequest();
+      // loginApiRequest();
+      router.push("/authentication");
     }
   };
 
@@ -111,6 +111,7 @@ const Container = styled.div`
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
+  padding-bottom: 40px;
   max-width: 427px;
 
   color: #0a4459;

@@ -8,7 +8,7 @@ import { ListCountryArray } from "../pages/register";
 
 const SelectBoxCountryCodeNum = ({
   list, // 국가 리스트
-  value,  // 국가전화코드
+  value, // 국가전화코드
   setValue, // 국가전화코드 세팅
 }: {
   list: ListCountryArray;
@@ -50,7 +50,6 @@ const Container = styled.div<{ isActive: boolean }>`
     return props.isActive ? "visible" : "hidden";
   }};
   margin-right: 8px;
-  margin-bottom: 20px;
   box-sizing: border-box;
   width: 120px;
   flex: 0 0 120px;
