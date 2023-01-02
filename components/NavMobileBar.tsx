@@ -95,11 +95,7 @@ const NavMobileBar = ({
             <Circle></Circle>
             <MenuButton>
               <Link
-<<<<<<< HEAD
-              onClick={()=>setIsActive(false)}
-=======
                 onClick={() => setIsActive(false)}
->>>>>>> feature/0
                 href="/register"
                 style={{ textDecoration: "none", color: "#FFFFFF" }}
               >
