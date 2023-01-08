@@ -18,3 +18,6 @@ export { default as ic_up_bk } from "./ic_up_bk.svg";
 export { default as test_thumbnail } from "./test_thumbnail.png";
 export { default as ic_close } from "./ic_close.svg";
 export { default as btn_favorite_act } from "./btn_favorite_act.svg";
+export { default as btn_favorite_act_sm } from "./btn_favorite_act_sm.svg";
+export { default as ic_plus } from "./ic_plus.svg";
+export { default as ic_minus } from "./ic_minus.svg";
