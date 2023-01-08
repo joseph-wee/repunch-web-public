@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
-import { BlockLike } from "typescript";
+import { useRouter } from "next/router";
 
 const NavTopBar = () => {
   const [isActive, setIsActive] = useState(true); // 조건부 렌더링 판별, true일때만 렌더링
@@ -27,6 +26,9 @@ const NavTopBar = () => {
         setIsActive(false);
         break;
       case "/payment":
+        setIsActive(false);
+        break;
+      case "/password_reset":
         setIsActive(false);
         break;
       default:
