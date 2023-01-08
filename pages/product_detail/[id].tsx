@@ -9,7 +9,7 @@ import {
   ic_plus,
 } from "../../assets";
 
-const id = () => {
+const useId = () => {
   const router = useRouter();
   const { id } = router.query;
   const [length, setLength] = useState<string>("1.0");
@@ -460,4 +460,4 @@ const Text = styled.div`
 
   color: #000000;
 `;
-export default id;
+export default useId;
