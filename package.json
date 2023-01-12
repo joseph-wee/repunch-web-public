@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run clean && next build",
+    "build": "next build",
     "start": "next start -p 8080",
     "lint": "next lint",
     "clean": "rm -rf .next",
-    "deploy-dev": "npm install && npm run build && eb deploy repunch-web-dev"
+    "deploy-dev": "npm install && npm run clean && npm run build && eb deploy repunch-web-dev",
+    "generate-zip": "npm run clean && npm install && npm run build && zip deploy.zip -r .next package.json next.config.js public"
   },
   "dependencies": {
     "@next/font": "13.0.7",
