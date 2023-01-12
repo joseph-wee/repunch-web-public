@@ -1,0 +1,50 @@
+on:
+  # push할 때마다 액션 실행하게 하려면 # 제거
+  #push:
+  #branches:
+  #-develop
+
+  workflow_dispatch: # 수동 실행 설정, 깃허브 액션 페이지에서 클릭으로 실행 가능
+    inputs:
+      component:
+        description: "What component"
+        required: true
+        default: "web-dev"
+      profile:
+        description: "What profile"
+        required: true
+        default: "deploy-dev"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.6.0
+
+      - name: npm cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          run: ls -al
+          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Generate deployment package
+        run: npm run generate-zip
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: repunch-web
+          environment_name: repunch-web-dev
+          version_label: repunch-web-dev${{ GITHUB_RUN_ID }}
+          region: us-west-1
+          deployment_package: deploy.zip
