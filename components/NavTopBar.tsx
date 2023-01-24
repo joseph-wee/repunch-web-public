@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const NavTopBar = () => {
+const useNavTopBar = () => {
   const [isActive, setIsActive] = useState(true); // 조건부 렌더링 판별, true일때만 렌더링
   const router = useRouter();
 
@@ -29,6 +29,12 @@ const NavTopBar = () => {
         setIsActive(false);
         break;
       case "/password_reset":
+        setIsActive(false);
+        break;
+      case "/check_out":
+        setIsActive(false);
+        break;
+      case "/payment_complete":
         setIsActive(false);
         break;
       default:
@@ -96,4 +102,4 @@ const Menu = styled.li`
   color: #0a4459;
 `;
 
-export default NavTopBar;
+export default useNavTopBar;
