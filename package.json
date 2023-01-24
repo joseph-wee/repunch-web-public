@@ -9,7 +9,7 @@
     "lint": "next lint",
     "clean": "rm -rf .next",
     "deploy-dev": "npm install && npm run clean && npm run build && eb deploy repunch-web-dev",
-    "generate-zip": "npm run clean && npm install && npm run build && zip deploy.zip -r .next package.json next.config.js public"
+    "generate-zip": "npm run clean && rm -rf node_modules && npm install && npm run build && zip deploy.zip -r .next package.json next.config.js public"
   },
   "dependencies": {
     "@next/font": "13.0.7",
