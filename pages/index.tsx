@@ -54,7 +54,13 @@ export default function Home() {
               />
             </SortButton>
           </ButtonWraaper>
-          <ProductList isActive={sortIsActive} />
+          <ProductListGridWrapper isActive={sortIsActive}>
+            <ProductList />
+            <ProductList />
+            <ProductList />
+            <ProductList />
+            <ProductList />
+          </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>
     </Container>
@@ -115,7 +121,6 @@ const Main = styled.div`
   }
 `;
 const ProductListWrapper = styled.div`
-  margin-left: 18px;
   width: 100%;
 `;
 const ButtonWraaper = styled.div`
@@ -223,4 +228,23 @@ const ButtonTextSort = styled.div`
   line-height: 14px;
 
   color: #000000;
+`;
+const ProductListGridWrapper = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "grid" : "none";
+  }};
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  row-gap: 50px;
+  column-gap: 20px;
+
+  @media screen and (max-width: 1279px) {
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: 40px;
+    column-gap: 18px;
+  }
+  @media screen and (max-width: 767px) {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 15px;
+    column-gap: 15px;
+  }
 `;
