@@ -21,3 +21,7 @@ export { default as btn_favorite_act } from "./btn_favorite_act.svg";
 export { default as btn_favorite_act_sm } from "./btn_favorite_act_sm.svg";
 export { default as ic_plus } from "./ic_plus.svg";
 export { default as ic_minus } from "./ic_minus.svg";
+export { default as ic_nav_indi } from "./ic_nav_indi.svg";
+export { default as paypal } from "./paypal.svg";
+export { default as btn_web_back } from "./btn_web_back.svg";
+export { default as garbage } from "./garbage.svg";
