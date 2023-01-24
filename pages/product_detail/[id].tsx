@@ -28,105 +28,107 @@ const useId = () => {
   return (
     <>
       <Container>
-        <ImageVideoWrapper>
-          <BigImagevideo>
-            <LikeButton>
-              <Image src={btn_favorite_act_sm} alt={"logo_favorite"} />
-            </LikeButton>
-          </BigImagevideo>
-          <FlexWrapper>
-            <SmallImageVideo />
-            <SmallImageVideo />
-            <SmallImageVideo />
-            <SmallImageVideo />
-            <SmallImageVideo />
-            <SmallImageVideo />
-          </FlexWrapper>
-        </ImageVideoWrapper>
-        <ProductInfoPurchaseContainer>
-          <Title>Leopard Viscose Crepe-Rose</Title>
-          <Line />
-          <InfoWrapper>
-            <InfoTitle>Composition</InfoTitle>
-            <InfoContent>
-              <RatioWrapper>
-                <Ratio>EL 9%</Ratio>
-                <Ratio>PA 94%</Ratio>
-              </RatioWrapper>
-            </InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Certification</InfoTitle>
-            <InfoContent>Repp verifyed</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Available</InfoTitle>
-            <InfoContent>155.00m</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Supplies</InfoTitle>
-            <InfoContent>Patterns</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Project</InfoTitle>
-            <InfoContent>Patterns</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Color</InfoTitle>
-            <InfoContent>Red</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Design</InfoTitle>
-            <InfoContent>Check</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Width</InfoTitle>
-            <InfoContent>36 inches / 90cm</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Weight</InfoTitle>
-            <InfoContent>36 inches / 90cm</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Yarn</InfoTitle>
-            <InfoContent>36 inches / 90cm</InfoContent>
-          </InfoWrapper>
-          <InfoWrapper>
-            <InfoTitle>Descripttion</InfoTitle>
-            <InfoDescription>
-              Aruba 93 Azure Blue Stripe Cotton & Linen FabricAruba 93 Azure
-              Blue Stripe Cotton & Linen FabricAruba 93 Azure Blue Stripe Cotton
-              & Linen Fabric
-            </InfoDescription>
-          </InfoWrapper>
-          <LengthWrapper>
-            <LengthTitle>Length (m)</LengthTitle>
-
-            <MinusButton onClick={() => minus()}>
-              <Image src={ic_minus} alt={"minus_button"} />
-            </MinusButton>
-            <LengthInput
-              type="number"
-              step="0.1"
-              value={length}
-              onChange={(e) => setLength(e.target.value)}
-            />
-            <PlusButton onClick={() => plus()}>
-              <Image src={ic_plus} alt={"plus_button"} />
-            </PlusButton>
-          </LengthWrapper>
-          <PricePurchaseWrapper>
-            <PriceWrapper>
-              <Price>$ 4.06</Price>
-              <Vat>EX VAT</Vat>
-            </PriceWrapper>
-            <PurchaseButton>Add to cart</PurchaseButton>
-          </PricePurchaseWrapper>
-          <RequestSample>
-            Request sample /&nbsp;
-            <BoldText>$ 8.38</BoldText>
-          </RequestSample>
-        </ProductInfoPurchaseContainer>
+        <ProductInfoContainer>
+          <ImageVideoWrapper>
+            <BigImagevideo>
+              <LikeButton>
+                <Image src={btn_favorite_act_sm} alt={"logo_favorite"} />
+              </LikeButton>
+            </BigImagevideo>
+            <SmallImageVideoWrapper>
+              <SmallImageVideo />
+              <SmallImageVideo />
+              <SmallImageVideo />
+              <SmallImageVideo />
+              <SmallImageVideo />
+            </SmallImageVideoWrapper>
+          </ImageVideoWrapper>
+          <ProductInfoPurchaseContainer>
+            <Title>Leopard Viscose Crepe-Rose</Title>
+            <Line />
+            <InfoWrapper>
+              <InfoTitle>Composition</InfoTitle>
+              <InfoContent>
+                <RatioWrapper>
+                  <Ratio>EL 9%</Ratio>
+                  <Ratio>PA 94%</Ratio>
+                </RatioWrapper>
+              </InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Certification</InfoTitle>
+              <InfoContent>Repp verifyed</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Available</InfoTitle>
+              <InfoContent>155.00m</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Supplies</InfoTitle>
+              <InfoContent>Patterns</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Project</InfoTitle>
+              <InfoContent>Patterns</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Color</InfoTitle>
+              <InfoContent>Red</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Design</InfoTitle>
+              <InfoContent>Check</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Width</InfoTitle>
+              <InfoContent>36 inches / 90cm</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Weight</InfoTitle>
+              <InfoContent>36 inches / 90cm</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Yarn</InfoTitle>
+              <InfoContent>36 inches / 90cm</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Descripttion</InfoTitle>
+              <InfoDescription>
+                Aruba 93 Azure Blue Stripe Cotton & Linen FabricAruba 93 Azure
+                Blue Stripe Cotton & Linen FabricAruba 93 Azure Blue Stripe
+                Cotton & Linen Fabric
+              </InfoDescription>
+            </InfoWrapper>
+            <LengthWrapper>
+              <LengthTitle>Length (m)</LengthTitle>
+              <ButtonInputWrapper>
+                <MinusButton onClick={() => minus()}>
+                  <Image src={ic_minus} alt={"minus_button"} />
+                </MinusButton>
+                <LengthInput
+                  type="number"
+                  step="0.1"
+                  value={length}
+                  onChange={(e) => setLength(e.target.value)}
+                />
+                <PlusButton onClick={() => plus()}>
+                  <Image src={ic_plus} alt={"plus_button"} />
+                </PlusButton>
+              </ButtonInputWrapper>
+            </LengthWrapper>
+            <PricePurchaseWrapper>
+              <PriceWrapper>
+                <Price>$ 4.06</Price>
+                <Vat>EX VAT</Vat>
+              </PriceWrapper>
+              <PurchaseButton>Add to cart</PurchaseButton>
+            </PricePurchaseWrapper>
+            <RequestSample>
+              Request sample /&nbsp;
+              <BoldText>$ 8.38</BoldText>
+            </RequestSample>
+          </ProductInfoPurchaseContainer>
+        </ProductInfoContainer>
         <DeliveryReturnsInfoTitleWrapper>
           <ShortLine />
           <DeliveryReturnsInfoTitle>
@@ -167,14 +169,37 @@ const useId = () => {
 
 const Container = styled.div`
   margin: 0 auto;
+  padding-top: 20px;
+  max-width: 865px;
+  @media screen and (max-width: 1279px) {
+    display: block;
+    padding-left: 74px;
+    padding-right: 74px;
+  }
+  @media screen and (max-width: 767px) {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+`;
+const ProductInfoContainer = styled.div`
+  display: flex;
+  @media screen and (max-width: 767px) {
+    display: block;
+  }
 `;
 const ImageVideoWrapper = styled.div``;
 const BigImagevideo = styled.div`
   position: relative;
+  border: 1px solid black;
+  box-sizing: border-box;
   &::after {
     display: block;
     content: "";
-    padding-bottom: 100%;
+    padding-bottom: 250px;
+    @media screen and (max-width: 767px) {
+      padding-bottom: 100%;
+    }
   }
 `;
 const LikeButton = styled.div`
@@ -189,12 +214,19 @@ const LikeButton = styled.div`
   background: rgba(10, 68, 89, 0.2);
   border-radius: 22px;
 `;
-const FlexWrapper = styled.div`
+const SmallImageVideoWrapper = styled.div`
   display: flex;
   overflow: hidden;
+  width: 320px;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `;
 const SmallImageVideo = styled.div`
-  width: 21vw;
+  width: 68px;
+  @media screen and (max-width: 767px) {
+    width: 21vw;
+  }
   border: 1px solid black;
   box-sizing: border-box;
 
@@ -202,14 +234,20 @@ const SmallImageVideo = styled.div`
   &::after {
     display: block;
     content: "";
-    padding-bottom: 100%;
+    padding-bottom: 68px;
+    @media screen and (max-width: 767px) {
+      padding-bottom: 100%;
+    }
   }
 `;
 const ProductInfoPurchaseContainer = styled.div`
-  padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: 40px;
+
+  @media screen and (max-width: 767px) {
+    padding-top: 20px;
+  }
 `;
 const Title = styled.div`
   margin-bottom: 16px;
@@ -301,6 +339,10 @@ const LengthTitle = styled.div`
   letter-spacing: -0.011em;
 
   color: #000000;
+`;
+const ButtonInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
 const MinusButton = styled.button`
   display: flex;
