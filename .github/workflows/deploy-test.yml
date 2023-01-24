@@ -45,6 +45,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: repunch-web
           environment_name: repunch-web-dev
-          version_label: repunch-web-dev$GITHUB_RUN_NUMBER
+          version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: us-west-1
           deployment_package: deploy.zip
