@@ -28,15 +28,6 @@ jobs:
         with:
           node-version: 16.x
 
-      - name: npm cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          run: ls -al
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
-
       - name: Generate deployment package
         run: npm run generate-zip
 
