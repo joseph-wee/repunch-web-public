@@ -4,205 +4,40 @@ import { ic_favorite_wht, test_thumbnail } from "../assets";
 import Image from "next/legacy/image";
 import Link from "next/link";
 
-const ProductCard = ({ isActive }: { isActive: boolean }) => {
+const ProductCard = () => {
   return (
-    <>
-      <Container isActive={isActive}>
-        <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
-          <Card>
-            <Thumbnail>
-              <Image
-                src={test_thumbnail}
-                alt={"thumbnail"}
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-              />
-              <Soldout>SOLD OUT</Soldout>
+    <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
+      <Card>
+        <Thumbnail>
+          <Image
+            src={test_thumbnail}
+            alt={"thumbnail"}
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+          />
+          <Soldout>SOLD OUT</Soldout>
 
-              <LikeButton>
-                <Image src={ic_favorite_wht} alt={"logo_favorite"} />
-              </LikeButton>
-            </Thumbnail>
-            <InfoWrapper>
-              <ProductTitle>Embroidery sheer</ProductTitle>
-              <ProductCategory>jacquard</ProductCategory>
-              <RatioWrapper>
-                <Ratio>EL 9%</Ratio>
-                <Ratio>PA 94%</Ratio>
-              </RatioWrapper>
-              <PriceUnitWrapper>
-                <Price>$ 8.38/meter</Price>
-              </PriceUnitWrapper>
-            </InfoWrapper>
-          </Card>
-        </Link>
-        <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
-          <Card>
-            <Thumbnail>
-              <Image
-                src={test_thumbnail}
-                alt={"thumbnail"}
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-              />
-              <Soldout>SOLD OUT</Soldout>
-
-              <LikeButton>
-                <Image src={ic_favorite_wht} alt={"logo_favorite"} />
-              </LikeButton>
-            </Thumbnail>
-            <InfoWrapper>
-              <ProductTitle>Embroidery sheer</ProductTitle>
-              <ProductCategory>jacquard</ProductCategory>
-              <RatioWrapper>
-                <Ratio>EL 9%</Ratio>
-                <Ratio>PA 94%</Ratio>
-              </RatioWrapper>
-              <PriceUnitWrapper>
-                <Price>$ 8.38/meter</Price>
-              </PriceUnitWrapper>
-            </InfoWrapper>
-          </Card>
-        </Link>
-        <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
-          <Card>
-            <Thumbnail>
-              <Image
-                src={test_thumbnail}
-                alt={"thumbnail"}
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-              />
-              <Soldout>SOLD OUT</Soldout>
-
-              <LikeButton>
-                <Image src={ic_favorite_wht} alt={"logo_favorite"} />
-              </LikeButton>
-            </Thumbnail>
-            <InfoWrapper>
-              <ProductTitle>Embroidery sheer</ProductTitle>
-              <ProductCategory>jacquard</ProductCategory>
-              <RatioWrapper>
-                <Ratio>EL 9%</Ratio>
-                <Ratio>PA 94%</Ratio>
-              </RatioWrapper>
-              <PriceUnitWrapper>
-                <Price>$ 8.38/meter</Price>
-              </PriceUnitWrapper>
-            </InfoWrapper>
-          </Card>
-        </Link>
-        <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
-          <Card>
-            <Thumbnail>
-              <Image
-                src={test_thumbnail}
-                alt={"thumbnail"}
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-              />
-
-              <LikeButton>
-                <Image src={ic_favorite_wht} alt={"logo_favorite"} />
-              </LikeButton>
-            </Thumbnail>
-            <InfoWrapper>
-              <ProductTitle>Embroidery sheer</ProductTitle>
-              <ProductCategory>jacquard</ProductCategory>
-              <RatioWrapper>
-                <Ratio>EL 9%</Ratio>
-                <Ratio>PA 94%</Ratio>
-              </RatioWrapper>
-              <PriceUnitWrapper>
-                <Price>$ 8.38/meter</Price>
-              </PriceUnitWrapper>
-            </InfoWrapper>
-          </Card>
-        </Link>
-        <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
-          <Card>
-            <Thumbnail>
-              <Image
-                src={test_thumbnail}
-                alt={"thumbnail"}
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-              />
-
-              <LikeButton>
-                <Image src={ic_favorite_wht} alt={"logo_favorite"} />
-              </LikeButton>
-            </Thumbnail>
-            <InfoWrapper>
-              <ProductTitle>Embroidery sheer</ProductTitle>
-              <ProductCategory>jacquard</ProductCategory>
-              <RatioWrapper>
-                <Ratio>EL 9%</Ratio>
-                <Ratio>PA 94%</Ratio>
-              </RatioWrapper>
-              <PriceUnitWrapper>
-                <Price>$ 8.38/meter</Price>
-              </PriceUnitWrapper>
-            </InfoWrapper>
-          </Card>
-        </Link>
-        <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
-          <Card>
-            <Thumbnail>
-              <Image
-                src={test_thumbnail}
-                alt={"thumbnail"}
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-              />
-
-              <LikeButton>
-                <Image src={ic_favorite_wht} alt={"logo_favorite"} />
-              </LikeButton>
-            </Thumbnail>
-            <InfoWrapper>
-              <ProductTitle>Embroidery sheer</ProductTitle>
-              <ProductCategory>jacquard</ProductCategory>
-              <RatioWrapper>
-                <Ratio>EL 9%</Ratio>
-                <Ratio>PA 94%</Ratio>
-              </RatioWrapper>
-              <PriceUnitWrapper>
-                <Price>$ 8.38/meter</Price>
-              </PriceUnitWrapper>
-            </InfoWrapper>
-          </Card>
-        </Link>
-      </Container>
-    </>
+          <LikeButton>
+            <Image src={ic_favorite_wht} alt={"logo_favorite"} />
+          </LikeButton>
+        </Thumbnail>
+        <InfoWrapper>
+          <ProductTitle>Embroidery sheer</ProductTitle>
+          <ProductCategory>jacquard</ProductCategory>
+          <RatioWrapper>
+            <Ratio>EL 9%</Ratio>
+            <Ratio>PA 94%</Ratio>
+          </RatioWrapper>
+          <PriceUnitWrapper>
+            <Price>$ 8.38/meter</Price>
+          </PriceUnitWrapper>
+        </InfoWrapper>
+      </Card>
+    </Link>
   );
 };
 
-const Container = styled.div<{ isActive: boolean }>`
-  display: ${(props) => {
-    return props.isActive == true ? "grid" : "none";
-  }};
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  row-gap: 50px;
-  column-gap: 20px;
-
-  @media screen and (max-width: 1279px) {
-    grid-template-columns: 1fr 1fr 1fr;
-    row-gap: 40px;
-    column-gap: 18px;
-  }
-  @media screen and (max-width: 767px) {
-    grid-template-columns: 1fr 1fr;
-    row-gap: 15px;
-    column-gap: 15px;
-  }
-`;
 const Card = styled.div`
   border-radius: 4px;
   filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.15));
