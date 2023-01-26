@@ -12,10 +12,10 @@ const useSideBar = () => {
     return router.pathname == pathname;
   };
 
-  useEffect(() => {
+  const addressPathCheck = () => {
     console.log(router.pathname);
-    console.log(pathCheck("cart"));
-  }, []);
+    return router.pathname.includes("address");
+  };
 
   return (
     <Container>
@@ -60,8 +60,8 @@ const useSideBar = () => {
         </Menu>
       </Link>
       <Link href="/address" style={{ textDecoration: "none" }}>
-        <Menu isActive={pathCheck("/address")}>
-          <ImageWrapper isActive={pathCheck("/address")}>
+        <Menu isActive={addressPathCheck()}>
+          <ImageWrapper isActive={addressPathCheck()}>
             <Image src={ic_nav_indi} alt={"button_close"} />
           </ImageWrapper>
           Address
