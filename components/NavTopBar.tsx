@@ -53,13 +53,13 @@ const useNavTopBar = () => {
           <Link href="/new_arrivals" style={{ textDecoration: "none" }}>
             <Menu>New arrivals</Menu>
           </Link>
-          <Link href="/shop_fabric" style={{ textDecoration: "none" }}>
+          <Link href="/shop_fabrics" style={{ textDecoration: "none" }}>
             <Menu>Shop fabric </Menu>
           </Link>
           <Link href="/shop_supplies" style={{ textDecoration: "none" }}>
             <Menu>Shop supplies</Menu>
           </Link>
-          <Link href="/shop_by_project" style={{ textDecoration: "none" }}>
+          <Link href="/shop_project" style={{ textDecoration: "none" }}>
             <Menu>Shop by project </Menu>
           </Link>
           <Link href="/about_us" style={{ textDecoration: "none" }}>
