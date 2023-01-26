@@ -27,7 +27,7 @@ const NavMobileBar = ({
           <Menu>
             <Link
               onClick={() => setIsActive(false)}
-              href="/shop_fabric"
+              href="/shop_fabrics"
               style={{ textDecoration: "none", color: "#FFFFFF" }}
             >
               Shop fabric
@@ -45,7 +45,7 @@ const NavMobileBar = ({
           <Menu>
             <Link
               onClick={() => setIsActive(false)}
-              href="/shop_by_project"
+              href="/shop_project"
               style={{ textDecoration: "none", color: "#FFFFFF" }}
             >
               Shop by project
