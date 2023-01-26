@@ -93,10 +93,15 @@ const Main = styled.div`
 `;
 const Title = styled.div`
   font-weight: 700;
-  font-size: 22px;
-  line-height: 26px;
+  font-size: 24px;
+  line-height: 28px;
   letter-spacing: -0.011em;
   color: #0a4459;
+  @media screen and (max-width: 767px) {
+    margin-bottom: 9px;
+    font-size: 22px;
+    line-height: 26px;
+  }
 `;
 const WelcomeText = styled.div`
   position: absolute;
@@ -109,7 +114,6 @@ const WelcomeText = styled.div`
   color: #0a4459;
   @media screen and (max-width: 767px) {
     position: static;
-    margin-top: 9px;
   }
 `;
 const FavoriteCartOrderCountWrapper = styled.div`
