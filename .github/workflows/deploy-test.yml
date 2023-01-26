@@ -14,24 +14,40 @@ on:
         description: "What profile"
         required: true
         default: "deploy-dev"
-
+        
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['16.x']
 
     steps:
-      - name: Checkout
+      - name: Checkout source code.
         uses: actions/checkout@v3.3.0
 
-      - name: Setup Node.js environment
+      - name: Set up Node.js
         uses: actions/setup-node@v3.6.0
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: yarn install
 
-      - name: Generate deployment package
-        run: npm run generate-zip
+      - name: Run build
+        run: yarn build:production          
 
+      - name: Current timestamp
+        id: timestamp
+        run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H-%M-%S-%3NZ')"
+
+      - name: remove node_modules
+        run: rm -rf node_modules
+        
+      - name: Generate deployment package # (1)
+        run: zip ./deploy.zip -r * .[^.]*
+          
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
         with:
@@ -39,7 +55,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: repunch-web
           environment_name: repunch-web-dev
-          version_label: ${ GITHUB_RUN_ID }
+          version_label: '${{ steps.timestamp.outputs.date }}'
           region: us-west-1
           deployment_package: deploy.zip
-          use_existing_version_if_available: true
