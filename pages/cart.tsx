@@ -4,6 +4,7 @@ import { SideBar, CartMeterageProduct } from "../components";
 import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back } from "../assets";
+import { goBack } from "../utils/functions";
 
 const cart = () => {
   return (
@@ -12,7 +13,7 @@ const cart = () => {
         <SideBar />
         <Main>
           <TitleWrapper>
-            <ImageWrapper>
+            <ImageWrapper onClick={() => goBack()}>
               <Image src={btn_web_back} alt={"btn_web_back"} />
             </ImageWrapper>
             <Title>Cart</Title>
@@ -73,11 +74,13 @@ const ImageWrapper = styled.div`
 `;
 const Title = styled.div`
   font-weight: 700;
-  font-size: 22px;
-  line-height: 26px;
+  font-size: 24px;
+  line-height: 28px;
   letter-spacing: -0.011em;
   color: #0a4459;
   @media screen and (max-width: 767px) {
+    font-size: 22px;
+    line-height: 26px;
     margin-left: 8px;
   }
 `;
@@ -161,7 +164,7 @@ const RemoveButton = styled.button`
   line-height: 18px;
   color: #0a4459;
   @media screen and (max-width: 767px) {
-    width: 34.5%;
+    width: 50vw;
   }
 `;
 const PurchaseButton = styled.button`
@@ -180,7 +183,7 @@ const PurchaseButton = styled.button`
   color: #ffffff;
   cursor: pointer;
   @media screen and (max-width: 767px) {
-    width: 65.5%;
+    width: 55vw;
   }
 `;
 
