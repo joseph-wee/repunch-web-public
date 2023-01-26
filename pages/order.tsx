@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back } from "../assets";
+import { goBack } from "../utils/functions";
 
 const order = () => {
   return (
@@ -16,7 +17,7 @@ const order = () => {
       <SideBar />
       <Main>
         <TitleWrapper>
-          <ImageWrapper>
+          <ImageWrapper onClick={() => goBack()}>
             <Image src={btn_web_back} alt={"btn_web_back"} />
           </ImageWrapper>
           <Title>Order</Title>
@@ -81,6 +82,8 @@ const Title = styled.div`
   letter-spacing: -0.011em;
   color: #0a4459;
   @media screen and (max-width: 767px) {
+    font-size: 22px;
+    line-height: 26px;
     margin-left: 8px;
   }
 `;

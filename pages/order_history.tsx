@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { btn_web_back } from "../assets";
 import Image from "next/image";
+import { goBack } from "../utils/functions";
 
 const order_history = () => {
   return (
@@ -16,7 +17,7 @@ const order_history = () => {
       <SideBar />
       <Main>
         <TitleWrapper>
-          <ImageWrapper>
+          <ImageWrapper onClick={() => goBack()}>
             <Image src={btn_web_back} alt={"btn_web_back"} />
           </ImageWrapper>
           <Title>Order history</Title>
@@ -69,11 +70,13 @@ const ImageWrapper = styled.div`
 `;
 const Title = styled.div`
   font-weight: 700;
-  font-size: 22px;
-  line-height: 26px;
+  font-size: 24px;
+  line-height: 28px;
   letter-spacing: -0.011em;
   color: #0a4459;
   @media screen and (max-width: 767px) {
+    font-size: 22px;
+    line-height: 26px;
     margin-left: 8px;
   }
 `;
