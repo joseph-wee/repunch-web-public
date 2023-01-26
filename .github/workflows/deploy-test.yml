@@ -25,8 +25,6 @@ jobs:
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.6.0
-        with:
-          node-version: 16.x
 
       - name: Generate deployment package
         run: npm run generate-zip
