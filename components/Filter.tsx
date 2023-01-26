@@ -97,6 +97,32 @@ const UseFilter = ({
             </>
           );
         })}
+
+        {suppliesList.map((i, j) => {
+          return (
+            <>
+              <CategoryListWrapper
+                isActive={suppliesIsActive}
+                key={`test${j}`}
+                onClick={() => suppliesListHandler(j)}
+              >
+                <Label
+                  htmlFor={`supplies${j}`}
+                  isChecked={i.isChecked}
+                  img={ic_check_wht.src}
+                  key={`test1${j}`}
+                />
+                <Checkbox
+                  type="checkbox"
+                  id={`supplies${j}`}
+                  onChange={() => suppliesListHandler(j)}
+                  key={`test23${j}`}
+                />
+                {i.name} (3)
+              </CategoryListWrapper>
+            </>
+          );
+        })}
         <CategoryTitleWrapper>
           <Image
             src={suppliesIsActive ? ic_down_bk : ic_up_bk}
@@ -143,6 +169,7 @@ const Background = styled.div<{ isActive: boolean }>`
 `;
 
 const Container = styled.div<{ isActive: boolean }>`
+  margin-right: 18px;
   width: 192px;
   flex-shrink: 0;
   height: 500px;
@@ -156,6 +183,7 @@ const Container = styled.div<{ isActive: boolean }>`
     position: fixed;
     top: 0;
     left: 0;
+    margin-right: 0;
     padding-top: 21px;
     padding-left: 20px;
     padding-right: 20px;
@@ -175,7 +203,7 @@ const Container = styled.div<{ isActive: boolean }>`
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 19px;
+  margin-bottom: 20px;
   height: 38px;
   border-bottom: 1px solid #e8e8e8;
   box-sizing: border-box;
@@ -202,7 +230,7 @@ const ButtonClose = styled.button<{ isActive: boolean }>`
 const CategoryTitleWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 32px;
+  margin-top: 20px;
   margin-left: 4px;
   margin-bottom: 14px;
   height: 19px;
@@ -312,6 +340,7 @@ const ColorCircle = styled.div`
     background-color: #000000;
   }
   &:nth-of-type(13) {
+    margin-bottom: 0;
     background: linear-gradient(
       156.04deg,
       #a9a9a9 10.26%,
@@ -322,6 +351,7 @@ const ColorCircle = styled.div`
     );
   }
   &:nth-of-type(14) {
+    margin-bottom: 0;
     background: linear-gradient(
       152.18deg,
       #d3a810 5.76%,
