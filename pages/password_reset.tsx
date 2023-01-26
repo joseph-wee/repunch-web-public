@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const usePassword_reset = () => {
+  const [popUpIsActive, setPopUpIsActive] = useState(false);
   const [password, setPassword] = useState(""); // 비밀번호
   const [passwordConfirm, setPasswordConfrim] = useState(""); // 비밀번호 확인
 
@@ -41,9 +42,23 @@ const usePassword_reset = () => {
               <LinkStyling>Cancel</LinkStyling>
             </Link>
           </Button>
-          <Button onClick={() => alert("test")}>Confirm</Button>
+          <Button onClick={() => setPopUpIsActive(true)}>Confirm</Button>
         </Wrapper>
       </Container>
+      <PopUpBox isActive={popUpIsActive}>
+        <ContentBox>
+          <PopUpTitle>
+            A new password has
+            <br />
+            been registered.
+          </PopUpTitle>
+          <ButtonWrapper>
+            <Link href="/" style={{ textDecoration: "none" }}>
+              <PopUpButton>OK</PopUpButton>
+            </Link>
+          </ButtonWrapper>
+        </ContentBox>
+      </PopUpBox>
     </>
   );
 };
@@ -173,6 +188,55 @@ const LinkStyling = styled.div`
   font-weight: 400;
   color: #0a4459;
   line-height: 130%;
+`;
+
+const PopUpBox = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "flex" : "none";
+  }};
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+`;
+const ContentBox = styled.div`
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 320px;
+  height: 132px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+`;
+const PopUpTitle = styled.div`
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: #0a4459;
+`;
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+`;
+const PopUpButton = styled.button`
+  width: 263.25px;
+  height: 36px;
+  background-color: #1eab92;
+  border: none;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: #ffffff;
+  cursor: pointer;
 `;
 
 export default usePassword_reset;
