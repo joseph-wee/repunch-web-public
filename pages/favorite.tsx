@@ -11,6 +11,7 @@ import { ic_down_bk, ic_up_bk } from "../assets";
 import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back } from "../assets";
+import { goBack } from "../utils/functions";
 
 const useFavorite = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
@@ -20,7 +21,7 @@ const useFavorite = () => {
       <SideBar />
       <Main>
         <TitleWrapper>
-          <ImageWrapper>
+          <ImageWrapper onClick={() => goBack()}>
             <Image src={btn_web_back} alt={"btn_web_back"} />
           </ImageWrapper>
           <Title>favorite</Title>
@@ -59,7 +60,7 @@ const Container = styled.div`
   margin: 0 auto;
   padding-top: 30px;
   padding-bottom: 40px;
-  max-width: 637px;
+  max-width: 1030px;
   @media screen and (max-width: 1279px) {
     max-width: 608px;
   }
@@ -82,7 +83,10 @@ const Main = styled.div`
 const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 31.28px;
+  @media screen and (max-width: 1279px) {
+    margin-bottom: 20px;
+  }
 `;
 const ImageWrapper = styled.div`
   display: none;
@@ -93,11 +97,13 @@ const ImageWrapper = styled.div`
 `;
 const Title = styled.div`
   font-weight: 700;
-  font-size: 22px;
-  line-height: 26px;
+  font-size: 24px;
+  line-height: 28px;
   letter-spacing: -0.011em;
   color: #0a4459;
   @media screen and (max-width: 767px) {
+    font-size: 22px;
+    line-height: 26px;
     margin-left: 8px;
   }
 `;
@@ -105,7 +111,7 @@ const ItemSortBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 21.72px;
   padding-left: 17px;
   padding-right: 13px;
   height: 30px;
@@ -117,6 +123,9 @@ const ItemSortBar = styled.div`
   font-size: 12px;
   line-height: 12px;
   color: #0a4459;
+  @media screen and (max-width: 1279px) {
+    margin-bottom: 20px;
+  }
 `;
 const Items = styled.div`
   display: flex;
@@ -161,9 +170,14 @@ const ProductListGridWrapper = styled.div<{ isActive: boolean }>`
     return props.isActive == true ? "grid" : "none";
   }};
 
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   row-gap: 22px;
-  column-gap: 17px;
+  column-gap: 20px;
+  @media screen and (max-width: 1279px) {
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: 22px;
+    column-gap: 17px;
+  }
 
   @media screen and (max-width: 767px) {
     grid-template-columns: 1fr 1fr;
