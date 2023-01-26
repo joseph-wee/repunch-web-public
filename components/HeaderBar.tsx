@@ -19,7 +19,11 @@ const useHeaderBar = () => {
   return (
     <>
       <Container>
-        <Link href="/" style={{ textDecoration: "none" }}>
+        <Link
+          href="/"
+          style={{ textDecoration: "none" }}
+          onClick={() => setIsActive(false)}
+        >
           <Title>Repunch</Title>
         </Link>
         <Menu onClick={() => setIsActive(!isActive)}>
@@ -28,12 +32,12 @@ const useHeaderBar = () => {
             alt="button_menu"
           />
         </Menu>
-        <Menu>
+        <Menu onClick={() => setIsActive(false)}>
           <Link href="/cart" style={{ textDecoration: "none" }}>
             <Image src={ic_cart_wht} alt="cart_menu_button" />
           </Link>
         </Menu>
-        <Menu>
+        <Menu onClick={() => setIsActive(false)}>
           <Link href="/favorite" style={{ textDecoration: "none" }}>
             <Image src={ic_favorite_wht} alt="favorite_menu_button" />
           </Link>
