@@ -10,6 +10,8 @@ import {
 import { btn_web_back, garbage, ic_check_wht } from "../assets";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { goBack } from "../utils/functions";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -25,6 +27,7 @@ const useAddress = () => {
   const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isExisted, setIsExisted] = useState<boolean>(false);
+  const router = useRouter();
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -73,7 +76,7 @@ const useAddress = () => {
 
   const moveTop = () => {
     setIsExisted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0 });
   };
 
   return (
@@ -82,7 +85,7 @@ const useAddress = () => {
       <Main>
         <AddressInit isExisted={isExisted}>
           <TitleWrapper>
-            <ImageWrapper>
+            <ImageWrapper onClick={() => goBack()}>
               <Image src={btn_web_back} alt={"btn_web_back"} />
             </ImageWrapper>
             <Title>Address</Title>
@@ -195,9 +198,15 @@ const useAddress = () => {
             <Title>Address</Title>
           </TitleWrapper>
           <ContentEditTitleBar>Shipping address</ContentEditTitleBar>
-          <AddAdressButton>+ Add a new address</AddAdressButton>
+          <AddAdressButton
+            onClick={() => router.push("/edit_shipping_address")}
+          >
+            + Add a new address
+          </AddAdressButton>
           <ContentWrapper>
-            <EditButton>Edit</EditButton>
+            <EditButton onClick={() => router.push("/edit_shipping_address")}>
+              Edit
+            </EditButton>
             <DeleteButton>
               <Image src={garbage} alt={"garbage_icon"} />
             </DeleteButton>
@@ -210,7 +219,9 @@ const useAddress = () => {
             <AddressPhoneNumber>821086281024</AddressPhoneNumber>
           </ContentWrapper>
           <ContentWrapper>
-            <EditButton>Edit</EditButton>
+            <EditButton onClick={() => router.push("/edit_shipping_address")}>
+              Edit
+            </EditButton>
             <DeleteButton>
               <Image src={garbage} alt={"garbage_icon"} />
             </DeleteButton>
@@ -225,9 +236,13 @@ const useAddress = () => {
           <ContentEditTitleBillingBar>
             Billing address
           </ContentEditTitleBillingBar>
-          <AddAdressButton>+ Add a new address</AddAdressButton>
+          <AddAdressButton onClick={() => router.push("/edit_billing_address")}>
+            + Add a new address
+          </AddAdressButton>
           <ContentWrapper>
-            <EditButton>Edit</EditButton>
+            <EditButton onClick={() => router.push("/edit_billing_address")}>
+              Edit
+            </EditButton>
             <DeleteButton>
               <Image src={garbage} alt={"garbage_icon"} />
             </DeleteButton>
@@ -240,7 +255,9 @@ const useAddress = () => {
             <AddressPhoneNumber>821086281024</AddressPhoneNumber>
           </ContentWrapper>
           <ContentWrapper>
-            <EditButton>Edit</EditButton>
+            <EditButton onClick={() => router.push("/edit_billing_address")}>
+              Edit
+            </EditButton>
             <DeleteButton>
               <Image src={garbage} alt={"garbage_icon"} />
             </DeleteButton>
