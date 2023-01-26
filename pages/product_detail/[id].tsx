@@ -8,8 +8,10 @@ import {
   ic_minus,
   ic_plus,
 } from "../../assets";
+import Link from "next/link";
 
 const useId = () => {
+  const [popUpIsActive, setPopUpIsActive] = useState(false);
   const router = useRouter();
   const { id } = router.query;
   const [length, setLength] = useState<string>("1.0");
@@ -121,9 +123,11 @@ const useId = () => {
                 <Price>$ 4.06</Price>
                 <Vat>EX VAT</Vat>
               </PriceWrapper>
-              <PurchaseButton>Add to cart</PurchaseButton>
+              <PurchaseButton onClick={() => setPopUpIsActive(true)}>
+                Add to cart
+              </PurchaseButton>
             </PricePurchaseWrapper>
-            <RequestSample>
+            <RequestSample onClick={() => setPopUpIsActive(true)}>
               Request sample /&nbsp;
               <BoldText>$ 8.38</BoldText>
             </RequestSample>
@@ -163,10 +167,25 @@ const useId = () => {
           </Text>
         </DeliveryReturnsInfoText>
       </Container>
+      <PopUpBox isActive={popUpIsActive}>
+        <ContentBox>
+          <PopUpTitle>Added to cart</PopUpTitle>
+          <PopUpMessage>
+            Feel free to continue shopping or check out.
+          </PopUpMessage>
+          <ButtonWrapper>
+            <Link href="/cart" style={{ textDecoration: "none" }}>
+              <PopUpButton>View cart</PopUpButton>
+            </Link>
+            <PopUpButton onClick={() => setPopUpIsActive(false)}>
+              Continue shopping
+            </PopUpButton>
+          </ButtonWrapper>
+        </ContentBox>
+      </PopUpBox>
     </>
   );
 };
-
 const Container = styled.div`
   margin: 0 auto;
   padding-top: 20px;
@@ -428,6 +447,7 @@ const PurchaseButton = styled.button`
   letter-spacing: -0.011em;
 
   color: #ffffff;
+  cursor: pointer;
 `;
 const RequestSample = styled.button`
   display: flex;
@@ -447,6 +467,7 @@ const RequestSample = styled.button`
   letter-spacing: -0.011em;
 
   color: #0a4459;
+  cursor: pointer;
 `;
 const BoldText = styled.div`
   font-weight: 700;
@@ -501,5 +522,62 @@ const Text = styled.div`
   letter-spacing: -0.011em;
 
   color: #000000;
+`;
+
+const PopUpBox = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "flex" : "none";
+  }};
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+`;
+const ContentBox = styled.div`
+  padding-top: 20px;
+  padding-bottom: 32px;
+  width: 320px;
+  height: 204px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+`;
+const PopUpTitle = styled.div`
+  margin-bottom: 9px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  color: #0a4459;
+`;
+const PopUpMessage = styled.div`
+  margin-bottom: 34px;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  text-align: center;
+  color: #8aa1aa;
+`;
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+`;
+const PopUpButton = styled.button`
+  width: 263.25px;
+  height: 36px;
+  background-color: #1eab92;
+  border: none;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: #ffffff;
+  cursor: pointer;
 `;
 export default useId;
