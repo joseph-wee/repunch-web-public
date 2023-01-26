@@ -6,7 +6,7 @@ import Image from "next/legacy/image";
 import { useState } from "react";
 import { Filter, ProductList } from "../components";
 
-const use_about_us = () => {
+const useAbout_us = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
   const [filterIsActive, setFilterIsActive] = useState(false);
 
@@ -215,4 +215,4 @@ const ProductListGridWrapper = styled.div<{ isActive: boolean }>`
     column-gap: 15px;
   }
 `;
-export default use_about_us;
+export default useAbout_us;
