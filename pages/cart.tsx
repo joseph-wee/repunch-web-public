@@ -41,13 +41,14 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   margin: 0 auto;
-  padding-top: 20px;
+  padding-top: 30px;
   padding-bottom: 40px;
   max-width: 637px;
   @media screen and (max-width: 1279px) {
     max-width: 608px;
   }
   @media screen and (max-width: 767px) {
+    padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
     boxsizing: border-box;

@@ -333,6 +333,7 @@ const Container = styled.div`
   @media screen and (max-width: 767px) {
     display: block;
     max-width: 100%; // 사이드바 추가하는거면 나중에 여기 삭제
+    padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
     boxsizing: border-box;

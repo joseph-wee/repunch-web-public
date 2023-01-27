@@ -49,6 +49,7 @@ const Container = styled.div`
   }
   @media screen and (max-width: 767px) {
     display: block;
+    padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
     boxsizing: border-box;
@@ -77,8 +78,8 @@ const ImageWrapper = styled.div`
 `;
 const Title = styled.div`
   font-weight: 700;
-  font-size: 22px;
-  line-height: 26px;
+  font-size: 24px;
+  line-height: 28px;
   letter-spacing: -0.011em;
   color: #0a4459;
   @media screen and (max-width: 767px) {

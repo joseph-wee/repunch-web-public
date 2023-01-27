@@ -66,6 +66,7 @@ const Container = styled.div`
   }
   @media screen and (max-width: 767px) {
     display: block;
+    padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
     boxsizing: border-box;
