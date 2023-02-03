@@ -1,11 +1,21 @@
 /* --------------------------- 회원가입 페이지 --------------------------- */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { SelectBox, SelectBoxCountryCodeNum } from "../components";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import {
+  valueValidation,
+  homepageUrlValidation,
+  userIdValidation,
+  passwordValidation,
+  passwordConfirmValidation,
+} from "../utils/functions";
+import { signupRequest, loginRequest } from "../utils/api";
+import { useAppDispatch, useAppSelector } from "../pages/redux/hooks";
+import { login } from "../features/login/loginSlice";
+import { PopUp } from "../components";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -33,7 +43,42 @@ const useRegister = () => {
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
   const [role, setRole] = useState<string>("USER"); // 유저 권한
 
+  const [firstNameValidationResult, setfirstNameValidationResult] =
+    useState<number>(0); // 성 유효성 체크
+  const [lastNameValidationResult, setLastNameValidationResult] =
+    useState<number>(0); // 이름 유효성 체크
+  const [countryCodeValidationResult, setCounryCodeValidationResult] =
+    useState<number>(0); // 국가코드 유효성 체크
+  const [companyNameValidationResult, setCompanyNameValidationResult] =
+    useState<number>(0); // 회사이름 유효성 체크
+  const [industryCodeValidationResult, setIndustryCodeValidationResult] =
+    useState<number>(0); // 회사 업종구분 코드 유효성 체크
+  const [homepageUrlValidationResult, setHomepageUrlValidationResult] =
+    useState<number>(0); // 회사 홈페이지 url 유효성 체크
+  const [
+    countryPhoneNumberValidationResult,
+    setCountryPhoneNumberValidationResult,
+  ] = useState<number>(0); // 국가 전화코드 유효성 체크
+  const [phoneNumberValidationResult, setPhoneNumberValidationResult] =
+    useState<number>(0); // 전화번호 유효성 체크
+  const [userIdValidationResult, setUserIdValidationResult] =
+    useState<number>(0); // 유저ID(이메일주소) 유효성 체크
+  const [passwordValidationResult, setPassowrdValidationResult] =
+    useState<number>(0); // 비밀번호 유효성 체크
+  const [passwordConfirmValidationResult, setPasswordConfirmValidationResult] =
+    useState<number>(0); // 비밀번호 확인 유효성 체크
+
+  const [validationStart, setValidationStart] = useState(false); // 입력시마다 검사 시작
+  const [moveScreen, setMoveScreen] = useState(0); // errorcase 발생시 해당 입력칸으로 이동하기위한 상태
+
+  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(false);
+  const [popUpIsActive, setPopUpIsActive] = useState<boolean>(false);
+
   const router = useRouter();
+  const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
+
+  const { value: isLogin } = useAppSelector((state) => state.isLogin);
+  const dispatch = useAppDispatch();
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -88,55 +133,6 @@ const useRegister = () => {
     { name: "empty4", code: "empty5" },
   ];
 
-  const test = () => {
-    console.log(firstName);
-    console.log(lastName);
-    console.log(countryCode);
-    console.log(companyName);
-    console.log(industryCode);
-    console.log(homepageUrl);
-    console.log(countryPhoneNumber);
-    console.log(phoneNumber);
-    console.log(userId);
-    console.log(password);
-    console.log(passwordConfirm);
-    console.log(role);
-  };
-
-  /** 회원가입 요청 api */
-  const registerApiRequest = () => {
-    axios({
-      method: "POST",
-      url: process.env.NEXT_PUBLIC_API_KEY + "signup",
-      data: {
-        firstName: firstName,
-        lastName: lastName,
-        countryCode: countryCode,
-        companyName: companyName,
-        industryCode: industryCode,
-        homepageUrl: homepageUrl,
-        countryPhoneNumber: countryPhoneNumber,
-        phoneNumber: phoneNumber,
-        userId: userId,
-        password: password,
-        passwordConfirm: passwordConfirm,
-        role: role,
-      },
-    })
-      .then(function (response) {
-        if (response.data.status == 200) {
-          alert("회원가입에 성공하였습니다.(임시 메세지)");
-          router.push("/login");
-        } else if (response.data.status == 500) {
-          alert("중복된 아이디 입니다.(임시 메세지)");
-        }
-      })
-      .catch(function (error) {
-        alert("통신에 실패하였습니다.(임시 메세지)");
-        console.log(error);
-      });
-  };
-
   /** 국가코드에따라 국가 전화 코드 할당하는 함수 */
   const phoneNumberHandler = () => {
     countryList.forEach((i) => {
@@ -150,31 +146,90 @@ const useRegister = () => {
     setPhoneNumber(onlyNumber);
   };
 
-  /**값 비어있는지 검사 후에 회원가입 요청 api 호출 */
-  const registerApiRequestHandler = () => {
-    if (firstName.length == 0) {
-      alert("값을 모두 채워주세요");
-    } else if (lastName.length == 0) {
-      alert("값을 모두 채워주세요");
-    } else if (countryCode ? false : true) {
-      alert("값을 모두 채워주세요");
-    } else if (countryPhoneNumber ? false : true) {
-      alert("값을 모두 채워주세요");
-    } else if (phoneNumber.length == 0) {
-      alert("값을 모두 채워주세요");
-    } else if (userId.length == 0) {
-      alert("값을 모두 채워주세요");
-    } else if (password.length == 0) {
-      alert("값을 모두 채워주세요");
-    } else if (passwordConfirm.length == 0) {
-      alert("값을 모두 채워주세요");
-    } else if (role.length == 0) {
-      alert("값을 모두 채워주세요");
+  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
+  const validationCheckAndSignupRequest = () => {
+    if (
+      firstNameValidationResult == 1 &&
+      lastNameValidationResult == 1 &&
+      countryCodeValidationResult == 1 &&
+      companyNameValidationResult == 1 &&
+      industryCodeValidationResult == 1 &&
+      homepageUrlValidationResult == 1 &&
+      countryPhoneNumberValidationResult == 1 &&
+      phoneNumberValidationResult == 1 &&
+      userIdValidationResult == 1 &&
+      passwordValidationResult == 1 &&
+      passwordConfirmValidationResult == 1
+    ) {
+      signupRequest(
+        firstName,
+        lastName,
+        countryCode,
+        companyName,
+        industryCode,
+        homepageUrl,
+        countryPhoneNumber,
+        phoneNumber,
+        userId,
+        password,
+        passwordConfirm,
+        role
+      ).then((res) => {
+        if (res?.data?.status == 200) {
+          alert("회원가입에 성공하였습니다.(임시 메세지)");
+          loginRequest(userId, password).then((res) => {
+            if (Boolean(res?.data)) {
+              if (res?.data.status == 401) {
+                alert("로그인에 실패하였습니다.(임시 메세지)");
+              }
+            } else if (res?.response.data.status == 403) {
+              setAuthPageIsActive(true);
+            }
+          });
+        } else if (res?.data.status == 500) {
+          alert(res?.data.message + " (임시 메세지)");
+        }
+      });
     } else {
-      // registerApiRequest();
-      alert("회원가입에 성공하였습니다.(임시 메세지)");
-      router.push("/login");
+      valueValidation(firstName, setfirstNameValidationResult);
+      valueValidation(lastName, setLastNameValidationResult);
+      valueValidation(countryCode, setCounryCodeValidationResult);
+      valueValidation(companyName, setCompanyNameValidationResult);
+      valueValidation(industryCode, setIndustryCodeValidationResult);
+      homepageUrlValidation(homepageUrl, setHomepageUrlValidationResult);
+      valueValidation(
+        countryPhoneNumber,
+        setCountryPhoneNumberValidationResult
+      );
+      valueValidation(phoneNumber, setPhoneNumberValidationResult);
+      userIdValidation(userId, setUserIdValidationResult);
+      passwordValidation(password, setPassowrdValidationResult);
+      passwordConfirmValidation(
+        password,
+        passwordConfirm,
+        setPasswordConfirmValidationResult
+      );
+      setMoveScreen((prev) => prev + 1); // errorcase 입력칸으로 화면이동시키기 위해 값 변경
     }
+  };
+
+  /** 인증 확인버튼 클릭 시 확인 유무에따라 팝업 혹은 페이지 이동 */
+  const authConfirmHandler = (userId: string, password: string) => {
+    loginRequest(userId, password).then((res) => {
+      if (Boolean(res?.data)) {
+        if (res?.data.status == 200) {
+          // 200 안뜨긴 하는데 회원가입이니깐... 지워야하나?
+          sessionStorage.setItem("at", res.data.result.access_token);
+          sessionStorage.setItem("rt", res.data.result.refresh_token);
+          dispatch(login());
+          router.push("/");
+        } else if (res?.data.status == 401) {
+          // 무슨 에러 처리를 해야할까?
+        }
+      } else if (res?.response.data.status == 403) {
+        setPopUpIsActive(true);
+      }
+    });
   };
 
   /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
@@ -182,39 +237,200 @@ const useRegister = () => {
     phoneNumberHandler();
   }, [countryCode]);
 
+  /** 성 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      valueValidation(firstName, setfirstNameValidationResult);
+    }
+  }, [firstName]);
+
+  /** 이름 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      valueValidation(lastName, setLastNameValidationResult);
+    }
+  }, [lastName]);
+
+  /** 국가코드 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      valueValidation(countryCode, setCounryCodeValidationResult);
+    }
+  }, [countryCode]);
+
+  /** 회사이름 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      valueValidation(companyName, setCompanyNameValidationResult);
+    }
+  }, [companyName]);
+
+  /** 회사업종구분코드 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      valueValidation(industryCode, setIndustryCodeValidationResult);
+    }
+  }, [industryCode]);
+
+  /** 홈페이지url 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      homepageUrlValidation(homepageUrl, setHomepageUrlValidationResult);
+    }
+  }, [homepageUrl]);
+
+  /** 국가전화코드 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      valueValidation(
+        countryPhoneNumber,
+        setCountryPhoneNumberValidationResult
+      );
+    }
+  }, [countryPhoneNumber]);
+
+  /** 전화번호 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      valueValidation(phoneNumber, setPhoneNumberValidationResult);
+    }
+  }, [phoneNumber]);
+
+  /** 아이디 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      userIdValidation(userId, setUserIdValidationResult);
+    }
+  }, [userId]);
+
+  /** 비밀번호 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      passwordValidation(password, setPassowrdValidationResult);
+    }
+  }, [password]);
+
+  /** 비밀번호확인 입력할때 마다 유효성 검사 */
+  useEffect(() => {
+    if (validationStart) {
+      passwordConfirmValidation(
+        password,
+        passwordConfirm,
+        setPasswordConfirmValidationResult
+      );
+    }
+  }, [passwordConfirm]);
+
+  /** error case 발생하면 해당 입력칸으로 이동 */
+  useEffect(() => {
+    if (moveScreen != 0) {
+      let top = 9;
+      ref.current?.forEach((i, j) => {
+        if (Boolean(i?.clientHeight) && j < top) {
+          top = j;
+        }
+      });
+      ref.current[top]?.scrollIntoView({ block: "center" });
+    }
+  }, [moveScreen]);
+
   return (
     <>
-      <Container>
+      <Container isActive={authPageIsActive}>
         <Title>Register</Title>
         <WelcomeText>Welcome to Repunch</WelcomeText>
         <Wrapper>
           <InputContainer>
             <InputTitle>First name</InputTitle>
-            <Input type="text" onChange={(e) => setFirstName(e.target.value)} />
+            <Input
+              type="text"
+              onChange={(e) => setFirstName(e.target.value)}
+              onFocus={() => setValidationStart(true)}
+            />
+            <ErrorCase
+              isActive={firstNameValidationResult}
+              ref={(element) => {
+                ref.current[0] = element;
+              }}
+            >
+              ErrorCase
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Last name</InputTitle>
-            <Input type="text" onChange={(e) => setLastName(e.target.value)} />
+            <Input
+              type="text"
+              onChange={(e) => setLastName(e.target.value)}
+              onFocus={() => setValidationStart(true)}
+            />
+            <ErrorCase
+              isActive={lastNameValidationResult}
+              ref={(element) => {
+                ref.current[1] = element;
+              }}
+            >
+              ErrorCase
+            </ErrorCase>
           </InputContainer>
         </Wrapper>
         <InputContainer>
           <InputTitle>Country</InputTitle>
           <SelectBox list={countryList} setValue={setCounryCode} />
+          <ErrorCase
+            isActive={countryCodeValidationResult}
+            ref={(element) => {
+              ref.current[2] = element;
+            }}
+          >
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Company name</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
-          <Input type="text" onChange={(e) => setCompanyName(e.target.value)} />
+          <Input
+            type="text"
+            onChange={(e) => setCompanyName(e.target.value)}
+            onFocus={() => setValidationStart(true)}
+          />
+          <ErrorCase
+            isActive={companyNameValidationResult}
+            ref={(element) => {
+              ref.current[3] = element;
+            }}
+          >
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
           <SelectBox list={companyCategoryList} setValue={setIndustryCode} />
+          <ErrorCase
+            isActive={industryCodeValidationResult}
+            ref={(element) => {
+              ref.current[4] = element;
+            }}
+          >
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Company URL</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
-          <Input type="text" onChange={(e) => setHomepageUrl(e.target.value)} />
+          <Input
+            type="text"
+            onChange={(e) => setHomepageUrl(e.target.value)}
+            onFocus={() => setValidationStart(true)}
+          />
+          <ErrorCase
+            isActive={homepageUrlValidationResult}
+            ref={(element) => {
+              ref.current[5] = element;
+            }}
+          >
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Phone number</InputTitle>
@@ -228,8 +444,22 @@ const useRegister = () => {
               type="text"
               value={phoneNumber}
               onChange={(e) => inputHandlerOnlyNumber(e)}
+              onFocus={() => setValidationStart(true)}
             />
           </Wrapper>
+          <ErrorCase
+            isActive={
+              countryPhoneNumberValidationResult == 2 ||
+              phoneNumberValidationResult == 2
+                ? 2
+                : 1
+            }
+            ref={(element) => {
+              ref.current[6] = element;
+            }}
+          >
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         {/**삭제할것인지 아닌지 체크필요 id와 email 입력이 둘다 email로 받기 때문 */}
         {/* <InputContainer>
@@ -241,7 +471,19 @@ const useRegister = () => {
         <InputContainer>
           <InputTitle>ID</InputTitle>
           <InputOptionalText>(Mail Address)</InputOptionalText>
-          <Input type="email" onChange={(e) => setUserId(e.target.value)} />
+          <Input
+            type="email"
+            onChange={(e) => setUserId(e.target.value)}
+            onFocus={() => setValidationStart(true)}
+          />
+          <ErrorCase
+            isActive={userIdValidationResult}
+            ref={(element) => {
+              ref.current[7] = element;
+            }}
+          >
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password</InputTitle>
@@ -249,7 +491,18 @@ const useRegister = () => {
           <Input
             type="password"
             onChange={(e) => setPassowrd(e.target.value)}
+            onFocus={() => setValidationStart(true)}
           />
+          <ErrorCase
+            isActive={passwordValidationResult}
+            ref={(element) => {
+              ref.current[8] = element;
+            }}
+          >
+            It must contain at least 8 digits and no more than 20 digits, one
+            uppercase and lowercase letter and one special character. (test
+            message)
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password confirm</InputTitle>
@@ -257,7 +510,16 @@ const useRegister = () => {
           <Input
             type="password"
             onChange={(e) => setPasswordConfirm(e.target.value)}
+            onFocus={() => setValidationStart(true)}
           />
+          <ErrorCase
+            isActive={passwordConfirmValidationResult}
+            ref={(element) => {
+              ref.current[9] = element;
+            }}
+          >
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <Wrapper>
           <Button>
@@ -265,7 +527,9 @@ const useRegister = () => {
               <LinkStyling>Cancel</LinkStyling>
             </Link>
           </Button>
-          <Button onClick={() => registerApiRequestHandler()}>Confirm</Button>
+          <Button onClick={() => validationCheckAndSignupRequest()}>
+            Confirm
+          </Button>
         </Wrapper>
         <TextContainer>
           <Text>
@@ -280,11 +544,48 @@ const useRegister = () => {
           </LinkText>
         </TextContainer>
       </Container>
+      <AuthContainer isActive={authPageIsActive}>
+        <AuthWrapper>
+          <AuthTitle>Repunch</AuthTitle>
+          <Name>J Kim</Name>
+          <ConfirmWrapper>
+            <Id>ID (E-mail)</Id>
+            <Email>{userId}</Email>
+            <AuthText>
+              An authentication email has been sent to
+              <br />
+              your email address.
+              <br />
+              You can use all services freely after the
+              <br />
+              authentication process.
+            </AuthText>
+            <AuthButton onClick={() => authConfirmHandler(userId, password)}>
+              Confirm
+            </AuthButton>
+          </ConfirmWrapper>
+        </AuthWrapper>
+        <TextInform>
+          If you entered the wrong email address, please
+          <br />
+          contact the email below
+        </TextInform>
+        <EmailRepunch>support@repunch.co.kr</EmailRepunch>
+      </AuthContainer>
+      <PopUp
+        title={"Not verified yet"}
+        text={"Wait a little longer or resend"}
+        isActive={popUpIsActive}
+        setIsActive={setPopUpIsActive}
+      />
     </>
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "none" : "block";
+  }};
   position: relative;
   margin: 0 auto;
   padding-top: 20px;
@@ -371,6 +672,19 @@ const Input = styled.input`
   font-size: 14px;
   font-weight: 400;
 `;
+const ErrorCase = styled.div<{ isActive: number }>`
+  visibility: ${(props) => {
+    return props.isActive == 2 ? "visible" : "hidden";
+  }};
+  margin-top: 10px;
+  height: ${(props) => {
+    return props.isActive == 0 || props.isActive == 1 ? "0px" : "";
+  }};
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  color: #ff5c01;
+`;
 const Line = styled.div`
   margin-bottom: 20px;
   border-top: 1px dashed #dee8ec;
@@ -444,6 +758,144 @@ const LinkText = styled.a`
   text-decoration-line: underline;
 
   color: #a4abba;
+`;
+
+const AuthContainer = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "block" : "none";
+  }};
+  padding-top: 40px;
+  padding-bottom: 40px;
+  padding-right: 20px;
+  padding-left: 20px;
+  @media screen and (max-width: 767px) {
+    padding-top: 20px;
+  }
+`;
+const AuthWrapper = styled.div`
+  margin: 0 auto;
+  margin-bottom: 29px;
+  padding-top: 15px;
+  padding-bottom: 20px;
+  padding-right: 20px;
+  padding-left: 20px;
+  background-color: #f2f6f8;
+  max-width: 427px;
+  border: 0.79402px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+  @media screen and (max-width: 767px) {
+    padding-top: 11px;
+  }
+`;
+const AuthTitle = styled.div`
+  display: flex;
+  margin-bottom: 4px;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: #0a4459;
+`;
+const Name = styled.div`
+  display: flex;
+  margin-bottom: 16px;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: #1eab92;
+`;
+const ConfirmWrapper = styled.div`
+  padding-top: 16px;
+  padding-bottom: 20px;
+  background-color: #ffffff;
+
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+`;
+const Id = styled.div`
+  display: flex;
+  align-itmes: center;
+  justify-content: center;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: #0a4459;
+`;
+const Email = styled.div`
+  display: flex;
+  margin-bottom: 12px;
+  align-itmes: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: #ff5c01;
+`;
+const AuthText = styled.div`
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 13px;
+
+  color: #0a4459;
+`;
+
+const AuthButton = styled.button`
+  display: flex;
+  margin: 0 auto;
+  width: 180px;
+  height: 40px;
+
+  box-sizing: border-box;
+
+  align-items: center;
+  justify-content: center;
+
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18px;
+
+  color: #ffffff;
+
+  overflow: hidden;
+
+  background-color: #1eab92;
+  border: none;
+  border-radius: 2px;
+
+  cursor: pointer;
+`;
+
+const TextInform = styled.div`
+  margin-bottom: 6px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 13px;
+
+  text-align: center;
+
+  color: #8aa1aa;
+`;
+const EmailRepunch = styled.div`
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 13px%;
+
+  text-align: center;
+  text-decoration-line: underline;
+
+  color: #0a4459;
 `;
 
 export default useRegister;
