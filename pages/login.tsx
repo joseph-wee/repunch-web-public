@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { loginRequest } from "../utils/api";
 import { PopUp } from "../components";
-import { useAppDispatch, useAppSelector } from "../pages/redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../features/login/loginSlice";
 
 const useLogin = () => {

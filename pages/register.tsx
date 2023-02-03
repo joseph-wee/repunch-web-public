@@ -13,7 +13,7 @@ import {
   passwordConfirmValidation,
 } from "../utils/functions";
 import { signupRequest, loginRequest } from "../utils/api";
-import { useAppDispatch, useAppSelector } from "../pages/redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../features/login/loginSlice";
 import { PopUp } from "../components";
 
