@@ -11,7 +11,6 @@ const useNavTopBar = () => {
 
   /** 주소 현재 경로에 따라서 조건부 렌더링되게 하는 함수 */
   const conditionalRendering = () => {
-    console.log("test");
     switch (router.pathname) {
       case "/login":
         setIsActive(false);
