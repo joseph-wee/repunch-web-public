@@ -6,21 +6,32 @@ import Image from "next/image";
 import { arrow_down, arrow_up } from "../assets";
 import { ListCountryArray, List } from "../pages/register";
 
-// list: 국가 리스트 배열 
+// list: 국가 리스트 배열
 // setValue: 값을 세팅
-const SelectBox = ({list, setValue}: {list: ListCountryArray, setValue: React.Dispatch<React.SetStateAction<string | undefined>>}) => {
+const SelectBox = ({
+  list,
+  setValue,
+}: {
+  list: ListCountryArray;
+  setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
+}) => {
   const [isActive, setIsActive] = useState<boolean>(false); // 셀렉트박스 활성 유무
-  const [text, setText] = useState<string>("")  // 선택된 값이 보여지는 텍스트
+  const [text, setText] = useState<string>(""); // 선택된 값이 보여지는 텍스트
 
   /** 옵션 선택하면 해당 값이 세팅 */
   const optionHandler = (i: List) => {
-    setText(i.name)
-    setValue(i.code)
-  }
+    setText(i.name);
+    setValue(i.code);
+  };
 
   return (
     <>
-      <Container isActive={isActive} onClick={()=>setIsActive(!isActive)} tabIndex={0} onBlur={()=> setIsActive(false)}>
+      <Container
+        isActive={isActive}
+        onClick={() => setIsActive(!isActive)}
+        tabIndex={0}
+        onBlur={() => setIsActive(false)}
+      >
         <Select>
           {text}
           <ImageWrapper>
@@ -28,24 +39,23 @@ const SelectBox = ({list, setValue}: {list: ListCountryArray, setValue: React.Di
           </ImageWrapper>
         </Select>
         <OptionWrapper isActive={isActive}>
-        {
-          list.map((i, j) => {
+          {list.map((i, j) => {
             return (
-              <Option key={j} onClick={() => optionHandler(i)}>{i.name}</Option>
-            )
-          })
-        }
+              <Option key={j} onClick={() => optionHandler(i)}>
+                {i.name}
+              </Option>
+            );
+          })}
         </OptionWrapper>
       </Container>
     </>
   );
 };
 
-const Container = styled.div< {isActive : boolean}>`
-  overflow: ${props => {
+const Container = styled.div<{ isActive: boolean }>`
+  overflow: ${(props) => {
     return props.isActive ? "visible" : "hidden";
   }};
-  margin-bottom: 20px;
   width: 100%;
   height: 40px;
 
@@ -70,19 +80,19 @@ const Select = styled.div`
 const ImageWrapper = styled.div`
   position: absolute;
   right: 10px;
-`
+`;
 
-const OptionWrapper = styled.div< {isActive : boolean}>`
+const OptionWrapper = styled.div<{ isActive: boolean }>`
   z-index: 1;
   position: relative;
-  height: ${props => {
+  height: ${(props) => {
     return props.isActive ? "200px" : "0";
   }};
-  overflow: ${props => {
+  overflow: ${(props) => {
     return props.isActive ? "scroll" : "hidden";
   }};
-  overflow-x:hidden;
-`
+  overflow-x: hidden;
+`;
 
 const Option = styled.div`
   display: flex;
@@ -97,7 +107,7 @@ const Option = styled.div`
   font-weight: 400;
   line-height: 14px;
 
-  background-color: #FFFFFF;
-`
+  background-color: #ffffff;
+`;
 
 export default SelectBox;
