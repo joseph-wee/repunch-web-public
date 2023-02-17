@@ -191,24 +191,47 @@ const useRegister = () => {
         }
       });
     } else {
-      valueValidation(firstName, setfirstNameValidationResult);
-      valueValidation(lastName, setLastNameValidationResult);
-      valueValidation(countryCode, setCounryCodeValidationResult);
-      valueValidation(companyName, setCompanyNameValidationResult);
-      valueValidation(industryCode, setIndustryCodeValidationResult);
+      valueValidation(firstName, validationStart, setfirstNameValidationResult);
+      valueValidation(lastName, validationStart, setLastNameValidationResult);
+      valueValidation(
+        countryCode,
+        validationStart,
+        setCounryCodeValidationResult
+      );
+      valueValidation(
+        companyName,
+        validationStart,
+        setCompanyNameValidationResult
+      );
+      valueValidation(
+        industryCode,
+        validationStart,
+        setIndustryCodeValidationResult
+      );
       homepageUrlValidation(homepageUrl, setHomepageUrlValidationResult);
       valueValidation(
         countryPhoneNumber,
+        validationStart,
         setCountryPhoneNumberValidationResult
       );
-      valueValidation(phoneNumber, setPhoneNumberValidationResult);
-      userIdValidation(userId, setUserIdValidationResult);
-      passwordValidation(password, setPassowrdValidationResult);
+      valueValidation(
+        phoneNumber,
+        validationStart,
+        setPhoneNumberValidationResult
+      );
+      userIdValidation(userId, validationStart, setUserIdValidationResult);
+      passwordValidation(
+        password,
+        validationStart,
+        setPassowrdValidationResult
+      );
       passwordConfirmValidation(
         password,
         passwordConfirm,
+        validationStart,
         setPasswordConfirmValidationResult
       );
+      setValidationStart(true);
       setMoveScreen((prev) => prev + 1); // errorcase 입력칸으로 화면이동시키기 위해 값 변경
     }
   };
@@ -237,100 +260,138 @@ const useRegister = () => {
     phoneNumberHandler();
   }, [countryCode]);
 
-  /** 성 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      valueValidation(firstName, setfirstNameValidationResult);
-    }
-  }, [firstName]);
+  // /** 성 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     valueValidation(firstName, setfirstNameValidationResult);
+  //   }
+  // }, [firstName]);
 
-  /** 이름 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      valueValidation(lastName, setLastNameValidationResult);
-    }
-  }, [lastName]);
+  // /** 이름 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     valueValidation(lastName, setLastNameValidationResult);
+  //   }
+  // }, [lastName]);
 
   /** 국가코드 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      valueValidation(countryCode, setCounryCodeValidationResult);
-    }
-  }, [countryCode]);
+  // useEffect(() => {
+  //   valueValidation(
+  //     countryCode,
+  //     validationStart,
+  //     setCounryCodeValidationResult
+  //   );
+  // }, [countryCode]);
 
-  /** 회사이름 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      valueValidation(companyName, setCompanyNameValidationResult);
-    }
-  }, [companyName]);
+  // /** 회사이름 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     valueValidation(companyName, setCompanyNameValidationResult);
+  //   }
+  // }, [companyName]);
 
-  /** 회사업종구분코드 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      valueValidation(industryCode, setIndustryCodeValidationResult);
-    }
-  }, [industryCode]);
+  // /** 회사업종구분코드 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     valueValidation(industryCode, setIndustryCodeValidationResult);
+  //   }
+  // }, [industryCode]);
 
-  /** 홈페이지url 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      homepageUrlValidation(homepageUrl, setHomepageUrlValidationResult);
-    }
-  }, [homepageUrl]);
+  // /** 홈페이지url 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     homepageUrlValidation(homepageUrl, setHomepageUrlValidationResult);
+  //   }
+  // }, [homepageUrl]);
 
   /** 국가전화코드 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      valueValidation(
-        countryPhoneNumber,
-        setCountryPhoneNumberValidationResult
-      );
-    }
-  }, [countryPhoneNumber]);
+  // useEffect(() => {
+  //   valueValidation(
+  //     countryPhoneNumber,
+  //     validationStart,
+  //     setCountryPhoneNumberValidationResult
+  //   );
+  // }, [countryPhoneNumber]);
 
-  /** 전화번호 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      valueValidation(phoneNumber, setPhoneNumberValidationResult);
-    }
-  }, [phoneNumber]);
+  // /** 전화번호 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     valueValidation(phoneNumber, setPhoneNumberValidationResult);
+  //   }
+  // }, [phoneNumber]);
 
-  /** 아이디 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      userIdValidation(userId, setUserIdValidationResult);
-    }
-  }, [userId]);
+  // /** 아이디 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     userIdValidation(userId, setUserIdValidationResult);
+  //   }
+  // }, [userId]);
 
-  /** 비밀번호 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      passwordValidation(password, setPassowrdValidationResult);
-    }
-  }, [password]);
+  // /** 비밀번호 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     passwordValidationSecond(password, setPassowrdValidationResult);
+  //   }
+  // }, [password]);
 
-  /** 비밀번호확인 입력할때 마다 유효성 검사 */
-  useEffect(() => {
-    if (validationStart) {
-      passwordConfirmValidation(
-        password,
-        passwordConfirm,
-        setPasswordConfirmValidationResult
-      );
-    }
-  }, [passwordConfirm]);
+  // /** 비밀번호확인 입력할때 마다 유효성 검사 */
+  // useEffect(() => {
+  //   if (validationStart) {
+  //     passwordConfirmValidationSecond(
+  //       password,
+  //       passwordConfirm,
+  //       setPasswordConfirmValidationResult
+  //     );
+  //   }
+  // }, [passwordConfirm]);
 
   /** error case 발생하면 해당 입력칸으로 이동 */
   useEffect(() => {
     if (moveScreen != 0) {
-      let top = 9;
-      ref.current?.forEach((i, j) => {
-        if (Boolean(i?.clientHeight) && j < top) {
-          top = j;
-        }
-      });
-      ref.current[top]?.scrollIntoView({ block: "center" });
+      if (firstNameValidationResult == 2) {
+        ref.current[0]?.focus();
+        return;
+      }
+      if (lastNameValidationResult == 2) {
+        ref.current[1]?.focus();
+        return;
+      }
+      if (countryCodeValidationResult == 2) {
+        ref.current[2]?.focus();
+        return;
+      }
+      if (companyNameValidationResult == 2) {
+        ref.current[3]?.focus();
+        return;
+      }
+      if (industryCodeValidationResult == 2) {
+        ref.current[4]?.focus();
+        return;
+      }
+      if (homepageUrlValidationResult == 2) {
+        ref.current[5]?.focus();
+        return;
+      }
+      if (countryPhoneNumberValidationResult == 2) {
+        ref.current[6]?.focus();
+        return;
+      }
+      if (phoneNumberValidationResult == 2) {
+        ref.current[6]?.focus();
+        return;
+      }
+      if (userIdValidationResult == 2) {
+        ref.current[7]?.focus();
+        return;
+      }
+      if (passwordValidationResult == 2) {
+        ref.current[8]?.focus();
+        return;
+      }
+      if (passwordConfirmValidationResult == 2) {
+        ref.current[9]?.focus();
+        return;
+      }
     }
   }, [moveScreen]);
 
@@ -344,15 +405,21 @@ const useRegister = () => {
             <InputTitle>First name</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setFirstName(e.target.value)}
-              onFocus={() => setValidationStart(true)}
-            />
-            <ErrorCase
-              isActive={firstNameValidationResult}
+              onChange={(e) => {
+                setFirstName(e.target.value);
+                validationStart
+                  ? valueValidation(
+                      e.target.value,
+                      validationStart,
+                      setfirstNameValidationResult
+                    )
+                  : "";
+              }}
               ref={(element) => {
                 ref.current[0] = element;
               }}
-            >
+            />
+            <ErrorCase isActive={firstNameValidationResult}>
               ErrorCase
             </ErrorCase>
           </InputContainer>
@@ -360,22 +427,31 @@ const useRegister = () => {
             <InputTitle>Last name</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setLastName(e.target.value)}
-              onFocus={() => setValidationStart(true)}
-            />
-            <ErrorCase
-              isActive={lastNameValidationResult}
+              onChange={(e) => {
+                setLastName(e.target.value);
+                validationStart
+                  ? valueValidation(
+                      e.target.value,
+                      validationStart,
+                      setLastNameValidationResult
+                    )
+                  : "";
+              }}
               ref={(element) => {
                 ref.current[1] = element;
               }}
-            >
-              ErrorCase
-            </ErrorCase>
+            />
+            <ErrorCase isActive={lastNameValidationResult}>ErrorCase</ErrorCase>
           </InputContainer>
         </Wrapper>
         <InputContainer>
           <InputTitle>Country</InputTitle>
-          <SelectBox list={countryList} setValue={setCounryCode} />
+          <SelectBox
+            list={countryList}
+            setValue={setCounryCode}
+            validationStart={validationStart}
+            setValidationResult={setCounryCodeValidationResult}
+          />
           <ErrorCase
             isActive={countryCodeValidationResult}
             ref={(element) => {
@@ -390,22 +466,33 @@ const useRegister = () => {
           <InputOptionalText>(Optional)</InputOptionalText>
           <Input
             type="text"
-            onChange={(e) => setCompanyName(e.target.value)}
-            onFocus={() => setValidationStart(true)}
-          />
-          <ErrorCase
-            isActive={companyNameValidationResult}
+            onChange={(e) => {
+              setCompanyName(e.target.value);
+              validationStart
+                ? valueValidation(
+                    e.target.value,
+                    validationStart,
+                    setLastNameValidationResult
+                  )
+                : "";
+            }}
             ref={(element) => {
               ref.current[3] = element;
             }}
-          >
+          />
+          <ErrorCase isActive={companyNameValidationResult}>
             ErrorCase
           </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
-          <SelectBox list={companyCategoryList} setValue={setIndustryCode} />
+          <SelectBox
+            list={companyCategoryList}
+            setValue={setIndustryCode}
+            validationStart={validationStart}
+            setValidationResult={setIndustryCodeValidationResult}
+          />
           <ErrorCase
             isActive={industryCodeValidationResult}
             ref={(element) => {
@@ -420,15 +507,21 @@ const useRegister = () => {
           <InputOptionalText>(Optional)</InputOptionalText>
           <Input
             type="text"
-            onChange={(e) => setHomepageUrl(e.target.value)}
-            onFocus={() => setValidationStart(true)}
-          />
-          <ErrorCase
-            isActive={homepageUrlValidationResult}
+            onChange={(e) => {
+              setHomepageUrl(e.target.value);
+              validationStart
+                ? valueValidation(
+                    e.target.value,
+                    validationStart,
+                    setLastNameValidationResult
+                  )
+                : "";
+            }}
             ref={(element) => {
               ref.current[5] = element;
             }}
-          >
+          />
+          <ErrorCase isActive={homepageUrlValidationResult}>
             ErrorCase
           </ErrorCase>
         </InputContainer>
@@ -439,12 +532,25 @@ const useRegister = () => {
               list={countryList}
               value={countryPhoneNumber}
               setValue={setCountryPhoneNumber}
+              validationStart={validationStart}
+              setValidationResult={setCounryCodeValidationResult}
             />
             <Input
               type="text"
               value={phoneNumber}
-              onChange={(e) => inputHandlerOnlyNumber(e)}
-              onFocus={() => setValidationStart(true)}
+              onChange={(e) => {
+                inputHandlerOnlyNumber(e);
+                validationStart
+                  ? valueValidation(
+                      e.target.value,
+                      validationStart,
+                      setLastNameValidationResult
+                    )
+                  : "";
+              }}
+              ref={(element) => {
+                ref.current[6] = element;
+              }}
             />
           </Wrapper>
           <ErrorCase
@@ -454,9 +560,6 @@ const useRegister = () => {
                 ? 2
                 : 1
             }
-            ref={(element) => {
-              ref.current[6] = element;
-            }}
           >
             ErrorCase
           </ErrorCase>
@@ -473,35 +576,43 @@ const useRegister = () => {
           <InputOptionalText>(Mail Address)</InputOptionalText>
           <Input
             type="email"
-            onChange={(e) => setUserId(e.target.value)}
-            onFocus={() => setValidationStart(true)}
-          />
-          <ErrorCase
-            isActive={userIdValidationResult}
+            onChange={(e) => {
+              setUserId(e.target.value);
+              validationStart
+                ? userIdValidation(
+                    e.target.value,
+                    validationStart,
+                    setUserIdValidationResult
+                  )
+                : "";
+            }}
             ref={(element) => {
               ref.current[7] = element;
             }}
-          >
-            ErrorCase
-          </ErrorCase>
+          />
+          <ErrorCase isActive={userIdValidationResult}>ErrorCase</ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password</InputTitle>
 
           <Input
             type="password"
-            onChange={(e) => setPassowrd(e.target.value)}
-            onFocus={() => setValidationStart(true)}
-          />
-          <ErrorCase
-            isActive={passwordValidationResult}
+            onChange={(e) => {
+              setPassowrd(e.target.value);
+              validationStart
+                ? passwordValidation(
+                    e.target.value,
+                    validationStart,
+                    setPassowrdValidationResult
+                  )
+                : "";
+            }}
             ref={(element) => {
               ref.current[8] = element;
             }}
-          >
-            It must contain at least 8 digits and no more than 20 digits, one
-            uppercase and lowercase letter and one special character. (test
-            message)
+          />
+          <ErrorCase isActive={passwordValidationResult}>
+            It must contain at least 10 digits (test message)
           </ErrorCase>
         </InputContainer>
         <InputContainer>
@@ -509,15 +620,22 @@ const useRegister = () => {
 
           <Input
             type="password"
-            onChange={(e) => setPasswordConfirm(e.target.value)}
-            onFocus={() => setValidationStart(true)}
-          />
-          <ErrorCase
-            isActive={passwordConfirmValidationResult}
+            onChange={(e) => {
+              setPasswordConfirm(e.target.value);
+              validationStart
+                ? passwordConfirmValidation(
+                    password,
+                    e.target.value,
+                    validationStart,
+                    setPasswordConfirmValidationResult
+                  )
+                : "";
+            }}
             ref={(element) => {
               ref.current[9] = element;
             }}
-          >
+          />
+          <ErrorCase isActive={passwordConfirmValidationResult}>
             ErrorCase
           </ErrorCase>
         </InputContainer>
