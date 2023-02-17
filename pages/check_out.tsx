@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { ic_check_wht, paypal } from "../assets";
 import { CheckOutMeterageProduct } from "../components";
@@ -7,11 +7,20 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const useCheck_out = () => {
-  const [deliveryIsChecked, setDeliveryIsChecked] = useState<boolean>(true);
-  const [paymentIsChecked, setPaymentIsChecked] = useState<boolean>(true);
+  const [deliveryIsChecked, setDeliveryIsChecked] = useState<number>(0);
+  const [paymentIsChecked, setPaymentIsChecked] = useState<number>(0);
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [popUpIsActive, setPopUpIsActive] = useState<number>(0);
+
+  const ref = useRef<any>();
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (popUpIsActive == 1) {
+      ref.current.focus();
+    }
+  }, [popUpIsActive]);
 
   return (
     <>
@@ -38,7 +47,9 @@ const useCheck_out = () => {
           <AddressText>06285</AddressText>
           <AddressPhoneNumber>821086281024</AddressPhoneNumber>
           <AddressButton>+ Add a new address</AddressButton>
-          <AddressButton>Select other address</AddressButton>
+          <AddressButton onClick={() => setPopUpIsActive(1)}>
+            Select other address
+          </AddressButton>
         </ContentWrapper>
         <ContentTitle>Delivery</ContentTitle>
         <ContentWrapper>
@@ -46,10 +57,11 @@ const useCheck_out = () => {
           <RadioLabel
             htmlFor="ship"
             isChecked={deliveryIsChecked}
-            onClick={() => setDeliveryIsChecked(true)}
+            order={0}
+            onClick={() => setDeliveryIsChecked(0)}
           >
-            <DefaultCircle isChecked={deliveryIsChecked} />
-            <CheckedCircle isChecked={deliveryIsChecked}>
+            <DefaultCircle isChecked={deliveryIsChecked} order={0} />
+            <CheckedCircle isChecked={deliveryIsChecked} order={0}>
               <SmallCircle />
             </CheckedCircle>
             By ship ($1.300)
@@ -58,26 +70,52 @@ const useCheck_out = () => {
           <RadioButton type="radio" id="air" name="delivery" />
           <RadioLabel
             htmlFor="air"
-            isChecked={!deliveryIsChecked}
-            onClick={() => setDeliveryIsChecked(false)}
+            isChecked={deliveryIsChecked}
+            order={1}
+            onClick={() => setDeliveryIsChecked(1)}
           >
-            <DefaultCircle isChecked={!deliveryIsChecked} />
-            <CheckedCircle isChecked={!deliveryIsChecked}>
+            <DefaultCircle isChecked={deliveryIsChecked} order={1} />
+            <CheckedCircle isChecked={deliveryIsChecked} order={1}>
               <SmallCircle />
             </CheckedCircle>
             By air ($1.300)
           </RadioLabel>
+          <DashLine />
+          <RadioButton type="radio" id="air" name="delivery" />
+          <RadioLabel
+            htmlFor="air"
+            isChecked={deliveryIsChecked}
+            order={2}
+            onClick={() => setDeliveryIsChecked(2)}
+          >
+            <DefaultCircle isChecked={deliveryIsChecked} order={2} />
+            <CheckedCircle isChecked={deliveryIsChecked} order={2}>
+              <SmallCircle />
+            </CheckedCircle>
+            Pickup ($1.300)
+          </RadioLabel>
+          <PickupInfo isActive={deliveryIsChecked}>
+            <PickupAddressTitle>Pickup address</PickupAddressTitle>
+            <PickupAddressContent>
+              V428+89H, Unnamed Road, Phumi Char, Cambodia
+            </PickupAddressContent>
+            <PickupTimeTitle>Time</PickupTimeTitle>
+            <PickupTimeContent>
+              Mon-Fri 10:00-19:00 Closed on Sat, Sun, and public holidays
+            </PickupTimeContent>
+          </PickupInfo>
         </ContentWrapper>
         <ContentTitle>Payment</ContentTitle>
         <ContentWrapper>
           <RadioButton type="radio" id="ship" name="delivery" />
           <RadioLabel
             htmlFor="ship"
-            isChecked={deliveryIsChecked}
-            onClick={() => setPaymentIsChecked(true)}
+            isChecked={paymentIsChecked}
+            order={0}
+            onClick={() => setPaymentIsChecked(0)}
           >
-            <DefaultCircle isChecked={paymentIsChecked} />
-            <CheckedCircle isChecked={paymentIsChecked}>
+            <DefaultCircle isChecked={paymentIsChecked} order={0} />
+            <CheckedCircle isChecked={paymentIsChecked} order={0}>
               <SmallCircle />
             </CheckedCircle>
             Credit Card
@@ -86,18 +124,19 @@ const useCheck_out = () => {
           <RadioButton type="radio" id="air" name="delivery" />
           <RadioLabel
             htmlFor="air"
-            isChecked={!deliveryIsChecked}
-            onClick={() => setPaymentIsChecked(false)}
+            isChecked={paymentIsChecked}
+            order={1}
+            onClick={() => setPaymentIsChecked(1)}
           >
-            <DefaultCircle isChecked={!paymentIsChecked} />
-            <CheckedCircle isChecked={!paymentIsChecked}>
+            <DefaultCircle isChecked={paymentIsChecked} order={1} />
+            <CheckedCircle isChecked={paymentIsChecked} order={1}>
               <SmallCircle />
             </CheckedCircle>
             <Image src={paypal} alt={"paypal_image"} width={63} height={21} />
           </RadioLabel>
         </ContentWrapper>
-        <ContentTitle>Billng Address</ContentTitle>
-        <ContentWrapper>
+        {/* <ContentTitle>Billng Address</ContentTitle> */}
+        {/* <ContentWrapper>
           <CheckBox type="checkbox" id="address" />
           <CheckBoxLabel
             htmlFor="address"
@@ -119,7 +158,7 @@ const useCheck_out = () => {
             <AddressButton>+ Add a new address</AddressButton>
             <AddressButton>Select other address</AddressButton>
           </BillingAddressWrapper>
-        </ContentWrapper>
+        </ContentWrapper> */}
         <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
@@ -152,6 +191,13 @@ const useCheck_out = () => {
           Checkout
         </CheckoutButton>
       </ButtonWrapper>
+      <PopUpBox isActive={popUpIsActive}>
+        <ContentBox tabIndex={0} onBlur={() => setPopUpIsActive(0)} ref={ref}>
+          <AddressMenu onClick={() => setPopUpIsActive(0)}>My1</AddressMenu>
+          <BorderLine />
+          <AddressMenu onClick={() => setPopUpIsActive(0)}>My2</AddressMenu>
+        </ContentBox>
+      </PopUpBox>
     </>
   );
 };
@@ -182,6 +228,7 @@ const Title = styled.div`
 const ContentTitle = styled.div`
   display: flex;
   align-items: center;
+  margin-top: 16px;
   margin-bottom: 10px;
   padding-left: 16px;
   height: 30px;
@@ -278,17 +325,19 @@ const RadioButton = styled.input`
   display: none;
 `;
 
-const RadioLabel = styled.label<{ isChecked: boolean }>`
+const RadioLabel = styled.label<{ isChecked: number; order: number }>`
   display: flex;
   align-items: center;
-  font-weight: 400;
   font-size: 12px;
   line-height: 12px;
   color: #0a4459;
+  font-weight: ${(props) => {
+    return props.isChecked == props.order ? "700" : "400";
+  }};
 `;
-const DefaultCircle = styled.label<{ isChecked: boolean }>`
+const DefaultCircle = styled.label<{ isChecked: number; order: number }>`
   display: ${(props) => {
-    return props.isChecked == true ? "none" : "block";
+    return props.isChecked == props.order ? "none" : "block";
   }};
   margin-right: 8px;
   width: 16px;
@@ -297,9 +346,9 @@ const DefaultCircle = styled.label<{ isChecked: boolean }>`
   border-radius: 42.6667px;
   box-sizing: border-box;
 `;
-const CheckedCircle = styled.label<{ isChecked: boolean }>`
+const CheckedCircle = styled.label<{ isChecked: number; order: number }>`
   display: ${(props) => {
-    return props.isChecked == true ? "flex" : "none";
+    return props.isChecked == props.order ? "flex" : "none";
   }};
   align-items: center;
   justify-content: center;
@@ -320,6 +369,43 @@ const DashLine = styled.div`
   margin-bottom: 16px;
   border-bottom: 1px dashed #dee8ec;
 `;
+const PickupInfo = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive == 2 ? "block" : "none";
+  }};
+  margin-top: 10px;
+  padding-left: 24px;
+  box-sizing: border-box;
+`;
+const PickupAddressTitle = styled.div`
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #8aa1aa;
+`;
+const PickupAddressContent = styled.div`
+  margin-bottom: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #0a4459;
+`;
+const PickupTimeTitle = styled.div`
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #8aa1aa;
+`;
+const PickupTimeContent = styled.div`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #0a4459;
+`;
 const CheckBox = styled.input`
   display: none;
 `;
@@ -339,7 +425,9 @@ const Box = styled.div<{ isChecked: boolean; img: string }>`
   height: 16px;
   box-sizing: border-box;
 
-  border: 1px solid #dee8ec;
+  border: ${(props) => {
+    return props.isChecked == true ? "none" : "1px solid #dee8ec;";
+  }};
   border-radius: 2.66667px;
 
   background-color: ${(props) => {
@@ -453,6 +541,43 @@ const CheckoutButton = styled.button`
   line-height: 18px;
   color: #ffffff;
   cursor: pointer;
+`;
+
+const PopUpBox = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive == 0 ? "none" : "flex";
+  }};
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+`;
+const ContentBox = styled.div`
+  width: 280px;
+  border-radius: 2px;
+  background-color: #ffffff;
+`;
+const AddressMenu = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  height: 50px;
+  box-sizing: border-box;
+
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.011em;
+  color: #0a4459;
+
+  cursor: pointer;
+`;
+const BorderLine = styled.div`
+  border-top: 1px solid #dee8ec;
 `;
 
 export default useCheck_out;
