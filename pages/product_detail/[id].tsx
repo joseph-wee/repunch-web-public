@@ -5,16 +5,30 @@ import Image from "next/image";
 import {
   btn_favorite_act_sm,
   ic_favorite_wht,
+  ic_info,
   ic_minus,
   ic_plus,
 } from "../../assets";
 import Link from "next/link";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { setMeterage, setSample } from "../../features/login/cartSlice";
 
 const useId = () => {
-  const [popUpIsActive, setPopUpIsActive] = useState(false);
+  const [popUpIsActive, setPopUpIsActive] = useState(0);
   const router = useRouter();
   const { id } = router.query;
   const [length, setLength] = useState<string>("1.0");
+  const { value: cartValue } = useAppSelector((state) => state.cartValue);
+
+  const dispatch = useAppDispatch();
+  const cartStateHandler = () => {
+    if (popUpIsActive == 1) {
+      dispatch(setMeterage());
+    }
+    if (popUpIsActive == 2) {
+      dispatch(setSample());
+    }
+  };
 
   const minus = () => {
     setLength((Number(length) - 1).toFixed(1).toString());
@@ -123,14 +137,18 @@ const useId = () => {
                 <Price>$ 4.06</Price>
                 <Vat>EX VAT</Vat>
               </PriceWrapper>
-              <PurchaseButton onClick={() => setPopUpIsActive(true)}>
+              <PurchaseButton onClick={() => setPopUpIsActive(1)}>
                 Add to cart
               </PurchaseButton>
             </PricePurchaseWrapper>
-            <RequestSample onClick={() => setPopUpIsActive(true)}>
+            <RequestSample onClick={() => setPopUpIsActive(2)}>
               Request sample /&nbsp;
               <BoldText>$ 8.38</BoldText>
             </RequestSample>
+            <SmapleMessage>
+              <Image src={ic_info} alt={"ic_info"} />
+              Samples can be ordered from 10-20 pieces.
+            </SmapleMessage>
           </ProductInfoPurchaseContainer>
         </ProductInfoContainer>
         <DeliveryReturnsInfoTitleWrapper>
@@ -171,13 +189,15 @@ const useId = () => {
         <ContentBox>
           <PopUpTitle>Added to cart</PopUpTitle>
           <PopUpMessage>
-            Feel free to continue shopping or check out.
+            Would you like to view cart to purchase or
+            <br />
+            continue shopping?
           </PopUpMessage>
-          <ButtonWrapper>
+          <ButtonWrapper onClick={() => cartStateHandler()}>
             <Link href="/cart" style={{ textDecoration: "none" }}>
               <PopUpButton>View cart</PopUpButton>
             </Link>
-            <PopUpButton onClick={() => setPopUpIsActive(false)}>
+            <PopUpButton onClick={() => setPopUpIsActive(0)}>
               Continue shopping
             </PopUpButton>
           </ButtonWrapper>
@@ -337,13 +357,14 @@ const Ratio = styled.div`
 `;
 const LengthWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
   position: relative;
   margin-top: 20px;
   margin-bottom: 20px;
   padding-left: 17.5px;
   padding-right: 17.5px;
   align-items: center;
-  width: 280px;
+  width: 100%;
   height: 61px;
   border: 0.79402px solid #dee8ec;
   border-radius: 1.58804px;
@@ -453,6 +474,7 @@ const RequestSample = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 10px;
   width: 100%;
   height: 48px;
   border: none;
@@ -468,6 +490,17 @@ const RequestSample = styled.button`
 
   color: #0a4459;
   cursor: pointer;
+`;
+const SmapleMessage = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5.5px;
+
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #1eab92;
 `;
 const BoldText = styled.div`
   font-weight: 700;
@@ -524,9 +557,9 @@ const Text = styled.div`
   color: #000000;
 `;
 
-const PopUpBox = styled.div<{ isActive: boolean }>`
+const PopUpBox = styled.div<{ isActive: number }>`
   display: ${(props) => {
-    return props.isActive == true ? "flex" : "none";
+    return props.isActive == 0 ? "none" : "flex";
   }};
   z-index: 2;
   position: fixed;
@@ -554,7 +587,7 @@ const PopUpTitle = styled.div`
   color: #0a4459;
 `;
 const PopUpMessage = styled.div`
-  margin-bottom: 34px;
+  margin-bottom: 24px;
   font-weight: 400;
   font-size: 11px;
   line-height: 14px;
