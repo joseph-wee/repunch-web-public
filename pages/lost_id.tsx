@@ -85,7 +85,6 @@ const useLost_id = () => {
         <WelcomeText>
           Please enter your registered name and phone number{" "}
         </WelcomeText>
-        <Line />
         <Wrapper>
           <InputContainer>
             <InputTitle>First name</InputTitle>
@@ -99,11 +98,7 @@ const useLost_id = () => {
         <InputContainer>
           <InputTitle>Phone number</InputTitle>
           <Wrapper>
-            <SelectBoxCountryCodeNum
-              list={countryList}
-              value={countryPhoneNumber}
-              setValue={setCountryPhoneNumber}
-            />
+            <SelectBoxCountryCodeNumTemporary />
             <Input
               type="text"
               value={phoneNumber}
@@ -138,6 +133,21 @@ const useLost_id = () => {
     </>
   );
 };
+
+const SelectBoxCountryCodeNumTemporary = styled.div`
+  margin-right: 8px;
+  box-sizing: border-box;
+  width: 120px;
+  flex: 0 0 120px;
+  height: 40px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  @media screen and (max-width: 767px) {
+    margin-right: 8.5px;
+    width: 77px;
+    flex: 0 0 77px;
+  } ;
+`;
 
 const ContainerFindId = styled.div<{ idLength: number }>`
   position: relative;
@@ -178,7 +188,7 @@ const WelcomeText = styled.div`
   font-weight: 300;
   font-size: 12px;
   line-height: 100%;
-  color: #a4abba;
+  color: #8aa1aa;
 
   font-family: "Roboto";
   font-size: 12px;
