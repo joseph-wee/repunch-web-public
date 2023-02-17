@@ -111,7 +111,7 @@ const useAddress = () => {
           </InputContainer>
           <InputContainer>
             <InputTitle>Country</InputTitle>
-            <SelectBox list={countryList} setValue={setCounryCode} />
+            <SelectBoxTemporary />
           </InputContainer>
           <InputContainer>
             <InputTitle>State /Province</InputTitle>
@@ -161,7 +161,7 @@ const useAddress = () => {
             </InputContainer>
             <InputContainer>
               <InputTitle>Country</InputTitle>
-              <SelectBox list={countryList} setValue={setCounryCode} />
+              <SelectBoxTemporary />
             </InputContainer>
             <InputContainer>
               <InputTitle>State /Province</InputTitle>
@@ -276,6 +276,14 @@ const useAddress = () => {
   );
 };
 
+const SelectBoxTemporary = styled.div`
+  width: 100%;
+  height: 40px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+`;
+
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -366,6 +374,7 @@ const InputTitle = styled.div`
   line-height: 14px;
   letter-spacing: 0em;
   text-align: left;
+  color: #0a4459;
 `;
 const InputOptionalText = styled.div`
   display: inline-block;
@@ -375,7 +384,7 @@ const InputOptionalText = styled.div`
   letter-spacing: 0em;
   text-align: left;
 
-  color: #a4abba;
+  color: #0a4459;
 `;
 const Input = styled.input`
   display: inline-block;
@@ -389,6 +398,7 @@ const Input = styled.input`
   font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
+  color: #0a4459;
 
   &:nth-of-type(2) {
     margin-top: 10px;
@@ -413,7 +423,9 @@ const Box = styled.div<{ isChecked: boolean; img: string }>`
   height: 16px;
   box-sizing: border-box;
 
-  border: 1px solid #dee8ec;
+  border: ${(props) => {
+    return props.isChecked == true ? "none" : "1px solid #dee8ec;";
+  }};
   border-radius: 2.66667px;
 
   background-color: ${(props) => {

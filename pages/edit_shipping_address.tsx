@@ -107,7 +107,7 @@ const useEdit_shipping_address = () => {
           </InputContainer>
           <InputContainer>
             <InputTitle>Country</InputTitle>
-            <SelectBox list={countryList} setValue={setCounryCode} />
+            <SelectBoxTemporary />
           </InputContainer>
           <InputContainer>
             <InputTitle>State /Province</InputTitle>
@@ -141,6 +141,13 @@ const useEdit_shipping_address = () => {
     </Container>
   );
 };
+const SelectBoxTemporary = styled.div`
+  width: 100%;
+  height: 40px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -270,7 +277,9 @@ const Box = styled.div<{ isChecked: boolean; img: string }>`
   height: 16px;
   box-sizing: border-box;
 
-  border: 1px solid #dee8ec;
+  border: ${(props) => {
+    return props.isChecked == true ? "none" : "1px solid #dee8ec;";
+  }};
   border-radius: 2.66667px;
 
   background-color: ${(props) => {

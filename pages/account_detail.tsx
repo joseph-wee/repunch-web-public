@@ -227,7 +227,7 @@ const useAccount_detail = () => {
         </Wrapper>
         <InputContainer>
           <InputTitle>Country</InputTitle>
-          <SelectBox list={countryList} setValue={setCounryCode} />
+          <SelectBoxTemporary />
         </InputContainer>
         <InputContainer>
           <InputTitle>Company name</InputTitle>
@@ -242,7 +242,7 @@ const useAccount_detail = () => {
         <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
-          <SelectBox list={companyCategoryList} setValue={setIndustryCode} />
+          <SelectBoxTemporary />
         </InputContainer>
         <InputContainer>
           <InputTitle>Company URL</InputTitle>
@@ -257,11 +257,7 @@ const useAccount_detail = () => {
         <InputContainer>
           <InputTitle>Phone number</InputTitle>
           <Wrapper>
-            <SelectBoxCountryCodeNum
-              list={countryList}
-              value={countryPhoneNumber}
-              setValue={setCountryPhoneNumber}
-            />
+            <SelectBoxCountryCodeNumTemporary />
             <Input
               type="text"
               value="test"
@@ -322,6 +318,29 @@ const useAccount_detail = () => {
     </Container>
   );
 };
+
+const SelectBoxTemporary = styled.div`
+  width: 100%;
+  height: 40px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+`;
+
+const SelectBoxCountryCodeNumTemporary = styled.div`
+  margin-right: 8px;
+  box-sizing: border-box;
+  width: 120px;
+  flex: 0 0 120px;
+  height: 40px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  @media screen and (max-width: 767px) {
+    margin-right: 8.5px;
+    width: 77px;
+    flex: 0 0 77px;
+  } ;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -390,6 +409,7 @@ const InputTitle = styled.div`
   line-height: 14px;
   letter-spacing: 0em;
   text-align: left;
+  color: #0a4459;
 `;
 
 const InputOptionalText = styled.div`
@@ -414,6 +434,7 @@ const Input = styled.input`
   font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
+  color: #0a4459;
 
   &:disabled {
     background-color: #ffffff;

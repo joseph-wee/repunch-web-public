@@ -227,7 +227,7 @@ const useEdit_account_info = () => {
         </Wrapper>
         <InputContainer>
           <InputTitle>Country</InputTitle>
-          <SelectBox list={countryList} setValue={setCounryCode} />
+          <SelectBoxTemporary />
         </InputContainer>
         <InputContainer>
           <InputTitle>Company name</InputTitle>
@@ -242,7 +242,7 @@ const useEdit_account_info = () => {
         <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
-          <SelectBox list={companyCategoryList} setValue={setIndustryCode} />
+          <SelectBoxTemporary />
         </InputContainer>
         <InputContainer>
           <InputTitle>Company URL</InputTitle>
@@ -257,11 +257,7 @@ const useEdit_account_info = () => {
         <InputContainer>
           <InputTitle>Phone number</InputTitle>
           <Wrapper>
-            <SelectBoxCountryCodeNum
-              list={countryList}
-              value={countryPhoneNumber}
-              setValue={setCountryPhoneNumber}
-            />
+            <SelectBoxCountryCodeNumTemporary />
             <Input
               type="text"
               value="test"
@@ -295,7 +291,27 @@ const useEdit_account_info = () => {
     </Container>
   );
 };
-
+const SelectBoxTemporary = styled.div`
+  width: 100%;
+  height: 40px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+`;
+const SelectBoxCountryCodeNumTemporary = styled.div`
+  margin-right: 8px;
+  box-sizing: border-box;
+  width: 120px;
+  flex: 0 0 120px;
+  height: 40px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  @media screen and (max-width: 767px) {
+    margin-right: 8.5px;
+    width: 77px;
+    flex: 0 0 77px;
+  } ;
+`;
 const Container = styled.div`
   display: flex;
   justify-content: center;
