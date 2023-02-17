@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { ic_favorite_wht, test_thumbnail } from "../assets";
+import { btn_review, ic_favorite_wht, test_thumbnail } from "../assets";
 import Image from "next/legacy/image";
 import Link from "next/link";
 
 const ProductCard = () => {
+  const [favoriteIsActive, setFavoriteIsActive] = useState(false);
   return (
-    <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
-      <Card>
-        <Thumbnail>
+    <Card>
+      <Thumbnail>
+        <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
           <Image
             src={test_thumbnail}
             alt={"thumbnail"}
@@ -17,11 +18,16 @@ const ProductCard = () => {
             objectPosition="center"
           />
           <Soldout>SOLD OUT</Soldout>
+        </Link>
 
-          <LikeButton>
-            <Image src={ic_favorite_wht} alt={"logo_favorite"} />
-          </LikeButton>
-        </Thumbnail>
+        <LikeButton onClick={() => setFavoriteIsActive(!favoriteIsActive)}>
+          <Image
+            src={favoriteIsActive ? btn_review : ic_favorite_wht}
+            alt={"logo_favorite"}
+          />
+        </LikeButton>
+      </Thumbnail>
+      <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
         <InfoWrapper>
           <ProductTitle>Embroidery sheer</ProductTitle>
           <ProductCategory>jacquard</ProductCategory>
@@ -33,8 +39,8 @@ const ProductCard = () => {
             <Price>$ 8.38/meter</Price>
           </PriceUnitWrapper>
         </InfoWrapper>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 };
 
@@ -79,6 +85,8 @@ const LikeButton = styled.div`
   height: 32px;
   background: rgba(10, 68, 89, 0.2);
   border-radius: 22px;
+
+  cursor: pointer;
 `;
 const InfoWrapper = styled.div`
   padding-top: 10px;
