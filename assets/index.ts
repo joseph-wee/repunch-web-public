@@ -25,3 +25,5 @@ export { default as ic_nav_indi } from "./ic_nav_indi.svg";
 export { default as paypal } from "./paypal.svg";
 export { default as btn_web_back } from "./btn_web_back.svg";
 export { default as garbage } from "./garbage.svg";
+export { default as btn_review } from "./btn_review.svg";
+export { default as ic_info } from "./ic_info.svg";
