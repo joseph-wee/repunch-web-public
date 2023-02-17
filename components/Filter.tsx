@@ -56,7 +56,7 @@ const UseFilter = ({
 
   return (
     <>
-      <Background isActive={isActive} />
+      <Background isActive={isActive} onClick={() => setIsActive(false)} />
       <Container isActive={isActive}>
         <Wrapper>
           <Title>SELCT CATEGORIES</Title>
@@ -64,11 +64,12 @@ const UseFilter = ({
             <Image src={ic_close} alt={"button_close"} />
           </ButtonClose>
         </Wrapper>
-        <CategoryTitleWrapper>
+        <CategoryTitleWrapper
+          onClick={() => setSuppliesIsActive(!suppliesIsActive)}
+        >
           <Image
             src={suppliesIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
-            onClick={() => setSuppliesIsActive(!suppliesIsActive)}
           />
           <CategoryTitle>Supplies</CategoryTitle>
         </CategoryTitleWrapper>
@@ -123,15 +124,14 @@ const UseFilter = ({
             </>
           );
         })}
-        <CategoryTitleWrapper>
+        <CategoryTitleWrapper onClick={() => setColorIsActive(!colorIsActive)}>
           <Image
             src={suppliesIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
-            onClick={() => setProjectIsActive(!projectIsActive)}
           />
           <CategoryTitle>SELECT COLOR</CategoryTitle>
         </CategoryTitleWrapper>
-        <ColorWraaper>
+        <ColorWraaper isActive={colorIsActive}>
           <ColorCircle />
           <ColorCircle />
           <ColorCircle />
@@ -245,6 +245,7 @@ const CategoryTitle = styled.div`
   line-height: 19px;
 
   letter-spacing: -0.011em;
+  cursor: pointer;
 `;
 const CategoryListWrapper = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
@@ -275,7 +276,9 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   height: 16px;
   box-sizing: border-box;
 
-  border: 1px solid #dee8ec;
+  border: ${(props) => {
+    return props.isChecked == true ? "none" : "1px solid #dee8ec;";
+  }};
   border-radius: 2.66667px;
 
   background-color: ${(props) => {
@@ -289,8 +292,10 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   background-position: center;
   background-repeat: no-repeat;
 `;
-const ColorWraaper = styled.div`
-  display: flex;
+const ColorWraaper = styled.div<{ isActive: boolean }>`
+display: ${(props) => {
+  return props.isActive == true ? "flex" : "none";
+}};
   flex-wrap: wrap;
   width: 188px;
   height; 190px;
