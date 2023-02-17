@@ -39,8 +39,16 @@ const useFavorite = () => {
               alt={"sort_arrow_button"}
             />
           </SortButton>
+          <SortMenuWrapper isActive={sortIsActive}>
+            <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+              Latest
+            </SortMenu>
+            <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+              Popular
+            </SortMenu>
+          </SortMenuWrapper>
         </ItemSortBar>
-        <ProductListGridWrapper isActive={sortIsActive}>
+        <ProductListGridWrapper>
           <ProductList />
           <ProductList />
           <ProductList />
@@ -110,6 +118,7 @@ const Title = styled.div`
 `;
 const ItemSortBar = styled.div`
   display: flex;
+  position: relative;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 21.72px;
@@ -166,10 +175,40 @@ const ButtonTextSort = styled.div`
 
   color: #000000;
 `;
-const ProductListGridWrapper = styled.div<{ isActive: boolean }>`
+const SortMenuWrapper = styled.div<{ isActive: boolean }>`
+  z-index: 1;
   display: ${(props) => {
-    return props.isActive == true ? "grid" : "none";
+    return props.isActive == true ? "none" : "block";
   }};
+  position: absolute;
+  right: 0;
+  top: 36px;
+  width: 120px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border-radius: 2px;
+
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+`;
+const SortMenu = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  height: 40px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #dee8ec;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: -0.011em;
+  color: #0a4459;
+  &:last-of-type {
+    border: none;
+  }
+  cursor: pointer;
+`;
+const ProductListGridWrapper = styled.div`
+  display: grid;
 
   grid-template-columns: 1fr 1fr 1fr 1fr;
   row-gap: 22px;
