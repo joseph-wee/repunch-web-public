@@ -3,10 +3,29 @@ import styled from "styled-components";
 import { SideBar, CartMeterageProduct } from "../components";
 import Link from "next/link";
 import Image from "next/image";
-import { btn_web_back } from "../assets";
+import { btn_web_back, ic_info } from "../assets";
 import { goBack } from "../utils/functions";
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { setMeterage, setSample } from "../features/login/cartSlice";
+import { useRouter } from "next/router";
 
-const cart = () => {
+const useCart = () => {
+  const [isActive, setIsActive] = useState(false);
+
+  const { value: cartValue } = useAppSelector((state) => state.cartValue);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const cartPurchaseHandler = () => {
+    if (cartValue == 0) {
+      router.push("/check_out");
+    }
+    if (cartValue == 1) {
+      setIsActive(true);
+    }
+  };
+
   return (
     <>
       <Container>
@@ -18,21 +37,46 @@ const cart = () => {
             </ImageWrapper>
             <Title>Cart</Title>
           </TitleWrapper>
-          <AllMeterSampleButtonWrapper>
-            <AllButton>ALL (2)</AllButton>
-            <MeterageButton>Meterage (2)</MeterageButton>
-            <SampleButton>Sample (0)</SampleButton>
+          <AllMeterSampleButtonWrapper isActive={cartValue}>
+            <MeterageButton
+              isActive={cartValue}
+              onClick={() => dispatch(setMeterage())}
+            >
+              Meterage (2)
+            </MeterageButton>
+            <SampleButton
+              isActive={cartValue}
+              onClick={() => dispatch(setSample())}
+            >
+              Sample (0)
+            </SampleButton>
           </AllMeterSampleButtonWrapper>
+          <SampleInfoMessage isActive={cartValue}>
+            <Image src={ic_info} alt={"ic_info"} />
+            Samples can be ordered from 10-20 pieces.
+          </SampleInfoMessage>
           <CartMeterageProduct />
           <CartMeterageProduct />
           <RemovePurchaseButtonWrapper>
             <RemoveButton>Remove(2)</RemoveButton>
-            <Link href="/check_out" style={{ textDecoration: "none" }}>
-              <PurchaseButton>Process to purchase(2)</PurchaseButton>
-            </Link>
+            <PurchaseButton onClick={() => cartPurchaseHandler()}>
+              Process to purchase(2)
+            </PurchaseButton>
           </RemovePurchaseButtonWrapper>
         </Main>
       </Container>
+      <PopUpBox isActive={isActive}>
+        <ContentBox>
+          <PopUpMessage>
+            Samples can be ordered from
+            <br />
+            <Bold>10-20</Bold> pieces.
+          </PopUpMessage>
+          <ButtonWrapper onClick={() => setIsActive(false)}>
+            <PopUpButton>OK</PopUpButton>
+          </ButtonWrapper>
+        </ContentBox>
+      </PopUpBox>
     </>
   );
 };
@@ -85,62 +129,63 @@ const Title = styled.div`
     margin-left: 8px;
   }
 `;
-const AllMeterSampleButtonWrapper = styled.div`
+const AllMeterSampleButtonWrapper = styled.div<{ isActive: number }>`
   display: flex;
   gap: 8px;
-  margin-bottom: 20px;
-  justify-content: space-between;
-  width: 100%;
+  margin-bottom: ${(props) => {
+    return props.isActive == 1 ? "10px" : "20px";
+  }};
 `;
-const AllButton = styled.button`
+const MeterageButton = styled.button<{ isActive: number }>`
+  display: block;
   padding: 0;
-  width: 98px;
+  width: 100%;
   height: 36px;
   background-color: #ffffff;
   border: 1px solid #0a4459;
   border-radius: 2px;
   box-sizing: border-box;
 
-  font-weight: 700;
+  font-weight: 400;
   font-size: 12px;
   line-height: 14px;
   color: #0a4459;
-  @media screen and (max-width: 767px) {
-    width: 24%;
-  }
+
+  border: ${(props) => {
+    return props.isActive == 0 ? "1px solid #0a4459" : "1px solid #dee8ec";
+  }};
 `;
-const MeterageButton = styled.button`
+const SampleButton = styled.button<{ isActive: number }>`
+  display: block;
   padding: 0;
-  width: 160px;
+  width: 100%;
   height: 36px;
   background-color: #ffffff;
   border: 1px solid #dee8ec;
   border-radius: 2px;
   box-sizing: border-box;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: #0a4459;
+
+  border: ${(props) => {
+    return props.isActive == 1 ? "1px solid #0a4459" : "1px solid #dee8ec";
+  }};
+`;
+const SampleInfoMessage = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive == 1 ? "flex" : "none";
+  }};
+  align-items: center;
+  gap: 5.5px;
+  margin-bottom: 20px;
 
   font-weight: 400;
   font-size: 12px;
-  line-height: 14px;
-  color: #0a4459;
-  @media screen and (max-width: 767px) {
-    width: 39%;
-  }
-`;
-const SampleButton = styled.button`
-  padding: 0;
-  width: 150px;
-  height: 36px;
-  background-color: #ffffff;
-  border: 1px solid #dee8ec;
-  border-radius: 2px;
-  box-sizing: border-box;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  color: #0a4459;
-  @media screen and (max-width: 767px) {
-    width: 36%;
-  }
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #1eab92;
 `;
 const RemovePurchaseButtonWrapper = styled.div`
   display: flex;
@@ -188,4 +233,63 @@ const PurchaseButton = styled.button`
   }
 `;
 
-export default cart;
+const PopUpBox = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "flex" : "none";
+  }};
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+`;
+const ContentBox = styled.div`
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 320px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+`;
+const PopUpTitle = styled.div`
+  margin-bottom: 9px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  color: #0a4459;
+`;
+const PopUpMessage = styled.div`
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  color: #0a4459;
+`;
+const Bold = styled.span`
+  color: #ff5c01;
+`;
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+`;
+const PopUpButton = styled.button`
+  width: 280px;
+  height: 36px;
+  background-color: #1eab92;
+  border: none;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: #ffffff;
+  cursor: pointer;
+`;
+
+export default useCart;
