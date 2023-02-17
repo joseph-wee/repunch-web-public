@@ -5,15 +5,20 @@ import styled from "styled-components";
 import Image from "next/image";
 import { arrow_down, arrow_up } from "../assets";
 import { ListCountryArray } from "../pages/register";
+import { valueValidation } from "../utils/functions";
 
 const SelectBoxCountryCodeNum = ({
   list, // 국가 리스트
   value, // 국가전화코드
   setValue, // 국가전화코드 세팅
+  validationStart,
+  setValidationResult,
 }: {
   list: ListCountryArray;
   value: string | undefined;
   setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
+  validationStart: boolean;
+  setValidationResult: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [isActive, setIsActive] = useState<boolean>(false); // 옵션 활성 유무
 
@@ -34,7 +39,17 @@ const SelectBoxCountryCodeNum = ({
         <OptionWrapper isActive={isActive}>
           {list.map((i) => {
             return (
-              <Option key={i.code} onClick={() => setValue(i.code_num)}>
+              <Option
+                key={i.code}
+                onClick={() => {
+                  setValue(i.code_num);
+                  valueValidation(
+                    i.code_num,
+                    validationStart,
+                    setValidationResult
+                  );
+                }}
+              >
                 {i.code_num}
               </Option>
             );
