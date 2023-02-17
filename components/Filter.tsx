@@ -214,7 +214,7 @@ const Title = styled.div`
   line-height: 23px;
   letter-spacing: -0.011em;
 
-  color: #000000;
+  color: #0a4459;
 `;
 const ButtonClose = styled.button<{ isActive: boolean }>`
   display: ${(props) => {
@@ -237,6 +237,7 @@ const CategoryTitleWrapper = styled.div`
   &:nth-of-type(2) {
     margin-top: 0;
   }
+  cursor: pointer;
 `;
 const CategoryTitle = styled.div`
   margin-left: 10px;
@@ -245,7 +246,7 @@ const CategoryTitle = styled.div`
   line-height: 19px;
 
   letter-spacing: -0.011em;
-  cursor: pointer;
+  color: #0a4459;
 `;
 const CategoryListWrapper = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
@@ -259,9 +260,8 @@ const CategoryListWrapper = styled.div<{ isActive: boolean }>`
   font-size: 14px;
   line-height: 16px;
   letter-spacing: -0.011em;
-
-  color: #000000;
-  cursor: pointer;
+  color: #0a4459;
+  cursor: default;
 `;
 
 const Checkbox = styled.input`
