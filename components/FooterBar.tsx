@@ -73,11 +73,11 @@ const Nav = styled.nav`
   justify-content: center;
   align-items: center;
 
-  height: 16px;
-  font-weight: 600;
-  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  font-size: 11px;
 
-  color: #a4abba;
+  color: #8aa1aa;
 `;
 const Menu = styled.div``;
 const Bar = styled.div`
@@ -95,11 +95,11 @@ const Text = styled.div`
   align:items: center;
   height: 16px;
 
-  /*이 폰트 써도 되는걸까? 결정에 따라 적용시키거나 피그마에 따라 바꾸어야할 듯*/
-  // font-family: 'SF Pro Text';
   font-weight: 400;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  line-height: 14px;  
+  color: #8AA1AA;
+  
 `;
 
 const IconWrapper = styled.div`
