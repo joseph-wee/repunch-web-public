@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { ic_down_bk, ic_up_bk, test_thumbnail } from "../assets";
+import { ic_close_wht, ic_down_bk, ic_up_bk, test_thumbnail } from "../assets";
 import Image from "next/image";
 
 const useOrderInfoBox = ({
@@ -12,6 +12,23 @@ const useOrderInfoBox = ({
 }) => {
   const [orderDetailIsActive, setOrderDetailIsActive] = useState(false);
   const [trackorderIsActive, setTrackorderIsActive] = useState(false);
+  const [questionDeliveryIsActive, setQuestionDeliveryIsActive] =
+    useState(false);
+  const [questionTaxIsActive, setQuestionTaxIsActive] = useState(false);
+  const questionDeliveryRef = useRef<any>();
+  const questionTaxRef = useRef<any>();
+
+  useEffect(() => {
+    if (questionDeliveryIsActive) {
+      questionDeliveryRef.current.focus();
+    }
+  }, [questionDeliveryIsActive]);
+
+  useEffect(() => {
+    if (questionTaxIsActive) {
+      questionTaxRef.current.focus();
+    }
+  }, [questionTaxIsActive]);
 
   return (
     <>
@@ -64,6 +81,42 @@ const useOrderInfoBox = ({
             </OrderDetailButtonBox>
           </OrderDetailButtonWrapper>
           <OrderDetailContent isActive={orderDetailIsActive}>
+            <DeliveryQuestionInfoBox
+              isActive={questionDeliveryIsActive}
+              tabIndex={0}
+              onBlur={() => setQuestionDeliveryIsActive(false)}
+              ref={questionDeliveryRef}
+            >
+              <QuestionText>
+                DeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDelivery
+              </QuestionText>
+              <ImageBox onClick={() => setQuestionDeliveryIsActive(false)}>
+                <Image
+                  src={ic_close_wht}
+                  width={24}
+                  height={24}
+                  alt="close_wht"
+                />
+              </ImageBox>
+            </DeliveryQuestionInfoBox>
+            <TaxQuestionInfoBox
+              isActive={questionTaxIsActive}
+              tabIndex={0}
+              onBlur={() => setQuestionTaxIsActive(false)}
+              ref={questionTaxRef}
+            >
+              <QuestionText>
+                TaxTaxTaxTaxTaxTaxTaxTaxTaxTaxTaxTaxTaxTax
+              </QuestionText>
+              <ImageBox onClick={() => setQuestionTaxIsActive(false)}>
+                <Image
+                  src={ic_close_wht}
+                  width={24}
+                  height={24}
+                  alt="close_wht"
+                />
+              </ImageBox>
+            </TaxQuestionInfoBox>
             <ContentTitle>Order Summary</ContentTitle>
             <FlexWrapper>
               <SummaryPriceTitle>Item subtotal</SummaryPriceTitle>
@@ -72,13 +125,18 @@ const useOrderInfoBox = ({
             <FlexWrapper>
               <SummaryPriceTitle>
                 Delivery by ship
-                <QuestionMark>?</QuestionMark>
+                <QuestionMark onClick={() => setQuestionDeliveryIsActive(true)}>
+                  ?
+                </QuestionMark>
               </SummaryPriceTitle>
               <SummaryPrice>Free</SummaryPrice>
             </FlexWrapper>
             <FlexWrapper>
               <SummaryPriceTitle>
-                Tax <QuestionMark>?</QuestionMark>
+                Tax{" "}
+                <QuestionMark onClick={() => setQuestionTaxIsActive(true)}>
+                  ?
+                </QuestionMark>
               </SummaryPriceTitle>
               <SummaryPrice>$32.25</SummaryPrice>
             </FlexWrapper>
@@ -278,6 +336,7 @@ const Line = styled.div`
   border-bottom: 1px solid #dee8ec;
 `;
 const OrderDetailContainer = styled.div`
+  position: relative;
   padding-top: 16px;
   padding-left: 16px;
   padding-right: 16px;
@@ -308,6 +367,58 @@ const OrderDetailContent = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
     return props.isActive == true ? "block" : "none";
   }};
+`;
+const DeliveryQuestionInfoBox = styled.div<{ isActive: boolean }>`
+  position: absolute;
+  display: ${(props) => {
+    return props.isActive == true ? "flex" : "none";
+  }};
+  justify-content: space-between;
+  gap: 12px;
+  padding-left: 12px;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 9px;
+  box-sizing: border-box;
+  width: 100%;
+  top: 113px;
+  left: 0;
+
+  height: 79px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 2px;
+`;
+const TaxQuestionInfoBox = styled.div<{ isActive: boolean }>`
+  position: absolute;
+  display: ${(props) => {
+    return props.isActive == true ? "flex" : "none";
+  }};
+  justify-content: space-between;
+  gap: 12px;
+  padding-left: 12px;
+  padding-top: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  top: 129px;
+  left: 0;
+
+  height: 79px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 2px;
+`;
+const QuestionText = styled.div`
+  margin-top: 1px;
+  height: auto;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.011em;
+  color: #ffffff;
+  word-break: break-all;
+`;
+const ImageBox = styled.div`
+  cursor: pointer;
 `;
 const ContentTitle = styled.div`
   margin-top: 11px;
@@ -345,6 +456,7 @@ const QuestionMark = styled.div`
   line-height: 9px;
   letter-spacing: -0.011em;
   color: #ffffff;
+  cursor: pointer;
 `;
 const SummaryPrice = styled.div`
   font-weight: 400;
