@@ -40,6 +40,7 @@ const useLogin = () => {
       if (Boolean(res?.data)) {
         if (res?.data.status == 200) {
           alert("로그인 성공하였습니다.(임시 메세지)");
+          dispatch(login());
           sessionStorage.setItem("at", res.data.result.access_token);
           sessionStorage.setItem("rt", res.data.result.refresh_token);
           router.push("/");
@@ -248,7 +249,9 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   height: 16px;
   box-sizing: border-box;
 
-  border: 1px solid #dee8ec;
+  border: ${(props) => {
+    return props.isChecked == true ? "none" : "1px solid #dee8ec;";
+  }};
   border-radius: 2.66667px;
 
   background-color: ${(props) => {
@@ -322,6 +325,8 @@ const RegisterContainer = styled.div`
   padding-right: 20px;
   padding-left: 20px;
   background-color: #f2f6f8;
+  border: 0.79402px solid #dee8ec;
+  border-radius: 2px;
 `;
 const RegisterTitle = styled.div`
   margin-bottom: 6px;
@@ -340,7 +345,6 @@ const Text = styled.div`
 
 const ButtonRegister = styled.button`
   display: flex;
-  margin-bottom: 20px;
   height: 48px;
   width: 100%;
   box-sizing: border-box;
