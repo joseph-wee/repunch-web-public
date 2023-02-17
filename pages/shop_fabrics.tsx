@@ -25,8 +25,9 @@ const useShop_fabrics = () => {
         <BannerTextWrapper>
           <Title>추후 페이지 수정예정</Title>
           <Text>
-            Fresh additions to our online store, updated weekly! Here at The
-            Fabric Store we get new shipments arriving every single week.{" "}
+            Fresh additions to our online store, updated weekly! <Br />
+            Here at The Fabric Store we get new shipments arriving every single
+            week.
           </Text>
         </BannerTextWrapper>
       </Banner>
@@ -68,20 +69,21 @@ const Container = styled.div`
 `;
 
 const Banner = styled.div`
+  display: flex;
+  align-items: center;
   position: relative;
   height: 277px;
 `;
 
 const Background = styled.div`
-  position: relative;
   height: 277px;
 `;
 const BannerTextWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
+  margin: 0 auto;
+  z-index: 1;
+  @media screen and (max-width: 767px) {
+    width: 75%;
+  }
   text-align: center;
   color: #ffffff;
 `;
@@ -92,11 +94,16 @@ const Title = styled.div`
   font-size: 24px;
   line-height: 28px;
 `;
-const Text = styled.div`
-  height: 16px;
+const Text = styled.span`
   font-weight: 400;
   font-size: 14px;
   line-height: 16px;
+`;
+
+const Br = styled.br`
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
 `;
 const Main = styled.div`
   display: flex;
@@ -108,6 +115,7 @@ const Main = styled.div`
   height: 2843.35px;
   box-sizing: border-box;
   @media screen and (max-width: 1279px) {
+    padding-top: 20px;
     padding-left: 80px;
     padding-right: 80px;
   }
