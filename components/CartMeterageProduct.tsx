@@ -108,7 +108,9 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   height: 16px;
   box-sizing: border-box;
 
-  border: 1px solid #dee8ec;
+  border: ${(props) => {
+    return props.isChecked == true ? "none" : "1px solid #dee8ec;";
+  }};
   border-radius: 2.66667px;
 
   background-color: ${(props) => {
@@ -126,7 +128,7 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
 const CloseButton = styled.div`
   display: flex;
   position: absolute;
-  right: 17px;
+  right: 13px;
   align-items: center;
 `;
 const ProductWrapper = styled.div`
