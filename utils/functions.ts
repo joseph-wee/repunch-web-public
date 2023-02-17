@@ -5,16 +5,23 @@ export const goBack = () => {
   window.history.back();
 };
 
-/** 회원가입: 일반적인 input 유효성 검사 */
+/** 회원가입: 처음 input 유효성 검사 */
 export const valueValidation = (
   value: string | undefined,
+  validationStart: boolean,
   setValueValidationResult: React.Dispatch<React.SetStateAction<number>> // 사용가능 유무
 ) => {
-  if (Boolean(value)) {
-    // 값이 있으면 1 비어있으면 2
+  if (validationStart && Boolean(value)) {
     setValueValidationResult(1);
-  } else {
+    return;
+  }
+  if (validationStart && !Boolean(value)) {
+    setValueValidationResult(0);
+    return;
+  }
+  if (!Boolean(value)) {
     setValueValidationResult(2);
+    return;
   }
 };
 
@@ -125,50 +132,100 @@ export const homepageUrlValidation = (
 //   }
 // };
 
-/** 회원가입: 유저id(이메일주소) 유효성 검사 */
+/** 회원가입: 유저id(이메일주소) 유효성 검사*/
 export const userIdValidation = (
   userId: string, // 전화번호
-  setPasswordValidationResult: React.Dispatch<React.SetStateAction<number>>
+  validationStart: boolean,
+  setUserIdValidationResult: React.Dispatch<React.SetStateAction<number>>
   // 전화번호 사용가능 유무
 ) => {
   let regexp = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/; // 이메일 유효성 검사 정규식
+  if (validationStart && (regexp.test(userId) || !Boolean(userId))) {
+    setUserIdValidationResult(0);
+    return;
+  }
+  if (validationStart && !regexp.test(userId)) {
+    setUserIdValidationResult(2);
+    return;
+  }
   if (regexp.test(userId)) {
-    // 정규식 통과하면 1 아니면 2
-    setPasswordValidationResult(1);
-  } else {
-    setPasswordValidationResult(2);
+    setUserIdValidationResult(1);
+    return;
+  }
+  if (!regexp.test(userId)) {
+    setUserIdValidationResult(2);
+    return;
   }
 };
 
-/** 회원가입: 비밀번호 유효성 검사 */
+/** 회원가입: 비밀번호 유효성 검사*/
 export const passwordValidation = (
   passowrd: string, // 비밀번호
+  validationStart: boolean,
   setUserIdValidationResult: React.Dispatch<React.SetStateAction<number>>
   // 비밀번호 사용가능 유무
 ) => {
   let regexp =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식
-  if (regexp.test(passowrd)) {
-    // 정규식 통과하면 1 아니면 2
-    setUserIdValidationResult(1);
-  } else {
+  if (validationStart && (regexp.test(passowrd) || !Boolean(passowrd))) {
+    setUserIdValidationResult(0);
+    return;
+  }
+  if (validationStart && !regexp.test(passowrd)) {
     setUserIdValidationResult(2);
+    return;
+  }
+  if (regexp.test(passowrd)) {
+    setUserIdValidationResult(1);
+    return;
+  }
+  if (!regexp.test(passowrd)) {
+    setUserIdValidationResult(2);
+    return;
   }
 };
 
-/** 회원가입: 비밀번호확인 유효성 검사 */
+/** 회원가입: 비밀번호확인 유효성 검사*/
 export const passwordConfirmValidation = (
   passowrd: string, // 비밀번호
   passwordConfirm: string, // 비밀번호확인
+  validationStart: boolean,
   setPasswordConfirmValidationResult: React.Dispatch<
     React.SetStateAction<number>
   >
   // 비밀번호확인 사용가능 유무
 ) => {
-  if (passowrd == passwordConfirm && Boolean(passwordConfirm)) {
+  if (validationStart && !Boolean(passowrd)) {
+    setPasswordConfirmValidationResult(0);
+    return;
+  }
+  if (
+    validationStart &&
+    passowrd == passwordConfirm &&
+    Boolean(passwordConfirm) &&
+    Boolean(passowrd)
+  ) {
+    setPasswordConfirmValidationResult(1);
+    return;
+  }
+  if (
+    validationStart &&
+    (passowrd != passwordConfirm || Boolean(passwordConfirm))
+  ) {
+    setPasswordConfirmValidationResult(2);
+    return;
+  }
+  if (
+    passowrd == passwordConfirm &&
+    Boolean(passwordConfirm) &&
+    Boolean(passowrd)
+  ) {
     // 비밀번호와 비밀번호 확인이 같으면 1 아니면 2
     setPasswordConfirmValidationResult(1);
-  } else {
+    return;
+  }
+  if (passowrd != passwordConfirm || !Boolean(passwordConfirm)) {
     setPasswordConfirmValidationResult(2);
+    return;
   }
 };
