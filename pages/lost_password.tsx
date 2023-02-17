@@ -12,7 +12,7 @@ const useLost_password = () => {
   return (
     <>
       <ContainerFindId isActive={isActive}>
-        <Title>Register</Title>
+        <Title>Find password</Title>
         <WelcomeText>
           Please enter the email address you registered when registering as a
           member. ID and password information will be sent to the e-mail.

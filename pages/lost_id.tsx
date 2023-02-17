@@ -81,7 +81,7 @@ const useLost_id = () => {
   return (
     <>
       <ContainerFindId idLength={id.length}>
-        <Title>Register</Title>
+        <Title>Find ID</Title>
         <WelcomeText>
           Please enter your registered name and phone number{" "}
         </WelcomeText>
