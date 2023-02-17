@@ -36,7 +36,7 @@ export default function Home() {
       <Main>
         <Filter isActive={filterIsActive} setIsActive={setFilterIsActive} />
         <ProductListWrapper>
-          <ButtonWraaper>
+          <ButtonFlexWrapper>
             <FilterButton onClick={() => setFilterIsActive(!filterIsActive)}>
               <Image src={ic_filter} alt={"filter_button"} />
               <ButtonTextFilter>Filter</ButtonTextFilter>
@@ -45,16 +45,27 @@ export default function Home() {
               </FilterAlarmBackground>
             </FilterButton>
             <Result>1900&nbsp;</Result>
-            <SortButton onClick={() => setSortIsActive(!sortIsActive)}>
-              <ButtonTextSort>Sort By</ButtonTextSort>
+            <ButtonWrapper>
+              <ClearButton>Clear Filter</ClearButton>
+              <SortButton onClick={() => setSortIsActive(!sortIsActive)}>
+                <ButtonTextSort>Sort By</ButtonTextSort>
 
-              <Image
-                src={sortIsActive ? ic_down_bk : ic_up_bk}
-                alt={"sort_arrow_button"}
-              />
-            </SortButton>
-          </ButtonWraaper>
-          <ProductListGridWrapper isActive={sortIsActive}>
+                <Image
+                  src={sortIsActive ? ic_down_bk : ic_up_bk}
+                  alt={"sort_arrow_button"}
+                />
+              </SortButton>
+            </ButtonWrapper>
+            <SortMenuWrapper isActive={sortIsActive}>
+              <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+                Latest
+              </SortMenu>
+              <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+                Popular
+              </SortMenu>
+            </SortMenuWrapper>
+          </ButtonFlexWrapper>
+          <ProductListGridWrapper>
             <ProductList />
             <ProductList />
             <ProductList />
@@ -67,24 +78,26 @@ export default function Home() {
   );
 }
 const Container = styled.div`
-  background-color: #eeeeee;
+  background-color: #fafafa;
 `;
 
 const Banner = styled.div`
+  display: flex;
+  align-items: center;
   position: relative;
   height: 277px;
+  overflow: hidden;
 `;
 
 const Background = styled.div`
-  position: relative;
   height: 277px;
 `;
 const BannerTextWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
+  margin: 0 auto;
+  z-index: 1;
+  @media screen and (max-width: 767px) {
+    width: 75%;
+  }
   text-align: center;
   color: #ffffff;
 `;
@@ -95,12 +108,12 @@ const Title = styled.div`
   font-size: 24px;
   line-height: 28px;
 `;
-const Text = styled.div`
-  height: 16px;
+const Text = styled.span`
   font-weight: 400;
   font-size: 14px;
   line-height: 16px;
 `;
+
 const Main = styled.div`
   display: flex;
   margin: 0 auto;
@@ -111,6 +124,7 @@ const Main = styled.div`
   height: 2843.35px;
   box-sizing: border-box;
   @media screen and (max-width: 1279px) {
+    padding-top: 20px;
     padding-left: 80px;
     padding-right: 80px;
   }
@@ -123,8 +137,9 @@ const Main = styled.div`
 const ProductListWrapper = styled.div`
   width: 100%;
 `;
-const ButtonWraaper = styled.div`
+const ButtonFlexWrapper = styled.div`
   display: flex;
+  position: relative;
   align-itmes: center;
   justify-content: space-between;
 
@@ -205,34 +220,87 @@ const Result = styled.div`
     display: none;
   }
 `;
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 19px;
+  align-items: center;
+`;
+const ClearButton = styled.button`
+  padding: 0;
+  border: none;
+  background-color: #fafafa;
+
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  text-decoration-line: underline;
+  color: #8aa1aa;
+
+  cursor: pointer;
+`;
 const SortButton = styled.button`
   display: flex;
   align-items: center;
+  padding-left: 0;
   border: none;
-
+  background-color: #fafafa;
   cursor: pointer;
-
-  @media screen and (max-width: 1279px) {
-    padding-top: 3px;
-  }
 `;
 const ButtonTextSort = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 7px;
+  margin-right: 14px;
 
-  height: 14px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #0a4459;
+
+  @media screen and (max-width: 1279px) {
+    margin-right: 7px;
+    font-size: 12px;
+  }
+`;
+const SortMenuWrapper = styled.div<{ isActive: boolean }>`
+  z-index: 1;
+  display: ${(props) => {
+    return props.isActive == true ? "none" : "block";
+  }};
+  position: absolute;
+  right: 0;
+  top: 25px;
+  @media screen and (max-width: 1279px) {
+    top: 40px;
+  }
+  width: 120px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border-radius: 2px;
+
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+`;
+const SortMenu = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  height: 40px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #dee8ec;
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
-
-  color: #000000;
+  letter-spacing: -0.011em;
+  color: #0a4459;
+  &:last-of-type {
+    border: none;
+  }
+  cursor: pointer;
 `;
-const ProductListGridWrapper = styled.div<{ isActive: boolean }>`
-  display: ${(props) => {
-    return props.isActive == true ? "grid" : "none";
-  }};
+const ProductListGridWrapper = styled.div`
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   row-gap: 50px;
   column-gap: 20px;
