@@ -5,15 +5,20 @@ import styled from "styled-components";
 import Image from "next/image";
 import { arrow_down, arrow_up } from "../assets";
 import { ListCountryArray, List } from "../pages/register";
+import { valueValidation } from "../utils/functions";
 
 // list: 국가 리스트 배열
 // setValue: 값을 세팅
 const SelectBox = ({
   list,
   setValue,
+  validationStart,
+  setValidationResult,
 }: {
   list: ListCountryArray;
   setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
+  validationStart: boolean;
+  setValidationResult: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [isActive, setIsActive] = useState<boolean>(false); // 셀렉트박스 활성 유무
   const [text, setText] = useState<string>(""); // 선택된 값이 보여지는 텍스트
@@ -22,6 +27,7 @@ const SelectBox = ({
   const optionHandler = (i: List) => {
     setText(i.name);
     setValue(i.code);
+    valueValidation(i.code, validationStart, setValidationResult);
   };
 
   return (
@@ -85,6 +91,7 @@ const ImageWrapper = styled.div`
 const OptionWrapper = styled.div<{ isActive: boolean }>`
   z-index: 1;
   position: relative;
+  margin-top: 1px;
   height: ${(props) => {
     return props.isActive ? "200px" : "0";
   }};
@@ -92,6 +99,9 @@ const OptionWrapper = styled.div<{ isActive: boolean }>`
     return props.isActive ? "scroll" : "hidden";
   }};
   overflow-x: hidden;
+  box-sizing: border-box;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
 `;
 
 const Option = styled.div`
@@ -101,13 +111,15 @@ const Option = styled.div`
   height: 40px;
   box-sizing: border-box;
   align-items: center;
-  border: 1px solid #dee8ec;
-  border-radius: 2px;
+  border-bottom: 1px solid #dee8ec;
   font-size: 14px;
   font-weight: 400;
   line-height: 14px;
 
   background-color: #ffffff;
+  &:last-of-type {
+    border: none;
+  }
 `;
 
 export default SelectBox;
