@@ -189,7 +189,7 @@ const LengthTitle = styled.div`
 
   letter-spacing: -0.011em;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const ButtonInputWrapper = styled.div`
   display: flex;

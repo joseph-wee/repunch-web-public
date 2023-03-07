@@ -17,7 +17,7 @@ const Container = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: #0a4459;
+  color: #121822;
 `;
 
 export default RecentOrders;

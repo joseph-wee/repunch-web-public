@@ -56,7 +56,7 @@ const Title = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Text = styled.div`
   display: flex;

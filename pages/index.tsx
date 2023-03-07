@@ -336,7 +336,7 @@ const ButtonTextFilter = styled.div`
   font-size: 16px;
   line-height: 19px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const FilterAlarmBackground = styled.div`
   display: flex;
@@ -416,7 +416,7 @@ const ButtonTextSort = styled.div`
   font-size: 14px;
   line-height: 16px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
 
   @media screen and (max-width: 1279px) {
     margin-right: 7px;

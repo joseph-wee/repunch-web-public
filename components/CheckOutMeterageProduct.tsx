@@ -58,7 +58,7 @@ const ProductTitle = styled.div`
 
   letter-spacing: -0.011em;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const MeterageOrSample = styled.div`
   font-weight: 400;
@@ -95,7 +95,7 @@ const Length = styled.div`
   font-size: 11px;
   line-height: 14px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
 `;
 const PriceWrapper = styled.div`
   display: flex;
@@ -111,14 +111,14 @@ const Exvat = styled.div`
   font-weight: 400;
   font-size: 10px;
   line-height: 13px;
-  color: #0a4459;
+  color: #121822;
 `;
 const Price = styled.div`
   font-weight: 700;
   font-size: 14px;
   line-height: 18px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 
 export default CheckOutMeterageProduct;

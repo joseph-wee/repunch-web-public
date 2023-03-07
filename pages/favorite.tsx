@@ -109,7 +109,7 @@ const Title = styled.div`
   font-size: 24px;
   line-height: 28px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     font-size: 22px;
     line-height: 26px;
@@ -132,7 +132,7 @@ const ItemSortBar = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 1279px) {
     margin-bottom: 20px;
   }
@@ -146,13 +146,13 @@ const Count = styled.div`
   font-weight: 700;
   font-size: 12px;
   line-height: 12px;
-  color: #0a4459;
+  color: #121822;
 `;
 const ItemsTitle = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: #0a4459;
+  color: #121822;
 `;
 
 const SortButton = styled.button`
@@ -201,7 +201,7 @@ const SortMenu = styled.div`
   font-size: 12px;
   line-height: 14px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   &:last-of-type {
     border: none;
   }

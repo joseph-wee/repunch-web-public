@@ -711,7 +711,7 @@ const Container = styled.div<{ isActive: boolean }>`
   padding-right: 20px;
   max-width: 427px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Title = styled.div`
   margin-bottom: 20px;
@@ -822,10 +822,10 @@ const Button = styled.button`
   font-weight: 700;
   font-size: 14px;
   line-height: 130%;
-  color: #ffffff;
+  color: #121822;
 
-  background-color: #0a4459;
-  border: 1px solid #dee8ec;
+  background-color: #e1ff20;
+  border: 1px solid #d4f01e;
   border-radius: 2px;
 
   overflow: hidden;
@@ -834,7 +834,8 @@ const Button = styled.button`
   &:nth-of-type(1) {
     margin-right: 12px;
     font-weight: 400;
-    color: #0a4459;
+    color: #121822;
+    border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
     @media screen and (max-width: 767px) {
@@ -854,7 +855,7 @@ const LinkStyling = styled.div`
 
   font-family: "Roboto";
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
   line-height: 130%;
 `;
 
@@ -915,7 +916,7 @@ const AuthTitle = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Name = styled.div`
   display: flex;
@@ -945,7 +946,7 @@ const Id = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Email = styled.div`
   display: flex;
@@ -965,7 +966,7 @@ const AuthText = styled.div`
   font-size: 10px;
   line-height: 13px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 
 const AuthButton = styled.button`
@@ -988,7 +989,7 @@ const AuthButton = styled.button`
 
   overflow: hidden;
 
-  background-color: #1eab92;
+  background-color: #e1ff20;
   border: none;
   border-radius: 2px;
 
@@ -1013,7 +1014,7 @@ const EmailRepunch = styled.div`
   text-align: center;
   text-decoration-line: underline;
 
-  color: #0a4459;
+  color: #121822;
 `;
 
 export default useRegister;

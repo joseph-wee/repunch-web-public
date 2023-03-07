@@ -209,7 +209,7 @@ const Title = styled.div`
   font-size: 24px;
   line-height: 28px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     font-size: 22px;
     line-height: 26px;
@@ -228,7 +228,7 @@ const ContentTitleBar = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: #0a4459;
+  color: #121822;
 `;
 const Wrapper = styled.div`
   display: flex;
@@ -276,7 +276,7 @@ const CheckBoxLabel = styled.label<{ isChecked: boolean }>`
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #0a4459;
+  color: #121822;
 `;
 const Box = styled.div<{ isChecked: boolean; img: string }>`
   margin-right: 8px;
@@ -327,7 +327,7 @@ const Button = styled.button`
   line-height: 130%;
   color: #ffffff;
 
-  background-color: #0a4459;
+  background-color: #121822;
   border: 1px solid #dee8ec;
   border-radius: 2px;
 
@@ -336,7 +336,7 @@ const Button = styled.button`
 
   &:nth-of-type(1) {
     font-weight: 400;
-    color: #0a4459;
+    color: #121822;
     background-color: #f2f6f8;
 
     @media screen and (max-width: 767px) {
@@ -356,7 +356,7 @@ const LinkStyling = styled.div`
 
   font-family: "Roboto";
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
   line-height: 130%;
 `;
 

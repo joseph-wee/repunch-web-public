@@ -531,7 +531,7 @@ const DeliveryReturnsInfoTitleWrapper = styled.div`
 
   letter-spacing: -0.011em;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const ShortLine = styled.div`
   width: 100%;

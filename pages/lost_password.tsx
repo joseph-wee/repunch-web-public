@@ -201,7 +201,7 @@ const LinkStyling = styled.div`
 
   font-family: "Roboto";
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
   line-height: 130%;
 `;
 
@@ -237,7 +237,7 @@ const ContainerYourPassword = styled.div<{ isActive: boolean }>`
   padding-bottom: 40px;
   max-width: 427.75px;
 
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     padding-left: 20px;
     padding-right: 20px;

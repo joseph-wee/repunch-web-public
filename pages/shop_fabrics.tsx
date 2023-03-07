@@ -169,7 +169,7 @@ const ButtonTextFilter = styled.div`
   font-size: 16px;
   line-height: 19px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const FilterAlarmBackground = styled.div`
   display: flex;

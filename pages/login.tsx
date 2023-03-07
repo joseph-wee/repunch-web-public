@@ -15,7 +15,7 @@ const useLogin = () => {
   const [userId, setUserId] = useState<string>("");
   const [password, setPaswword] = useState<string>("");
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(true);
+  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(false);
   const [popUpIsActive, setPopUpIsActive] = useState<boolean>(false);
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
 
@@ -101,9 +101,9 @@ const useLogin = () => {
             onChange={() => setIsChecked(!isChecked)}
           />
           Remember
-          {/* <Link href="/lost_id" style={{ textDecoration: "none" }}>
+          <Link href="/lost_id" style={{ textDecoration: "none" }}>
             <LinkStyling1>Lost ID</LinkStyling1>
-          </Link> */}
+          </Link>
           <Link href="/lost_password" style={{ textDecoration: "none" }}>
             <LinkStyling2>Lost Password? </LinkStyling2>
           </Link>
@@ -280,7 +280,7 @@ const LinkStyling1 = styled.span`
   font-weight: 400;
   line-height: 14px;
 
-  color: #0a4459;
+  color: #121822;
   text-decoration-line: underline;
 `;
 const LinkStyling2 = styled.span`

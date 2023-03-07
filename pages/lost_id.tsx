@@ -156,7 +156,7 @@ const ContainerFindId = styled.div<{ idLength: number }>`
   padding-bottom: 40px;
   max-width: 427.75px;
 
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     padding-left: 20px;
     padding-right: 20px;
@@ -188,7 +188,7 @@ const WelcomeText = styled.div`
   font-weight: 300;
   font-size: 12px;
   line-height: 100%;
-  color: #8aa1aa;
+  color: #536c6d;
 
   font-family: "Roboto";
   font-size: 12px;
@@ -252,10 +252,10 @@ const Button = styled.button`
   font-weight: 700;
   font-size: 14px;
   line-height: 130%;
-  color: #ffffff;
+  color: #121822;
 
-  background-color: #0a4459;
-  border: 1px solid #dee8ec;
+  background-color: #e1ff20;
+  border: 1px solid #e1ff20;
   border-radius: 2px;
 
   overflow: hidden;
@@ -264,7 +264,8 @@ const Button = styled.button`
   &:nth-of-type(1) {
     margin-right: 12px;
     font-weight: 400;
-    color: #0a4459;
+    color: #121822;
+    border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
     @media screen and (max-width: 767px) {
@@ -284,7 +285,7 @@ const LinkStyling = styled.div`
 
   font-family: "Roboto";
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
   line-height: 130%;
 `;
 
@@ -295,7 +296,7 @@ const ContainerYourId = styled.div<{ idLength: number }>`
   padding-bottom: 40px;
   max-width: 280px;
 
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     padding-left: 20px;
     padding-right: 20px;
@@ -358,7 +359,7 @@ const EmailRepunch = styled.div`
   text-align: center;
   text-decoration-line: underline;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const ButtonHome = styled.button`
   display: flex;
@@ -380,7 +381,7 @@ const ButtonHome = styled.button`
   overflow: hidden;
 
   background-color: #1eab92;
-  border: none;
+  border: 0.79402px solid #d4f01e;
   border-radius: 2px;
 
   cursor: pointer;
@@ -397,7 +398,7 @@ const LinkStylingHome = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #ffffff;
+  color: #121822;
 `;
 
 export default useLost_id;

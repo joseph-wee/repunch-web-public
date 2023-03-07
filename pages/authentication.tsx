@@ -78,7 +78,7 @@ const Title = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Name = styled.div`
   display: flex;
@@ -108,7 +108,7 @@ const Id = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Email = styled.div`
   display: flex;
@@ -128,7 +128,7 @@ const Text = styled.div`
   font-size: 10px;
   line-height: 13px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 
 const Button = styled.button`
@@ -176,7 +176,7 @@ const EmailRepunch = styled.div`
   text-align: center;
   text-decoration-line: underline;
 
-  color: #0a4459;
+  color: #121822;
 `;
 
 export default useAuthentication;

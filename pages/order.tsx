@@ -84,7 +84,7 @@ const Title = styled.div`
   font-size: 24px;
   line-height: 28px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     font-size: 22px;
     line-height: 26px;
