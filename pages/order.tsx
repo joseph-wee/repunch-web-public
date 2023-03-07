@@ -24,10 +24,13 @@ const order = () => {
         </TitleWrapper>
         <ButtonWrapper>
           <AllButton>ALL</AllButton>
-          <InProductionButton>In Production (0)</InProductionButton>
-          <ShippedButton>Shipped (0)</ShippedButton>
-          <ReceivedButton>Received (1)</ReceivedButton>
-          <DeniedButton>Denied (0)</DeniedButton>
+          <ReviewButton>In Review (0)</ReviewButton>
+          <ConfirmButton>Order confirmed (0)</ConfirmButton>
+          <ShipButton>Shipped (1)</ShipButton>
+          <DeliveredButton>Delivered (0)</DeliveredButton>
+          <PickupButton>Pick up (0)</PickupButton>
+          <CanceledButton>Canceled (0)</CanceledButton>
+          <ReturnButton>Return (0)</ReturnButton>
         </ButtonWrapper>
         <RecentOrders />
         <OrderInfoBox accomplish={false} myAccount={false} />
@@ -90,70 +93,107 @@ const Title = styled.div`
 `;
 const ButtonWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  gap: 11px 8px;
+  column-gap: 8px;
+  row-gap: 10px;
+
   flex-wrap: wrap;
   margin-bottom: 20px;
 `;
 const AllButton = styled.button`
-  width: 60px;
+  width: 47px;
   height: 36px;
   background-color: #ffffff;
-  border: 1px solid #0a4459;
+  border: 1px solid #121822;
   border-radius: 2px;
   box-sizing: border-box;
   font-weight: 700;
-  font-size: 14px;
-  line-height: 16px;
-  color: #0a4459;
+  font-size: 12px;
+  line-height: 14px;
+  color: #121822;
 `;
-const InProductionButton = styled.button`
-  width: 138px;
+const ReviewButton = styled.button`
+  width: 87px;
   height: 36px;
   background-color: #ffffff;
   border: 1px solid #dee8ec;
   border-radius: 2px;
   box-sizing: border-box;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 16px;
-  color: #0a4459;
+  font-size: 12px;
+  line-height: 14px;
+  color: #121822;
 `;
-const ShippedButton = styled.button`
-  width: 102px;
+const ConfirmButton = styled.button`
+  width: 120px;
   height: 36px;
   background-color: #ffffff;
   border: 1px solid #dee8ec;
   border-radius: 2px;
   box-sizing: border-box;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 16px;
-  color: #0a4459;
+  font-size: 12px;
+  line-height: 14px;
+  color: #121822;
 `;
-const ReceivedButton = styled.button`
-  width: 102px;
+const ShipButton = styled.button`
+  width: 84px;
   height: 36px;
   background-color: #ffffff;
   border: 1px solid #dee8ec;
   border-radius: 2px;
   box-sizing: border-box;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 16px;
-  color: #0a4459;
+  font-size: 12px;
+  line-height: 14px;
+  color: #121822;
 `;
-const DeniedButton = styled.button`
-  width: 102px;
+const DeliveredButton = styled.button`
+  width: 93px;
   height: 36px;
   background-color: #ffffff;
   border: 1px solid #dee8ec;
   border-radius: 2px;
   box-sizing: border-box;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 16px;
-  color: #0a4459;
+  font-size: 12px;
+  line-height: 14px;
+  color: #121822;
+`;
+const PickupButton = styled.button`
+  width: 79px;
+  height: 36px;
+  background-color: #ffffff;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: #121822;
+`;
+const CanceledButton = styled.button`
+  width: 93px;
+  height: 36px;
+  background-color: #ffffff;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: #121822;
+`;
+const ReturnButton = styled.button`
+  width: 93px;
+  height: 36px;
+  background-color: #ffffff;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: #121822;
 `;
 
 export default order;

@@ -210,11 +210,11 @@ const Wrapper = styled.div`
 `;
 const Title = styled.div`
   font-weight: 700;
-  font-size: 18px;
-  line-height: 23px;
+  font-size: 16px;
+  line-height: 21px;
   letter-spacing: -0.011em;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const ButtonClose = styled.button<{ isActive: boolean }>`
   display: ${(props) => {
@@ -246,7 +246,7 @@ const CategoryTitle = styled.div`
   line-height: 19px;
 
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
 `;
 const CategoryListWrapper = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
@@ -260,7 +260,7 @@ const CategoryListWrapper = styled.div<{ isActive: boolean }>`
   font-size: 14px;
   line-height: 16px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   cursor: default;
 `;
 
@@ -277,12 +277,12 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   box-sizing: border-box;
 
   border: ${(props) => {
-    return props.isChecked == true ? "none" : "1px solid #dee8ec;";
+    return props.isChecked == true ? "none" : "1px solid #E0E0E0;";
   }};
-  border-radius: 2.66667px;
+  border-radius: 2px;
 
   background-color: ${(props) => {
-    return props.isChecked == true ? "#FF5C01" : "#FFFFFF";
+    return props.isChecked == true ? "#121822" : "#FFFFFF";
   }};
 
   background-image: url(${(props) => {

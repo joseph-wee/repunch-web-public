@@ -65,7 +65,7 @@ const MeterageOrSample = styled.div`
   font-size: 12px;
   line-height: 16px;
   letter-spacing: -0.011em;
-  color: #1eab92;
+  color: #0f697c;
 `;
 const Line = styled.div`
   margin-left: 13.5px;
@@ -88,7 +88,7 @@ const LengthTitle = styled.div`
   font-size: 11px;
   line-height: 14px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #536c6d;
 `;
 const Length = styled.div`
   font-weight: 400;

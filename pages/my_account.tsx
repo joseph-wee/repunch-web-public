@@ -97,7 +97,7 @@ const Title = styled.div`
   font-size: 24px;
   line-height: 28px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     margin-bottom: 9px;
     font-size: 22px;
@@ -112,7 +112,7 @@ const WelcomeText = styled.div`
   font-size: 12px;
   line-height: 12px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     position: static;
   }
@@ -147,7 +147,7 @@ const Count = styled.div`
   font-size: 20px;
   line-height: 20px;
   text-align: center;
-  color: #0a4459;
+  color: #121822;
 `;
 const CountTitle = styled.div`
   width: 50px;
@@ -155,7 +155,7 @@ const CountTitle = styled.div`
   font-size: 12px;
   line-height: 12px;
   text-align: center;
-  color: #8aa1aa;
+  color: #536c6d;
 `;
 const InfoContainer = styled.div`
   margin-top: 10px;
@@ -178,7 +178,7 @@ const InfoContent = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 34px;
-  color: #0a4459;
+  color: #121822;
 `;
 
 export default my_account;

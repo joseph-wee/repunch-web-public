@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
-import { home_image, ic_down_bk, ic_filter, ic_up_bk } from "../assets";
+import { ic_down_bk, ic_filter, ic_up_bk } from "../assets";
 import Image from "next/legacy/image";
 import { useState } from "react";
 import { Filter, ProductList } from "../components";
@@ -14,13 +14,13 @@ const useNew_arrivals = () => {
     <Container>
       <Banner>
         <Background>
-          <Image
+          {/* <Image
             src={home_image}
             alt={"homepage_banner"}
             layout="fill"
             objectFit="cover"
             objectPosition="center"
-          />
+          /> */}
         </Background>
         <BannerTextWrapper>
           <Title>추후 페이지 수정예정</Title>

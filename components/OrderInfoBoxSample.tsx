@@ -8,8 +8,9 @@ import {
   test_thumbnail,
 } from "../assets";
 import Image from "next/image";
+import Sample from "./Sample";
 
-const useOrderInfoBox = ({
+const useOrderInfoBoxSample = ({
   accomplish,
   myAccount,
 }: {
@@ -40,24 +41,23 @@ const useOrderInfoBox = ({
     <>
       <Container>
         <ProductWrapper>
-          <ImageWrapper>
-            <Image src={test_thumbnail} alt={"test"} width={80} height={80} />
-          </ImageWrapper>
-          <TextWrapper>
-            <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
-            <MeterageOrSample>Meterage</MeterageOrSample>
-            <LengthWrapper>
-              <LengthTitle>Length (m)</LengthTitle>
-              <Length>10 m</Length>
-            </LengthWrapper>
-            <LengthPrice>$ 4.06</LengthPrice>
-          </TextWrapper>
+          <SampleWrapper>
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+          </SampleWrapper>
         </ProductWrapper>
         <DashLine1 />
-        <OrderInfoWrapper>
-          <OrderInfoTitle>Length (m)</OrderInfoTitle>
-          <OrderInfoContent>10 m</OrderInfoContent>
-        </OrderInfoWrapper>
         <OrderInfoWrapper>
           <OrderInfoTitle>Order no.</OrderInfoTitle>
           <OrderInfoContent>0906ZG5D72045J</OrderInfoContent>
@@ -259,9 +259,9 @@ const useOrderInfoBox = ({
         <AccomplishInvoiceButton isActive={accomplish}>
           Invoice Download
         </AccomplishInvoiceButton>
-        <AccomplishInvoiceButton isActive={!accomplish}>
+        {/* <AccomplishInvoiceButton isActive={!accomplish}>
           Re-order
-        </AccomplishInvoiceButton>
+        </AccomplishInvoiceButton> */}
       </ButtonWrapper>
     </>
   );
@@ -281,7 +281,6 @@ const ProductWrapper = styled.div`
   margin-left: 16px;
   margin-right: 16px;
   margin-bottom: 16px;
-  height: 80.31px;
 `;
 const ImageWrapper = styled.div`
   overflow: hidden;
@@ -794,4 +793,16 @@ const AccomplishInvoiceButton = styled.button<{ isActive: boolean }>`
     margin-bottom: 0px;
   }
 `;
-export default useOrderInfoBox;
+const SampleWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  row-gap: 9px;
+  column-gap: 9.5px;
+
+  @media screen and (max-width: 767px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    row-gap: 2px;
+    column-gap: 2px;
+  }
+`;
+export default useOrderInfoBoxSample;

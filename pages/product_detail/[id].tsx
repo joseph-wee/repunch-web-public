@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import {
   btn_favorite_act_sm,
+  btn_review,
   ic_favorite_wht,
   ic_info,
   ic_minus,
@@ -48,7 +49,7 @@ const useId = () => {
           <ImageVideoWrapper>
             <BigImagevideo>
               <LikeButton>
-                <Image src={btn_favorite_act_sm} alt={"logo_favorite"} />
+                <Image src={btn_review} alt={"logo_favorite"} />
               </LikeButton>
             </BigImagevideo>
             <SmallImageVideoWrapper>
@@ -142,9 +143,10 @@ const useId = () => {
               </PurchaseButton>
             </PricePurchaseWrapper>
             <RequestSample onClick={() => setPopUpIsActive(2)}>
-              Request sample /&nbsp;
-              <BoldText>$ 8.38</BoldText>
+              Request sample(Add to cart) /&nbsp;
+              <BoldText>$ 8.38(-30%)</BoldText>
             </RequestSample>
+            <DiscountMessage>-30% Open Promotion Due to ‘23.10</DiscountMessage>
             <SmapleMessage>
               <Image src={ic_info} alt={"ic_info"} />
               Samples can be ordered from 10-20 pieces.
@@ -208,10 +210,11 @@ const useId = () => {
 };
 const Container = styled.div`
   margin: 0 auto;
-  padding-top: 20px;
+  padding-top: 40px;
   max-width: 865px;
   @media screen and (max-width: 1279px) {
     display: block;
+    padding-top: 20px;
     padding-left: 74px;
     padding-right: 74px;
   }
@@ -294,7 +297,7 @@ const Title = styled.div`
   font-size: 22px;
   line-height: 29px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
 `;
 const Line = styled.div`
   margin-bottom: 20px;
@@ -314,7 +317,7 @@ const InfoTitle = styled.div`
   line-height: 17px;
   letter-spacing: -0.011em;
 
-  color: #a4abba;
+  color: #a4b0b3;
 `;
 const InfoContent = styled.div`
   font-weight: 500;
@@ -456,18 +459,16 @@ const PurchaseButton = styled.button`
   align-items: center;
   justify-content: center;
   width: 100%;
-  border: none;
+  border: 0.79402px solid #d4f01e;
   border-radius: 1.58804px;
-  background-color: #0a4459;
+  background-color: #e1ff20;
 
-  font-weight: 400;
+  font-weight: 700;
   font-size: 14px;
   line-height: 18px;
-
-  text-align: center;
   letter-spacing: -0.011em;
 
-  color: #ffffff;
+  color: #121822;
   cursor: pointer;
 `;
 const RequestSample = styled.button`
@@ -478,7 +479,7 @@ const RequestSample = styled.button`
   width: 100%;
   height: 48px;
   border: none;
-  border: 0.79402px solid #8aa1aa;
+  border: 0.79402px solid #536c6d;
   border-radius: 1.58804px;
   box-sizing: border-box;
   background-color: #ffffff;
@@ -488,8 +489,22 @@ const RequestSample = styled.button`
   line-height: 18px;
   letter-spacing: -0.011em;
 
-  color: #0a4459;
+  color: #121822;
   cursor: pointer;
+`;
+const BoldText = styled.div`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: #ff2f01;
+`;
+const DiscountMessage = styled.div`
+  margin-bottom: 5px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #ff2f01;
 `;
 const SmapleMessage = styled.div`
   display: flex;
@@ -500,12 +515,7 @@ const SmapleMessage = styled.div`
   font-size: 12px;
   line-height: 16px;
   letter-spacing: -0.011em;
-  color: #1eab92;
-`;
-const BoldText = styled.div`
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 18px;
+  color: #0f697c;
 `;
 
 const DeliveryReturnsInfoTitleWrapper = styled.div`
@@ -531,7 +541,13 @@ const DeliveryReturnsInfoTitle = styled.div`
   flex-shrink: 0;
   margin-left: 15px;
   margin-right: 15px;
-  width: 140px;
+  width: 208px;
+
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 43px;
+  letter-spacing: -0.011em;
+  color: #121822;
 `;
 const DeliveryReturnsInfoText = styled.div`
   padding-left: 20px;
@@ -561,7 +577,7 @@ const PopUpBox = styled.div<{ isActive: number }>`
   display: ${(props) => {
     return props.isActive == 0 ? "none" : "flex";
   }};
-  z-index: 2;
+  z-index: 3;
   position: fixed;
   top: 0;
   align-items: center;
@@ -584,7 +600,7 @@ const PopUpTitle = styled.div`
   font-size: 14px;
   line-height: 18px;
   text-align: center;
-  color: #0a4459;
+  color: #121822;
 `;
 const PopUpMessage = styled.div`
   margin-bottom: 24px;
@@ -592,7 +608,7 @@ const PopUpMessage = styled.div`
   font-size: 11px;
   line-height: 14px;
   text-align: center;
-  color: #8aa1aa;
+  color: #536c6d;
 `;
 const ButtonWrapper = styled.div`
   display: flex;
@@ -603,14 +619,14 @@ const ButtonWrapper = styled.div`
 const PopUpButton = styled.button`
   width: 263.25px;
   height: 36px;
-  background-color: #1eab92;
-  border: none;
+  background-color: #e1ff20;
+  border: 0.79402px solid #d4f01e;
   border-radius: 2px;
   box-sizing: border-box;
   font-weight: 700;
   font-size: 14px;
   line-height: 18px;
-  color: #ffffff;
+  color: #121822;
   cursor: pointer;
 `;
 export default useId;

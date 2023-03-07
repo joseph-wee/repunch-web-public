@@ -107,7 +107,7 @@ const Menu = styled.div<{ isActive: boolean }>`
   font-size: 14px;
   line-height: 14px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
 `;
 const ImageWrapper = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
@@ -125,7 +125,7 @@ const LogoutMenu = styled.div`
   font-size: 14px;
   line-height: 14px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
 `;
 
 export default useSideBar;

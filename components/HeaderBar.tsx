@@ -8,6 +8,8 @@ import {
   ic_cart_wht,
   ic_close_wht,
   ic_favorite_wht,
+  ic_menu_wht,
+  logo,
 } from "../assets";
 import Link from "next/link";
 import NavTopBar from "./NavTopBar";
@@ -24,11 +26,13 @@ const useHeaderBar = () => {
           style={{ textDecoration: "none" }}
           onClick={() => setIsActive(false)}
         >
-          <Title>Repunch</Title>
+          <Logo>
+            <Image src={logo} alt="logo" />
+          </Logo>
         </Link>
         <Menu onClick={() => setIsActive(!isActive)}>
           <Image
-            src={isActive ? ic_close_wht : button_menu}
+            src={isActive ? ic_close_wht : ic_menu_wht}
             alt="button_menu"
           />
         </Menu>
@@ -50,7 +54,7 @@ const useHeaderBar = () => {
 };
 
 const Container = styled.header`
-  z-index: 2;
+  z-index: 3;
   display: flex;
   position: fixed;
   padding-left: 17px;
@@ -60,19 +64,9 @@ const Container = styled.header`
   align-items: center;
   width: 100%;
   height: 64px;
-  background-color: #ff5c01;
+  background-color: #e1ff20;
 `;
-const Title = styled.h1`
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 900;
-  font-size: 30px;
-  line-height: 130%;
-  /* identical to box height, or 39px */
-
-  letter-spacing: -0.02em;
-  color: #ffffff;
-`;
+const Logo = styled.div``;
 const Menu = styled.div`
   position: absolute;
   right: 20px;

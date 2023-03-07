@@ -1,7 +1,16 @@
 import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
-import { home_image, ic_down_bk, ic_filter, ic_up_bk } from "../assets";
+import {
+  home_image_desktop,
+  home_image_mobile,
+  home_image_pad,
+  ic_down_bk,
+  ic_down_bk_filter,
+  ic_filter,
+  ic_up_bk,
+  ic_up_bk_filter,
+} from "../assets";
 import Image from "next/legacy/image";
 import { useState } from "react";
 import { Filter, ProductList } from "../components";
@@ -19,18 +28,48 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Banner>
-        <Background>
+        <BackgroundMobile>
           <Image
-            src={home_image}
+            src={home_image_mobile}
             alt={"homepage_banner"}
             layout="fill"
             objectFit="cover"
             objectPosition="center"
           />
-        </Background>
+        </BackgroundMobile>
+        <BackgroundPad>
+          <Image
+            src={home_image_pad}
+            alt={"homepage_banner"}
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+          />
+        </BackgroundPad>
+        <BackgroundDesktop>
+          <Image
+            src={home_image_desktop}
+            alt={"homepage_banner"}
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+          />
+        </BackgroundDesktop>
         <BannerTextWrapper>
-          <Title>Repunch</Title>
-          <Text>Fresh additions to our online store</Text>
+          <Title>
+            Recreating
+            <br />
+            Future fiber
+          </Title>
+          <FlexWrapper>
+            <Text1>Repunch creates</Text1>
+            <LineLime />
+          </FlexWrapper>
+          <Text2>new and bold choices, </Text2>
+          <Text3>by giving everyone a chance</Text3>
+          <Text4>at forming a better future</Text4>
+
+          <IoText>repunch.io</IoText>
         </BannerTextWrapper>
       </Banner>
       <Main>
@@ -51,7 +90,7 @@ export default function Home() {
                 <ButtonTextSort>Sort By</ButtonTextSort>
 
                 <Image
-                  src={sortIsActive ? ic_down_bk : ic_up_bk}
+                  src={sortIsActive ? ic_down_bk_filter : ic_up_bk_filter}
                   alt={"sort_arrow_button"}
                 />
               </SortButton>
@@ -85,39 +124,157 @@ const Banner = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  height: 277px;
+  margin-top: 16px;
+  height: 280px;
   overflow: hidden;
+  box-sizing: border-box;
+  @media screen and (max-width: 767px) {
+    margin: 0;
+  }
 `;
 
-const Background = styled.div`
-  height: 277px;
+const BackgroundMobile = styled.div`
+  display: none;
+  height: 280px;
+  @media screen and (max-width: 767px) {
+    display: block;
+  }
+`;
+const BackgroundPad = styled.div`
+  display: none;
+  height: 280px;
+  @media screen and (max-width: 1279px) {
+    display: block;
+  }
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
+`;
+const BackgroundDesktop = styled.div`
+  display: block;
+  height: 280px;
+  @media screen and (max-width: 1279px) {
+    display: none;
+  }
 `;
 const BannerTextWrapper = styled.div`
-  margin: 0 auto;
   z-index: 1;
-  @media screen and (max-width: 767px) {
-    width: 75%;
-  }
-  text-align: center;
+  position: relative;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 100%;
+  height: 280px;
+  box-sizing: border-box;
   color: #ffffff;
+
+  @media screen and (max-width: 767px) {
+    padding-right: 14px;
+  }
+`;
+const FlexWrapper = styled.div`
+  display: flex;
+  align-tiems: center;
+  gap: 7px;
+  height: 19px;
 `;
 const Title = styled.div`
-  margin-bottom: 5px;
-  heihgt: 96px;
-  font-weight: 900;
-  font-size: 24px;
-  line-height: 28px;
-`;
-const Text = styled.span`
+  margin-bottom: 128px;
+
+  font-family: "Inter";
   font-weight: 400;
-  font-size: 14px;
-  line-height: 16px;
+  font-size: 14.8998px;
+  line-height: 17px;
+  text-align: right;
+  letter-spacing: -0.011em;
+  text-transform: uppercase;
+  color: #e1ff20;
+
+  @media screen and (max-width: 767px) {
+    margin-right: 1.5px;
+  }
+`;
+const Text1 = styled.div`
+  flex-shrink: 0;
+  height: 19px;
+  font-family: "Inter";
+  font-weight: 400;
+  font-size: 14.8998px;
+  line-height: 17px;
+  text-align: right;
+  letter-spacing: -0.011em;
+  text-transform: uppercase;
+  color: #e1ff20;
+`;
+const LineLime = styled.div`
+  margin-right: 3px;
+  width: 100%;
+  height: 8px;
+
+  border-bottom: 1px solid #e1ff20;
+
+  @media screen and (max-width: 767px) {
+    margin-right: 0px;
+  }
+`;
+const Text2 = styled.div`
+  position: absolute;
+  bottom: 59.63px;
+  height: 19px;
+  font-family: "Inter";
+  font-weight: 400;
+  font-size: 14.8998px;
+  line-height: 17px;
+  letter-spacing: -0.011em;
+  text-transform: uppercase;
+  color: #e1ff20;
+`;
+const Text3 = styled.div`
+  position: absolute;
+  bottom: 38.96px;
+  height: 19px;
+  margin-left: 47.16px;
+  font-family: "Inter";
+  font-weight: 400;
+  font-size: 14.8998px;
+  line-height: 17px;
+  letter-spacing: -0.011em;
+  text-transform: uppercase;
+  color: #e1ff20;
+`;
+const Text4 = styled.div`
+  position: absolute;
+  bottom: 20.33px;
+  height: 19px;
+  margin-left: 47.16px;
+  font-family: "Inter";
+  font-weight: 400;
+  font-size: 14.8998px;
+  line-height: 17px;
+  letter-spacing: -0.011em;
+  text-transform: uppercase;
+  color: #e1ff20;
+`;
+const IoText = styled.div`
+  position: absolute;
+  left: 5px;
+  bottom: 24px;
+  height: 8px;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12.4px;
+  -webkit-transform: scale(0.5); //0.5 -> 50%
+  display: inline-block;
+  line-height: 8px;
+  color: #e1ff20;
 `;
 
 const Main = styled.div`
   display: flex;
   margin: 0 auto;
-  padding-top: 50px;
+  padding-top: 47px;
   padding-bottom: 20px;
 
   max-width: 1030px;
@@ -207,13 +364,15 @@ const Result = styled.div`
   font-weight: 700;
   font-size: 16px;
   line-height: 19px;
-  /* identical to box height */
+
+  color: #121822;
 
   letter-spacing: -0.011em;
   &::after {
     display: block;
     content: "result";
     font-weight: 400;
+    color: #121822;
   }
 
   @media screen and (max-width: 1279px) {
@@ -235,7 +394,7 @@ const ClearButton = styled.button`
   line-height: 16px;
   letter-spacing: -0.011em;
   text-decoration-line: underline;
-  color: #8aa1aa;
+  color: #536c6d;
 
   cursor: pointer;
 `;
@@ -293,7 +452,7 @@ const SortMenu = styled.div`
   font-size: 12px;
   line-height: 14px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   &:last-of-type {
     border: none;
   }

@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { btn_review, ic_favorite_wht, test_thumbnail } from "../assets";
+import {
+  btn_favorite_inact,
+  btn_review,
+  ic_favorite_wht,
+  test_thumbnail,
+} from "../assets";
 import Image from "next/legacy/image";
 import Link from "next/link";
 
@@ -22,7 +27,7 @@ const ProductCard = () => {
 
         <LikeButton onClick={() => setFavoriteIsActive(!favoriteIsActive)}>
           <Image
-            src={favoriteIsActive ? btn_review : ic_favorite_wht}
+            src={favoriteIsActive ? btn_review : btn_favorite_inact}
             alt={"logo_favorite"}
           />
         </LikeButton>
@@ -36,7 +41,8 @@ const ProductCard = () => {
             <Ratio>PA 94%</Ratio>
           </RatioWrapper>
           <PriceUnitWrapper>
-            <Price>$ 8.38/meter</Price>
+            <Price>$ 8.38</Price>
+            <Meter>/meter</Meter>
           </PriceUnitWrapper>
         </InfoWrapper>
       </Link>
@@ -72,7 +78,7 @@ const Soldout = styled.div`
   line-height: 14px;
 
   color: #ffffff;
-  background-color: #ff5c01;
+  background-color: #121822;
 `;
 const LikeButton = styled.div`
   display: flex;
@@ -101,14 +107,14 @@ const ProductTitle = styled.div`
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
-  color: #0a4459;
+  color: #121822;
 `;
 const ProductCategory = styled.div`
   margin-bottom: 7px;
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
-  color: #0a4459;
+  color: #121822;
 `;
 const RatioWrapper = styled.div`
   display: flex;
@@ -139,10 +145,18 @@ const PriceUnitWrapper = styled.div`
 const Price = styled.span`
   font-weight: 700;
   font-size: 14px;
-  line-height: 16px;
+  line-height: 20.8px;
   letter-spacing: -0.011em;
 
-  color: #ff5c01;
+  color: #121822;
+`;
+const Meter = styled.span`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18.2px;
+  letter-spacing: -0.011em;
+
+  color: #a4b0b2;
 `;
 
 export default ProductCard;

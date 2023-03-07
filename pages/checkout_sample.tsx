@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { ic_check_wht, paypal } from "../assets";
-import { CheckOutMeterageProduct } from "../components";
+import { ic_air, ic_check_wht, ic_info, paypal } from "../assets";
+import { CheckOutMeterageProduct, Sample } from "../components";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const useCheck_out = () => {
+const useCheck_out_sample = () => {
   const [deliveryIsChecked, setDeliveryIsChecked] = useState<number>(0);
   const [paymentIsChecked, setPaymentIsChecked] = useState<number>(0);
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -27,7 +27,32 @@ const useCheck_out = () => {
       <Container>
         <Title>Check out</Title>
         <ContentTitle>Product</ContentTitle>
-        <CheckOutMeterageProduct />
+        <SampleContainer>
+          <SampleWrapper>
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+            <Sample />
+          </SampleWrapper>
+          <QtyWrapper>
+            <QtyTitle>Qty</QtyTitle>
+            <Qty>13</Qty>
+          </QtyWrapper>
+          <DottedLine />
+          <SamplePriceWrapper>
+            <Exvat>EX VAT</Exvat>
+            <SamplePrice>$ 4.06(-30%)</SamplePrice>
+          </SamplePriceWrapper>
+        </SampleContainer>
         {/* <ContentTitle>Order Profile</ContentTitle>
         <ContentWrapper>
           <EditButton>Edit</EditButton>
@@ -52,7 +77,12 @@ const useCheck_out = () => {
         </ContentWrapper>
         <ContentTitle>Delivery</ContentTitle>
         <ContentWrapper>
-          <RadioButton type="radio" id="ship" name="delivery" />
+          <DeliveryWrapper>
+            <Image src={ic_air} alt={"air_image"} width={16} height={16} />
+            <DeliveryAirText>By air&nbsp;</DeliveryAirText>
+            <DeliveryFreeText>(Free delivery)</DeliveryFreeText>
+          </DeliveryWrapper>
+          {/* <RadioButton type="radio" id="ship" name="delivery" />
           <RadioLabel
             htmlFor="ship"
             isChecked={deliveryIsChecked}
@@ -102,7 +132,7 @@ const useCheck_out = () => {
             <PickupTimeContent>
               Mon-Fri 10:00-19:00 Closed on Sat, Sun, and public holidays
             </PickupTimeContent>
-          </PickupInfo>
+          </PickupInfo> */}
         </ContentWrapper>
         <ContentTitle>Payment</ContentTitle>
         <ContentWrapper>
@@ -181,6 +211,13 @@ const useCheck_out = () => {
             <TotalTitle>Total</TotalTitle>
             <TotalPrice>$62.25</TotalPrice>
           </FlexWrapper>
+          <InfoText>
+            <Image src={ic_info} alt={"ic_info"} />
+            Customs duties & taxes aren’t included. Please contact customs
+            later&nbsp;
+            <Br />
+            to pay
+          </InfoText>
         </PriceWrapper>
       </Container>
       <Line />
@@ -224,6 +261,70 @@ const Title = styled.div`
     line-height: 26px;
   }
 `;
+const SampleContainer = styled.div`
+  padding-top: 15px;
+  padding-left: 16px;
+  padding-right: 18px;
+  padding-bottom: 15px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+`;
+const SampleWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  row-gap: 9px;
+  column-gap: 9.5px;
+
+  @media screen and (max-width: 767px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    row-gap: 2px;
+    column-gap: 2px;
+  }
+  margin-bottom: 12px;
+`;
+const QtyWrapper = styled.div`
+  margin-bottom: 12px;
+  display: flex;
+  height: 18px;
+  align-items: center;
+  justify-content: space-between;
+`;
+const QtyTitle = styled.div`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: #a4b0b3;
+`;
+const Qty = styled.div`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: #121822;
+`;
+const DottedLine = styled.div`
+  border-bottom: 1px dashed #dee8ec;
+`;
+const SamplePriceWrapper = styled.div`
+  display: flex;
+  margin-top: 12px;
+  align-items: center;
+  justify-content: right;
+`;
+const Exvat = styled.div`
+  margin-right: 6px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 13px;
+  color: #121822;
+`;
+const SamplePrice = styled.div`
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: #ff2f01;
+`;
 const ContentTitle = styled.div`
   display: flex;
   align-items: center;
@@ -246,6 +347,23 @@ const ContentWrapper = styled.div`
   padding: 16px;
   border: 1px solid #dee8ec;
   border-radius: 2px;
+`;
+const DeliveryWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const DeliveryAirText = styled.span`
+  margin-left: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+  color: #121822;
+`;
+const DeliveryFreeText = styled.span`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+  color: #0f697c;
 `;
 const EditButton = styled.button`
   position: absolute;
@@ -451,6 +569,7 @@ const PriceWrapper = styled.div`
   border: 0.79402px solid #dee8ec;
   border-radius: 2px;
 `;
+
 const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -503,6 +622,22 @@ const TotalPrice = styled.div`
   font-size: 14px;
   line-height: 18px;
   color: #ff5c01;
+`;
+const InfoText = styled.div`
+  display: flex;
+  gap: 5.5px;
+  margin-top: 2px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #0f697c;
+`;
+
+const Br = styled.br`
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
 `;
 const ButtonWrapper = styled.div`
   margin: 0 auto;
@@ -579,4 +714,4 @@ const BorderLine = styled.div`
   border-top: 1px solid #dee8ec;
 `;
 
-export default useCheck_out;
+export default useCheck_out_sample;

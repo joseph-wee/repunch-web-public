@@ -338,7 +338,7 @@ const Title = styled.div`
   font-size: 22px;
   line-height: 26px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     margin-left: 8px;
   }
@@ -355,7 +355,7 @@ const ContentTitleBar = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: #0a4459;
+  color: #121822;
 `;
 const Wrapper = styled.div`
   display: flex;
@@ -374,7 +374,7 @@ const InputTitle = styled.div`
   line-height: 14px;
   letter-spacing: 0em;
   text-align: left;
-  color: #0a4459;
+  color: #121822;
 `;
 const InputOptionalText = styled.div`
   display: inline-block;
@@ -384,7 +384,7 @@ const InputOptionalText = styled.div`
   letter-spacing: 0em;
   text-align: left;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Input = styled.input`
   display: inline-block;
@@ -398,7 +398,7 @@ const Input = styled.input`
   font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
 
   &:nth-of-type(2) {
     margin-top: 10px;
@@ -415,7 +415,7 @@ const CheckBoxLabel = styled.label<{ isChecked: boolean }>`
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #0a4459;
+  color: #121822;
 `;
 const Box = styled.div<{ isChecked: boolean; img: string }>`
   margin-right: 8px;
@@ -464,10 +464,10 @@ const Button = styled.button`
   font-weight: 700;
   font-size: 14px;
   line-height: 130%;
-  color: #ffffff;
+  color: #121822;
 
-  background-color: #0a4459;
-  border: 1px solid #dee8ec;
+  background-color: #e1ff20;
+  border: 1px solid #d4f01e;
   border-radius: 2px;
 
   overflow: hidden;
@@ -475,7 +475,8 @@ const Button = styled.button`
 
   &:nth-of-type(1) {
     font-weight: 400;
-    color: #0a4459;
+    color: #121822;
+    border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
     @media screen and (max-width: 767px) {
@@ -495,7 +496,7 @@ const LinkStyling = styled.div`
 
   font-family: "Roboto";
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
   line-height: 130%;
 `;
 const ContentEditTitleBar = styled.div`
@@ -510,7 +511,7 @@ const ContentEditTitleBar = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     margin-bottom: 10px;
   }
@@ -529,7 +530,7 @@ const ContentEditTitleBillingBar = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -546,7 +547,7 @@ const AddAdressButton = styled.button`
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #0a4459;
+  color: #121822;
   cursor: pointer;
 `;
 const ContentWrapper = styled.div`
@@ -570,7 +571,7 @@ const EditButton = styled.button`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: #a4abba;
+  color: #a4b0b3;
   cursor: pointer;
 `;
 const DeleteButton = styled.button`
@@ -586,20 +587,20 @@ const AddressTitle = styled.div`
   font-weight: 700;
   font-size: 14px;
   line-height: 18px;
-  color: #0a4459;
+  color: #121822;
 `;
 const AddressText = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #8aa1aa;
+  color: #a4b0b3;
 `;
 const AddressPhoneNumber = styled.div`
   margin-top: 12px;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #8aa1aa;
+  color: #a4b0b3;
 `;
 
 export default useAddress;

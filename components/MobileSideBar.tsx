@@ -54,7 +54,7 @@ const MenuTitle = styled.div`
   font-size: 14px;
   line-height: 14px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   cursor: pointer;
 `;
 

@@ -267,24 +267,24 @@ const useAccount_detail = () => {
           </Wrapper>
         </InputContainer>
         {/**삭제할것인지 아닌지 체크필요 id와 email 입력이 둘다 email로 받기 때문 */}
-        <InputContainer>
+        {/* <InputContainer>
           <InputTitle>Email</InputTitle>
 
-          <Input
+          <InputEmail
             type="email"
             onChange={(e) => setUserId(e.target.value)}
             value="test"
             disabled
           />
-        </InputContainer>
+        </InputContainer> */}
         <Link href="/edit_account_info" style={{ textDecoration: "none" }}>
-          <EditButton>Edit</EditButton>
+          <EditButton>Edit information</EditButton>
         </Link>
         <Line />
         <InputContainer>
           <InputTitle>ID</InputTitle>
           <InputOptionalText>(Mail Address)</InputOptionalText>
-          <Input
+          <InputEmail
             type="email"
             onChange={(e) => setUserId(e.target.value)}
             value="test"
@@ -312,7 +312,7 @@ const useAccount_detail = () => {
           />
         </InputContainer>
         <Link href="/edit_account_password" style={{ textDecoration: "none" }}>
-          <EditButton>Edit</EditButton>
+          <EditButton>Edit password</EditButton>
         </Link>
       </Main>
     </Container>
@@ -384,7 +384,7 @@ const Title = styled.div`
   font-size: 24px;
   line-height: 28px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     margin-left: 8px;
   }
@@ -409,7 +409,7 @@ const InputTitle = styled.div`
   line-height: 14px;
   letter-spacing: 0em;
   text-align: left;
-  color: #0a4459;
+  color: #121822;
 `;
 
 const InputOptionalText = styled.div`
@@ -420,7 +420,7 @@ const InputOptionalText = styled.div`
   letter-spacing: 0em;
   text-align: left;
 
-  color: #a4abba;
+  color: #a4b0b2;
 `;
 const Input = styled.input`
   display: inline-block;
@@ -434,10 +434,28 @@ const Input = styled.input`
   font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
 
   &:disabled {
     background-color: #ffffff;
+  }
+`;
+const InputEmail = styled.input`
+  display: inline-block;
+  padding-left: 16px;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 400;
+  color: #121822;
+
+  &:disabled {
+    background-color: #f2f6f8;
   }
 `;
 const EditButton = styled.button`
@@ -450,7 +468,7 @@ const EditButton = styled.button`
   font-weight: 700;
   font-size: 14px;
   line-height: 18px;
-  color: #0a4459;
+  color: #121822;
   cursor: pointer;
 `;
 const Line = styled.div`

@@ -9,7 +9,7 @@ import {
 } from "../assets";
 import Image from "next/image";
 
-const useCartMeterageProduct = () => {
+const useCartSampleProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [length, setLength] = useState<string>("1.0");
 
@@ -25,10 +25,10 @@ const useCartMeterageProduct = () => {
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
-          id="test2"
+          id="test"
           onChange={() => setIsChecked(!isChecked)}
         />
-        <Label htmlFor="test2" isChecked={isChecked} img={ic_check_wht.src} />
+        <Label htmlFor="test" isChecked={isChecked} img={ic_check_wht.src} />
         Check to purchase
         <CloseButton>
           <Image src={ic_close} alt={"close_button"} width={18} height={18} />
@@ -40,7 +40,7 @@ const useCartMeterageProduct = () => {
         </ImageWrapper>
         <TextWrapper>
           <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
-          <MeterageOrSample>Meterage</MeterageOrSample>
+          <MeterageOrSample>Sample</MeterageOrSample>
         </TextWrapper>
       </ProductWrapper>
       <Line />
@@ -64,7 +64,7 @@ const useCartMeterageProduct = () => {
       <Line />
       <PriceWrapper>
         <Exvat>EX VAT</Exvat>
-        <Price>$ 4.06</Price>
+        <Price>$ 4.06(-30%)</Price>
       </PriceWrapper>
     </Container>
   );
@@ -74,6 +74,9 @@ const Container = styled.div`
   margin-bottom: 10px;
   border: 1px solid #dee8ec;
   border-radius: 2px;
+  @media screen and (max-width: 767px) {
+    margin-bottom: 20px;
+  }
 `;
 const CheckCancelWrapper = styled.div`
   display: flex;
@@ -186,7 +189,7 @@ const LengthTitle = styled.div`
 
   letter-spacing: -0.011em;
 
-  color: #121822;
+  color: #0a4459;
 `;
 const ButtonInputWrapper = styled.div`
   display: flex;
@@ -252,7 +255,7 @@ const Price = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #121822;
+  color: #ff2f01;
 `;
 
-export default useCartMeterageProduct;
+export default useCartSampleProduct;

@@ -76,7 +76,7 @@ const Container = styled.nav<{ isActive: boolean }>`
   }};
   align-items: center;
   box-sizing: border-box;
-  height: 80px;
+  height: 64px;
 
   background-color: #ffffff;
   border-bottom: 1px solid #f2f6f8;
@@ -98,7 +98,7 @@ const Menu = styled.li`
   letter-spacing: -0.011em;
   text-align: left;
 
-  color: #0a4459;
+  color: #000000;
 `;
 
 export default useNavTopBar;

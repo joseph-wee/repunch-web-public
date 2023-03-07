@@ -31,6 +31,25 @@ const useLost_password = () => {
           </Button>
           <Button onClick={() => setIsActive(true)}>Confirm</Button>
         </Wrapper>
+        <InfoMessage>
+          By Apply(sign up as a member), you agree to our
+          <br />
+          <Link
+            href="/term_of_service"
+            target="_blank"
+            style={{ textDecoration: "none" }}
+          >
+            <LinkStyle>Terms of Service</LinkStyle>
+          </Link>
+          &nbsp;and&nbsp;
+          <Link
+            href="/term_of_service"
+            target="_blank"
+            style={{ textDecoration: "none" }}
+          >
+            <LinkStyle>Privacy Policy.</LinkStyle>
+          </Link>
+        </InfoMessage>
       </ContainerFindId>
       <ContainerYourPassword isActive={isActive}>
         <TitleYourPassword>
@@ -63,7 +82,7 @@ const ContainerFindId = styled.div<{ isActive: boolean }>`
   padding-bottom: 40px;
   max-width: 427.75px;
 
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     padding-left: 20px;
     padding-right: 20px;
@@ -95,7 +114,7 @@ const WelcomeText = styled.div`
   font-weight: 300;
   font-size: 12px;
   line-height: 100%;
-  color: #a4abba;
+  color: #536c6d;
 
   font-family: "Roboto";
   font-size: 12px;
@@ -108,10 +127,6 @@ const Wrapper = styled.div`
 const InputContainer = styled.div`
   margin-bottom: 20px;
   width: 100%;
-
-  &:nth-of-type(1) {
-    margin-right: 10px;
-  }
 `;
 const InputTitle = styled.div`
   display: inline-block;
@@ -136,6 +151,7 @@ const Input = styled.input`
   font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
+  color: #121822;
 `;
 
 const Button = styled.button`
@@ -152,10 +168,10 @@ const Button = styled.button`
   font-weight: 700;
   font-size: 14px;
   line-height: 130%;
-  color: #ffffff;
+  color: #121822;
 
-  background-color: #0a4459;
-  border: 1px solid #dee8ec;
+  background-color: #e1ff20;
+  border: 1px solid #d4f01e;
   border-radius: 2px;
 
   overflow: hidden;
@@ -164,8 +180,9 @@ const Button = styled.button`
   &:nth-of-type(1) {
     margin-right: 12px;
     font-weight: 400;
-    color: #0a4459;
+    color: #121822;
     background-color: #f2f6f8;
+    border: 1px solid #dee8ec;
 
     @media screen and (max-width: 767px) {
       margin-right: 11px;
@@ -186,6 +203,31 @@ const LinkStyling = styled.div`
   font-weight: 400;
   color: #0a4459;
   line-height: 130%;
+`;
+
+const InfoMessage = styled.div`
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  text-align: center;
+
+  color: #a4abba;
+`;
+
+const LinkStyle = styled.span`
+  display: inline-block;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #a4abba;
+  border-bottom: 0.7px solid #a4abba;
+  box-sizing: border-box;
+  height: 14px;
 `;
 
 const ContainerYourPassword = styled.div<{ isActive: boolean }>`
@@ -212,6 +254,7 @@ const TitleYourPassword = styled.div`
   font-weight: 700;
   line-height: 29px;
   letter-spacing: 0em;
+  color: #121822;
 `;
 
 const TextInform = styled.div`
@@ -222,7 +265,7 @@ const TextInform = styled.div`
 
   text-align: center;
 
-  color: #8aa1aa;
+  color: #536c6d;
 `;
 const EmailRepunch = styled.div`
   margin-bottom: 40px;
@@ -233,7 +276,7 @@ const EmailRepunch = styled.div`
   text-align: center;
   text-decoration-line: underline;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const ButtonHome = styled.button`
   display: flex;
@@ -251,12 +294,12 @@ const ButtonHome = styled.button`
   font-weight: 700;
   line-height: 18px;
 
-  color: #ffffff;
+  color: #121822;
 
   overflow: hidden;
 
-  background-color: #1eab92;
-  border: none;
+  background-color: #0f697c;
+  border: 0.79402px solid #d4f01e;
   border-radius: 2px;
 
   cursor: pointer;

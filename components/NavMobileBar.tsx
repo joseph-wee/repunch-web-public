@@ -23,7 +23,7 @@ const NavMobileBar = ({
             <Link
               onClick={() => setIsActive(false)}
               href="/new_arrivals"
-              style={{ textDecoration: "none", color: "#FFFFFF" }}
+              style={{ textDecoration: "none", color: "#121822" }}
             >
               New Arrivals
             </Link>
@@ -32,7 +32,7 @@ const NavMobileBar = ({
             <Link
               onClick={() => setIsActive(false)}
               href="/shop_fabrics"
-              style={{ textDecoration: "none", color: "#FFFFFF" }}
+              style={{ textDecoration: "none", color: "#121822" }}
             >
               Shop fabric
             </Link>
@@ -41,7 +41,7 @@ const NavMobileBar = ({
             <Link
               onClick={() => setIsActive(false)}
               href="/shop_supplies"
-              style={{ textDecoration: "none", color: "#FFFFFF" }}
+              style={{ textDecoration: "none", color: "#121822" }}
             >
               Shop supplies
             </Link>
@@ -50,7 +50,7 @@ const NavMobileBar = ({
             <Link
               onClick={() => setIsActive(false)}
               href="/shop_project"
-              style={{ textDecoration: "none", color: "#FFFFFF" }}
+              style={{ textDecoration: "none", color: "#121822" }}
             >
               Shop by project
             </Link>
@@ -59,7 +59,7 @@ const NavMobileBar = ({
             <Link
               onClick={() => setIsActive(false)}
               href="/about_us"
-              style={{ textDecoration: "none", color: "#FFFFFF" }}
+              style={{ textDecoration: "none", color: "#121822" }}
             >
               New Arrivals
             </Link>
@@ -90,7 +90,7 @@ const NavMobileBar = ({
               <Link
                 onClick={() => setIsActive(false)}
                 href="/login"
-                style={{ textDecoration: "none", color: "#FFFFFF" }}
+                style={{ textDecoration: "none", color: "#121822" }}
               >
                 <LinkBox>Log in</LinkBox>
               </Link>
@@ -101,7 +101,7 @@ const NavMobileBar = ({
               <Link
                 onClick={() => setIsActive(false)}
                 href="/register"
-                style={{ textDecoration: "none", color: "#FFFFFF" }}
+                style={{ textDecoration: "none", color: "#121822" }}
               >
                 <LinkBox>Sign in</LinkBox>
               </Link>
@@ -110,7 +110,7 @@ const NavMobileBar = ({
               <Link
                 onClick={() => setIsActive(false)}
                 href="/"
-                style={{ textDecoration: "none", color: "#FFFFFF" }}
+                style={{ textDecoration: "none", color: "#121822" }}
               >
                 <LinkBox>Logout</LinkBox>
               </Link>
@@ -148,7 +148,9 @@ const Container = styled.nav<{ isActive: boolean }>`
   box-sizing: border-box;
   width: 100%;
   height: 478px;
-  background-color: #ff5c01;
+  background-color: #e1ff20;
+
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 `;
 
 const MenuWrapper = styled.ul``;
@@ -156,12 +158,11 @@ const Menu = styled.li`
   display: flex;
   height: 62px;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   box-sizing: border-box;
 
   font-weight: 400;
   font-size: 16px;
-  color: #ffffff;
+  color: #121822; ;
 `;
 const MenuButtonWrapper = styled.nav`
   position: absolute;
@@ -189,7 +190,7 @@ const MenuButton = styled.div<{ isActive: boolean }>`
   font-size: 16px;
   text-align: right;
   line-height: 24px;
-  color: #ffffff;
+  color: #121822;
 
   cursor: pointer;
 
@@ -208,7 +209,7 @@ const LogoutButton = styled.div<{ isActive: boolean }>`
   font-size: 16px;
   text-align: right;
   line-height: 24px;
-  color: #ffffff;
+  color: #121822;
 
   cursor: pointer;
 `;
@@ -224,7 +225,7 @@ const Circle = styled.div<{ isActive: boolean }>`
   width: 4px;
   height: 4px;
   border-radius: 100%;
-  background: rgba(255, 255, 255, 0.36);
+  background-color: #121822;
 `;
 
 export default NavMobileBar;

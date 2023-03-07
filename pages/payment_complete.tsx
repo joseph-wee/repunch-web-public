@@ -30,7 +30,7 @@ const Container = styled.div`
   padding-bottom: 60px;
   max-width: 427px;
 
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     padding-left: 20px;
     padding-right: 20px;
@@ -45,7 +45,7 @@ const MainText = styled.div`
   font-size: 22px;
   line-height: 29px;
   text-align: center;
-  color: #0a4459;
+  color: #121822;
 `;
 const InformText = styled.div`
   margin-bottom: 6px;
@@ -53,7 +53,7 @@ const InformText = styled.div`
   font-size: 11px;
   line-height: 14px;
   text-align: center;
-  color: #8aa1aa;
+  color: #536c6d;
 `;
 const EmailRepunch = styled.div`
   margin-bottom: 40px;
@@ -62,7 +62,7 @@ const EmailRepunch = styled.div`
   line-height: 13px;
   text-align: center;
   text-decoration-line: underline;
-  color: #0a4459;
+  color: #121822;
 `;
 const ButtonHome = styled.button`
   display: block;
@@ -74,9 +74,9 @@ const ButtonHome = styled.button`
   font-size: 14px;
   font-weight: 700;
   line-height: 18px;
-  color: #ffffff;
-  background-color: #1eab92;
-  border: none;
+  color: #121822;
+  background-color: #e1ff20;
+  border: 1px solid #d4f01e;
   border-radius: 2px;
   cursor: pointer;
 `;

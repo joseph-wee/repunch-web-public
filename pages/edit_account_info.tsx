@@ -202,7 +202,7 @@ const useEdit_account_info = () => {
           <ImageWrapper onClick={() => goBack()}>
             <Image src={btn_web_back} alt={"btn_web_back"} />
           </ImageWrapper>
-          <Title>Account detail</Title>
+          <Title>Edit information</Title>
         </TitleWrapper>
         <Line />
         <Wrapper>
@@ -283,9 +283,7 @@ const useEdit_account_info = () => {
             </Link>
           </Button>
 
-          <Button onClick={() => router.push("/account_detail")}>
-            Confirm
-          </Button>
+          <Button onClick={() => router.push("/account_detail")}>Done</Button>
         </ButtonWrapper>
       </Main>
     </Container>
@@ -353,7 +351,7 @@ const Title = styled.div`
   font-size: 24px;
   line-height: 26px;
   letter-spacing: -0.011em;
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     font-size: 22px;
     line-height: 26px;
@@ -432,10 +430,10 @@ const Button = styled.button`
   font-weight: 700;
   font-size: 14px;
   line-height: 130%;
-  color: #ffffff;
+  color: #121822;
 
-  background-color: #0a4459;
-  border: 1px solid #dee8ec;
+  background-color: #e1ff20;
+  border: 1px solid #d4f01e;
   border-radius: 2px;
 
   overflow: hidden;
@@ -443,7 +441,8 @@ const Button = styled.button`
 
   &:nth-of-type(1) {
     font-weight: 400;
-    color: #0a4459;
+    color: #121822;
+    border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
     @media screen and (max-width: 767px) {
@@ -463,7 +462,7 @@ const LinkStyling = styled.div`
 
   font-family: "Roboto";
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
   line-height: 130%;
 `;
 

@@ -15,7 +15,7 @@ const useLogin = () => {
   const [userId, setUserId] = useState<string>("");
   const [password, setPaswword] = useState<string>("");
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(false);
+  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(true);
   const [popUpIsActive, setPopUpIsActive] = useState<boolean>(false);
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
 
@@ -101,9 +101,9 @@ const useLogin = () => {
             onChange={() => setIsChecked(!isChecked)}
           />
           Remember
-          <Link href="/lost_id" style={{ textDecoration: "none" }}>
+          {/* <Link href="/lost_id" style={{ textDecoration: "none" }}>
             <LinkStyling1>Lost ID</LinkStyling1>
-          </Link>
+          </Link> */}
           <Link href="/lost_password" style={{ textDecoration: "none" }}>
             <LinkStyling2>Lost Password? </LinkStyling2>
           </Link>
@@ -141,9 +141,9 @@ const useLogin = () => {
               <br />
               authentication process.
             </AuthText>
-            <AuthButton onClick={() => authConfirmHandler(userId, password)}>
+            {/* <AuthButton onClick={() => authConfirmHandler(userId, password)}>
               Confirm
-            </AuthButton>
+            </AuthButton> */}
           </ConfirmWrapper>
         </AuthWrapper>
         <TextInform>
@@ -175,7 +175,7 @@ const Container = styled.div<{ isActive: boolean }>`
   padding-bottom: 40px;
   max-width: 427px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Title = styled.div`
   margin-bottom: 4px;
@@ -184,6 +184,7 @@ const Title = styled.div`
   line-height: 29px;
   letter-spacing: 0em;
   text-align: left;
+  color: #121822;
 `;
 const WelcomeText = styled.div`
   margin-bottom: 20px;
@@ -193,7 +194,7 @@ const WelcomeText = styled.div`
   font-weight: 300;
   font-size: 12px;
   line-height: 100%;
-  color: #a4abba;
+  color: #a4b0b2;
 `;
 
 const InputContainer = styled.div`
@@ -213,6 +214,7 @@ const InputTitle = styled.div`
   line-height: 14px;
   letter-spacing: 0em;
   text-align: left;
+  color: #121822;
 `;
 
 const Input = styled.input`
@@ -227,6 +229,7 @@ const Input = styled.input`
   font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
+  color: #121822;
 `;
 const Wrapper = styled.div`
   display: flex;
@@ -255,7 +258,7 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   border-radius: 2.66667px;
 
   background-color: ${(props) => {
-    return props.isChecked == true ? "#FF5C01" : "#FFFFFF";
+    return props.isChecked == true ? "#121822" : "#FFFFFF";
   }};
 
   background-image: url(${(props) => {
@@ -291,7 +294,7 @@ const LinkStyling2 = styled.span`
   font-weight: 400;
   line-height: 14px;
 
-  color: #0a4459;
+  color: #121822;
   text-decoration-line: underline;
 `;
 
@@ -310,10 +313,10 @@ const Button = styled.button`
   font-weight: 700;
   line-height: 18px;
 
-  color: #ffffff;
+  color: #121822;
 
-  background-color: #0a4459;
-  border: none;
+  background-color: #e1ff20;
+  border: 0.79402px solid #d4f01e;
   border-radius: 2px;
 
   cursor: pointer;
@@ -332,7 +335,7 @@ const RegisterTitle = styled.div`
   margin-bottom: 6px;
   font-weight: 700;
   font-size: 14px;
-  color: #0a4459;
+  color: #121822;
 `;
 const Text = styled.div`
   margin-bottom: 24px;
@@ -340,7 +343,7 @@ const Text = styled.div`
   font-weight: 400;
   font-size: 11px;
   line-height: 130%;
-  color: #8aa1aa;
+  color: #536c6d;
 `;
 
 const ButtonRegister = styled.button`
@@ -361,7 +364,7 @@ const ButtonRegister = styled.button`
 
   overflow: hidden;
 
-  background-color: #1eab92;
+  background-color: #121822;
   border: none;
   border-radius: 2px;
 `;
@@ -418,7 +421,7 @@ const AuthTitle = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Name = styled.div`
   display: flex;
@@ -429,7 +432,7 @@ const Name = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #1eab92;
+  color: #0f697c;
 `;
 const ConfirmWrapper = styled.div`
   padding-top: 16px;
@@ -448,7 +451,7 @@ const Id = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 const Email = styled.div`
   display: flex;
@@ -459,16 +462,15 @@ const Email = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #ff5c01;
+  color: #ff2f01;
 `;
 const AuthText = styled.div`
-  margin-bottom: 12px;
   text-align: center;
   font-weight: 400;
   font-size: 10px;
   line-height: 13px;
 
-  color: #0a4459;
+  color: #121822;
 `;
 
 const AuthButton = styled.button`
@@ -506,7 +508,7 @@ const TextInform = styled.div`
 
   text-align: center;
 
-  color: #8aa1aa;
+  color: #536c6d;
 `;
 const EmailRepunch = styled.div`
   font-weight: 400;
@@ -516,7 +518,7 @@ const EmailRepunch = styled.div`
   text-align: center;
   text-decoration-line: underline;
 
-  color: #0a4459;
+  color: #121822;
 `;
 
 export default useLogin;

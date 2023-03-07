@@ -14,10 +14,10 @@ const usePassword_reset = () => {
     <>
       <Container>
         <Title>Password reset</Title>
-        <InformText>
+        {/* <InformText>
           The temporary password can’t be used continuously. Please register and
           use the new password.
-        </InformText>
+        </InformText> */}
         <Wrapper>
           <InputContainer>
             <InputTitle>New password</InputTitle>
@@ -70,23 +70,19 @@ const Container = styled.div`
   padding-bottom: 40px;
   max-width: 427.75px;
 
-  color: #0a4459;
+  color: #121822;
   @media screen and (max-width: 767px) {
     padding-left: 20px;
     padding-right: 20px;
   }
 `;
 const Title = styled.div`
-  margin-bottom: 2px;
+  margin-bottom: 20px;
   font-size: 22px;
   font-weight: 700;
   line-height: 29px;
   letter-spacing: 0em;
   text-align: left;
-
-  @media screen and (max-width: 767px) {
-    margin-bottom: 4px;
-  }
 `;
 const InformText = styled.div`
   top: 28px;
@@ -111,20 +107,16 @@ const Wrapper = styled.div`
 const InputContainer = styled.div`
   margin-bottom: 20px;
   width: 100%;
-
-  &:nth-of-type(1) {
-    margin-right: 10px;
-  }
 `;
 const InputTitle = styled.div`
   display: inline-block;
-  margin-right: 3.8px;
-  margin-bottom: 10px;
+  margin-bottom: 7px;
   font-size: 11px;
   font-weight: 400;
   line-height: 14px;
   letter-spacing: 0em;
   text-align: left;
+  color: #121822;
 `;
 
 const Input = styled.input`
@@ -139,6 +131,8 @@ const Input = styled.input`
   font-family: Roboto;
   font-size: 14px;
   font-weight: 400;
+
+  color: #121822;
 `;
 
 const Button = styled.button`
@@ -153,11 +147,11 @@ const Button = styled.button`
   font-family: "Roboto";
   font-weight: 700;
   font-size: 14px;
-  line-height: 130%;
-  color: #ffffff;
+  line-height: 18px;
+  color: #121822;
 
-  background-color: #0a4459;
-  border: 1px solid #dee8ec;
+  background-color: #e1ff20;
+  border: 1px solid #d4f01e;
   border-radius: 2px;
 
   overflow: hidden;
@@ -166,7 +160,8 @@ const Button = styled.button`
   &:nth-of-type(1) {
     margin-right: 12px;
     font-weight: 400;
-    color: #0a4459;
+    color: #121822;
+    border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
     @media screen and (max-width: 767px) {
@@ -186,7 +181,7 @@ const LinkStyling = styled.div`
 
   font-family: "Roboto";
   font-weight: 400;
-  color: #0a4459;
+  color: #121822;
   line-height: 130%;
 `;
 
@@ -194,7 +189,7 @@ const PopUpBox = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
     return props.isActive == true ? "flex" : "none";
   }};
-  z-index: 2;
+  z-index: 3;
   position: fixed;
   top: 0;
   align-items: center;
@@ -217,7 +212,7 @@ const PopUpTitle = styled.div`
   font-weight: 700;
   font-size: 14px;
   line-height: 18px;
-  color: #0a4459;
+  color: #121822;
 `;
 const ButtonWrapper = styled.div`
   display: flex;
@@ -228,14 +223,14 @@ const ButtonWrapper = styled.div`
 const PopUpButton = styled.button`
   width: 263.25px;
   height: 36px;
-  background-color: #1eab92;
-  border: none;
+  background-color: #e1ff20;
+  border: 0.79402px solid #d4f01e;
   border-radius: 2px;
   box-sizing: border-box;
   font-weight: 700;
   font-size: 14px;
   line-height: 18px;
-  color: #ffffff;
+  color: #121822;
   cursor: pointer;
 `;
 
