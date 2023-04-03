@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_KEY;
+// axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_KEY;
+axios.defaults.baseURL = "http://test.api.repunch.io/v1";
 
 /** 회원가입 요청 api */
 export const signupRequest = async (
