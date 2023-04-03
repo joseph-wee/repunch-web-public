@@ -73,6 +73,13 @@ const useLogin = () => {
     }
   };
 
+  /** 엔터키 입력시 로그인 */
+  const enterHandler = (e: any) => {
+    if (e.key === "Enter") {
+      loginRequestHandler(userId, password);
+    }
+  };
+
   // useEffect(() => {
   //   console.log(isChecked);
   //   console.log(ic_check_wht.src);
@@ -86,7 +93,11 @@ const useLogin = () => {
 
         <InputContainer>
           <InputTitle>ID (Mail address)</InputTitle>
-          <Input type="text" onChange={(e) => setUserId(e.target.value)} />
+          <Input
+            type="text"
+            onChange={(e) => setUserId(e.target.value)}
+            onKeyDown={(e) => enterHandler(e)}
+          />
           <ErrorCase isActive={idValidation}>ErrorCase</ErrorCase>
         </InputContainer>
         <InputContainer>
@@ -94,6 +105,7 @@ const useLogin = () => {
           <Input
             type="password"
             onChange={(e) => setPaswword(e.target.value)}
+            onKeyDown={(e) => enterHandler(e)}
           />
           <ErrorCase isActive={pwValidation}>ErrorCase</ErrorCase>
         </InputContainer>
