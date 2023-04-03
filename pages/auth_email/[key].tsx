@@ -13,7 +13,7 @@ const useKey = () => {
       if (Boolean(res?.data)) {
         if (res?.data.status == 200) {
           setMessage("complete");
-          router.push("/");
+          router.push("/login");
           return;
         }
         if (res?.data.status == 500) {
