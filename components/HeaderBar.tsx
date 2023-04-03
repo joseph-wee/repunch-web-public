@@ -14,9 +14,18 @@ import {
 import Link from "next/link";
 import NavTopBar from "./NavTopBar";
 import NavMobileBar from "./NavMobileBar";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { login } from "../features/login/loginSlice";
 
 const useHeaderBar = () => {
   const [isActive, setIsActive] = useState<boolean>(false);
+  const { value: isLogin } = useAppSelector((state) => state.isLogin);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    sessionStorage.getItem("rt") ? dispatch(login()) : "";
+  }, []);
 
   return (
     <>
