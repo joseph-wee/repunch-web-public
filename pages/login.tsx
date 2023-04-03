@@ -105,9 +105,9 @@ const useLogin = () => {
             onChange={() => setIsChecked(!isChecked)}
           />
           Remember
-          <Link href="/lost_id" style={{ textDecoration: "none" }}>
+          {/* <Link href="/lost_id" style={{ textDecoration: "none" }}>
             <LinkStyling1>Lost ID</LinkStyling1>
-          </Link>
+          </Link> */}
           <Link href="/lost_password" style={{ textDecoration: "none" }}>
             <LinkStyling2>Lost Password? </LinkStyling2>
           </Link>
