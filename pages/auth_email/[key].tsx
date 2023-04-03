@@ -12,11 +12,13 @@ const useKey = () => {
     authEmailRequest(router.query.key).then((res) => {
       if (Boolean(res?.data)) {
         if (res?.data.status == 200) {
-          setMessage("인증이 완료 되었습니다.");
+          setMessage("complete");
+          router.push("/");
           return;
         }
         if (res?.data.status == 500) {
           setMessage(res?.data.message);
+          router.push("/");
           return;
         }
       }
