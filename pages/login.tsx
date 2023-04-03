@@ -10,65 +10,67 @@ import { loginRequest } from "../utils/api";
 import { PopUp } from "../components";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../features/login/loginSlice";
+import { userIdValidation } from "../utils/functions";
 
 const useLogin = () => {
-  const [userId, setUserId] = useState<string>("");
-  const [password, setPaswword] = useState<string>("");
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string>(""); // id
+  const [password, setPaswword] = useState<string>(""); // pw
+  const [isChecked, setIsChecked] = useState<boolean>(false); //체크박스
+  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(true);
   const [popUpIsActive, setPopUpIsActive] = useState<boolean>(false);
+  const [idValidation, setIdValidation] = useState<number>(0);
+  const [pwValidation, setPwValidation] = useState<number>(0);
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  // /**값 비어있는지 검사 후에 로그인 요청 api 호출 */
-  // const loginApiRequestHandler = () => {
-  //   if (userId.length == 0) {
-  //     alert("값을 모두 채워주세요");
-  //   } else if (password.length == 0) {
-  //     alert("값을 모두 채워주세요");
-  //   } else {
-  //     // loginApiRequest();
-  //     router.push("/authentication");
-  //   }
-  // };
+  /** id 유효성 검사 */
+  const idValidationCheck = () => {
+    let regexp = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/; // 이메일 유효성
+    if (userId.length > 0 && userId.length < 50 && regexp.test(userId)) {
+      setIdValidation(1);
+      return true;
+    } else {
+      setIdValidation(2);
+      return false;
+    }
+  };
+
+  /** pw 유효성 검사 */
+  const pwValidationCheck = () => {
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/;
+
+    if (password.length > 0 && password.length < 50 && regexp.test(password)) {
+      setPwValidation(1);
+      return true;
+    } else {
+      setPwValidation(2);
+      return false;
+    }
+  };
 
   /** 로그인 api 요청후 결과에 따라 액션 */
   const loginRequestHandler = (userId: string, password: string) => {
-    loginRequest(userId, password).then((res) => {
-      if (Boolean(res?.data)) {
-        if (res?.data.status == 200) {
-          alert("로그인 성공하였습니다.(임시 메세지)");
-          dispatch(login());
-          sessionStorage.setItem("at", res.data.result.access_token);
-          sessionStorage.setItem("rt", res.data.result.refresh_token);
-          router.push("/");
-        } else if (res?.data.status == 401) {
-          alert("로그인에 실패하였습니다.(임시 메세지)");
-        }
-      } else if (res?.response.data.status == 403) {
-        setAuthPageIsActive(true);
-      }
-    });
-  };
+    let idValidationValue = idValidationCheck();
+    let pwValidationValue = pwValidationCheck();
 
-  /** 인증 확인버튼 클릭 시 확인 유무에따라 팝업 혹은 페이지 이동 */
-  const authConfirmHandler = (userId: string, password: string) => {
-    loginRequest(userId, password).then((res) => {
-      if (Boolean(res?.data)) {
-        if (res?.data.status == 200) {
-          sessionStorage.setItem("at", res.data.result.access_token);
-          sessionStorage.setItem("rt", res.data.result.refresh_token);
-          dispatch(login());
-          router.push("/");
-        } else if (res?.data.status == 401) {
-          // 무슨 에러 처리를 해야할까?
+    if (idValidationValue && pwValidationValue) {
+      loginRequest(userId, password).then((res) => {
+        if (Boolean(res?.data)) {
+          if (res?.data.status == 200) {
+            dispatch(login());
+            sessionStorage.setItem("at", res.data.result.access_token);
+            sessionStorage.setItem("rt", res.data.result.refresh_token);
+            router.push("/");
+          } else if (res?.data.status == 401) {
+            setPwValidation(2);
+          }
+        } else if (res?.response.data.status == 403) {
+          setAuthPageIsActive(true);
         }
-      } else if (res?.response.data.status == 403) {
-        setPopUpIsActive(true);
-      }
-    });
+      });
+    }
   };
 
   // useEffect(() => {
@@ -85,6 +87,7 @@ const useLogin = () => {
         <InputContainer>
           <InputTitle>ID (Mail address)</InputTitle>
           <Input type="text" onChange={(e) => setUserId(e.target.value)} />
+          <ErrorCase isActive={idValidation}>ErrorCase</ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password</InputTitle>
@@ -92,6 +95,7 @@ const useLogin = () => {
             type="password"
             onChange={(e) => setPaswword(e.target.value)}
           />
+          <ErrorCase isActive={pwValidation}>ErrorCase</ErrorCase>
         </InputContainer>
         <Wrapper>
           <Label htmlFor="test" isChecked={isChecked} img={ic_check_wht.src} />
@@ -127,24 +131,22 @@ const useLogin = () => {
       </Container>
       <AuthContainer isActive={authPageIsActive}>
         <AuthWrapper>
-          <AuthTitle>Repunch</AuthTitle>
-          <Name>J Kim</Name>
-          <ConfirmWrapper>
-            <Id>ID (E-mail)</Id>
-            <Email>{userId}</Email>
-            <AuthText>
-              An authentication email has been sent to
-              <br />
-              your email address.
-              <br />
-              You can use all services freely after the
-              <br />
-              authentication process.
-            </AuthText>
-            {/* <AuthButton onClick={() => authConfirmHandler(userId, password)}>
-              Confirm
-            </AuthButton> */}
-          </ConfirmWrapper>
+          {/* <AuthTitle>Repunch</AuthTitle>
+          <Name>J Kim</Name> */}
+          {/* <ConfirmWrapper> */}
+          <Id>ID (E-mail)</Id>
+          <Email>{userId}</Email>
+          <AuthText>
+            An authentication email has been sent to
+            <br />
+            your email address.
+            <br />
+            You can use all services freely after the
+            <br />
+            authentication process.
+          </AuthText>
+          <AuthButton onClick={() => router.push("/")}>Home</AuthButton>
+          {/* </ConfirmWrapper> */}
         </AuthWrapper>
         <TextInform>
           If you entered the wrong email address, please
@@ -230,6 +232,23 @@ const Input = styled.input`
   font-size: 14px;
   font-weight: 400;
   color: #121822;
+`;
+const ErrorCase = styled.div<{ isActive: number }>`
+  visibility: ${(props) => {
+    return props.isActive == 2 ? "visible" : "hidden";
+  }};
+  margin-top: 10px;
+  height: ${(props) => {
+    return props.isActive == 0 || props.isActive == 1 ? "0px" : "";
+  }};
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  color: #ff5c01;
+`;
+const Line = styled.div`
+  margin-bottom: 20px;
+  border-top: 1px dashed #dee8ec;
 `;
 const Wrapper = styled.div`
   display: flex;
@@ -399,8 +418,8 @@ const AuthContainer = styled.div<{ isActive: boolean }>`
 const AuthWrapper = styled.div`
   margin: 0 auto;
   margin-bottom: 29px;
-  padding-top: 15px;
-  padding-bottom: 20px;
+  padding-top: 47px;
+  padding-bottom: 26px;
   padding-right: 20px;
   padding-left: 20px;
   background-color: #f2f6f8;
@@ -476,6 +495,7 @@ const AuthText = styled.div`
 const AuthButton = styled.button`
   display: flex;
   margin: 0 auto;
+  margin-top: 12px;
   width: 180px;
   height: 40px;
 
@@ -489,12 +509,12 @@ const AuthButton = styled.button`
   font-weight: 700;
   line-height: 18px;
 
-  color: #ffffff;
+  color: #121822;
 
   overflow: hidden;
 
-  background-color: #1eab92;
-  border: none;
+  background-color: #e1ff20;
+  border: 1px solid #d4f01e;
   border-radius: 2px;
 
   cursor: pointer;
