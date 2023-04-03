@@ -2,9 +2,22 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import styled from "styled-components";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { logout } from "../features/login/loginSlice";
 
 const MobileSideBar = () => {
   const router = useRouter();
+
+  const { value: isLogin } = useAppSelector((state) => state.isLogin);
+
+  const dispatch = useAppDispatch();
+
+  const logoutHandler = () => {
+    sessionStorage.clear();
+    dispatch(logout());
+    router.push("/");
+  };
+
   return (
     <Container>
       <Line />
@@ -32,7 +45,7 @@ const MobileSideBar = () => {
         <MenuTitle>Account Detail</MenuTitle>
       </Link>
       <Line />
-      <MenuTitle onClick={() => router.push("/home")}>Logout</MenuTitle>
+      <MenuTitle onClick={() => logoutHandler()}>Logout</MenuTitle>
     </Container>
   );
 };

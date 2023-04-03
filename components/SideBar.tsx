@@ -4,6 +4,8 @@ import styled from "styled-components";
 import Link from "next/link";
 import Image from "next/image";
 import { ic_nav_indi } from "../assets";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { logout } from "../features/login/loginSlice";
 
 const useSideBar = () => {
   const router = useRouter();
@@ -15,6 +17,16 @@ const useSideBar = () => {
   const addressPathCheck = () => {
     console.log(router.pathname);
     return router.pathname.includes("address");
+  };
+
+  const { value: isLogin } = useAppSelector((state) => state.isLogin);
+
+  const dispatch = useAppDispatch();
+
+  const logoutHandler = () => {
+    sessionStorage.clear();
+    dispatch(logout());
+    router.push("/");
   };
 
   return (
@@ -76,7 +88,11 @@ const useSideBar = () => {
         </Menu>
       </Link>
       {/**로그아웃 기능 추가하기 */}
-      <Link href="/" style={{ textDecoration: "none" }}>
+      <Link
+        onClick={() => logoutHandler()}
+        href="/"
+        style={{ textDecoration: "none" }}
+      >
         <LogoutMenu>Logout</LogoutMenu>
       </Link>
     </Container>

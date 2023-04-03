@@ -3,7 +3,8 @@ import styled from "styled-components";
 import Link from "next/link";
 import Image from "next/image";
 import { ic_cart_wht, ic_favorite_wht } from "../assets";
-import { useAppSelector } from "../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { logout } from "../features/login/loginSlice";
 
 const NavMobileBar = ({
   isActive,
@@ -13,6 +14,14 @@ const NavMobileBar = ({
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
+
+  const dispatch = useAppDispatch();
+
+  const logoutHandler = () => {
+    location.reload();
+    sessionStorage.clear();
+    dispatch(logout);
+  };
 
   return (
     <>
@@ -108,7 +117,10 @@ const NavMobileBar = ({
             </MenuButton>
             <LogoutButton isActive={isLogin}>
               <Link
-                onClick={() => setIsActive(false)}
+                onClick={() => {
+                  setIsActive(false);
+                  logoutHandler();
+                }}
                 href="/"
                 style={{ textDecoration: "none", color: "#121822" }}
               >
