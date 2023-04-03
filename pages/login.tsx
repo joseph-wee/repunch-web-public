@@ -16,7 +16,7 @@ const useLogin = () => {
   const [userId, setUserId] = useState<string>(""); // id
   const [password, setPaswword] = useState<string>(""); // pw
   const [isChecked, setIsChecked] = useState<boolean>(false); //체크박스
-  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(true);
+  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(false);
   const [popUpIsActive, setPopUpIsActive] = useState<boolean>(false);
   const [idValidation, setIdValidation] = useState<number>(0);
   const [pwValidation, setPwValidation] = useState<number>(0);
