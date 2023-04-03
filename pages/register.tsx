@@ -146,21 +146,162 @@ const useRegister = () => {
     setPhoneNumber(onlyNumber);
   };
 
+  /** 인증 확인버튼 클릭 시 확인 유무에따라 팝업 혹은 페이지 이동 */
+  const authConfirmHandler = (userId: string, password: string) => {
+    // loginRequest(userId, password).then((res) => {
+    //   if (Boolean(res?.data)) {
+    //     if (res?.data.status == 200) {
+    //       // 200 안뜨긴 하는데 회원가입이니깐... 지워야하나?
+    //       sessionStorage.setItem("at", res.data.result.access_token);
+    //       sessionStorage.setItem("rt", res.data.result.refresh_token);
+    //       dispatch(login());
+    //       router.push("/");
+    //     } else if (res?.data.status == 401) {
+    //       // 무슨 에러 처리를 해야할까?
+    //     }
+    //   } else if (res?.response.data.status == 403) {
+    //     setPopUpIsActive(true);
+    //   }
+    // });
+    router.push("/");
+  };
+
+  /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
+  useEffect(() => {
+    phoneNumberHandler();
+  }, [countryCode]);
+
+  /** firstName 유효성 검사 */
+  const validationFirstname = () => {
+    let regexp = /^[A-Za-z]{1,20}$/;
+    if (regexp.test(firstName)) {
+      setfirstNameValidationResult(1);
+      return true;
+    }
+    setfirstNameValidationResult(2);
+    return false;
+  };
+  /** lastName 유효성 검사 */
+  const validationLastName = () => {
+    let regexp = /^[A-Za-z]{1,20}$/;
+    if (regexp.test(lastName)) {
+      setLastNameValidationResult(1);
+      return true;
+    }
+    setLastNameValidationResult(2);
+    return false;
+  };
+  /** country 유효성 검사 */
+  const validationCountry = () => {
+    if (Boolean(countryCode)) {
+      setCounryCodeValidationResult(1);
+      return true;
+    }
+    setCounryCodeValidationResult(2);
+    return false;
+  };
+  /** company name 유효성 검사 */
+  const validationCompanyName = () => {
+    if (companyName.length < 50) {
+      setCompanyNameValidationResult(1);
+      return true;
+    }
+    setCompanyNameValidationResult(2);
+    return false;
+  };
+  /** company url 유효성 검사 */
+  const validationHomepageUrl = () => {
+    if (homepageUrl.length < 50) {
+      setHomepageUrlValidationResult(1);
+      return true;
+    }
+    setHomepageUrlValidationResult(2);
+    return false;
+  };
+  /** country phone number 유효성 검사 */
+  const validationCoutryPhoneNumber = () => {
+    if (Boolean(countryPhoneNumber)) {
+      setCountryPhoneNumberValidationResult(1);
+      return true;
+    }
+    setCountryPhoneNumberValidationResult(2);
+    return false;
+  };
+  /** phone number 유효성 검사 */
+  const validationPhoneNumber = () => {
+    if (phoneNumber.length > 7) {
+      setPhoneNumberValidationResult(1);
+      return true;
+    }
+    setPhoneNumberValidationResult(2);
+    return false;
+  };
+  /** userId 유효성 검사 */
+  const validationUserId = () => {
+    let regexp = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/; // 이메일 유효성 검사 정규식
+    if (regexp.test(userId)) {
+      setUserIdValidationResult(1);
+      return true;
+    }
+    setUserIdValidationResult(2);
+    return false;
+  };
+  /** password 유효성 검사 */
+  const validationPassword = () => {
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (regexp.test(password)) {
+      setPassowrdValidationResult(1);
+      return true;
+    }
+    setPassowrdValidationResult(2);
+    return false;
+  };
+  /** passwordConfirm 유효성 검사 */
+  const validationPasswordConfirm = () => {
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (password == passwordConfirm && regexp.test(passwordConfirm)) {
+      setPasswordConfirmValidationResult(1);
+      return true;
+    }
+    setPasswordConfirmValidationResult(2);
+    return false;
+  };
+
+  /** 모든 유효성 검사 */
+  const validationAll = () => {
+    let validationResult = new Array(10);
+    validationResult[0] = validationFirstname();
+    validationResult[1] = validationLastName();
+    validationResult[2] = validationCountry();
+    validationResult[3] = validationCompanyName();
+    validationResult[4] = validationHomepageUrl();
+    validationResult[5] = validationCoutryPhoneNumber();
+    validationResult[6] = validationPhoneNumber();
+    validationResult[7] = validationUserId();
+    validationResult[8] = validationPassword();
+    validationResult[9] = validationPasswordConfirm();
+
+    //유효성 결과 false값있으면 그 input으로 포커스, 모두 true면 return true
+    for (let i = 0; i < 10; i++) {
+      if (validationResult[i] == false) {
+        console.log(ref.current[i]);
+        ref.current[i]?.focus();
+        ref.current[i]?.scrollIntoView({
+          block: "center",
+          inline: "start",
+        });
+        break;
+      }
+      if (i == 9) {
+        return true;
+      }
+    }
+  };
+
   /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
   const validationCheckAndSignupRequest = () => {
-    if (
-      firstNameValidationResult == 1 &&
-      lastNameValidationResult == 1 &&
-      countryCodeValidationResult == 1 &&
-      companyNameValidationResult == 1 &&
-      industryCodeValidationResult == 1 &&
-      homepageUrlValidationResult == 1 &&
-      countryPhoneNumberValidationResult == 1 &&
-      phoneNumberValidationResult == 1 &&
-      userIdValidationResult == 1 &&
-      passwordValidationResult == 1 &&
-      passwordConfirmValidationResult == 1
-    ) {
+    let validationAllValue = validationAll();
+    if (validationAllValue == true) {
       signupRequest(
         firstName,
         lastName,
@@ -176,224 +317,26 @@ const useRegister = () => {
         role
       ).then((res) => {
         if (res?.data?.status == 200) {
-          alert("회원가입에 성공하였습니다.(임시 메세지)");
           loginRequest(userId, password).then((res) => {
             if (Boolean(res?.data)) {
               if (res?.data.status == 401) {
-                alert("로그인에 실패하였습니다.(임시 메세지)");
+                setAuthPageIsActive(true);
               }
             } else if (res?.response.data.status == 403) {
               setAuthPageIsActive(true);
             }
           });
         } else if (res?.data.status == 500) {
-          alert(res?.data.message + " (임시 메세지)");
+          setUserIdValidationResult(2);
+          ref.current[0]?.focus();
+          ref.current[0]?.scrollIntoView({
+            block: "center",
+            inline: "start",
+          });
         }
       });
-    } else {
-      valueValidation(firstName, validationStart, setfirstNameValidationResult);
-      valueValidation(lastName, validationStart, setLastNameValidationResult);
-      valueValidation(
-        countryCode,
-        validationStart,
-        setCounryCodeValidationResult
-      );
-      valueValidation(
-        companyName,
-        validationStart,
-        setCompanyNameValidationResult
-      );
-      valueValidation(
-        industryCode,
-        validationStart,
-        setIndustryCodeValidationResult
-      );
-      homepageUrlValidation(homepageUrl, setHomepageUrlValidationResult);
-      valueValidation(
-        countryPhoneNumber,
-        validationStart,
-        setCountryPhoneNumberValidationResult
-      );
-      valueValidation(
-        phoneNumber,
-        validationStart,
-        setPhoneNumberValidationResult
-      );
-      userIdValidation(userId, validationStart, setUserIdValidationResult);
-      passwordValidation(
-        password,
-        validationStart,
-        setPassowrdValidationResult
-      );
-      passwordConfirmValidation(
-        password,
-        passwordConfirm,
-        validationStart,
-        setPasswordConfirmValidationResult
-      );
-      setValidationStart(true);
-      setMoveScreen((prev) => prev + 1); // errorcase 입력칸으로 화면이동시키기 위해 값 변경
     }
   };
-
-  /** 인증 확인버튼 클릭 시 확인 유무에따라 팝업 혹은 페이지 이동 */
-  const authConfirmHandler = (userId: string, password: string) => {
-    loginRequest(userId, password).then((res) => {
-      if (Boolean(res?.data)) {
-        if (res?.data.status == 200) {
-          // 200 안뜨긴 하는데 회원가입이니깐... 지워야하나?
-          sessionStorage.setItem("at", res.data.result.access_token);
-          sessionStorage.setItem("rt", res.data.result.refresh_token);
-          dispatch(login());
-          router.push("/");
-        } else if (res?.data.status == 401) {
-          // 무슨 에러 처리를 해야할까?
-        }
-      } else if (res?.response.data.status == 403) {
-        setPopUpIsActive(true);
-      }
-    });
-  };
-
-  /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
-  useEffect(() => {
-    phoneNumberHandler();
-  }, [countryCode]);
-
-  // /** 성 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     valueValidation(firstName, setfirstNameValidationResult);
-  //   }
-  // }, [firstName]);
-
-  // /** 이름 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     valueValidation(lastName, setLastNameValidationResult);
-  //   }
-  // }, [lastName]);
-
-  /** 국가코드 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   valueValidation(
-  //     countryCode,
-  //     validationStart,
-  //     setCounryCodeValidationResult
-  //   );
-  // }, [countryCode]);
-
-  // /** 회사이름 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     valueValidation(companyName, setCompanyNameValidationResult);
-  //   }
-  // }, [companyName]);
-
-  // /** 회사업종구분코드 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     valueValidation(industryCode, setIndustryCodeValidationResult);
-  //   }
-  // }, [industryCode]);
-
-  // /** 홈페이지url 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     homepageUrlValidation(homepageUrl, setHomepageUrlValidationResult);
-  //   }
-  // }, [homepageUrl]);
-
-  /** 국가전화코드 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   valueValidation(
-  //     countryPhoneNumber,
-  //     validationStart,
-  //     setCountryPhoneNumberValidationResult
-  //   );
-  // }, [countryPhoneNumber]);
-
-  // /** 전화번호 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     valueValidation(phoneNumber, setPhoneNumberValidationResult);
-  //   }
-  // }, [phoneNumber]);
-
-  // /** 아이디 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     userIdValidation(userId, setUserIdValidationResult);
-  //   }
-  // }, [userId]);
-
-  // /** 비밀번호 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     passwordValidationSecond(password, setPassowrdValidationResult);
-  //   }
-  // }, [password]);
-
-  // /** 비밀번호확인 입력할때 마다 유효성 검사 */
-  // useEffect(() => {
-  //   if (validationStart) {
-  //     passwordConfirmValidationSecond(
-  //       password,
-  //       passwordConfirm,
-  //       setPasswordConfirmValidationResult
-  //     );
-  //   }
-  // }, [passwordConfirm]);
-
-  /** error case 발생하면 해당 입력칸으로 이동 */
-  useEffect(() => {
-    if (moveScreen != 0) {
-      if (firstNameValidationResult == 2) {
-        ref.current[0]?.focus();
-        return;
-      }
-      if (lastNameValidationResult == 2) {
-        ref.current[1]?.focus();
-        return;
-      }
-      if (countryCodeValidationResult == 2) {
-        ref.current[2]?.focus();
-        return;
-      }
-      if (companyNameValidationResult == 2) {
-        ref.current[3]?.focus();
-        return;
-      }
-      if (industryCodeValidationResult == 2) {
-        ref.current[4]?.focus();
-        return;
-      }
-      if (homepageUrlValidationResult == 2) {
-        ref.current[5]?.focus();
-        return;
-      }
-      if (countryPhoneNumberValidationResult == 2) {
-        ref.current[6]?.focus();
-        return;
-      }
-      if (phoneNumberValidationResult == 2) {
-        ref.current[6]?.focus();
-        return;
-      }
-      if (userIdValidationResult == 2) {
-        ref.current[7]?.focus();
-        return;
-      }
-      if (passwordValidationResult == 2) {
-        ref.current[8]?.focus();
-        return;
-      }
-      if (passwordConfirmValidationResult == 2) {
-        ref.current[9]?.focus();
-        return;
-      }
-    }
-  }, [moveScreen]);
 
   return (
     <>
@@ -406,14 +349,8 @@ const useRegister = () => {
             <Input
               type="text"
               onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
                 setFirstName(e.target.value);
-                validationStart
-                  ? valueValidation(
-                      e.target.value,
-                      validationStart,
-                      setfirstNameValidationResult
-                    )
-                  : "";
               }}
               ref={(element) => {
                 ref.current[0] = element;
@@ -428,14 +365,8 @@ const useRegister = () => {
             <Input
               type="text"
               onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
                 setLastName(e.target.value);
-                validationStart
-                  ? valueValidation(
-                      e.target.value,
-                      validationStart,
-                      setLastNameValidationResult
-                    )
-                  : "";
               }}
               ref={(element) => {
                 ref.current[1] = element;
@@ -445,19 +376,20 @@ const useRegister = () => {
           </InputContainer>
         </Wrapper>
         <InputContainer>
-          <InputTitle>Country</InputTitle>
+          <InputTitle
+            ref={(element) => {
+              ref.current[2] = element;
+            }}
+          >
+            Country
+          </InputTitle>
           <SelectBox
             list={countryList}
             setValue={setCounryCode}
             validationStart={validationStart}
             setValidationResult={setCounryCodeValidationResult}
           />
-          <ErrorCase
-            isActive={countryCodeValidationResult}
-            ref={(element) => {
-              ref.current[2] = element;
-            }}
-          >
+          <ErrorCase isActive={countryCodeValidationResult}>
             ErrorCase
           </ErrorCase>
         </InputContainer>
@@ -468,13 +400,6 @@ const useRegister = () => {
             type="text"
             onChange={(e) => {
               setCompanyName(e.target.value);
-              validationStart
-                ? valueValidation(
-                    e.target.value,
-                    validationStart,
-                    setLastNameValidationResult
-                  )
-                : "";
             }}
             ref={(element) => {
               ref.current[3] = element;
@@ -509,13 +434,6 @@ const useRegister = () => {
             type="text"
             onChange={(e) => {
               setHomepageUrl(e.target.value);
-              validationStart
-                ? valueValidation(
-                    e.target.value,
-                    validationStart,
-                    setLastNameValidationResult
-                  )
-                : "";
             }}
             ref={(element) => {
               ref.current[5] = element;
@@ -528,48 +446,35 @@ const useRegister = () => {
         <InputContainer>
           <InputTitle>Phone number</InputTitle>
           <Wrapper>
-            <SelectBoxCountryCodeNum
-              list={countryList}
-              value={countryPhoneNumber}
-              setValue={setCountryPhoneNumber}
-              validationStart={validationStart}
-              setValidationResult={setCounryCodeValidationResult}
-            />
-            <Input
-              type="text"
-              value={phoneNumber}
-              onChange={(e) => {
-                inputHandlerOnlyNumber(e);
-                validationStart
-                  ? valueValidation(
-                      e.target.value,
-                      validationStart,
-                      setLastNameValidationResult
-                    )
-                  : "";
-              }}
-              ref={(element) => {
-                ref.current[6] = element;
-              }}
-            />
+            <InputContainerCountryCodeNum>
+              <SelectBoxCountryCodeNum
+                list={countryList}
+                value={countryPhoneNumber}
+                setValue={setCountryPhoneNumber}
+                validationStart={validationStart}
+                setValidationResult={setCounryCodeValidationResult}
+              />
+              <ErrorCase isActive={countryPhoneNumberValidationResult}>
+                ErrorCase
+              </ErrorCase>
+            </InputContainerCountryCodeNum>
+            <InputContainerPhoneNumber>
+              <Input
+                type="text"
+                value={phoneNumber}
+                onChange={(e) => {
+                  inputHandlerOnlyNumber(e);
+                }}
+                ref={(element) => {
+                  ref.current[6] = element;
+                }}
+              />
+              <ErrorCase isActive={phoneNumberValidationResult}>
+                ErrorCase
+              </ErrorCase>
+            </InputContainerPhoneNumber>
           </Wrapper>
-          <ErrorCase
-            isActive={
-              countryPhoneNumberValidationResult == 2 ||
-              phoneNumberValidationResult == 2
-                ? 2
-                : 1
-            }
-          >
-            ErrorCase
-          </ErrorCase>
         </InputContainer>
-        {/**삭제할것인지 아닌지 체크필요 id와 email 입력이 둘다 email로 받기 때문 */}
-        {/* <InputContainer>
-          <InputTitle>Email</InputTitle>
-
-          <Input type="email" onChange={(e) => setUserId(e.target.value)}/>
-        </InputContainer> */}
         <Line />
         <InputContainer>
           <InputTitle>ID</InputTitle>
@@ -578,13 +483,6 @@ const useRegister = () => {
             type="email"
             onChange={(e) => {
               setUserId(e.target.value);
-              validationStart
-                ? userIdValidation(
-                    e.target.value,
-                    validationStart,
-                    setUserIdValidationResult
-                  )
-                : "";
             }}
             ref={(element) => {
               ref.current[7] = element;
@@ -599,21 +497,12 @@ const useRegister = () => {
             type="password"
             onChange={(e) => {
               setPassowrd(e.target.value);
-              validationStart
-                ? passwordValidation(
-                    e.target.value,
-                    validationStart,
-                    setPassowrdValidationResult
-                  )
-                : "";
             }}
             ref={(element) => {
               ref.current[8] = element;
             }}
           />
-          <ErrorCase isActive={passwordValidationResult}>
-            It must contain at least 10 digits (test message)
-          </ErrorCase>
+          <ErrorCase isActive={passwordValidationResult}>ErrorCase</ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password confirm</InputTitle>
@@ -622,14 +511,6 @@ const useRegister = () => {
             type="password"
             onChange={(e) => {
               setPasswordConfirm(e.target.value);
-              validationStart
-                ? passwordConfirmValidation(
-                    password,
-                    e.target.value,
-                    validationStart,
-                    setPasswordConfirmValidationResult
-                  )
-                : "";
             }}
             ref={(element) => {
               ref.current[9] = element;
@@ -664,24 +545,22 @@ const useRegister = () => {
       </Container>
       <AuthContainer isActive={authPageIsActive}>
         <AuthWrapper>
-          <AuthTitle>Repunch</AuthTitle>
-          <Name>J Kim</Name>
-          <ConfirmWrapper>
-            <Id>ID (E-mail)</Id>
-            <Email>{userId}</Email>
-            <AuthText>
-              An authentication email has been sent to
-              <br />
-              your email address.
-              <br />
-              You can use all services freely after the
-              <br />
-              authentication process.
-            </AuthText>
-            <AuthButton onClick={() => authConfirmHandler(userId, password)}>
-              Confirm
-            </AuthButton>
-          </ConfirmWrapper>
+          {/* <AuthTitle>Repunch</AuthTitle>
+          <Name>J Kim</Name> */}
+          {/* <ConfirmWrapper> */}
+          <Id>ID (E-mail)</Id>
+          <Email>{userId}</Email>
+          <AuthText>
+            An authentication email has been sent to
+            <br />
+            your email address.
+            <br />
+            You can use all services freely after the
+            <br />
+            authentication process.
+          </AuthText>
+          <AuthButton onClick={() => router.push("/")}>Home</AuthButton>
+          {/* </ConfirmWrapper> */}
         </AuthWrapper>
         <TextInform>
           If you entered the wrong email address, please
@@ -755,6 +634,10 @@ const InputContainer = styled.div`
   &:nth-of-type(1) {
     margin-right: 10px;
   }
+`;
+const InputContainerCountryCodeNum = styled.div``;
+const InputContainerPhoneNumber = styled.div`
+  width: 100%;
 `;
 const InputTitle = styled.div`
   display: inline-block;
@@ -985,7 +868,7 @@ const AuthButton = styled.button`
   font-weight: 700;
   line-height: 18px;
 
-  color: #ffffff;
+  color: #121822;
 
   overflow: hidden;
 
