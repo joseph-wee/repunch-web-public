@@ -18,8 +18,6 @@ const ProductCard = (
 ) => {
   const [favoriteIsActive, setFavoriteIsActive] = useState(false);
 
-  console.log(quantity.quantity);
-
   return (
     <Card>
       <Thumbnail>
@@ -31,7 +29,7 @@ const ProductCard = (
             objectFit="cover"
             objectPosition="center"
           />
-          {quantity.quantity == "100" ? <Soldout>SOLD OUT</Soldout> : ""}
+          {/* {quantity?.quantity == "100" ? <Soldout>SOLD OUT</Soldout> : ""} */}
         </Link>
 
         <LikeButton onClick={() => setFavoriteIsActive(!favoriteIsActive)}>
