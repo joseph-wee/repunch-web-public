@@ -71,3 +71,53 @@ export const authEmailRequest = async (key: string[] | string | undefined) => {
     return error;
   }
 };
+
+/** 상품(원단) 목록 조회 api */
+export const productsRequest = async (count: number, searchAfter: number) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/products?count=${count}&searchAfter=${searchAfter}`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 유저 패스워드 초기화 */
+export const pwMailingRequest = async (userId: string) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/reset-password?email=${userId}`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 유저 패스워드 재설정 */
+export const pwResetRequest = async (
+  sessionKey: undefined | string | string[],
+  password: string,
+  passwordConfirm: string
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/email/reset`,
+      data: {
+        sessionKey: sessionKey,
+        password: password,
+        passwordConfirm: passwordConfirm,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
