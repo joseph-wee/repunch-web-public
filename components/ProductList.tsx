@@ -9,8 +9,17 @@ import {
 import Image from "next/legacy/image";
 import Link from "next/link";
 
-const ProductCard = () => {
+// title, quantity, thumbnail, price,
+const ProductCard = (
+  // title: string,
+  quantity: string
+  // price: string,
+  // favoriteValue: boolean
+) => {
   const [favoriteIsActive, setFavoriteIsActive] = useState(false);
+
+  console.log(quantity.quantity);
+
   return (
     <Card>
       <Thumbnail>
@@ -22,7 +31,7 @@ const ProductCard = () => {
             objectFit="cover"
             objectPosition="center"
           />
-          <Soldout>SOLD OUT</Soldout>
+          {quantity.quantity == "100" ? <Soldout>SOLD OUT</Soldout> : ""}
         </Link>
 
         <LikeButton onClick={() => setFavoriteIsActive(!favoriteIsActive)}>

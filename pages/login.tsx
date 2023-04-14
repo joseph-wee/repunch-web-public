@@ -53,21 +53,30 @@ const useLogin = () => {
   /** 로그인 api 요청후 결과에 따라 액션 */
   const loginRequestHandler = (userId: string, password: string) => {
     let idValidationValue = idValidationCheck();
-    let pwValidationValue = pwValidationCheck();
 
-    if (idValidationValue && pwValidationValue) {
+    if (idValidationValue) {
       loginRequest(userId, password).then((res) => {
-        if (Boolean(res?.data)) {
-          if (res?.data.status == 200) {
-            dispatch(login());
-            sessionStorage.setItem("at", res.data.result.access_token);
-            sessionStorage.setItem("rt", res.data.result.refresh_token);
-            router.push("/");
-          } else if (res?.data.status == 401) {
-            setPwValidation(2);
-          }
-        } else if (res?.response.data.status == 403) {
+        if (res?.data?.status == 200) {
+          dispatch(login());
+          sessionStorage.setItem("at", res.data.result.access_token);
+          sessionStorage.setItem("rt", res.data.result.refresh_token);
+          router.push("/");
+          return;
+        }
+
+        if (res?.response.data.code == 1001) {
+          setIdValidation(2);
+          return;
+        }
+
+        if (res?.response.data.code == 1002) {
+          setPwValidation(2);
+          return;
+        }
+
+        if (res?.response.status == 403) {
           setAuthPageIsActive(true);
+          return;
         }
       });
     }

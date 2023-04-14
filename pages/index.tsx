@@ -14,10 +14,31 @@ import {
 import Image from "next/legacy/image";
 import { useState } from "react";
 import { Filter, ProductList } from "../components";
+import { useEffect } from "react";
+import { productsRequest } from "../utils/api";
 
 export default function Home() {
   const [sortIsActive, setSortIsActive] = useState(true);
   const [filterIsActive, setFilterIsActive] = useState(false);
+  const [productList, setProductList] = useState([]);
+  const [sortFilterIsActive, setSortFilterIsActive] = useState(false);
+
+  /** 상품 리스트 호출 함수 */
+  const productListRequestFirst = (searchAfter: number) => {
+    productsRequest(10, 3).then((res) => {
+      let tempArr = productList;
+      tempArr = res.data.result.data;
+      setProductList([...tempArr]);
+    });
+  };
+
+  useEffect(() => {
+    productListRequestFirst(3);
+  }, []);
+
+  useEffect(() => {
+    console.log(productList);
+  }, [productList]);
 
   return (
     <Container>
@@ -85,7 +106,12 @@ export default function Home() {
             </FilterButton>
             <Result>1900&nbsp;</Result>
             <ButtonWrapper>
-              <ClearButton>Clear Filter</ClearButton>
+              <ClearButton
+                isActive={sortFilterIsActive}
+                onClick={() => setSortFilterIsActive(false)}
+              >
+                Clear Filter
+              </ClearButton>
               <SortButton onClick={() => setSortIsActive(!sortIsActive)}>
                 <ButtonTextSort>Sort By</ButtonTextSort>
 
@@ -96,20 +122,32 @@ export default function Home() {
               </SortButton>
             </ButtonWrapper>
             <SortMenuWrapper isActive={sortIsActive}>
-              <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+              <SortMenu
+                onClick={() => {
+                  setSortIsActive(!sortIsActive);
+                  setSortFilterIsActive(true);
+                }}
+              >
                 Latest
               </SortMenu>
-              <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+              <SortMenu
+                onClick={() => {
+                  setSortIsActive(!sortIsActive);
+                  setSortFilterIsActive(true);
+                }}
+              >
                 Popular
               </SortMenu>
             </SortMenuWrapper>
           </ButtonFlexWrapper>
           <ProductListGridWrapper>
-            <ProductList />
-            <ProductList />
-            <ProductList />
-            <ProductList />
-            <ProductList />
+            {productList.map((i) => {
+              return (
+                <>
+                  <ProductList quantity={i.quantity} />
+                </>
+              );
+            })}
           </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>
@@ -124,7 +162,7 @@ const Banner = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  margin-top: 16px;
+
   height: 280px;
   overflow: hidden;
   box-sizing: border-box;
@@ -384,13 +422,16 @@ const ButtonWrapper = styled.div`
   gap: 19px;
   align-items: center;
 `;
-const ClearButton = styled.button`
+const ClearButton = styled.button<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "block" : "none";
+  }};
   padding: 0;
   border: none;
   background-color: #fafafa;
 
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 16px;
   letter-spacing: -0.011em;
   text-decoration-line: underline;

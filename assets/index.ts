@@ -36,3 +36,4 @@ export { default as ic_menu_wht } from "./ic_menu_wht.svg";
 export { default as btn_favorite_inact } from "./btn_favorite_inact.svg";
 export { default as ic_air } from "./ic_air.svg";
 export { default as payment_express } from "./payment_express.png";
+export { default as ic_close_black } from "./ic_close_black.svg";

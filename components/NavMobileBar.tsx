@@ -70,31 +70,10 @@ const NavMobileBar = ({
               href="/about_us"
               style={{ textDecoration: "none", color: "#121822" }}
             >
-              New Arrivals
+              About us
             </Link>
           </Menu>
-        </MenuWrapper>
-        <MenuButtonWrapper>
-          <MenuButtonBox>
-            <MenuIcon>
-              <Link
-                onClick={() => setIsActive(false)}
-                href="/cart"
-                style={{ textDecoration: "none" }}
-              >
-                <Image src={ic_cart_wht} alt="cart_menu_button" />
-              </Link>
-            </MenuIcon>
-            <MenuIcon>
-              <Link
-                onClick={() => setIsActive(false)}
-                href="/favorite"
-                style={{ textDecoration: "none" }}
-              >
-                <Image src={ic_favorite_wht} alt="favorite_menu_button" />
-              </Link>
-            </MenuIcon>
-
+          <Menu>
             <MenuButton isActive={isLogin}>
               <Link
                 onClick={() => setIsActive(false)}
@@ -127,8 +106,9 @@ const NavMobileBar = ({
                 <LinkBox>Logout</LinkBox>
               </Link>
             </LogoutButton>
-          </MenuButtonBox>
-        </MenuButtonWrapper>
+          </Menu>
+        </MenuWrapper>
+        <MenuButtonWrapper></MenuButtonWrapper>
       </Container>
     </>
   );
@@ -155,11 +135,12 @@ const Container = styled.nav<{ isActive: boolean }>`
   position: fixed;
   z-index: 2;
   top: 64px;
+  padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
+  padding-bottom: 40px;
   box-sizing: border-box;
   width: 100%;
-  height: 478px;
   background-color: #e1ff20;
 
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
@@ -168,13 +149,19 @@ const Container = styled.nav<{ isActive: boolean }>`
 const MenuWrapper = styled.ul``;
 const Menu = styled.li`
   display: flex;
-  height: 62px;
+  position: relative;
+  margin-bottom: 15px;
+  height: 31px;
   align-items: center;
   box-sizing: border-box;
 
   font-weight: 400;
   font-size: 16px;
-  color: #121822; ;
+  color: #121822;
+  &:last-of-type {
+    margin-bottom: 0px;
+    height: 24px;
+  }
 `;
 const MenuButtonWrapper = styled.nav`
   position: absolute;
@@ -185,7 +172,6 @@ const MenuButtonWrapper = styled.nav`
 const MenuButtonBox = styled.div`
   position: relative;
   display: flex;
-  padding-left: 23px;
 `;
 
 const MenuIcon = styled.div`
@@ -195,35 +181,11 @@ const MenuButton = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
     return props.isActive ? "none" : "block";
   }};
-  position: absolute;
-  right: 106px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 16px;
-  text-align: right;
-  line-height: 24px;
-  color: #121822;
-
-  cursor: pointer;
-
-  &:nth-of-type(5) {
-    right: 33px;
-  }
 `;
 const LogoutButton = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
     return props.isActive ? "block" : "none";
   }};
-  position: absolute;
-  right: 33px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 16px;
-  text-align: right;
-  line-height: 24px;
-  color: #121822;
-
-  cursor: pointer;
 `;
 
 const LinkBox = styled.div``;
@@ -231,9 +193,8 @@ const Circle = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
     return props.isActive ? "none" : "block";
   }};
-  position: absolute;
-  right: 92px;
-  bottom: 12px;
+  margin-left: 10px;
+  margin-right: 10px;
   width: 4px;
   height: 4px;
   border-radius: 100%;

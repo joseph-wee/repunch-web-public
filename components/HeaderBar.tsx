@@ -6,6 +6,7 @@ import Image from "next/image";
 import {
   button_menu,
   ic_cart_wht,
+  ic_close_black,
   ic_close_wht,
   ic_favorite_wht,
   ic_menu_wht,
@@ -41,7 +42,7 @@ const useHeaderBar = () => {
         </Link>
         <Menu onClick={() => setIsActive(!isActive)}>
           <Image
-            src={isActive ? ic_close_wht : ic_menu_wht}
+            src={isActive ? ic_close_black : ic_menu_wht}
             alt="button_menu"
           />
         </Menu>
