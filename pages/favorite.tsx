@@ -49,12 +49,10 @@ const useFavorite = () => {
           </SortMenuWrapper>
         </ItemSortBar>
         <ProductListGridWrapper>
-          <ProductList />
-          <ProductList />
-          <ProductList />
-          <ProductList />
-          <ProductList />
-          <ProductList />
+          <ProductList quantity={"100"} />
+          <ProductList quantity={"100"} />
+          <ProductList quantity={"100"} />
+          <ProductList quantity={"100"} />
         </ProductListGridWrapper>
       </Main>
       <MobileSideBar />
