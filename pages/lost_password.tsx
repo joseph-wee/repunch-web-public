@@ -4,10 +4,39 @@ import { useState } from "react";
 import { SelectBoxCountryCodeNum } from "../components";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { pwMailingRequest } from "../utils/api";
 
 const useLost_password = () => {
-  const [email, setEmail] = useState(""); // 이메일
+  const [userId, setUserId] = useState(""); // 이메일
   const [isActive, setIsActive] = useState(false); // 이메일 입력완료후 체크 임시용
+
+  const [userIdValidationResult, setUserIdValidationResult] =
+    useState<number>(0); // 유저ID(이메일주소) 유효성 체크
+
+  /** userId 유효성 검사 */
+  const validationUserId = () => {
+    let regexp = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/; // 이메일 유효성 검사 정규식
+    if (regexp.test(userId)) {
+      setUserIdValidationResult(1);
+      return true;
+    }
+    setUserIdValidationResult(2);
+    return false;
+  };
+
+  /** 유효성 검사 후 리셋 메일링 전송 함수 */
+  const pwMailingRequestHandler = () => {
+    let validation = validationUserId();
+    if (validation == true) {
+      pwMailingRequest(userId).then((res) => {
+        if (res.data.status == 200) {
+          alert("success");
+        } else {
+          setUserIdValidationResult(2);
+        }
+      });
+    }
+  };
 
   return (
     <>
@@ -20,7 +49,8 @@ const useLost_password = () => {
         <Wrapper>
           <InputContainer>
             <InputTitle>Registered Email</InputTitle>
-            <Input type="text" onChange={(e) => setEmail(e.target.value)} />
+            <Input type="text" onChange={(e) => setUserId(e.target.value)} />
+            <ErrorCase isActive={userIdValidationResult}>ErrorCase</ErrorCase>
           </InputContainer>
         </Wrapper>
         <Wrapper>
@@ -29,7 +59,7 @@ const useLost_password = () => {
               <LinkStyling>Cancel</LinkStyling>
             </Link>
           </Button>
-          <Button onClick={() => setIsActive(true)}>Confirm</Button>
+          <Button onClick={() => pwMailingRequestHandler()}>Confirm</Button>
         </Wrapper>
         <InfoMessage>
           By Apply(sign up as a member), you agree to our
@@ -153,7 +183,19 @@ const Input = styled.input`
   font-weight: 400;
   color: #121822;
 `;
-
+const ErrorCase = styled.div<{ isActive: number }>`
+  visibility: ${(props) => {
+    return props.isActive == 2 ? "visible" : "hidden";
+  }};
+  margin-top: 10px;
+  height: ${(props) => {
+    return props.isActive == 0 || props.isActive == 1 ? "0px" : "";
+  }};
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  color: #ff5c01;
+`;
 const Button = styled.button`
   display: flex;
   margin-bottom: 20px;
