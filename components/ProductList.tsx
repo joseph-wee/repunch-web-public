@@ -12,7 +12,7 @@ import Link from "next/link";
 // title, quantity, thumbnail, price,
 const ProductCard = (
   // title: string,
-  quantity: string
+  quantity: any
   // price: string,
   // favoriteValue: boolean
 ) => {

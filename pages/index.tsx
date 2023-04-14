@@ -144,7 +144,7 @@ export default function Home() {
             {productList.map((i) => {
               return (
                 <>
-                  <ProductList quantity={i.quantity} />
+                  <ProductList quantity={90} />
                 </>
               );
             })}
