@@ -121,3 +121,33 @@ export const pwResetRequest = async (
     console.log(error);
   }
 };
+
+/** 개인정보 조회 */
+export const userInfoRequest = async (acessToken: string | null) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/user/me`,
+      headers: {
+        Authorization: `Bearer ${acessToken}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 상품(원단) 상세 조회 */
+export const productDetailRequest = async (productNo: string | undefined) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/products/${productNo}`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};

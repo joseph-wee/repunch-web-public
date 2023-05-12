@@ -78,12 +78,12 @@ const Container = styled.nav<{ isActive: boolean }>`
   box-sizing: border-box;
   height: 64px;
 
-  background-color: #fafafa;
+  background-color: #ffffff;
   border-bottom: 1px solid #f2f6f8;
 
   @media screen and (max-width: 767px) {
     display: none;
-  } ;
+  }
 `;
 const Wrapper = styled.ul`
   display: flex;

@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { useState } from "react";
-import { ic_check_wht, ic_close, ic_down_bk, ic_up_bk } from "../assets";
+import {
+  ic_check_web_color,
+  ic_check_web_color_dk,
+  ic_check_wht,
+  ic_close,
+  ic_close_black,
+  ic_down_bk,
+  ic_up_bk,
+} from "../assets";
 
 /** 카테고리 객체 타입 */
 export interface List {
@@ -12,8 +20,16 @@ export interface List {
   isChecked: boolean; // 체크유무
 }
 
+/** 임시 필터 리스트 타입 */
+export interface TempList {
+  name: string; // 이름
+  isChecked: boolean; // 체크유무
+}
+
 /** 카테고리 객체타입을 배열 형태로 확장 */
 export interface ListCountryArray extends Array<List> {}
+
+export interface ListTempArray extends Array<TempList> {}
 
 const UseFilter = ({
   isActive,
@@ -30,6 +46,7 @@ const UseFilter = ({
   const [widthIsActive, setWidthIsActive] = useState(true);
   const [weightIsActive, setWeightIsActive] = useState(true);
   const [yarnIsActive, setYarnIsActive] = useState(true);
+  const [colorChecked, setColorChecked] = useState(new Array(15).fill(false));
 
   const [suppliesList, setSuppliesList] = useState<ListCountryArray>([
     {
@@ -48,10 +65,272 @@ const UseFilter = ({
     { name: "Zips", group_code: "006", code: "3", isChecked: false },
   ]);
 
+  const [projectList, setProjectList] = useState<ListTempArray>([
+    {
+      name: "Casualwear",
+      isChecked: false,
+    },
+    {
+      name: "Ceremoney",
+      isChecked: false,
+    },
+    {
+      name: "Coating",
+      isChecked: false,
+    },
+    {
+      name: "Details",
+      isChecked: false,
+    },
+    {
+      name: "Eveningwear",
+      isChecked: false,
+    },
+    {
+      name: "Jeanswear",
+      isChecked: false,
+    },
+    {
+      name: "Leathergoods",
+      isChecked: false,
+    },
+    {
+      name: "Line",
+      isChecked: false,
+    },
+    {
+      name: "Outerwear",
+      isChecked: false,
+    },
+    {
+      name: "Shirting",
+      isChecked: false,
+    },
+    {
+      name: "Sportswear",
+      isChecked: false,
+    },
+    {
+      name: "Suiting",
+      isChecked: false,
+    },
+    {
+      name: "Tailoring",
+      isChecked: false,
+    },
+    {
+      name: "Workwear",
+      isChecked: false,
+    },
+  ]);
+  const [designList, setDesignList] = useState<ListTempArray>([
+    {
+      name: "NEW",
+      isChecked: false,
+    },
+    {
+      name: "Check",
+      isChecked: false,
+    },
+    {
+      name: "Dot",
+      isChecked: false,
+    },
+    {
+      name: "Stripe",
+      isChecked: false,
+    },
+    {
+      name: "Double Face",
+      isChecked: false,
+    },
+    {
+      name: "Diagonal",
+      isChecked: false,
+    },
+    {
+      name: "Twill",
+      isChecked: false,
+    },
+    {
+      name: "Fancy",
+      isChecked: false,
+    },
+    {
+      name: "Floral",
+      isChecked: false,
+    },
+    {
+      name: "Haute couture",
+      isChecked: false,
+    },
+    {
+      name: "Herringbone",
+      isChecked: false,
+    },
+    {
+      name: "Houndstooth",
+      isChecked: false,
+    },
+    {
+      name: "Interiors",
+      isChecked: false,
+    },
+    {
+      name: "Jacquard",
+      isChecked: false,
+    },
+    {
+      name: "Melange",
+      isChecked: false,
+    },
+    {
+      name: "Ready-to-dye",
+      isChecked: false,
+    },
+    {
+      name: "Shiny",
+      isChecked: false,
+    },
+    {
+      name: "Lustre",
+      isChecked: false,
+    },
+    {
+      name: "Transparent",
+      isChecked: false,
+    },
+    {
+      name: "Textured",
+      isChecked: false,
+    },
+    {
+      name: "Wahsed",
+      isChecked: false,
+    },
+    {
+      name: "Water Repellent",
+      isChecked: false,
+    },
+  ]);
+  const [compositionList, setCompositionList] = useState<ListTempArray>([
+    {
+      name: "Wool",
+      isChecked: false,
+    },
+    {
+      name: "Cotton",
+      isChecked: false,
+    },
+    {
+      name: "Lycra",
+      isChecked: false,
+    },
+    {
+      name: "Silk",
+      isChecked: false,
+    },
+    {
+      name: "Polyester",
+      isChecked: false,
+    },
+    {
+      name: "Linen",
+      isChecked: false,
+    },
+    {
+      name: "Viscose",
+      isChecked: false,
+    },
+    {
+      name: "Merino",
+      isChecked: false,
+    },
+  ]);
+  const [widthList, setWidthList] = useState<ListTempArray>([
+    {
+      name: "36 inches / 90cm",
+      isChecked: false,
+    },
+    {
+      name: "53 inches / 135cm",
+      isChecked: false,
+    },
+    {
+      name: "60 inches / 150cm",
+      isChecked: false,
+    },
+  ]);
+  const [weightList, setWeightList] = useState<ListTempArray>([
+    {
+      name: "Extra light under 80g/m²",
+      isChecked: false,
+    },
+    {
+      name: "Light 80-135 g/m²",
+      isChecked: false,
+    },
+    {
+      name: "Medium 135-270 g/m²",
+      isChecked: false,
+    },
+    {
+      name: "Heavy 270-400 g/m²",
+      isChecked: false,
+    },
+    {
+      name: "Extra heavy over 400m²",
+      isChecked: false,
+    },
+  ]);
+
+  /**  */
   const suppliesListHandler = (order: number) => {
     let array = suppliesList;
     array[order].isChecked = !array[order].isChecked;
     setSuppliesList([...array]);
+  };
+
+  /** 색상 클릭시 해당 colorChecked 값 변경하여 색상에 체크표시 */
+  const colorCheckedHandler = (num: number) => {
+    let arr = colorChecked;
+    arr[num] = !arr[num];
+    setColorChecked([...arr]);
+  };
+
+  /** 필터 프로젝트 리스트 항목들 체크 핸들러 */
+  const projectCheckedHandler = (num: number) => {
+    let arr = projectList;
+    arr[num].isChecked = !arr[num].isChecked;
+    setProjectList([...arr]);
+  };
+
+  /** 필터 디자인 리스트 항목들 체크 핸들러 */
+  const designCheckedHandler = (num: number) => {
+    let arr = designList;
+    arr[num].isChecked = !arr[num].isChecked;
+    setDesignList([...arr]);
+  };
+
+  /** 필터 컴포지션 리스트 항목들 체크 핸들러 */
+  const compositionCheckedHandler = (num: number) => {
+    let arr = compositionList;
+    arr[num].isChecked = !arr[num].isChecked;
+    setCompositionList([...arr]);
+  };
+
+  /** 필터 width 리스트 항목들 체크 핸들러 */
+  const widthCheckedHandler = (num: number) => {
+    let arr = widthList;
+    arr[num].isChecked = !arr[num].isChecked;
+    setWidthList([...arr]);
+  };
+
+  /** 필터 weight 리스트 항목들 체크 핸들러 */
+  const weightCheckedHandler = (num: number) => {
+    let arr = weightList;
+    arr[num].isChecked = !arr[num].isChecked;
+    setWeightList([...arr]);
   };
 
   return (
@@ -61,92 +340,265 @@ const UseFilter = ({
         <Wrapper>
           <Title>SELCT CATEGORIES</Title>
           <ButtonClose isActive={isActive} onClick={() => setIsActive(false)}>
-            <Image src={ic_close} alt={"button_close"} />
+            <Image src={ic_close_black} alt={"button_close"} />
           </ButtonClose>
         </Wrapper>
-        <CategoryTitleWrapper
-          onClick={() => setSuppliesIsActive(!suppliesIsActive)}
-        >
-          <Image
-            src={suppliesIsActive ? ic_down_bk : ic_up_bk}
-            alt={"arrow_down"}
-          />
-          <CategoryTitle>Supplies</CategoryTitle>
-        </CategoryTitleWrapper>
-        {suppliesList.map((i, j) => {
-          return (
-            <>
-              <CategoryListWrapper
-                isActive={suppliesIsActive}
-                key={`test${j}`}
-                onClick={() => suppliesListHandler(j)}
-              >
-                <Label
-                  htmlFor={`supplies${j}`}
-                  isChecked={i.isChecked}
-                  img={ic_check_wht.src}
-                  key={`test1${j}`}
-                />
-                <Checkbox
-                  type="checkbox"
-                  id={`supplies${j}`}
-                  onChange={() => suppliesListHandler(j)}
-                  key={`test23${j}`}
-                />
-                {i.name} (3)
-              </CategoryListWrapper>
-            </>
-          );
-        })}
-
-        {suppliesList.map((i, j) => {
-          return (
-            <>
-              <CategoryListWrapper
-                isActive={suppliesIsActive}
-                key={`test${j}`}
-                onClick={() => suppliesListHandler(j)}
-              >
-                <Label
-                  htmlFor={`supplies${j}`}
-                  isChecked={i.isChecked}
-                  img={ic_check_wht.src}
-                  key={`test1${j}`}
-                />
-                <Checkbox
-                  type="checkbox"
-                  id={`supplies${j}`}
-                  onChange={() => suppliesListHandler(j)}
-                  key={`test23${j}`}
-                />
-                {i.name} (3)
-              </CategoryListWrapper>
-            </>
-          );
-        })}
         <CategoryTitleWrapper onClick={() => setColorIsActive(!colorIsActive)}>
           <Image
-            src={suppliesIsActive ? ic_down_bk : ic_up_bk}
+            src={suppliesIsActive ? ic_up_bk : ic_down_bk}
             alt={"arrow_down"}
           />
           <CategoryTitle>SELECT COLOR</CategoryTitle>
         </CategoryTitleWrapper>
         <ColorWraaper isActive={colorIsActive}>
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
-          <ColorCircle />
+          <ColorCircle onClick={() => colorCheckedHandler(0)}>
+            <ColorChecked isChecked={colorChecked[0]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(1)}>
+            <ColorChecked isChecked={colorChecked[1]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(2)}>
+            <ColorChecked isChecked={colorChecked[2]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(3)}>
+            <ColorChecked isChecked={colorChecked[3]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(4)}>
+            <ColorChecked isChecked={colorChecked[4]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(5)}>
+            <ColorChecked isChecked={colorChecked[5]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(6)}>
+            <ColorChecked isChecked={colorChecked[6]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(7)}>
+            <ColorChecked isChecked={colorChecked[7]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(8)}>
+            <ColorChecked isChecked={colorChecked[8]}>
+              <Image src={ic_check_web_color_dk} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(9)}>
+            <ColorChecked isChecked={colorChecked[9]}>
+              <Image src={ic_check_web_color_dk} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(10)}>
+            <ColorChecked isChecked={colorChecked[10]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(11)}>
+            <ColorChecked isChecked={colorChecked[11]}>
+              <Image src={ic_check_web_color} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(12)}>
+            <ColorChecked isChecked={colorChecked[12]}>
+              <Image src={ic_check_web_color_dk} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(13)}>
+            <ColorChecked isChecked={colorChecked[13]}>
+              <Image src={ic_check_web_color_dk} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
+          <ColorCircle onClick={() => colorCheckedHandler(14)}>
+            <ColorChecked isChecked={colorChecked[14]}>
+              <Image src={ic_check_web_color_dk} alt="ic_check_web_color" />
+            </ColorChecked>
+          </ColorCircle>
         </ColorWraaper>
+        <CategoryTitleWrapper
+          onClick={() => setProjectIsActive(!projectIsActive)}
+        >
+          <Image
+            src={projectIsActive ? ic_down_bk : ic_up_bk}
+            alt={"arrow_down"}
+          />
+          <CategoryTitle>Proejct</CategoryTitle>
+        </CategoryTitleWrapper>
+        {projectList.map((i, j) => {
+          return (
+            <>
+              <CategoryListWrapper
+                isActive={projectIsActive}
+                key={`test${j}`}
+                onClick={() => projectCheckedHandler(j)}
+              >
+                <Label
+                  htmlFor={`project${j}`}
+                  isChecked={i.isChecked}
+                  img={ic_check_wht.src}
+                  key={`test1${j}`}
+                />
+                <Checkbox
+                  type="checkbox"
+                  id={`project${j}`}
+                  onChange={() => projectCheckedHandler(j)}
+                  key={`test23${j}`}
+                />
+                {i.name}
+              </CategoryListWrapper>
+            </>
+          );
+        })}
+
+        <CategoryTitleWrapper
+          onClick={() => setDesignIsActive(!designIsActive)}
+        >
+          <Image
+            src={designIsActive ? ic_down_bk : ic_up_bk}
+            alt={"arrow_down"}
+          />
+          <CategoryTitle>Design</CategoryTitle>
+        </CategoryTitleWrapper>
+        {designList.map((i, j) => {
+          return (
+            <>
+              <CategoryListWrapper
+                isActive={designIsActive}
+                key={`design${j}`}
+                onClick={() => designCheckedHandler(j)}
+              >
+                <Label
+                  htmlFor={`design${j}`}
+                  isChecked={i.isChecked}
+                  img={ic_check_wht.src}
+                  key={`design${j}`}
+                />
+                <Checkbox
+                  type="checkbox"
+                  id={`design${j}`}
+                  onChange={() => designCheckedHandler(j)}
+                  key={`design1${j}`}
+                />
+                {i.name}
+              </CategoryListWrapper>
+            </>
+          );
+        })}
+
+        <CategoryTitleWrapper
+          onClick={() => setCompositionIsActive(!compositionIsActive)}
+        >
+          <Image
+            src={compositionIsActive ? ic_down_bk : ic_up_bk}
+            alt={"arrow_down"}
+          />
+          <CategoryTitle>Composition</CategoryTitle>
+        </CategoryTitleWrapper>
+        {compositionList.map((i, j) => {
+          return (
+            <>
+              <CategoryListWrapper
+                isActive={compositionIsActive}
+                key={`composition${j}`}
+                onClick={() => compositionCheckedHandler(j)}
+              >
+                <Label
+                  htmlFor={`composition${j}`}
+                  isChecked={i.isChecked}
+                  img={ic_check_wht.src}
+                  key={`composition${j}`}
+                />
+                <Checkbox
+                  type="checkbox"
+                  id={`composition${j}`}
+                  onChange={() => compositionCheckedHandler(j)}
+                  key={`composition1${j}`}
+                />
+                {i.name}
+              </CategoryListWrapper>
+            </>
+          );
+        })}
+
+        <CategoryTitleWrapper onClick={() => setWidthIsActive(!widthIsActive)}>
+          <Image
+            src={widthIsActive ? ic_down_bk : ic_up_bk}
+            alt={"arrow_down"}
+          />
+          <CategoryTitle>WIDTH</CategoryTitle>
+        </CategoryTitleWrapper>
+        {widthList.map((i, j) => {
+          return (
+            <>
+              <CategoryListWrapper
+                isActive={widthIsActive}
+                key={`width${j}`}
+                onClick={() => widthCheckedHandler(j)}
+              >
+                <Label
+                  htmlFor={`width${j}`}
+                  isChecked={i.isChecked}
+                  img={ic_check_wht.src}
+                  key={`width${j}`}
+                />
+                <Checkbox
+                  type="checkbox"
+                  id={`width${j}`}
+                  onChange={() => widthCheckedHandler(j)}
+                  key={`width1${j}`}
+                />
+                {i.name}
+              </CategoryListWrapper>
+            </>
+          );
+        })}
+
+        <CategoryTitleWrapper
+          onClick={() => setWeightIsActive(!weightIsActive)}
+        >
+          <Image
+            src={weightIsActive ? ic_down_bk : ic_up_bk}
+            alt={"arrow_down"}
+          />
+          <CategoryTitle>Weight</CategoryTitle>
+        </CategoryTitleWrapper>
+        {weightList.map((i, j) => {
+          return (
+            <>
+              <CategoryListWrapper
+                isActive={weightIsActive}
+                key={`weight${j}`}
+                onClick={() => weightCheckedHandler(j)}
+              >
+                <Label
+                  htmlFor={`weight${j}`}
+                  isChecked={i.isChecked}
+                  img={ic_check_wht.src}
+                  key={`weight${j}`}
+                />
+                <Checkbox
+                  type="checkbox"
+                  id={`weight${j}`}
+                  onChange={() => weightCheckedHandler(j)}
+                  key={`weight1${j}`}
+                />
+                {i.name}
+              </CategoryListWrapper>
+            </>
+          );
+        })}
       </Container>
     </>
   );
@@ -184,7 +636,7 @@ const Container = styled.div<{ isActive: boolean }>`
     top: 0;
     left: 0;
     margin-right: 0;
-    padding-top: 21px;
+    padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 43.5px;
@@ -209,6 +661,7 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 const Title = styled.div`
+  margin-top: 2px;
   font-weight: 700;
   font-size: 16px;
   line-height: 21px;
@@ -231,9 +684,9 @@ const CategoryTitleWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-top: 20px;
-  margin-left: 4px;
+  margin-left: 2px;
   margin-bottom: 14px;
-  height: 19px;
+  height: 21px;
   &:nth-of-type(2) {
     margin-top: 0;
   }
@@ -253,15 +706,14 @@ const CategoryListWrapper = styled.div<{ isActive: boolean }>`
     return props.isActive == true ? "flex" : "none";
   }};
   align-items: center;
-  margin-bottom: 8px;
-  height: 16px;
+  margin-bottom: 13px;
 
   font-weight: 400;
   font-size: 14px;
   line-height: 16px;
   letter-spacing: -0.011em;
   color: #121822;
-  cursor: default;
+  cursor: pointer;
 `;
 
 const Checkbox = styled.input`
@@ -291,6 +743,8 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   background-size: 9.5px 7.4px;
   background-position: center;
   background-repeat: no-repeat;
+
+  cursor: pointer;
 `;
 const ColorWraaper = styled.div<{ isActive: boolean }>`
 display: ${(props) => {
@@ -301,11 +755,17 @@ display: ${(props) => {
   height; 190px;
 `;
 const ColorCircle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   margin-right: 10px;
   margin-bottom: 15.5px;
   width: 36px;
   height: 36px;
   border-radius: 100%;
+  cursor: pointer;
+
   &:nth-of-type(1) {
     background-color: #1b759f;
   }
@@ -366,6 +826,23 @@ const ColorCircle = styled.div`
       #d3a810 89.44%
     );
   }
+  &:nth-of-type(15) {
+    margin-bottom: 0;
+    background: linear-gradient(
+      154.17deg,
+      #ff1001 17.26%,
+      #fff500 37.73%,
+      #24ff00 57.06%,
+      #00bdf9 72.22%,
+      #0075ff 90.03%
+    );
+  }
+`;
+
+const ColorChecked = styled.div<{ isChecked: boolean }>`
+  display: ${(props) => {
+    return props.isChecked == true ? "block" : "none";
+  }};
 `;
 
 export default UseFilter;
