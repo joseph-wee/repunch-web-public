@@ -343,14 +343,16 @@ const UseFilter = ({
             <Image src={ic_close_black} alt={"button_close"} />
           </ButtonClose>
         </Wrapper>
-        <CategoryTitleWrapper onClick={() => setColorIsActive(!colorIsActive)}>
+        <CategoryTitleWrapper
+          onClick={() => setSuppliesIsActive(!suppliesIsActive)}
+        >
           <Image
-            src={suppliesIsActive ? ic_up_bk : ic_down_bk}
+            src={suppliesIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
           <CategoryTitle>SELECT COLOR</CategoryTitle>
         </CategoryTitleWrapper>
-        <ColorWraaper isActive={colorIsActive}>
+        <ColorWraaper isActive={suppliesIsActive}>
           <ColorCircle onClick={() => colorCheckedHandler(0)}>
             <ColorChecked isChecked={colorChecked[0]}>
               <Image src={ic_check_web_color} alt="ic_check_web_color" />
