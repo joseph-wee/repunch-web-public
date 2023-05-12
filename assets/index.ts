@@ -37,3 +37,7 @@ export { default as btn_favorite_inact } from "./btn_favorite_inact.svg";
 export { default as ic_air } from "./ic_air.svg";
 export { default as payment_express } from "./payment_express.png";
 export { default as ic_close_black } from "./ic_close_black.svg";
+export { default as ic_check_web_color } from "./ic_check_web_color.svg";
+export { default as ic_check_web_color_dk } from "./ic_check_web_color_dk.svg";
+export { default as btn_play_l } from "./btn_play_l.svg";
+export { default as btn_stop_l } from "./btn_stop_l.svg";
