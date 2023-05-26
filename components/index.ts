@@ -16,3 +16,4 @@ export { default as OrderInfoBox } from "./OrderInfoBox";
 export { default as OrderInfoBoxSample } from "./OrderInfoBoxSample";
 export { default as RecentOrders } from "./RecentOrders";
 export { default as Sample } from "./Sample";
+export { default as VideoPlayer } from "./VideoPlayer";

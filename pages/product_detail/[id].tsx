@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import {
   btn_favorite_act_sm,
+  btn_favorite_inact_sm,
   btn_review,
   ic_favorite_wht,
   ic_info,
@@ -13,6 +14,8 @@ import {
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setMeterage, setSample } from "../../features/login/cartSlice";
+import { productDetailRequest } from "../../utils/api";
+import { VideoPlayer } from "../../components";
 
 const useId = () => {
   const [popUpIsActive, setPopUpIsActive] = useState(0);
@@ -20,6 +23,8 @@ const useId = () => {
   const { id } = router.query;
   const [length, setLength] = useState<string>("1.0");
   const { value: cartValue } = useAppSelector((state) => state.cartValue);
+
+  const [videoUrl, setVideoUrl] = useState("");
 
   const dispatch = useAppDispatch();
   const cartStateHandler = () => {
@@ -38,20 +43,33 @@ const useId = () => {
     setLength((Number(length) + 1).toFixed(1).toString());
   };
 
+  const productDetailRequestHandler = (productNo: string | undefined) => {
+    productDetailRequest(productNo).then((res) => {
+      console.log(res.data.result.files);
+      setVideoUrl(res.data.result.files[1].resourceUrl);
+    });
+  };
+
   useEffect(() => {
-    console.log(typeof length);
-  }, [length]);
+    let productNo = window.location.href.split("/").pop();
+    productDetailRequestHandler(productNo);
+  }, []);
+
+  useEffect(() => {
+    console.log(videoUrl);
+  }, [videoUrl]);
 
   return (
     <>
       <Container>
         <ProductInfoContainer>
           <ImageVideoWrapper>
-            <BigImagevideo>
+            <BigImagevideoWrapper>
+              <VideoPlayer isActive={true} url={videoUrl} state={videoUrl} />
               <LikeButton>
-                <Image src={btn_review} alt={"logo_favorite"} />
+                <Image src={btn_favorite_inact_sm} alt={"logo_favorite"} />
               </LikeButton>
-            </BigImagevideo>
+            </BigImagevideoWrapper>
             <SmallImageVideoWrapper>
               <SmallImageVideo />
               <SmallImageVideo />
@@ -231,9 +249,8 @@ const ProductInfoContainer = styled.div`
   }
 `;
 const ImageVideoWrapper = styled.div``;
-const BigImagevideo = styled.div`
+const BigImagevideoWrapper = styled.div`
   position: relative;
-  border: 1px solid black;
   box-sizing: border-box;
   &::after {
     display: block;
@@ -244,6 +261,12 @@ const BigImagevideo = styled.div`
     }
   }
 `;
+const BigVideo = styled.video`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+`;
+const BigImage = styled.div``;
 const LikeButton = styled.div`
   display: flex;
   align-items: center;
@@ -251,10 +274,12 @@ const LikeButton = styled.div`
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   background: rgba(10, 68, 89, 0.2);
   border-radius: 22px;
+
+  cursor: pointer;
 `;
 const SmallImageVideoWrapper = styled.div`
   display: flex;

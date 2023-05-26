@@ -41,3 +41,5 @@ export { default as ic_check_web_color } from "./ic_check_web_color.svg";
 export { default as ic_check_web_color_dk } from "./ic_check_web_color_dk.svg";
 export { default as btn_play_l } from "./btn_play_l.svg";
 export { default as btn_stop_l } from "./btn_stop_l.svg";
+export { default as ic_play_fullscreen } from "./ic_play_fullscreen.svg";
+export { default as btn_favorite_inact_sm } from "./btn_favorite_inact_sm.svg";
