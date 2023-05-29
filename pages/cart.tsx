@@ -43,7 +43,7 @@ const useCart = () => {
               isActive={cartValue}
               onClick={() => dispatch(setMeterage())}
             >
-              Meterage (1)
+              Roll (1)
             </MeterageButton>
             <SampleButton
               isActive={cartValue}

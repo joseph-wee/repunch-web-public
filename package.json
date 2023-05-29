@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@next/font": "13.0.7",
+    "@paypal/react-paypal-js": "^7.8.3",
     "@reduxjs/toolkit": "^1.9.1",
     "@types/node": "18.11.17",
     "@types/react": "18.0.26",
@@ -25,6 +26,7 @@
     "next": "13.0.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-paypal-button-v2": "^2.6.3",
     "react-redux": "^8.0.5",
     "redux-persist": "^6.0.0",
     "styled-components": "^5.3.6",

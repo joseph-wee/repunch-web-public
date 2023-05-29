@@ -25,7 +25,7 @@ const useCheck_out = () => {
   return (
     <>
       <Container>
-        <Title>Check out</Title>
+        <Title>Order</Title>
         <ContentTitle>Product</ContentTitle>
         <CheckOutMeterageProduct />
         {/* <ContentTitle>Order Profile</ContentTitle>
@@ -91,7 +91,7 @@ const useCheck_out = () => {
             <CheckedCircle isChecked={deliveryIsChecked} order={2}>
               <SmallCircle />
             </CheckedCircle>
-            Pickup ($1.300)
+            Pickup ($0 / Ready to pick up)
           </RadioLabel>
           <PickupInfo isActive={deliveryIsChecked}>
             <PickupAddressTitle>Pickup address</PickupAddressTitle>
@@ -104,7 +104,7 @@ const useCheck_out = () => {
             </PickupTimeContent>
           </PickupInfo>
         </ContentWrapper>
-        <ContentTitle>Payment</ContentTitle>
+        {/* <ContentTitle>Payment</ContentTitle>
         <ContentWrapper>
           <RadioButton type="radio" id="ship" name="delivery" />
           <RadioLabel
@@ -133,7 +133,7 @@ const useCheck_out = () => {
             </CheckedCircle>
             <Image src={paypal} alt={"paypal_image"} width={63} height={21} />
           </RadioLabel>
-        </ContentWrapper>
+        </ContentWrapper> */}
         {/* <ContentTitle>Billng Address</ContentTitle> */}
         {/* <ContentWrapper>
           <CheckBox type="checkbox" id="address" />
@@ -158,7 +158,7 @@ const useCheck_out = () => {
             <AddressButton>Select other address</AddressButton>
           </BillingAddressWrapper>
         </ContentWrapper> */}
-        <PriceWrapper>
+        {/* <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
             <Price>$32.25</Price>
@@ -181,13 +181,13 @@ const useCheck_out = () => {
             <TotalTitle>Total</TotalTitle>
             <TotalPrice>$62.25</TotalPrice>
           </FlexWrapper>
-        </PriceWrapper>
+        </PriceWrapper> */}
       </Container>
       <Line />
       <ButtonWrapper>
         <CancelButton onClick={() => router.push("/cart")}>Cancel</CancelButton>
         <CheckoutButton onClick={() => router.push("/payment_complete")}>
-          Checkout
+          Confirm
         </CheckoutButton>
       </ButtonWrapper>
       <PopUpBox isActive={popUpIsActive}>
