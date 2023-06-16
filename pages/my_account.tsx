@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -7,8 +7,15 @@ import {
   SideBar,
 } from "../components";
 import Link from "next/link";
+import { userInfoRequest } from "../utils/api";
 
 const my_account = () => {
+  useEffect(() => {
+    userInfoRequest(sessionStorage.getItem("at")).then((res) => {
+      console.log(res);
+    });
+  }, []);
+
   return (
     <Container>
       <SideBar />

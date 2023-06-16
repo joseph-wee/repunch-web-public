@@ -151,3 +151,207 @@ export const productDetailRequest = async (productNo: string | undefined) => {
     return error;
   }
 };
+
+/** 현재 유저 정보 조회 */
+export const userCheck = async (accessToken: string | null) => {
+  try {
+    const res = await axios({
+      headers: { Authorization: `Bearer ${accessToken}` },
+      method: "GET",
+      url: `/user/me`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 현재 유저 정보 조회2 */
+export const userCheck2 = (accessToken: string | null) => {
+  axios
+    .get("/user/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then((res: any) => {
+      console.log(res.data);
+      return res;
+    })
+    .catch((error) => {
+      console.log(error);
+      return error;
+    });
+};
+
+/** 배송지 추가 */
+export const addAddress = async (
+  accessToken: string | null,
+  title: string,
+  firstName: string,
+  lastName: string,
+  companyName: string,
+  countryCode: string,
+  state: string,
+  streetAddress1: string,
+  streetAddress2: string,
+  postCode: string,
+  phoneNumber: string
+) => {
+  try {
+    const res = await axios({
+      headers: { Authorization: `Bearer ${accessToken}` },
+      method: "POST",
+      url: `/email/reset`,
+      data: {
+        title: title,
+        firstName: firstName,
+        lastName: lastName,
+        companyName: companyName,
+        countryCode: countryCode,
+        state: state,
+        streetAddress1: streetAddress1,
+        streetAddress2: streetAddress2,
+        postCode: postCode,
+        phoneNumber: phoneNumber,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 장바구니 담기 */
+export const carts = async (
+  accessToken: string | null,
+  productNo: number,
+  orderUnitType: string,
+  count: number
+) => {
+  try {
+    const res = await axios({
+      headers: { Authorization: `Bearer ${accessToken}` },
+      method: "POST",
+      url: `/carts`,
+      data: {
+        productNo: productNo,
+        orderUnitType: orderUnitType,
+        count: count,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 주문 생성 */
+export const createOrder = async (
+  orderUnitType: string,
+  productNo: number,
+  itemAmount: number,
+  count: number,
+  cartNo: number,
+  addressNo: number,
+  firstName: string,
+  lastName: string,
+  postalCode: number,
+  countryCode: string,
+  state: string,
+  streetAddress1: string,
+  streetAddress2: string,
+  phoneNumber: string,
+  deliveryMethod: string,
+  amount: number
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/orders`,
+      data: {
+        orderUnitType: orderUnitType,
+        items: [
+          {
+            orderUnitType: orderUnitType,
+            productNo: productNo,
+            amount: itemAmount,
+            count: count,
+            cartNo: cartNo,
+            shippingAddress: {
+              addressNo: addressNo,
+              firstName: firstName,
+              lastName: lastName,
+              postalCode: postalCode,
+              countryCode: countryCode,
+              state: state,
+              streetAddress1: streetAddress1,
+              streetAddress2: streetAddress2,
+              phoneNumber: phoneNumber,
+            },
+          },
+        ],
+        deliveryMethod: deliveryMethod,
+        shippingAddress: {
+          addressNo: addressNo,
+          firstName: firstName,
+          lastName: lastName,
+          postalCode: postalCode,
+          countryCode: countryCode,
+          state: state,
+          streetAddress1: streetAddress1,
+          streetAddress2: streetAddress2,
+          phoneNumber: phoneNumber,
+        },
+        amount: amount,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 주문 생성(가결제) */
+export const paymentCapture = async (
+  orderNo: string,
+  paymentMethod: string,
+  paymentAmount: number,
+  pointAmount: number,
+  totalAmount: number
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/orders`,
+      data: {
+        orderNo: orderNo,
+        paymentMethod: paymentMethod,
+        paymentAmount: paymentAmount,
+        pointAmount: pointAmount,
+        totalAmount: totalAmount,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 결제 성공 콜백 api */
+export const paymentRequest = async (token: string, payerId: string) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/payment/request`,
+      data: {
+        token: token,
+        payerId: payerId,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};

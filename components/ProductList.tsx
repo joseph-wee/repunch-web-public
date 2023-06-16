@@ -5,6 +5,8 @@ import {
   btn_review,
   ic_favorite_wht,
   test_thumbnail,
+  test_thumbnail_green,
+  test_thumbnail_red,
 } from "../assets";
 import Image from "next/legacy/image";
 import Link from "next/link";
@@ -17,13 +19,15 @@ const ProductCard = (
   // favoriteValue: boolean
 ) => {
   const [favoriteIsActive, setFavoriteIsActive] = useState(false);
+  const [colorLength, setColorLength] = useState("60m");
+  const [thumbnail, setThumnail] = useState(test_thumbnail);
 
   return (
     <Card>
       <Thumbnail>
         <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
           <Image
-            src={test_thumbnail}
+            src={thumbnail}
             alt={"thumbnail"}
             layout="fill"
             objectFit="cover"
@@ -39,20 +43,49 @@ const ProductCard = (
           />
         </LikeButton>
       </Thumbnail>
-      <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
-        <InfoWrapper>
-          <ProductTitle>Embroidery sheer</ProductTitle>
-          <ProductCategory>jacquard</ProductCategory>
-          <RatioWrapper>
-            <Ratio>EL 9%</Ratio>
-            <Ratio>PA 94%</Ratio>
-          </RatioWrapper>
-          <PriceUnitWrapper>
-            <Price>$ 8.38</Price>
-            <Meter>/meter</Meter>
-          </PriceUnitWrapper>
-        </InfoWrapper>
-      </Link>
+
+      <InfoWrapper>
+        <ProductTitle>Embroidery sheer</ProductTitle>
+        <ProductCategory>jacquard</ProductCategory>
+        <RatioWrapper>
+          <Ratio>EL 9%</Ratio>
+          <Ratio>PA 94%</Ratio>
+        </RatioWrapper>
+        <PriceUnitWrapper>
+          <Price>$ 8.38</Price>
+          <Meter>/m</Meter>
+        </PriceUnitWrapper>
+        <ColorLength>{colorLength}</ColorLength>
+        <ColorCircleWrapper>
+          <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
+            <ColorCircle
+              color={"blue"}
+              onMouseOver={() => {
+                setColorLength("30m");
+                setThumnail(test_thumbnail);
+              }}
+            />
+          </Link>
+          <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
+            <ColorCircle
+              color={"green"}
+              onMouseOver={() => {
+                setColorLength("30m");
+                setThumnail(test_thumbnail_green);
+              }}
+            />
+          </Link>
+          <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
+            <ColorCircle
+              color={"red"}
+              onMouseOver={() => {
+                setColorLength("30m");
+                setThumnail(test_thumbnail_red);
+              }}
+            />
+          </Link>
+        </ColorCircleWrapper>
+      </InfoWrapper>
     </Card>
   );
 };
@@ -105,7 +138,7 @@ const InfoWrapper = styled.div`
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 5px;
-  padding-bottom: 12px;
+  padding-bottom: 16px;
 
   border-radius: 0px 0px 4px 4px;
   background-color: #ffffff;
@@ -125,7 +158,7 @@ const ProductCategory = styled.div`
 `;
 const RatioWrapper = styled.div`
   display: flex;
-  margin-bottom: 16px;
+  margin-bottom: 21px;
 `;
 const Ratio = styled.div`
   display: flex;
@@ -148,10 +181,11 @@ const Ratio = styled.div`
 const PriceUnitWrapper = styled.div`
   display: flex;
   align-items: center;
+  margin-bottom: 1px;
 `;
 const Price = styled.span`
   font-weight: 700;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20.8px;
   letter-spacing: -0.011em;
 
@@ -159,11 +193,38 @@ const Price = styled.span`
 `;
 const Meter = styled.span`
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 18.2px;
   letter-spacing: -0.011em;
 
   color: #a4b0b2;
+`;
+const ColorLength = styled.div`
+  margin-bottom: 12px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #121822;
+`;
+const ColorCircleWrapper = styled.div`
+  display: flex;
+  gap: 6px;
+`;
+const ColorCircle = styled.div<{ color: string }>`
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+  background-color: ${(props) => {
+    switch (props.color) {
+      case "blue":
+        return "#1B8F9F";
+      case "green":
+        return "#46CA43";
+      case "red":
+        return "#EC3939";
+    }
+  }};
 `;
 
 export default ProductCard;
