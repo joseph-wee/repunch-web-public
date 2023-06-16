@@ -9,7 +9,7 @@ import {
 import Link from "next/link";
 import { userInfoRequest } from "../utils/api";
 
-const my_account = () => {
+const useMy_account = () => {
   useEffect(() => {
     userInfoRequest(sessionStorage.getItem("at")).then((res) => {
       console.log(res);
@@ -188,4 +188,4 @@ const InfoContent = styled.div`
   color: #121822;
 `;
 
-export default my_account;
+export default useMy_account;
