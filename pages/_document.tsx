@@ -46,7 +46,6 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
         </Head>
-        <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
         <body>
           <Main />
           <NextScript />
