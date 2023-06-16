@@ -20,6 +20,8 @@ export { default as ic_up_bk } from "./ic_up_bk.svg";
 export { default as ic_up_bk_filter } from "./ic_up_bk_filter.svg";
 export { default as ic_down_bk_filter } from "./ic_down_bk_filter.svg";
 export { default as test_thumbnail } from "./test_thumbnail.png";
+export { default as test_thumbnail_green } from "./test_thumbnail_green.png";
+export { default as test_thumbnail_red } from "./test_thumbnail_red.png";
 export { default as ic_close } from "./ic_close.svg";
 export { default as btn_favorite_act } from "./btn_favorite_act.svg";
 export { default as btn_favorite_act_sm } from "./btn_favorite_act_sm.svg";
