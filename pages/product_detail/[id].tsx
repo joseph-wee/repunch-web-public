@@ -222,6 +222,7 @@ const useId = () => {
                   <ColorBox
                     isChecked={colorCheckedList[j]}
                     onClick={() => checkHandler(j)}
+                    key={i}
                   >
                     <ColorCircle color={i}>
                       <CheckImageWrapper isChecked={colorCheckedList[j]}>
