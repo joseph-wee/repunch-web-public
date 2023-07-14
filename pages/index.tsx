@@ -25,7 +25,7 @@ export default function Home() {
 
   /** 상품 리스트 호출 함수 */
   const productListRequestFirst = (searchAfter: number) => {
-    productsRequest(10, 3).then((res) => {
+    productsRequest(10, 10).then((res) => {
       let tempArr = productList;
       tempArr = res.data.result.data;
       setProductList([...tempArr]);
