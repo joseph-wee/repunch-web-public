@@ -6,6 +6,7 @@ import {
   btn_favorite_act_sm,
   btn_favorite_inact_sm,
   btn_review,
+  ic_check_web_color,
   ic_favorite_wht,
   ic_info,
   ic_minus,
@@ -21,10 +22,79 @@ const useId = () => {
   const [popUpIsActive, setPopUpIsActive] = useState(0);
   const router = useRouter();
   const { id } = router.query;
-  const [length, setLength] = useState<string>("1.0");
+  const [length, setLength] = useState<string>("1");
   const { value: cartValue } = useAppSelector((state) => state.cartValue);
 
   const [videoUrl, setVideoUrl] = useState("");
+
+  //////// 개발용 임시 데이터, 코드
+
+  const colorList = ["emerald", "green", "red"];
+  const [colorCheckedList, setColorCheckedList] = useState([
+    true,
+    false,
+    false,
+  ]);
+
+  const [productClicked, setProductClicked] = useState([
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+
+  const [price, setPrice] = useState(10);
+  const [count, setCount] = useState(1);
+
+  useEffect(() => {
+    setCount(1);
+  }, [colorCheckedList]);
+
+  useEffect(() => {
+    setPrice(Number(count) * 10);
+  }, [count]);
+
+  const checkHandler = (order: number) => {
+    let temp = colorCheckedList;
+    temp.forEach((i, j) => {
+      if (i == true) {
+        temp[j] = false;
+      }
+    });
+    temp[order] = true;
+    setColorCheckedList([...temp]);
+  };
+
+  const clickHandler = (order: number) => {
+    let temp = productClicked;
+    if (order >= 0 && order <= 1) {
+      for (let i = 0; i <= 1; i++) {
+        temp[i] = false;
+      }
+    }
+    if (order >= 2 && order <= 5) {
+      for (let i = 2; i <= 5; i++) {
+        temp[i] = false;
+      }
+    }
+    if (order >= 6 && order <= 11) {
+      for (let i = 6; i <= 11; i++) {
+        temp[i] = false;
+      }
+    }
+    temp[order] = true;
+    setProductClicked([...temp]);
+  };
+
+  ////////
 
   const dispatch = useAppDispatch();
   const cartStateHandler = () => {
@@ -37,10 +107,13 @@ const useId = () => {
   };
 
   const minus = () => {
-    setLength((Number(length) - 1).toFixed(1).toString());
+    if (count == 1) {
+      return;
+    }
+    setCount(count - 1);
   };
   const plus = () => {
-    setLength((Number(length) + 1).toFixed(1).toString());
+    setCount(count + 1);
   };
 
   const productDetailRequestHandler = (productNo: string | undefined) => {
@@ -50,14 +123,19 @@ const useId = () => {
     });
   };
 
-  useEffect(() => {
-    let productNo = window.location.href.split("/").pop();
-    productDetailRequestHandler(productNo);
-  }, []);
+  const continueShoppingHandler = () => {
+    setPopUpIsActive(0);
+    setCount(1);
+  };
 
   useEffect(() => {
-    console.log(videoUrl);
-  }, [videoUrl]);
+    let productNo = window.location.href.split("/").pop();
+    // productDetailRequestHandler(productNo);
+  }, []);
+
+  // useEffect(() => {
+  //   console.log(videoUrl);
+  // }, [videoUrl]);
 
   return (
     <>
@@ -65,7 +143,7 @@ const useId = () => {
         <ProductInfoContainer>
           <ImageVideoWrapper>
             <BigImagevideoWrapper>
-              <VideoPlayer isActive={true} url={videoUrl} state={videoUrl} />
+              {/* <VideoPlayer isActive={true} url={videoUrl} state={videoUrl} /> */}
               <LikeButton>
                 <Image src={btn_favorite_inact_sm} alt={"logo_favorite"} />
               </LikeButton>
@@ -134,34 +212,179 @@ const useId = () => {
                 Cotton & Linen Fabric
               </InfoDescription>
             </InfoWrapper>
+          </ProductInfoPurchaseContainer>
+        </ProductInfoContainer>
+        <PurchaseContainer>
+          <PurchaseBox>
+            <ColorWrapper>
+              {colorList.map((i, j) => {
+                return (
+                  <ColorBox
+                    isChecked={colorCheckedList[j]}
+                    onClick={() => checkHandler(j)}
+                  >
+                    <ColorCircle color={i}>
+                      <CheckImageWrapper isChecked={colorCheckedList[j]}>
+                        <Image
+                          src={ic_check_web_color}
+                          alt="ic_check_web_color"
+                        ></Image>
+                      </CheckImageWrapper>
+                    </ColorCircle>
+                  </ColorBox>
+                );
+              })}
+            </ColorWrapper>
+            <ProductWrapper>
+              <Product
+                isRender={colorCheckedList[0]}
+                isActive={productClicked[0]}
+                onClick={() => clickHandler(0)}
+              >
+                <ColorName>Emerald</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[0]}
+                isActive={productClicked[1]}
+                onClick={() => clickHandler(1)}
+              >
+                <ColorName>Emerald</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[1]}
+                isActive={productClicked[2]}
+                onClick={() => clickHandler(2)}
+              >
+                <ColorName>Green</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[1]}
+                isActive={productClicked[3]}
+                onClick={() => clickHandler(3)}
+              >
+                <ColorName>Green</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>{" "}
+              <Product
+                isRender={colorCheckedList[1]}
+                isActive={productClicked[4]}
+                onClick={() => clickHandler(4)}
+              >
+                <ColorName>Green</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[1]}
+                isActive={productClicked[5]}
+                onClick={() => clickHandler(5)}
+              >
+                <ColorName>Green</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[2]}
+                isActive={productClicked[6]}
+                onClick={() => clickHandler(6)}
+              >
+                <ColorName>Red</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[2]}
+                isActive={productClicked[7]}
+                onClick={() => clickHandler(7)}
+              >
+                <ColorName>Red</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[2]}
+                isActive={productClicked[8]}
+                onClick={() => clickHandler(8)}
+              >
+                <ColorName>Red</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[2]}
+                isActive={productClicked[9]}
+                onClick={() => clickHandler(9)}
+              >
+                <ColorName>Red</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[2]}
+                isActive={productClicked[10]}
+                onClick={() => clickHandler(10)}
+              >
+                <ColorName>Red</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+              <Product
+                isRender={colorCheckedList[2]}
+                isActive={productClicked[11]}
+                onClick={() => clickHandler(11)}
+              >
+                <ColorName>Red</ColorName>
+                <MiniCircle />
+                <LengthText>20cm*20cm</LengthText>
+                <UnitText>(W*L)</UnitText>
+              </Product>
+            </ProductWrapper>
+            <AvailableText>20 Available</AvailableText>
             <LengthWrapper>
-              <LengthTitle>Length (m)</LengthTitle>
               <ButtonInputWrapper>
                 <MinusButton onClick={() => minus()}>
                   <Image src={ic_minus} alt={"minus_button"} />
                 </MinusButton>
                 <LengthInput
                   type="number"
-                  step="0.1"
-                  value={length}
-                  onChange={(e) => setLength(e.target.value)}
+                  step="1"
+                  value={count}
+                  onChange={(e) => setCount(parseInt(e.target.value))}
                 />
                 <PlusButton onClick={() => plus()}>
                   <Image src={ic_plus} alt={"plus_button"} />
                 </PlusButton>
               </ButtonInputWrapper>
+              <ProductPriceWrapper>
+                <ProductUnit>1 Qty 20 m</ProductUnit>
+                <ProductPrice>$ {price}</ProductPrice>
+              </ProductPriceWrapper>
             </LengthWrapper>
             <PricePurchaseWrapper>
-              <PriceWrapper>
-                <Price>$ 4.06</Price>
-                <Vat>EX VAT</Vat>
-              </PriceWrapper>
               <PurchaseButton onClick={() => setPopUpIsActive(1)}>
                 Add to cart
               </PurchaseButton>
             </PricePurchaseWrapper>
             <RequestSample onClick={() => setPopUpIsActive(2)}>
-              Request sample(Add to cart) /&nbsp;
+              Request sample(Add to cart)&nbsp;
               <BoldText>$ 8.38(-30%)</BoldText>
             </RequestSample>
             <DiscountMessage>-30% Open Promotion Due to ‘23.10</DiscountMessage>
@@ -169,8 +392,8 @@ const useId = () => {
               <Image src={ic_info} alt={"ic_info"} />
               Samples can be ordered from 10-20 pieces.
             </SmapleMessage>
-          </ProductInfoPurchaseContainer>
-        </ProductInfoContainer>
+          </PurchaseBox>
+        </PurchaseContainer>
         <DeliveryReturnsInfoTitleWrapper>
           <ShortLine />
           <DeliveryReturnsInfoTitle>
@@ -217,7 +440,7 @@ const useId = () => {
             <Link href="/cart" style={{ textDecoration: "none" }}>
               <PopUpButton>View cart</PopUpButton>
             </Link>
-            <PopUpButton onClick={() => setPopUpIsActive(0)}>
+            <PopUpButton onClick={() => continueShoppingHandler()}>
               Continue shopping
             </PopUpButton>
           </ButtonWrapper>
@@ -244,8 +467,13 @@ const Container = styled.div`
 `;
 const ProductInfoContainer = styled.div`
   display: flex;
+  margin-bottom: 40px;
+  @media screen and (max-width: 1279px) {
+    margin-bottom: 16px;
+  }
   @media screen and (max-width: 767px) {
     display: block;
+    margin-bottom: 43px;
   }
 `;
 const ImageVideoWrapper = styled.div``;
@@ -310,7 +538,6 @@ const SmallImageVideo = styled.div`
 const ProductInfoPurchaseContainer = styled.div`
   padding-left: 20px;
   padding-right: 20px;
-  padding-bottom: 40px;
 
   @media screen and (max-width: 767px) {
     padding-top: 20px;
@@ -331,6 +558,9 @@ const Line = styled.div`
 const InfoWrapper = styled.div`
   margin-bottom: 12px;
   display: flex;
+  &:nth-of-type(13) {
+    margin-bottom: 0px;
+  }
 `;
 const InfoTitle = styled.div`
   margin-right: 22.84px;
@@ -362,6 +592,114 @@ const InfoDescription = styled.div`
 
   color: #333333;
 `;
+const PurchaseContainer = styled.div`
+  padding-left: 340px;
+  margin-bottom: 40px;
+  @media screen and (max-width: 1279px) {
+    padding-left: 0px;
+    margin-bottom: 20px;
+  }
+  @media screen and (max-width: 767px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+`;
+const PurchaseBox = styled.div`
+  padding: 20px;
+  border: 1px solid #dee8ec;
+`;
+const ColorWrapper = styled.div`
+  display: flex;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #dee8ec;
+  box-sizing: border-box;
+  height: 55px;
+`;
+const ColorBox = styled.div<{ isChecked: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  ${(props) => {
+    switch (props.isChecked) {
+      case true:
+        return `border: 1px solid #dee8ec;
+        border-bottom: 1px solid #FFFFFF;`;
+      case false:
+        return `
+          border: none;
+        `;
+    }
+  }};
+  box-sizing: border-box;
+  cursor: pointer;
+`;
+const ColorCircle = styled.div<{ color: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 100%;
+  background-color: ${(props) => {
+    switch (props.color) {
+      case "emerald":
+        return "#1B8F9F";
+      case "green":
+        return "#46ca43";
+      case "red":
+        return "#EC3939";
+    }
+  }};
+`;
+const CheckImageWrapper = styled.div<{ isChecked: boolean }>`
+  display: ${(props) => {
+    return props.isChecked ? "block" : "none";
+  }};
+`;
+const ProductWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+`;
+const Product = styled.div<{ isRender: boolean; isActive: boolean }>`
+  display: ${(props) => {
+    return props.isRender ? "flex" : "none";
+  }};
+  align-items: center;
+  padding: 10px;
+  border: ${(props) => {
+    return props.isActive ? "1px solid #536c6d" : "1px solid #DEE8EC";
+  }};
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 130%;
+  color: #121822;
+  cursor: pointer;
+`;
+const ColorName = styled.div``;
+const MiniCircle = styled.div`
+  margin-right: 4px;
+  margin-left: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 100%;
+  background-color: #dee8ec;
+`;
+const LengthText = styled.div``;
+const UnitText = styled.div`
+  color: #536c6d;
+`;
+const AvailableText = styled.div`
+  margin-bottom: 20px;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 130%;
+`;
 const RatioWrapper = styled.div`
   display: flex;
 `;
@@ -389,14 +727,15 @@ const LengthWrapper = styled.div`
   position: relative;
   margin-top: 20px;
   margin-bottom: 20px;
-  padding-left: 17.5px;
-  padding-right: 17.5px;
   align-items: center;
   width: 100%;
-  height: 61px;
-  border: 0.79402px solid #dee8ec;
-  border-radius: 1.58804px;
+  height: 40px;
   box-sizing: border-box;
+  @media screen and (max-width: 767px) {
+    display: block;
+    height: auto;
+    margin-bottom: 16px;
+  }
 `;
 const LengthTitle = styled.div`
   margin-right: 36.5px;
@@ -411,6 +750,9 @@ const LengthTitle = styled.div`
 const ButtonInputWrapper = styled.div`
   display: flex;
   align-items: center;
+  @media screen and (max-width: 767px) {
+    margin-bottom: 16px;
+  }
 `;
 const MinusButton = styled.button`
   display: flex;
@@ -438,6 +780,10 @@ const LengthInput = styled.input`
   }
 
   text-align: center;
+
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `;
 const PlusButton = styled.button`
   display: flex;
@@ -451,9 +797,39 @@ const PlusButton = styled.button`
 
   cursor: pointer;
 `;
+const ProductPriceWrapper = styled.div`
+  display: flex;
+  gap: 11.48px;
+  @media screen and (max-width: 767px) {
+    display: block;
+  }
+`;
+const ProductUnit = styled.div`
+  display: flex;
+  align-items: end;
+  color: #536c6d;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 130%;
+  letter-spacing: -0.132px;
+  @media screen and (max-width: 767px) {
+    display: block;
+    text-align: center;
+  }
+`;
+const ProductPrice = styled.div`
+  color: #121822;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 130%;
+  letter-spacing: -0.308px;
+  @media screen and (max-width: 767px) {
+    text-align: center;
+  }
+`;
 const PricePurchaseWrapper = styled.div`
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   height: 48px;
 `;
 const PriceWrapper = styled.div`
@@ -484,9 +860,9 @@ const PurchaseButton = styled.button`
   align-items: center;
   justify-content: center;
   width: 100%;
-  border: 0.79402px solid #d4f01e;
+  border: 0.79402px solid #dee8ec;
   border-radius: 1.58804px;
-  background-color: #e1ff20;
+  background-color: #f2f6f8;
 
   font-weight: 700;
   font-size: 14px;
@@ -500,7 +876,7 @@ const RequestSample = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 9px;
   width: 100%;
   height: 48px;
   border: none;
@@ -516,14 +892,18 @@ const RequestSample = styled.button`
 
   color: #121822;
   cursor: pointer;
+  @media screen and (max-width: 767px) {
+    display: block;
+  }
 `;
 const BoldText = styled.div`
-  font-weight: 400;
+  font-weight: 600;
   font-size: 14px;
   line-height: 18px;
   color: #ff2f01;
 `;
 const DiscountMessage = styled.div`
+  margin-left: 8px;
   margin-bottom: 5px;
   font-weight: 400;
   font-size: 12px;
@@ -535,7 +915,7 @@ const SmapleMessage = styled.div`
   display: flex;
   align-items: center;
   gap: 5.5px;
-
+  margin-left: 8px;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
