@@ -5,6 +5,7 @@ export { default as SelectBoxCountryCodeNum } from "./SelectBoxCountryCodeNum";
 export { default as NavTopBar } from "./NavTopBar";
 export { default as NavMobileBar } from "./NavMobileBar";
 export { default as Filter } from "./Filter";
+export { default as Product } from "./ProductList";
 export { default as ProductList } from "./ProductList";
 export { default as PopUp } from "./PopUp";
 export { default as SideBar } from "./SideBar";
