@@ -20,25 +20,7 @@ import { productsRequest } from "../utils/api";
 export default function Home() {
   const [sortIsActive, setSortIsActive] = useState(true);
   const [filterIsActive, setFilterIsActive] = useState(false);
-  const [productList, setProductList] = useState([]);
   const [sortFilterIsActive, setSortFilterIsActive] = useState(false);
-
-  /** 상품 리스트 호출 함수 */
-  const productListRequestFirst = (searchAfter: number) => {
-    productsRequest(10, 10).then((res) => {
-      let tempArr = productList;
-      tempArr = res.data.result.data;
-      setProductList([...tempArr]);
-    });
-  };
-
-  useEffect(() => {
-    productListRequestFirst(3);
-  }, []);
-
-  useEffect(() => {
-    console.log(productList);
-  }, [productList]);
 
   return (
     <Container>
@@ -141,13 +123,7 @@ export default function Home() {
             </SortMenuWrapper>
           </ButtonFlexWrapper>
           <ProductListGridWrapper>
-            {productList.map((i) => {
-              return (
-                <>
-                  <ProductList quantity={90} />
-                </>
-              );
-            })}
+            <ProductList />
           </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>
