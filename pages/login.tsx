@@ -301,9 +301,9 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
     return props.isChecked == true ? "#121822" : "#FFFFFF";
   }};
 
-  background-image: url(${(props) => {
-    return props.isChecked == true ? props.img : "";
-  }});
+  background-image: ${(props) => {
+    return props.isChecked == true ? `url(${props.img})` : "";
+  }};
   background-size: 9.5px 7.4px;
   background-position: center;
   background-repeat: no-repeat;
@@ -554,7 +554,7 @@ const TextInform = styled.div`
 const EmailRepunch = styled.div`
   font-weight: 400;
   font-size: 10px;
-  line-height: 13px%;
+  line-height: 13px;
 
   text-align: center;
   text-decoration-line: underline;

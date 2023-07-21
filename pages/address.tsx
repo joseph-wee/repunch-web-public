@@ -432,9 +432,9 @@ const Box = styled.div<{ isChecked: boolean; img: string }>`
     return props.isChecked == true ? "#FF5C01" : "#FFFFFF";
   }};
 
-  background-image: url(${(props) => {
-    return props.isChecked == true ? props.img : "";
-  }});
+  background-image: ${(props) => {
+    return props.isChecked == true ? `url(${props.img})` : "";
+  }};
   background-size: 9.5px 7.4px;
   background-position: center;
   background-repeat: no-repeat;

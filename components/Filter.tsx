@@ -739,9 +739,9 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
     return props.isChecked == true ? "#121822" : "#FFFFFF";
   }};
 
-  background-image: url(${(props) => {
-    return props.isChecked == true ? props.img : "";
-  }});
+  background-image: ${(props) => {
+    return props.isChecked == true ? `url(${props.img})` : "";
+  }};
   background-size: 9.5px 7.4px;
   background-position: center;
   background-repeat: no-repeat;
@@ -749,12 +749,12 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   cursor: pointer;
 `;
 const ColorWraaper = styled.div<{ isActive: boolean }>`
-display: ${(props) => {
-  return props.isActive == true ? "flex" : "none";
-}};
+  display: ${(props) => {
+    return props.isActive == true ? "flex" : "none";
+  }};
   flex-wrap: wrap;
   width: 188px;
-  height; 190px;
+  height: 190px;
 `;
 const ColorCircle = styled.div`
   display: flex;
