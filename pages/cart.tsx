@@ -66,11 +66,9 @@ const useCart = () => {
             Select all
           </SelectAllBoxWrapper>
           <MeterageProductWrapper isActive={cartValue}>
-            {" "}
             <CartMeterageProduct />
           </MeterageProductWrapper>
           <SampleProudctWrapper isActive={cartValue}>
-            {" "}
             <CartSampleProduct />
           </SampleProudctWrapper>
         </Main>
@@ -240,9 +238,9 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
     return props.isChecked == true ? "#121822" : "#FFFFFF";
   }};
 
-  background-image: url(${(props) => {
-    return props.isChecked == true ? props.img : "";
-  }});
+  background-image: ${(props) => {
+    return props.isChecked == true ? `url(${props.img})` : "";
+  }};
   background-size: 9.5px 7.4px;
   background-position: center;
   background-repeat: no-repeat;
