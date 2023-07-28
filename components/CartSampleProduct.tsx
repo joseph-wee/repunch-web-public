@@ -40,31 +40,19 @@ const useCartSampleProduct = () => {
         </ImageWrapper>
         <TextWrapper>
           <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
-          <MeterageOrSample>Sample</MeterageOrSample>
+          <OptionWrapper>
+            <Color />
+            Red
+            <VerticalLine />
+            Sample
+          </OptionWrapper>
         </TextWrapper>
       </ProductWrapper>
       <Line />
-      <LengthWrapper>
-        <LengthTitle>Length (m)</LengthTitle>
-        <ButtonInputWrapper>
-          <MinusButton onClick={() => minus()}>
-            <Image src={ic_minus} alt={"minus_button"} />
-          </MinusButton>
-          <LengthInput
-            type="number"
-            step="0.1"
-            value={length}
-            onChange={(e) => setLength(e.target.value)}
-          />
-          <PlusButton onClick={() => plus()}>
-            <Image src={ic_plus} alt={"plus_button"} />
-          </PlusButton>
-        </ButtonInputWrapper>
-      </LengthWrapper>
-      <Line />
+
       <PriceWrapper>
         <Exvat>EX VAT</Exvat>
-        <Price>$ 4.06(-30%)</Price>
+        <Price>$ 4.06</Price>
       </PriceWrapper>
     </Container>
   );
@@ -117,9 +105,9 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
     return props.isChecked == true ? "#121822" : "#FFFFFF";
   }};
 
-  background-image: url(${(props) => {
-    return props.isChecked == true ? props.img : "";
-  }});
+  background-image: ${(props) => {
+    return props.isChecked == true ? `url(${props.img})` : "";
+  }};
   background-size: 9.5px 7.4px;
   background-position: center;
   background-repeat: no-repeat;
@@ -149,13 +137,34 @@ const TextWrapper = styled.div`
   margin-left: 10px;
 `;
 const ProductTitle = styled.div`
+  margin-bottom: 7px;
   font-weight: 700;
   font-size: 12px;
   line-height: 16px;
 
-  letter-spacing: -0.011em;
-
   color: #121822;
+`;
+const OptionWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #536c6d;
+`;
+const Color = styled.div`
+  margin-right: 4px;
+  width: 12px;
+  height: 12px;
+  background-color: #ec3939;
+  border-radius: 100%;
+`;
+const VerticalLine = styled.div`
+  width: 1px;
+  height: 9px;
+  background-color: #dee8ec;
+  margin: 0 6px;
 `;
 const MeterageOrSample = styled.div`
   font-weight: 400;
@@ -255,7 +264,7 @@ const Price = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #ff2f01;
+  color: #121822;
 `;
 
 export default useCartSampleProduct;

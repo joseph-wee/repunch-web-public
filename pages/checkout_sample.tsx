@@ -50,7 +50,7 @@ const useCheck_out_sample = () => {
           <DottedLine />
           <SamplePriceWrapper>
             <Exvat>EX VAT</Exvat>
-            <SamplePrice>$ 4.06(-30%)</SamplePrice>
+            <SamplePrice>$ 42.78</SamplePrice>
           </SamplePriceWrapper>
         </SampleContainer>
         {/* <ContentTitle>Order Profile</ContentTitle>
@@ -62,14 +62,13 @@ const useCheck_out_sample = () => {
         </ContentWrapper> */}
         <ContentTitle>Shipping Address</ContentTitle>
         <ContentWrapper>
-          <EditButton>Edit</EditButton>
           <AddressTitle>My1</AddressTitle>
           <AddressText>#809</AddressText>
           <AddressText>#809, 8dong ssangyoung</AddressText>
           <AddressText>daechi dong, gangnamgu</AddressText>
           <AddressText>korea</AddressText>
           <AddressText>06285</AddressText>
-          <AddressPhoneNumber>821086281024</AddressPhoneNumber>
+          <AddressPhoneNumber>+82 1086281024</AddressPhoneNumber>
           <AddressButton>+ Add a new address</AddressButton>
           <AddressButton onClick={() => setPopUpIsActive(1)}>
             Select other address
@@ -134,7 +133,7 @@ const useCheck_out_sample = () => {
             </PickupTimeContent>
           </PickupInfo> */}
         </ContentWrapper>
-        <ContentTitle>Payment</ContentTitle>
+        {/* <ContentTitle>Payment</ContentTitle>
         <ContentWrapper>
           <RadioButton type="radio" id="ship" name="delivery" />
           <RadioLabel
@@ -163,7 +162,7 @@ const useCheck_out_sample = () => {
             </CheckedCircle>
             <Image src={paypal} alt={"paypal_image"} width={63} height={21} />
           </RadioLabel>
-        </ContentWrapper>
+        </ContentWrapper> */}
         {/* <ContentTitle>Billng Address</ContentTitle> */}
         {/* <ContentWrapper>
           <CheckBox type="checkbox" id="address" />
@@ -191,11 +190,11 @@ const useCheck_out_sample = () => {
         <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
-            <Price>$32.25</Price>
+            <Price>$42.78</Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
-              Delivery by ship
+              Delivery by air
               <QuestionMark>?</QuestionMark>
             </PriceTitle>
             <Price>Free</Price>
@@ -209,7 +208,7 @@ const useCheck_out_sample = () => {
           <Line />
           <FlexWrapper>
             <TotalTitle>Total</TotalTitle>
-            <TotalPrice>$62.25</TotalPrice>
+            <TotalPrice>$75.03</TotalPrice>
           </FlexWrapper>
           <InfoText>
             <Image src={ic_info} alt={"ic_info"} />
@@ -263,8 +262,8 @@ const Title = styled.div`
 `;
 const SampleContainer = styled.div`
   padding-top: 15px;
-  padding-left: 16px;
-  padding-right: 18px;
+  padding-left: 15px;
+  padding-right: 15px;
   padding-bottom: 15px;
   border: 1px solid #dee8ec;
   border-radius: 2px;
@@ -272,14 +271,17 @@ const SampleContainer = styled.div`
 `;
 const SampleWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  row-gap: 9px;
-  column-gap: 9.5px;
+  grid-template-columns: repeat(auto-fill, minmax(48px, auto));
+  gap: 9px;
 
   @media screen and (max-width: 767px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    row-gap: 2px;
-    column-gap: 2px;
+    gap: 7px;
+  }
+  @media screen and (max-width: 414px) {
+    gap: 4px;
+  }
+  @media screen and (max-width: 375px) {
+    gap: 2px;
   }
   margin-bottom: 12px;
 `;
@@ -323,7 +325,7 @@ const SamplePrice = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #ff2f01;
+  color: #121822;
 `;
 const ContentTitle = styled.div`
   display: flex;
@@ -551,9 +553,9 @@ const Box = styled.div<{ isChecked: boolean; img: string }>`
     return props.isChecked == true ? "#FF5C01" : "#FFFFFF";
   }};
 
-  background-image: url(${(props) => {
-    return props.isChecked == true ? props.img : "";
-  }});
+  background-image: ${(props) => {
+    return props.isChecked == true ? `url(${props.img})` : "";
+  }};
   background-size: 9.5px 7.4px;
   background-position: center;
   background-repeat: no-repeat;
@@ -598,6 +600,7 @@ const QuestionMark = styled.div`
   line-height: 9px;
   letter-spacing: -0.011em;
   color: #ffffff;
+  cursor: pointer;
 `;
 const Price = styled.div`
   font-weight: 400;

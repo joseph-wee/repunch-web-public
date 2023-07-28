@@ -45,19 +45,35 @@ const useOrderInfoBox = ({
           </ImageWrapper>
           <TextWrapper>
             <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
-            <MeterageOrSample>Meterage</MeterageOrSample>
-            <LengthWrapper>
-              <LengthTitle>Length (m)</LengthTitle>
-              <Length>10 m</Length>
-            </LengthWrapper>
-            <LengthPrice>$ 4.06</LengthPrice>
+            <OptionWrapper>
+              <Color />
+              Red
+              <VerticalLine />
+              20m*20m
+            </OptionWrapper>
+            <ProductQty>3 Qty</ProductQty>
+          </TextWrapper>
+        </ProductWrapper>
+        <ProductWrapper>
+          <ImageWrapper>
+            <Image src={test_thumbnail} alt={"test"} width={80} height={80} />
+          </ImageWrapper>
+          <TextWrapper>
+            <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
+            <OptionWrapper>
+              <ColorGreen />
+              Green
+              <VerticalLine />
+              20m*20m
+            </OptionWrapper>
+            <ProductQty>3 Qty</ProductQty>
           </TextWrapper>
         </ProductWrapper>
         <DashLine1 />
-        <OrderInfoWrapper>
+        {/* <OrderInfoWrapper>
           <OrderInfoTitle>Length (m)</OrderInfoTitle>
           <OrderInfoContent>10 m</OrderInfoContent>
-        </OrderInfoWrapper>
+        </OrderInfoWrapper> */}
         <OrderInfoWrapper>
           <OrderInfoTitle>Order no.</OrderInfoTitle>
           <OrderInfoContent>0906ZG5D72045J</OrderInfoContent>
@@ -66,13 +82,13 @@ const useOrderInfoBox = ({
           <OrderInfoTitle>Order time</OrderInfoTitle>
           <OrderInfoContent>JUN 10, 2023 / 23:12</OrderInfoContent>
         </OrderInfoWrapper>
-        <OrderInfoWrapper>
+        {/* <OrderInfoWrapper>
           <OrderCanceled>Order canceled</OrderCanceled>
           <OrderInfoContent>
             Currently out of stock.
             <br /> Please adjust the quantity and order again.
           </OrderInfoContent>
-        </OrderInfoWrapper>
+        </OrderInfoWrapper> 여기 남겨두고 나중에 지우기*/}
         <DashLine1 />
         <TotalPriceWrapper>
           <Total>Total</Total>
@@ -84,7 +100,7 @@ const useOrderInfoBox = ({
             <OrderDetailButtonBox
               onClick={() => setOrderDetailIsActive(!orderDetailIsActive)}
             >
-              <OrderDetailButton>Order detail</OrderDetailButton>
+              <OrderDetailButton>Order Summary</OrderDetailButton>
               <Image
                 src={orderDetailIsActive ? ic_up_bk : ic_down_bk}
                 alt={"sort_arrow_button"}
@@ -256,11 +272,17 @@ const useOrderInfoBox = ({
         <AccomplishInvoiceButton isActive={accomplish}>
           Order accomplish
         </AccomplishInvoiceButton>
-        <AccomplishInvoiceButton isActive={accomplish}>
-          Invoice Download
-        </AccomplishInvoiceButton>
+        <NoticeText isActive={accomplish}>
+          After 10 days, it will be automatically checked for completion.
+          <br />
+          If you have any problems with delivery, please contact us via&nbsp;
+          <u>support@requnch.io</u> or&nbsp;<u>Contact us</u>
+        </NoticeText>
         <AccomplishInvoiceButton isActive={!accomplish}>
           Re-order
+        </AccomplishInvoiceButton>
+        <AccomplishInvoiceButton isActive={!accomplish}>
+          Invoice Download
         </AccomplishInvoiceButton>
       </ButtonWrapper>
     </>
@@ -301,6 +323,48 @@ const ProductTitle = styled.div`
   letter-spacing: -0.011em;
 
   color: #121822;
+`;
+const OptionWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #536c6d;
+`;
+const Color = styled.div`
+  margin-right: 4px;
+  width: 12px;
+  height: 12px;
+  background-color: #ec3939;
+  border-radius: 100%;
+`;
+const ColorGreen = styled.div`
+  margin-right: 4px;
+  width: 12px;
+  height: 12px;
+  background-color: #46ca43;
+  border-radius: 100%;
+`;
+const VerticalLine = styled.div`
+  width: 1px;
+  height: 9px;
+  background-color: #dee8ec;
+  margin: 0 6px;
+`;
+const ProductQty = styled.div`
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  color: #121822;
+  text-align: right;
+  font-family: Roboto;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14.3px;
+  letter-spacing: -0.121px;
 `;
 const MeterageOrSample = styled.div`
   font-weight: 400;
@@ -790,8 +854,17 @@ const AccomplishInvoiceButton = styled.button<{ isActive: boolean }>`
   line-height: 14px;
   color: #121822;
   cursor: pointer;
-  &:nth-of-type(2) {
+  &:last-of-type {
     margin-bottom: 0px;
   }
+`;
+const NoticeText = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "none" : "block";
+  }};
+  color: #536c6d;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 12.65px;
 `;
 export default useOrderInfoBox;

@@ -1,17 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { ic_check_wht, paypal } from "../assets";
-import { CheckOutMeterageProduct } from "../components";
+import {
+  ic_check_web_status_check,
+  ic_check_web_status_dot,
+} from "../../assets";
+import { CheckOutMeterageProduct } from "../../components";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ic_air } from "../assets";
+import { ic_air } from "../../assets";
 
-const useCheck_out = () => {
+const useOrder_temp = () => {
   const [deliveryIsChecked, setDeliveryIsChecked] = useState<number>(0);
   const [paymentIsChecked, setPaymentIsChecked] = useState<number>(0);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [popUpIsActive, setPopUpIsActive] = useState<number>(0);
+  const [preparation, setPreparation] = useState<boolean>(false);
 
   const ref = useRef<any>();
 
@@ -27,15 +31,42 @@ const useCheck_out = () => {
     <>
       <Container>
         <Title>Order</Title>
+        <ProgressContainer>
+          <ModelWrapper>
+            <Circle1 preparation={preparation} />
+            <LinkLine preparation={preparation} />
+            <Circle2 preparation={preparation} />
+          </ModelWrapper>
+          <ModelTitleWrapper>
+            <ModelTitle1>
+              <TempBox1>
+                Prepare fabric and
+                <br />
+                caculating
+              </TempBox1>
+            </ModelTitle1>
+            <ModelTitle2>
+              <TempBox2>
+                Proceed to
+                <br />
+                purchase
+              </TempBox2>
+            </ModelTitle2>
+          </ModelTitleWrapper>
+        </ProgressContainer>
+        {preparation ? (
+          <Notice preparation={preparation}>
+            Awaiting proceed to purchase. If payment is not made within 48
+            hours, the payment will be automatically canceled.
+          </Notice>
+        ) : (
+          <Notice preparation={preparation}>
+            We will prepare the products you ordered as quickly as possible. It
+            may take up to 2 business days to get to the payment stage.
+          </Notice>
+        )}
         <ContentTitle>Product</ContentTitle>
         <CheckOutMeterageProduct />
-        {/* <ContentTitle>Order Profile</ContentTitle>
-        <ContentWrapper>
-          <EditButton>Edit</EditButton>
-          <ProfileCorperationName>Repp.corp</ProfileCorperationName>
-          <ProfileName>JKim</ProfileName>
-          <ProfilePhoneNumber>+82(0)10-8628-1024</ProfilePhoneNumber>
-        </ContentWrapper> */}
         <ContentTitle>Shipping Address</ContentTitle>
         <ContentWrapper>
           <AddressTitle>My1</AddressTitle>
@@ -52,143 +83,21 @@ const useCheck_out = () => {
         </ContentWrapper>
         <ContentTitle>Delivery</ContentTitle>
         <ContentWrapper>
-          <RadioButton type="radio" id="ship" name="delivery" />
-          <RadioLabel
-            htmlFor="ship"
-            isChecked={deliveryIsChecked}
-            order={0}
-            onClick={() => setDeliveryIsChecked(0)}
-          >
-            <DefaultCircle isChecked={deliveryIsChecked} order={0} />
-            <CheckedCircle isChecked={deliveryIsChecked} order={0}>
-              <SmallCircle />
-            </CheckedCircle>
-            By air (about 1week)
-          </RadioLabel>
-          <DashLine />
-          <RadioButton type="radio" id="air" name="delivery" />
-          <RadioLabel
-            htmlFor="air"
-            isChecked={deliveryIsChecked}
-            order={1}
-            onClick={() => setDeliveryIsChecked(1)}
-          >
-            <DefaultCircle isChecked={deliveryIsChecked} order={1} />
-            <CheckedCircle isChecked={deliveryIsChecked} order={1}>
-              <SmallCircle />
-            </CheckedCircle>
-            By ship (about 3week)
-          </RadioLabel>
-          <DashLine />
-          <RadioButton type="radio" id="air" name="delivery" />
-          <RadioLabel
-            htmlFor="air"
-            isChecked={deliveryIsChecked}
-            order={2}
-            onClick={() => setDeliveryIsChecked(2)}
-          >
-            <DefaultCircle isChecked={deliveryIsChecked} order={2} />
-            <CheckedCircle isChecked={deliveryIsChecked} order={2}>
-              <SmallCircle />
-            </CheckedCircle>
-            Pickup ($0 / Ready to pick up)
-          </RadioLabel>
-          <PickupInfo isActive={deliveryIsChecked}>
-            <PickupAddressTitle>Pickup address</PickupAddressTitle>
-            <PickupAddressContent>
-              V428+89H, Unnamed Road, Phumi Char, Cambodia
-            </PickupAddressContent>
-            <PickupTimeTitle>Time</PickupTimeTitle>
-            <PickupTimeContent>
-              Mon-Fri 10:00-19:00 Closed on Sat, Sun, and public holidays
-            </PickupTimeContent>
-          </PickupInfo>
+          <DeliveryWrapper>
+            <Image src={ic_air} alt={"air_image"} width={16} height={16} />
+            <DeliveryAirText>By air&nbsp;</DeliveryAirText>
+            <DeliveryFreeText>(about 1week)</DeliveryFreeText>
+          </DeliveryWrapper>
         </ContentWrapper>
-        {/* <ContentTitle>Payment</ContentTitle>
-        <ContentWrapper>
-          <RadioButton type="radio" id="ship" name="delivery" />
-          <RadioLabel
-            htmlFor="ship"
-            isChecked={paymentIsChecked}
-            order={0}
-            onClick={() => setPaymentIsChecked(0)}
-          >
-            <DefaultCircle isChecked={paymentIsChecked} order={0} />
-            <CheckedCircle isChecked={paymentIsChecked} order={0}>
-              <SmallCircle />
-            </CheckedCircle>
-            Credit Card
-          </RadioLabel>
-          <DashLine />
-          <RadioButton type="radio" id="air" name="delivery" />
-          <RadioLabel
-            htmlFor="air"
-            isChecked={paymentIsChecked}
-            order={1}
-            onClick={() => setPaymentIsChecked(1)}
-          >
-            <DefaultCircle isChecked={paymentIsChecked} order={1} />
-            <CheckedCircle isChecked={paymentIsChecked} order={1}>
-              <SmallCircle />
-            </CheckedCircle>
-            <Image src={paypal} alt={"paypal_image"} width={63} height={21} />
-          </RadioLabel>
-        </ContentWrapper> */}
-        {/* <ContentTitle>Billng Address</ContentTitle> */}
-        {/* <ContentWrapper>
-          <CheckBox type="checkbox" id="address" />
-          <CheckBoxLabel
-            htmlFor="address"
-            isChecked={isChecked}
-            onClick={() => setIsChecked(!isChecked)}
-          >
-            <Box isChecked={isChecked} img={ic_check_wht.src} />
-            Set as a shipping address
-          </CheckBoxLabel>
-          <BillingAddressWrapper isChecked={isChecked}>
-            <EditButton>Edit</EditButton>
-            <AddressTitle>My1</AddressTitle>
-            <AddressText>#809</AddressText>
-            <AddressText>#809, 8dong ssangyoung</AddressText>
-            <AddressText>daechi dong, gangnamgu</AddressText>
-            <AddressText>korea</AddressText>
-            <AddressText>06285</AddressText>
-            <AddressPhoneNumber>821086281024</AddressPhoneNumber>
-            <AddressButton>+ Add a new address</AddressButton>
-            <AddressButton>Select other address</AddressButton>
-          </BillingAddressWrapper>
-        </ContentWrapper> */}
-        {/* <PriceWrapper>
-          <FlexWrapper>
-            <PriceTitle>Item subtotal</PriceTitle>
-            <Price>$32.25</Price>
-          </FlexWrapper>
-          <FlexWrapper>
-            <PriceTitle>
-              Delivery by ship
-              <QuestionMark>?</QuestionMark>
-            </PriceTitle>
-            <Price>Free</Price>
-          </FlexWrapper>
-          <FlexWrapper>
-            <PriceTitle>
-              Tax <QuestionMark>?</QuestionMark>
-            </PriceTitle>
-            <Price>$32.25</Price>
-          </FlexWrapper>
-          <Line />
-          <FlexWrapper>
-            <TotalTitle>Total</TotalTitle>
-            <TotalPrice>$62.25</TotalPrice>
-          </FlexWrapper>
-        </PriceWrapper> */}
       </Container>
       <Line />
       <ButtonWrapper>
-        <CancelButton onClick={() => router.push("/cart")}>Cancel</CancelButton>
-        <CheckoutButton onClick={() => router.push("/order_temp/1")}>
-          Confirm
-        </CheckoutButton>
+        <CancelButton onClick={() => router.push("/cart")}>
+          Cancel order
+        </CancelButton>
+        <CancelButton onClick={() => router.push("/order")}>
+          Order list
+        </CancelButton>
       </ButtonWrapper>
       <PopUpBox isActive={popUpIsActive}>
         <ContentBox tabIndex={0} onBlur={() => setPopUpIsActive(0)} ref={ref}>
@@ -225,6 +134,111 @@ const Title = styled.div`
     line-height: 26px;
   }
 `;
+const ProgressContainer = styled.div`
+  margin-bottom: 10px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  padding-top: 33px;
+  padding-bottom: 38px;
+`;
+const ModelWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 11px;
+`;
+const Circle1 = styled.div<{ preparation: boolean }>`
+  width: 26px;
+  height: 26px;
+  border: 1px solid #121822;
+  border-radius: 100%;
+  ${(props) => {
+    switch (props.preparation) {
+      case true:
+        return `
+        background-image: url(${ic_check_web_status_dot.src});
+        `;
+      case false:
+        return `
+          background-image: url(${ic_check_web_status_check.src});
+          `;
+    }
+  }};
+  background-color: #e1ff20;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+`;
+const Circle2 = styled.div<{ preparation: boolean }>`
+  width: 26px;
+  height: 26px;
+  ${(props) => {
+    switch (props.preparation) {
+      case true:
+        return `
+        border: 1px solid #121822;
+        background-image: url(${ic_check_web_status_check.src});
+        background-color: #E1FF20;
+        background-position: center;
+        background-repeat: no-repeat;
+        `;
+      case false:
+        return `
+          border: 1px solid #DEE8EC;
+          `;
+    }
+  }};
+  border-radius: 100%;
+  box-sizing: border-box;
+`;
+const LinkLine = styled.div<{ preparation: boolean }>`
+  width: 100px;
+  border-top: ${(props) => {
+    return props.preparation ? `1px solid #536C6D` : `1px solid #DEE8EC`;
+  }};
+`;
+const ModelTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  color: #121822;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 11px;
+`;
+const ModelTitle1 = styled.div`
+  position: relative;
+  width: 26px;
+  margin-right: 100px;
+`;
+const ModelTitle2 = styled.div`
+  position: relative;
+  width: 26px;
+`;
+const TempBox1 = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95px;
+  margin: 0 auto;
+`;
+const TempBox2 = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 53px;
+  margin: 0 auto;
+`;
+const Notice = styled.div<{ preparation: boolean }>`
+  color: ${(props) => {
+    return props.preparation ? `#FF2F01` : `#536C6D`;
+  }};
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14.3px;
+`;
 const ContentTitle = styled.div`
   display: flex;
   align-items: center;
@@ -260,7 +274,7 @@ const DeliveryAirText = styled.span`
   color: #121822;
 `;
 const DeliveryFreeText = styled.span`
-  font-weight: 400;
+  font-weight: 700;
   font-size: 12px;
   line-height: 12px;
   color: #121822;
@@ -472,7 +486,7 @@ const PriceWrapper = styled.div`
 const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-itmes: center;
+  align-items: center;
   margin-bottom: 2px;
 `;
 const PriceTitle = styled.div`
@@ -597,4 +611,4 @@ const BorderLine = styled.div`
   border-top: 1px solid #dee8ec;
 `;
 
-export default useCheck_out;
+export default useOrder_temp;

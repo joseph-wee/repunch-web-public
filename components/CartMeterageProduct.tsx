@@ -11,13 +11,13 @@ import Image from "next/image";
 
 const useCartMeterageProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
-  const [length, setLength] = useState<string>("1.0");
+  const [length, setLength] = useState<string>("1");
 
   const minus = () => {
-    setLength((Number(length) - 1).toFixed(1).toString());
+    setLength((Number(length) - 1).toString());
   };
   const plus = () => {
-    setLength((Number(length) + 1).toFixed(1).toString());
+    setLength((Number(length) + 1).toString());
   };
 
   return (
@@ -40,19 +40,27 @@ const useCartMeterageProduct = () => {
         </ImageWrapper>
         <TextWrapper>
           <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
-          <MeterageOrSample>Meterage</MeterageOrSample>
+          <OptionWrapper>
+            <Color />
+            Red
+            <VerticalLine />
+            20m*20m
+          </OptionWrapper>
         </TextWrapper>
       </ProductWrapper>
       <Line />
       <LengthWrapper>
-        <LengthTitle>Length (m)</LengthTitle>
+        <LengthPriceWrapper>
+          <Length>20m*20m</Length>
+          <PriceInfo>$ 4.06</PriceInfo>
+        </LengthPriceWrapper>
         <ButtonInputWrapper>
           <MinusButton onClick={() => minus()}>
             <Image src={ic_minus} alt={"minus_button"} />
           </MinusButton>
           <LengthInput
             type="number"
-            step="0.1"
+            step="1"
             value={length}
             onChange={(e) => setLength(e.target.value)}
           />
@@ -146,20 +154,34 @@ const TextWrapper = styled.div`
   margin-left: 10px;
 `;
 const ProductTitle = styled.div`
+  margin-bottom: 7px;
   font-weight: 700;
   font-size: 12px;
   line-height: 16px;
 
-  letter-spacing: -0.011em;
-
   color: #121822;
 `;
-const MeterageOrSample = styled.div`
+const OptionWrapper = styled.div`
+  display: flex;
+  align-items: center;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
   letter-spacing: -0.011em;
-  color: #0f697c;
+  color: #536c6d;
+`;
+const Color = styled.div`
+  margin-right: 4px;
+  width: 12px;
+  height: 12px;
+  background-color: #ec3939;
+  border-radius: 100%;
+`;
+const VerticalLine = styled.div`
+  width: 1px;
+  height: 9px;
+  background-color: #dee8ec;
+  margin: 0 6px;
 `;
 const Line = styled.div`
   margin-left: 13.5px;
@@ -177,6 +199,18 @@ const LengthWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 40px;
+`;
+const LengthPriceWrapper = styled.div``;
+const Length = styled.div`
+  color: #333333;
+  font-size: 12px;
+  font-weight: 500;
+`;
+const PriceInfo = styled.div`
+  color: #121822;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 15.6px;
 `;
 const LengthTitle = styled.div`
   margin-right: 36.5px;
@@ -252,7 +286,7 @@ const Price = styled.div`
   font-size: 14px;
   line-height: 18px;
 
-  color: #121822;
+  color: #ff2f01;
 `;
 
 export default useCartMeterageProduct;
