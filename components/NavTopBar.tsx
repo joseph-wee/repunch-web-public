@@ -36,6 +36,12 @@ const useNavTopBar = () => {
       case "/payment_complete":
         setIsActive(false);
         break;
+      case "/checkout_sample":
+        setIsActive(false);
+        break;
+      case "/order_temp/[id]":
+        setIsActive(false);
+        break;
       default:
         setIsActive(true);
     }
