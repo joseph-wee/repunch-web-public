@@ -6,7 +6,7 @@ import Image from "next/image";
 import { btn_web_back } from "../assets";
 import { goBack } from "../utils/functions";
 
-const order = () => {
+const useOrder = () => {
   const [clicked, setClicked] = useState(1);
 
   return (
@@ -318,4 +318,4 @@ const RecentOrders = styled.div`
   color: #121822;
 `;
 
-export default order;
+export default useOrder;
