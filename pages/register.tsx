@@ -674,8 +674,8 @@ const Input = styled.input`
   font-weight: 400;
 `;
 const ErrorCase = styled.div<{ isActive: number }>`
-  visibility: ${(props) => {
-    return props.isActive == 2 ? "visible" : "hidden";
+  display: ${(props) => {
+    return props.isActive == 2 ? "block" : "none";
   }};
   margin-top: 10px;
   height: ${(props) => {
@@ -892,7 +892,7 @@ const TextInform = styled.div`
 const EmailRepunch = styled.div`
   font-weight: 400;
   font-size: 10px;
-  line-height: 13px%;
+  line-height: 13px;
 
   text-align: center;
   text-decoration-line: underline;
