@@ -45,7 +45,9 @@ const useCheck_out = () => {
           <AddressText>korea</AddressText>
           <AddressText>06285</AddressText>
           <AddressPhoneNumber>+82 1086281024</AddressPhoneNumber>
-          <AddressButton>+ Add a new address</AddressButton>
+          <AddressButton onClick={() => router.push("/edit_shipping_address")}>
+            + Add a new address
+          </AddressButton>
           <AddressButton onClick={() => setPopUpIsActive(1)}>
             Select other address
           </AddressButton>
@@ -358,7 +360,7 @@ const DefaultCircle = styled.label<{ isChecked: number; order: number }>`
   }};
   margin-right: 8px;
   width: 16px;
-  height: 16.65px;
+  height: 16px;
   border: 1px solid #dee8ec;
   border-radius: 42.6667px;
   box-sizing: border-box;
@@ -371,7 +373,7 @@ const CheckedCircle = styled.label<{ isChecked: number; order: number }>`
   justify-content: center;
   margin-right: 8px;
   width: 16px;
-  height: 16.65px;
+  height: 16px;
   background-color: #121822;
   border-radius: 8px;
 `;

@@ -69,7 +69,9 @@ const useCheck_out_sample = () => {
           <AddressText>korea</AddressText>
           <AddressText>06285</AddressText>
           <AddressPhoneNumber>+82 1086281024</AddressPhoneNumber>
-          <AddressButton>+ Add a new address</AddressButton>
+          <AddressButton onClick={() => router.push("/edit_shipping_address")}>
+            + Add a new address
+          </AddressButton>
           <AddressButton onClick={() => setPopUpIsActive(1)}>
             Select other address
           </AddressButton>
