@@ -83,193 +83,46 @@ const useAddress = () => {
     <Container>
       <SideBar />
       <Main>
-        <AddressInit isExisted={isExisted}>
-          <TitleWrapper>
-            <ImageWrapper onClick={() => goBack()}>
-              <Image src={btn_web_back} alt={"btn_web_back"} />
-            </ImageWrapper>
-            <Title>Address</Title>
-          </TitleWrapper>
-          <ContentTitleBar>Shipping address</ContentTitleBar>
-          <InputContainer>
-            <InputTitle>Address title</InputTitle>
-            <Input type="text" />
-          </InputContainer>
-          <Wrapper>
-            <InputContainer>
-              <InputTitle>First name</InputTitle>
-              <Input type="text" />
-            </InputContainer>
-            <InputContainer>
-              <InputTitle>Last name</InputTitle>
-              <Input type="text" />
-            </InputContainer>
-          </Wrapper>
-          <InputContainer>
-            <InputTitle>Company name</InputTitle>
-            <Input type="text" />
-          </InputContainer>
-          <InputContainer>
-            <InputTitle>Country</InputTitle>
-            <SelectBoxTemporary />
-          </InputContainer>
-          <InputContainer>
-            <InputTitle>State /Province</InputTitle>
-            <Input type="text" />
-          </InputContainer>
-          <InputContainer>
-            <InputTitle>Street address</InputTitle>
-            <Input type="text" />
-            <Input type="text" />
-          </InputContainer>
-          <InputContainer>
-            <InputTitle>Postcode</InputTitle>
-            <Input type="text" />
-          </InputContainer>
-          <InputContainer>
-            <InputTitle>Phone number</InputTitle>
-            <Input type="text" />
-          </InputContainer>
-          <ContentTitleBar>Billing Address</ContentTitleBar>
-          <CheckBox type="checkbox" id="address" />
-          <CheckBoxLabel
-            htmlFor="address"
-            isChecked={isChecked}
-            onClick={() => setIsChecked(!isChecked)}
-          >
-            <Box isChecked={isChecked} img={ic_check_wht.src} />
-            Set as a shipping address
-          </CheckBoxLabel>
-          <BillingAddressWrapper isChecked={isChecked}>
-            <InputContainer>
-              <InputTitle>Address title</InputTitle>
-              <Input type="text" />
-            </InputContainer>
-            <Wrapper>
-              <InputContainer>
-                <InputTitle>First name</InputTitle>
-                <Input type="text" />
-              </InputContainer>
-              <InputContainer>
-                <InputTitle>Last name</InputTitle>
-                <Input type="text" />
-              </InputContainer>
-            </Wrapper>
-            <InputContainer>
-              <InputTitle>Company name</InputTitle>
-              <Input type="text" />
-            </InputContainer>
-            <InputContainer>
-              <InputTitle>Country</InputTitle>
-              <SelectBoxTemporary />
-            </InputContainer>
-            <InputContainer>
-              <InputTitle>State /Province</InputTitle>
-              <Input type="text" />
-            </InputContainer>
-            <InputContainer>
-              <InputTitle>Street address</InputTitle>
-              <Input type="text" />
-              <Input type="text" />
-            </InputContainer>
-            <InputContainer>
-              <InputTitle>Postcode</InputTitle>
-              <Input type="text" />
-            </InputContainer>
-            <InputContainer>
-              <InputTitle>Phone number</InputTitle>
-              <Input type="text" />
-            </InputContainer>
-          </BillingAddressWrapper>
-          <ButtonWrapper>
-            <Button>
-              <Link href="/" style={{ textDecoration: "none" }}>
-                <LinkStyling>Cancel</LinkStyling>
-              </Link>
-            </Button>
-            <Button onClick={() => moveTop()}>Confirm</Button>
-          </ButtonWrapper>
-        </AddressInit>
-        <AddressEdit isExisted={isExisted}>
-          <TitleWrapper>
-            <ImageWrapper>
-              <Image src={btn_web_back} alt={"btn_web_back"} />
-            </ImageWrapper>
-            <Title>Address</Title>
-          </TitleWrapper>
-          <ContentEditTitleBar>Shipping address</ContentEditTitleBar>
-          <AddAdressButton
-            onClick={() => router.push("/edit_shipping_address")}
-          >
-            + Add a new address
-          </AddAdressButton>
-          <ContentWrapper>
-            <EditButton onClick={() => router.push("/edit_shipping_address")}>
-              Edit
-            </EditButton>
-            <DeleteButton>
-              <Image src={garbage} alt={"garbage_icon"} />
-            </DeleteButton>
-            <AddressTitle>My1</AddressTitle>
-            <AddressText>#809</AddressText>
-            <AddressText>#809, 8dong ssangyoung</AddressText>
-            <AddressText>daechi dong, gangnamgu</AddressText>
-            <AddressText>korea</AddressText>
-            <AddressText>06285</AddressText>
-            <AddressPhoneNumber>821086281024</AddressPhoneNumber>
-          </ContentWrapper>
-          <ContentWrapper>
-            <EditButton onClick={() => router.push("/edit_shipping_address")}>
-              Edit
-            </EditButton>
-            <DeleteButton>
-              <Image src={garbage} alt={"garbage_icon"} />
-            </DeleteButton>
-            <AddressTitle>My1</AddressTitle>
-            <AddressText>#809</AddressText>
-            <AddressText>#809, 8dong ssangyoung</AddressText>
-            <AddressText>daechi dong, gangnamgu</AddressText>
-            <AddressText>korea</AddressText>
-            <AddressText>06285</AddressText>
-            <AddressPhoneNumber>821086281024</AddressPhoneNumber>
-          </ContentWrapper>
-          <ContentEditTitleBillingBar>
-            Billing address
-          </ContentEditTitleBillingBar>
-          <AddAdressButton onClick={() => router.push("/edit_billing_address")}>
-            + Add a new address
-          </AddAdressButton>
-          <ContentWrapper>
-            <EditButton onClick={() => router.push("/edit_billing_address")}>
-              Edit
-            </EditButton>
-            <DeleteButton>
-              <Image src={garbage} alt={"garbage_icon"} />
-            </DeleteButton>
-            <AddressTitle>My1</AddressTitle>
-            <AddressText>#809</AddressText>
-            <AddressText>#809, 8dong ssangyoung</AddressText>
-            <AddressText>daechi dong, gangnamgu</AddressText>
-            <AddressText>korea</AddressText>
-            <AddressText>06285</AddressText>
-            <AddressPhoneNumber>821086281024</AddressPhoneNumber>
-          </ContentWrapper>
-          <ContentWrapper>
-            <EditButton onClick={() => router.push("/edit_billing_address")}>
-              Edit
-            </EditButton>
-            <DeleteButton>
-              <Image src={garbage} alt={"garbage_icon"} />
-            </DeleteButton>
-            <AddressTitle>My1</AddressTitle>
-            <AddressText>#809</AddressText>
-            <AddressText>#809, 8dong ssangyoung</AddressText>
-            <AddressText>daechi dong, gangnamgu</AddressText>
-            <AddressText>korea</AddressText>
-            <AddressText>06285</AddressText>
-            <AddressPhoneNumber>821086281024</AddressPhoneNumber>
-          </ContentWrapper>
-        </AddressEdit>
+        <TitleWrapper>
+          <ImageWrapper>
+            <Image src={btn_web_back} alt={"btn_web_back"} />
+          </ImageWrapper>
+          <Title>Address</Title>
+        </TitleWrapper>
+        <ContentEditTitleBar>Shipping address</ContentEditTitleBar>
+        <AddAdressButton onClick={() => router.push("/edit_shipping_address")}>
+          + Add a new address
+        </AddAdressButton>
+        <ContentWrapper>
+          <EditButton onClick={() => router.push("/edit_shipping_address")}>
+            Edit
+          </EditButton>
+          <DeleteButton>
+            <Image src={garbage} alt={"garbage_icon"} />
+          </DeleteButton>
+          <AddressTitle>My1</AddressTitle>
+          <AddressText>#809</AddressText>
+          <AddressText>#809, 8dong ssangyoung</AddressText>
+          <AddressText>daechi dong, gangnamgu</AddressText>
+          <AddressText>korea</AddressText>
+          <AddressText>06285</AddressText>
+          <AddressPhoneNumber>821086281024</AddressPhoneNumber>
+        </ContentWrapper>
+        <ContentWrapper>
+          <EditButton onClick={() => router.push("/edit_shipping_address")}>
+            Edit
+          </EditButton>
+          <DeleteButton>
+            <Image src={garbage} alt={"garbage_icon"} />
+          </DeleteButton>
+          <AddressTitle>My1</AddressTitle>
+          <AddressText>#809</AddressText>
+          <AddressText>#809, 8dong ssangyoung</AddressText>
+          <AddressText>daechi dong, gangnamgu</AddressText>
+          <AddressText>korea</AddressText>
+          <AddressText>06285</AddressText>
+          <AddressPhoneNumber>821086281024</AddressPhoneNumber>
+        </ContentWrapper>
       </Main>
       <MobileSideBar />
     </Container>
@@ -311,16 +164,7 @@ const Main = styled.div`
     margin-bottom: 20px;
   }
 `;
-const AddressInit = styled.div<{ isExisted: boolean }>`
-  display: ${(props) => {
-    return props.isExisted == true ? "none" : "block";
-  }};
-`;
-const AddressEdit = styled.div<{ isExisted: boolean }>`
-  display: ${(props) => {
-    return props.isExisted == true ? "block" : "none";
-  }};
-`;
+
 const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
