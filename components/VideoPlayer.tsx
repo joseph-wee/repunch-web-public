@@ -270,6 +270,7 @@ const VideoPlayer = ({
 };
 const Container = styled.div``;
 const Video = styled.video`
+  margin-bottom: 4px;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -330,7 +331,7 @@ const ProgressBar = styled.input<{ value: number; fullScreenValue: boolean }>`
   background: ${(props) => {
     return `linear-gradient(to right, #FFFFFF ${props.value}%,  rgba(255, 255, 255, 0.3) ${props.value}%);`;
   }};
-  //width: ${(props) => {
+  width: ${(props) => {
     return props.fullScreenValue ? "visible" : "hidden";
   }};
 `;
