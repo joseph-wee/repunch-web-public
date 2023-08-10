@@ -30,7 +30,7 @@ const useOrder_history = () => {
             isActive={orderCategory}
             onClick={() => setOrderCategory(0)}
           >
-            Meterage (1)
+            Roll (1)
           </MeterageButton>
           <SampleButton
             isActive={orderCategory}
