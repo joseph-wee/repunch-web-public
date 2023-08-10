@@ -211,7 +211,7 @@ const useAccount_detail = () => {
             <Input
               type="text"
               onChange={(e) => setFirstName(e.target.value)}
-              value="test"
+              value="Joseph"
               disabled
             />
           </InputContainer>
@@ -220,14 +220,14 @@ const useAccount_detail = () => {
             <Input
               type="text"
               onChange={(e) => setLastName(e.target.value)}
-              value="test"
+              value="Kim"
               disabled
             />
           </InputContainer>
         </Wrapper>
         <InputContainer>
           <InputTitle>Country</InputTitle>
-          <SelectBoxTemporary />
+          <Input type="text" value="korea" disabled />
         </InputContainer>
         <InputContainer>
           <InputTitle>Company name</InputTitle>
@@ -242,7 +242,7 @@ const useAccount_detail = () => {
         <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
-          <SelectBoxTemporary />
+          <Input type="text" value="test" disabled />
         </InputContainer>
         <InputContainer>
           <InputTitle>Company URL</InputTitle>
@@ -257,10 +257,12 @@ const useAccount_detail = () => {
         <InputContainer>
           <InputTitle>Phone number</InputTitle>
           <Wrapper>
-            <SelectBoxCountryCodeNumTemporary />
+            <SelectBoxCountryCodeNumTemporary>
+              82
+            </SelectBoxCountryCodeNumTemporary>
             <Input
               type="text"
-              value="test"
+              value="01012345678"
               onChange={(e) => inputHandlerOnlyNumber(e)}
               disabled
             />
@@ -320,6 +322,8 @@ const useAccount_detail = () => {
 };
 
 const SelectBoxTemporary = styled.div`
+  display: flex;
+  align-items: center;
   width: 100%;
   height: 40px;
   border: 1px solid #dee8ec;
@@ -328,6 +332,9 @@ const SelectBoxTemporary = styled.div`
 `;
 
 const SelectBoxCountryCodeNumTemporary = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
   margin-right: 8px;
   box-sizing: border-box;
   width: 120px;
@@ -339,7 +346,10 @@ const SelectBoxCountryCodeNumTemporary = styled.div`
     margin-right: 8.5px;
     width: 77px;
     flex: 0 0 77px;
-  } ;
+  }
+  font-size: 14px;
+  font-weight: 400;
+  color: #121822;
 `;
 
 const Container = styled.div`
