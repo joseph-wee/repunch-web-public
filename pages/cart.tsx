@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { SideBar, CartMeterageProduct, CartSampleProduct } from "../components";
 import Link from "next/link";
@@ -12,11 +12,21 @@ import { useRouter } from "next/router";
 
 const useCart = () => {
   const [isActive, setIsActive] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [rollAllCheck, setRollAllCheck] = useState(false);
+  const [sampleAllCheck, setSampleAllCheck] = useState(false);
+
+  const [rollCheckArr, setRollCheckArr] = useState([false]);
+  const [sampleCheckArr, setSampleCheckArr] = useState([false]);
 
   const { value: cartValue } = useAppSelector((state) => state.cartValue);
   const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const [rollTotalCount, setRollTotalCount] = useState(3);
+  const [sampleTotalCount, setSampleTotalCount] = useState(3);
+
+  const [rollSelectCount, setRollSelectCount] = useState(0);
+  const [sampleSelectCount, setSampleSelectCount] = useState(0);
 
   const cartPurchaseHandler = () => {
     if (cartValue == 0) {
@@ -26,6 +36,84 @@ const useCart = () => {
       setIsActive(true);
     }
   };
+
+  let tempResult = [1, 2, 3];
+
+  /** api 콜 이후에 체크리스트 할당 */
+  useEffect(() => {
+    setRollCheckArr(new Array(tempResult.length).fill(false));
+    setSampleCheckArr(new Array(tempResult.length).fill(false));
+  }, []);
+
+  /** roll 모두 체크 혹은 해제 */
+  const rollCheckAll = () => {
+    let count = 0;
+    rollCheckArr.forEach((i) => {
+      if (i) {
+        count++;
+      }
+    });
+    if (count == rollCheckArr.length) {
+      let temp = rollCheckArr;
+      temp.fill(false);
+      setRollCheckArr([...temp]);
+      return;
+    }
+    let temp = rollCheckArr;
+    temp.fill(true);
+    setRollCheckArr([...temp]);
+  };
+
+  /** sample 모두 체크 혹은 해제 */
+  const sampleCheckAll = () => {
+    let count = 0;
+    sampleCheckArr.forEach((i) => {
+      if (i) {
+        count++;
+      }
+    });
+    if (count == sampleCheckArr.length) {
+      let temp = sampleCheckArr;
+      temp.fill(false);
+      setSampleCheckArr([...temp]);
+      return;
+    }
+    let temp = sampleCheckArr;
+    temp.fill(true);
+    setSampleCheckArr([...temp]);
+  };
+
+  /** roll 체크 감지하여 roll selct all 체크 혹은 해제 */
+  useEffect(() => {
+    let count = 0;
+    rollCheckArr.forEach((i) => {
+      if (i) {
+        count++;
+      }
+    });
+    setRollSelectCount(count);
+    if (count == rollCheckArr.length) {
+      setRollAllCheck(true);
+      return;
+    }
+    setRollAllCheck(false);
+  }, [rollCheckArr]);
+
+  /** sample 체크 감지하여 roll selct all 체크 혹은 해제 */
+  useEffect(() => {
+    let count = 0;
+    sampleCheckArr.forEach((i) => {
+      if (i) {
+        count++;
+      }
+    });
+    setSampleSelectCount(count);
+    if (count == sampleCheckArr.length) {
+      setSampleAllCheck(true);
+      return;
+    }
+    setSampleAllCheck(false);
+  }, [sampleCheckArr]);
 
   return (
     <>
@@ -43,42 +131,90 @@ const useCart = () => {
               isActive={cartValue}
               onClick={() => dispatch(setMeterage())}
             >
-              Roll (1)
+              Roll ({rollTotalCount})
             </MeterageButton>
             <SampleButton
               isActive={cartValue}
               onClick={() => dispatch(setSample())}
             >
-              Sample (1)
+              Sample ({sampleTotalCount})
             </SampleButton>
           </AllMeterSampleButtonWrapper>
-          <SampleInfoMessage isActive={cartValue}>
-            <Image src={ic_info} alt={"ic_info"} />
-            Samples can be ordered from 10-20 pieces.
-          </SampleInfoMessage>
-          <SelectAllBoxWrapper>
-            <Checkbox
-              type="checkbox"
-              id="a"
-              onChange={() => setIsChecked(!isChecked)}
-            />
-            <Label htmlFor="a" isChecked={isChecked} img={ic_check_wht.src} />
-            Select all
-          </SelectAllBoxWrapper>
-          <MeterageProductWrapper isActive={cartValue}>
-            <CartMeterageProduct />
-          </MeterageProductWrapper>
-          <SampleProudctWrapper isActive={cartValue}>
-            <CartSampleProduct />
-          </SampleProudctWrapper>
+
+          {cartValue == 0 ? (
+            <>
+              <SelectAllBoxWrapper>
+                <Checkbox
+                  type="checkbox"
+                  id="roll_all"
+                  onChange={() => setRollAllCheck(!rollAllCheck)}
+                />
+                <Label
+                  htmlFor="roll_all"
+                  isChecked={rollAllCheck}
+                  img={ic_check_wht.src}
+                  onClick={() => rollCheckAll()}
+                />
+                Select all
+              </SelectAllBoxWrapper>
+
+              {tempResult.map((i, j) => {
+                return (
+                  <MeterageProductWrapper>
+                    <CartMeterageProduct
+                      rollCheckArr={rollCheckArr}
+                      setRollCheckArr={setRollCheckArr}
+                      order={j}
+                    />
+                  </MeterageProductWrapper>
+                );
+              })}
+            </>
+          ) : (
+            <>
+              <SampleInfoMessage>
+                <Image src={ic_info} alt={"ic_info"} />
+                Samples can be ordered from 10-20 pieces.
+              </SampleInfoMessage>
+              <SelectAllBoxWrapper>
+                <Checkbox
+                  type="checkbox"
+                  id="sample_all"
+                  onChange={() => setSampleAllCheck(!sampleAllCheck)}
+                />
+                <Label
+                  htmlFor="sample_all"
+                  isChecked={sampleAllCheck}
+                  img={ic_check_wht.src}
+                  onClick={() => sampleCheckAll()}
+                />
+                Select all
+              </SelectAllBoxWrapper>
+
+              {tempResult.map((i, j) => {
+                return (
+                  <SampleProudctWrapper>
+                    <CartSampleProduct
+                      sampleCheckArr={sampleCheckArr}
+                      setSampleCheckArr={setSampleCheckArr}
+                      order={j}
+                    />
+                  </SampleProudctWrapper>
+                );
+              })}
+            </>
+          )}
         </Main>
       </Container>
       <Line />
       <ButtonContainer>
         <RemovePurchaseButtonWrapper>
-          <RemoveButton>Remove(1)</RemoveButton>
+          <RemoveButton>
+            Remove({cartValue == 0 ? rollSelectCount : sampleSelectCount})
+          </RemoveButton>
           <PurchaseButton onClick={() => cartPurchaseHandler()}>
-            Process to purchase(1)
+            Process to purchase(
+            {cartValue == 0 ? rollSelectCount : sampleSelectCount})
           </PurchaseButton>
         </RemovePurchaseButtonWrapper>
       </ButtonContainer>
@@ -201,6 +337,7 @@ const SampleButton = styled.button<{ isActive: number }>`
 
   cursor: pointer;
 `;
+
 const SelectAllBoxWrapper = styled.div`
   margin-bottom: 10px;
   display: flex;
@@ -246,10 +383,8 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   background-repeat: no-repeat;
 `;
 
-const SampleInfoMessage = styled.div<{ isActive: number }>`
-  display: ${(props) => {
-    return props.isActive == 1 ? "flex" : "none";
-  }};
+const SampleInfoMessage = styled.div`
+  display: flex;
   align-items: center;
   gap: 5.5px;
   margin-bottom: 20px;
@@ -260,16 +395,8 @@ const SampleInfoMessage = styled.div<{ isActive: number }>`
   letter-spacing: -0.011em;
   color: #0f697c;
 `;
-const MeterageProductWrapper = styled.div<{ isActive: number }>`
-  display: ${(props) => {
-    return props.isActive == 0 ? "block" : "none";
-  }};
-`;
-const SampleProudctWrapper = styled.div<{ isActive: number }>`
-  display: ${(props) => {
-    return props.isActive == 1 ? "block" : "none";
-  }};
-`;
+const MeterageProductWrapper = styled.div``;
+const SampleProudctWrapper = styled.div``;
 const Line = styled.div`
   margin-top: 30px;
   width: 100%;
