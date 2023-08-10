@@ -76,7 +76,12 @@ export default function Home() {
         </BannerTextWrapper>
       </Banner>
       <Main>
-        <Filter isActive={filterIsActive} setIsActive={setFilterIsActive} />
+        <Filter
+          isActive={filterIsActive}
+          setIsActive={setFilterIsActive}
+          sortFilterIsActive={sortFilterIsActive}
+          setSortFilterIsActive={setSortFilterIsActive}
+        />
         <ProductListWrapper>
           <ButtonFlexWrapper>
             <FilterButton onClick={() => setFilterIsActive(!filterIsActive)}>
@@ -189,7 +194,7 @@ const BannerTextWrapper = styled.div`
 `;
 const FlexWrapper = styled.div`
   display: flex;
-  align-tiems: center;
+  align-items: center;
   gap: 7px;
   height: 19px;
 `;
@@ -311,7 +316,7 @@ const ProductListWrapper = styled.div`
 const ButtonFlexWrapper = styled.div`
   display: flex;
   position: relative;
-  align-itmes: center;
+  align-items: center;
   justify-content: space-between;
 
   margin-bottom: 20px;
@@ -319,7 +324,7 @@ const ButtonFlexWrapper = styled.div`
 const FilterButton = styled.button`
   display: none;
   position: relative;
-  align-itesm: center;
+  align-items: center;
   justify-content: center;
 
   padding-top: 6px;
@@ -358,7 +363,7 @@ const FilterAlarmBackground = styled.div`
   top: 6px;
   left: 22px;
 
-  align-itesm: center;
+  align-items: center;
   justify-content: center;
   width: 8px;
   height: 8px;
