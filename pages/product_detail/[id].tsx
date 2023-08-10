@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import Image from "next/image";
@@ -6,6 +6,7 @@ import {
   btn_favorite_act_sm,
   btn_favorite_inact_sm,
   btn_review,
+  btn_review_sm,
   ic_check_web_color,
   ic_favorite_wht,
   ic_info,
@@ -26,6 +27,16 @@ const useId = () => {
   const { value: cartValue } = useAppSelector((state) => state.cartValue);
 
   const [videoUrl, setVideoUrl] = useState("");
+  const [px, setPx] = useState(0);
+  const [leftTarget, setLeftTarget] = useState(0);
+  const [rightTarget, setRightTarget] = useState(4);
+  const [leftEnd, setLeftEnd] = useState(true);
+  const [rightEnd, setRightEnd] = useState(false);
+  const [imgVideoClicked, setImgVideoClicked] = useState(1);
+
+  const [like, setLike] = useState(false); // 좋아요
+
+  const ref = useRef<any>();
 
   //////// 개발용 임시 데이터, 코드
 
@@ -118,7 +129,7 @@ const useId = () => {
 
   const productDetailRequestHandler = (productNo: string | undefined) => {
     productDetailRequest(productNo).then((res) => {
-      console.log(res.data.result.files);
+      console.log(res.data.result);
       setVideoUrl(res.data.result.files[1].resourceUrl);
     });
   };
@@ -129,7 +140,7 @@ const useId = () => {
   };
 
   useEffect(() => {
-    let productNo = window.location.href.split("/").pop();
+    // let productNo = window.location.href.split("/").pop();
     // productDetailRequestHandler(productNo);
   }, []);
 
@@ -137,23 +148,134 @@ const useId = () => {
   //   console.log(videoUrl);
   // }, [videoUrl]);
 
+  let temp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  const slideClickHandler = (j: number) => {
+    console.log("j: " + j + " left: " + leftTarget + " right " + rightTarget);
+
+    setImgVideoClicked(j + 1);
+    // 왼쪽타겟이 첫번째위치지만 이동해야하는 경우
+    if (j == leftTarget && px == -46.5) {
+      setLeftEnd(true);
+      setLeftTarget(0);
+      setRightTarget(4);
+      setPx((prev) => prev + 46.5);
+      return;
+    }
+    // 오른쪽 끝으로 이동한 상태에서 왼쪽 타겟클릭시 이동해야하는 경우
+    if (j == leftTarget && j == temp.length - 5) {
+      setRightEnd(false);
+      setLeftTarget((prev) => prev - 1);
+      setRightTarget((prev) => prev - 1);
+      setPx((prev) => prev + 46.5);
+      return;
+    }
+    // 왼쪽 타겟클릭했지만 이동해서는 안되는 경우
+    if (j == leftTarget && leftEnd) {
+      return;
+    }
+    // 왼쪽 타겟 클릭시 이동
+    if (j == leftTarget) {
+      setLeftTarget((prev) => prev - 1);
+      setRightTarget((prev) => prev - 1);
+      setPx((prev) => prev + 69);
+      return;
+    }
+    // 오른쪽 타겟 클릭시 이동하는데 처음 이동하는 경우
+    if (j == rightTarget && j == 4) {
+      setLeftEnd(false);
+      setLeftTarget(0);
+      setRightTarget((prev) => prev + 1);
+      setPx((prev) => prev - 46.5);
+      return;
+    }
+    // 오른쪽 타겟클릭했지만 이동해서는 안되는 경우
+    if (j == rightTarget && rightEnd) {
+      return;
+    }
+    // 오른쪽 타겟 클릭시 마지막 위치지만 이동해야하는 경우
+    if (j == rightTarget && j == temp.length - 1) {
+      setLeftTarget((prev) => prev + 1);
+      setRightEnd(true);
+      setPx((prev) => prev - 46.5);
+      return;
+    }
+    // 오른쪽 타겟 클릭시 이동하는 경우
+    if (j == rightTarget) {
+      setLeftTarget((prev) => prev + 1);
+      setRightTarget((prev) => prev + 1);
+      setPx((prev) => prev - 69);
+      return;
+    }
+  };
+
+  const test = () => {
+    return `100`;
+  };
+
+  const slideHandler = (n: number) => {
+    setImgVideoClicked(n + 1);
+    // 767px 이하에서는 작동안되게
+    if (window.innerWidth <= 767) {
+      return;
+    }
+    // 썸네일 이미지 개수가 5개 이하인 경우 스크롤 이동이 안되어야 하므로
+    if (temp.length <= 5) {
+      return;
+    }
+    // 첫번째 썸네일의 경우 무조건 스크롤 위치 0
+    if (n == 0) {
+      ref.current.scrollLeft = 0;
+      return;
+    }
+    // 마지막 썸네일의 경우 무조건 스크롤 위치 맨 끝
+    if (n == temp.length - 1) {
+      ref.current.scrollLeft = 69 * temp.length - 1;
+      return;
+    }
+    // 스크롤이 왼쪽으로 이동해야하는 경우
+    if (ref.current.scrollLeft >= 69 * n) {
+      ref.current.scrollLeft = 46.5 + 69 * (n - 1);
+      return;
+    }
+    // 스크롤이 오른쪽으로 이동해야하는 경우
+    if (ref.current.scrollLeft <= 69 * (n - 4) + 46.5) {
+      ref.current.scrollLeft = 69 * (n - 4) + 46.5;
+      return;
+    }
+  };
+
+  useEffect(() => {
+    console.log(window.innerWidth);
+    console.log(window.outerWidth);
+  }, []);
+
   return (
     <>
       <Container>
         <ProductInfoContainer>
           <ImageVideoWrapper>
             <BigImagevideoWrapper>
-              {/* <VideoPlayer isActive={true} url={videoUrl} state={videoUrl} /> */}
-              <LikeButton>
-                <Image src={btn_favorite_inact_sm} alt={"logo_favorite"} />
+              <VideoPlayer isActive={true} url={videoUrl} state={videoUrl} />
+              <LikeButton onClick={() => setLike(!like)}>
+                <Image
+                  src={like ? btn_review_sm : btn_favorite_inact_sm}
+                  alt={"logo_favorite"}
+                />
               </LikeButton>
             </BigImagevideoWrapper>
-            <SmallImageVideoWrapper>
-              <SmallImageVideo />
-              <SmallImageVideo />
-              <SmallImageVideo />
-              <SmallImageVideo />
-              <SmallImageVideo />
+            <SmallImageVideoWrapper ref={ref}>
+              {temp.map((i, j) => {
+                return (
+                  <SmallImageVideo
+                    isClicked={imgVideoClicked}
+                    px={j * 69 + px}
+                    onClick={() => slideHandler(j)}
+                  >
+                    {j}
+                  </SmallImageVideo>
+                );
+              })}
             </SmallImageVideoWrapper>
           </ImageVideoWrapper>
           <ProductInfoPurchaseContainer>
@@ -480,7 +602,9 @@ const ProductInfoContainer = styled.div`
 const ImageVideoWrapper = styled.div``;
 const BigImagevideoWrapper = styled.div`
   position: relative;
+  margin-bottom: 4px;
   box-sizing: border-box;
+  background-color: #f2f6f8;
   &::after {
     display: block;
     content: "";
@@ -512,29 +636,33 @@ const LikeButton = styled.div`
 `;
 const SmallImageVideoWrapper = styled.div`
   display: flex;
-  overflow: hidden;
+  position: relative;
   width: 320px;
+  height: 68px;
   @media screen and (max-width: 767px) {
     width: 100%;
   }
+  overflow-x: overlay;
+  overflow-y: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
-const SmallImageVideo = styled.div`
+const SmallImageVideo = styled.div<{ isClicked: number; px: number }>`
+  margin-right: 1px;
+  position: absolute;
+  left: ${(props) => {
+    return `${props.px}px`;
+  }};
   width: 68px;
-  @media screen and (max-width: 767px) {
-    width: 21vw;
-  }
-  border: 1px solid black;
+  height: 68px;
+  background-color: #f2f6f8;
+  ${(props) => {
+    return `  &:nth-of-type(${props.isClicked}) {
+    border: 4px solid #e1ff20;
+  }`;
+  }}
   box-sizing: border-box;
-
-  position: relative;
-  &::after {
-    display: block;
-    content: "";
-    padding-bottom: 68px;
-    @media screen and (max-width: 767px) {
-      padding-bottom: 100%;
-    }
-  }
 `;
 const ProductInfoPurchaseContainer = styled.div`
   padding-left: 20px;
@@ -930,7 +1058,7 @@ const DeliveryReturnsInfoTitleWrapper = styled.div`
   padding-left: 20px;
   padding-right: 20px;
   align-items: center;
-  justfiy-content: center;
+  justify-content: center;
   font-weight: 700;
   font-size: 16px;
   line-height: 21px;
