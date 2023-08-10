@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -46,7 +46,13 @@ const useEdit_account_password = () => {
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
   const [role, setRole] = useState<string>("USER"); // 유저 권한
 
+  const [passwordValidationResult, setPassowrdValidationResult] =
+    useState<number>(0); // 비밀번호 유효성 체크
+  const [passwordConfirmValidationResult, setPasswordConfirmValidationResult] =
+    useState<number>(0); // 비밀번호 확인 유효성 체크
+
   const router = useRouter();
+  const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -190,10 +196,42 @@ const useEdit_account_password = () => {
     }
   };
 
-  /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
-  useEffect(() => {
-    phoneNumberHandler();
-  }, [countryCode]);
+  /** password 유효성 검사 */
+  const validationPassword = () => {
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (regexp.test(password)) {
+      setPassowrdValidationResult(1);
+      return true;
+    }
+    setPassowrdValidationResult(2);
+    return false;
+  };
+  /** passwordConfirm 유효성 검사 */
+  const validationPasswordConfirm = () => {
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (password == passwordConfirm && regexp.test(passwordConfirm)) {
+      setPasswordConfirmValidationResult(1);
+      return true;
+    }
+    setPasswordConfirmValidationResult(2);
+    return false;
+  };
+
+  /** 모든 유효성 검사 */
+  const validationAll = () => {
+    let validationResult = new Array(2);
+    validationResult[0] = validationPassword();
+    validationResult[1] = validationPasswordConfirm();
+
+    if (validationResult[0] && validationResult[1]) {
+      return true;
+    }
+  };
+
+  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
+  const validationCheckAndSignupRequest = () => {
+    validationAll() && router.push("/account_detail");
+  };
 
   return (
     <Container>
@@ -204,6 +242,7 @@ const useEdit_account_password = () => {
           </ImageWrapper>
           <Title>Edit password</Title>
         </TitleWrapper>
+        <Line />
 
         <InputContainer>
           <InputTitle>ID</InputTitle>
@@ -220,16 +259,30 @@ const useEdit_account_password = () => {
 
           <Input
             type="password"
-            onChange={(e) => setPassowrd(e.target.value)}
+            onChange={(e) => {
+              setPassowrd(e.target.value);
+            }}
+            ref={(element) => {
+              ref.current[8] = element;
+            }}
           />
+          <ErrorCase isActive={passwordValidationResult}>ErrorCase</ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password confirm</InputTitle>
 
           <Input
             type="password"
-            onChange={(e) => setPasswordConfirm(e.target.value)}
+            onChange={(e) => {
+              setPasswordConfirm(e.target.value);
+            }}
+            ref={(element) => {
+              ref.current[9] = element;
+            }}
           />
+          <ErrorCase isActive={passwordConfirmValidationResult}>
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <ButtonWrapper>
           <Button>
@@ -238,7 +291,7 @@ const useEdit_account_password = () => {
             </Link>
           </Button>
 
-          <Button onClick={() => router.push("/account_detail")}>
+          <Button onClick={() => validationCheckAndSignupRequest()}>
             Confirm
           </Button>
         </ButtonWrapper>
@@ -343,6 +396,19 @@ const Input = styled.input`
   &:disabled {
     background-color: #ffffff;
   }
+`;
+const ErrorCase = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive == 2 ? "block" : "none";
+  }};
+  margin-top: 10px;
+  height: ${(props) => {
+    return props.isActive == 0 || props.isActive == 1 ? "0px" : "";
+  }};
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  color: #ff5c01;
 `;
 const InputEmail = styled.input`
   display: inline-block;

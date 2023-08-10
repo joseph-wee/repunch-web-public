@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -7,6 +7,7 @@ import {
   RecentOrders,
   SelectBox,
   SelectBoxCountryCodeNum,
+  SelectBoxEdit,
   SideBar,
 } from "../components";
 import { ic_down_bk, ic_up_bk } from "../assets";
@@ -17,6 +18,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect } from "react";
 import { goBack } from "../utils/functions";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -31,22 +33,58 @@ export interface ListCountryArray extends Array<List> {}
 const useEdit_account_info = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
 
-  const [firstName, setFirstName] = useState<string>(""); // 성
-  const [lastName, setLastName] = useState<string>(""); // 이름
-  const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
-  const [companyName, setCompanyName] = useState<string>(""); // 회사이름
+  const [firstName, setFirstName] = useState<string>("jkim"); // 성
+  const [lastName, setLastName] = useState<string>("jkim"); // 이름
+  const [countryCode, setCounryCode] = useState<string>("KR"); // 국가코드
+  const [companyName, setCompanyName] = useState<string>("test"); // 회사이름
   const [industryCode, setIndustryCode] = useState<string | undefined>(""); // 회사 업종구분 코드
-  const [homepageUrl, setHomepageUrl] = useState<string>(""); // 회사 홈페이지 url
+  const [homepageUrl, setHomepageUrl] = useState<string>("test"); // 회사 홈페이지 url
   const [countryPhoneNumber, setCountryPhoneNumber] = useState<
     string | undefined
   >(""); // 국가 전화코드
-  const [phoneNumber, setPhoneNumber] = useState<string>(""); // 전화번호
-  const [userId, setUserId] = useState<string>(""); // 유저ID(이메일주소)
+  const [phoneNumber, setPhoneNumber] = useState<string>("01012345678"); // 전화번호
+  const [userId, setUserId] = useState<string>("jkim"); // 유저ID(이메일주소)
   const [password, setPassowrd] = useState<string>(""); // 비밀번호
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
   const [role, setRole] = useState<string>("USER"); // 유저 권한
 
   const router = useRouter();
+
+  const [firstNameValidationResult, setfirstNameValidationResult] =
+    useState<number>(0); // 성 유효성 체크
+  const [lastNameValidationResult, setLastNameValidationResult] =
+    useState<number>(0); // 이름 유효성 체크
+  const [countryCodeValidationResult, setCounryCodeValidationResult] =
+    useState<number>(0); // 국가코드 유효성 체크
+  const [companyNameValidationResult, setCompanyNameValidationResult] =
+    useState<number>(0); // 회사이름 유효성 체크
+  const [industryCodeValidationResult, setIndustryCodeValidationResult] =
+    useState<number>(0); // 회사 업종구분 코드 유효성 체크
+  const [homepageUrlValidationResult, setHomepageUrlValidationResult] =
+    useState<number>(0); // 회사 홈페이지 url 유효성 체크
+  const [
+    countryPhoneNumberValidationResult,
+    setCountryPhoneNumberValidationResult,
+  ] = useState<number>(0); // 국가 전화코드 유효성 체크
+  const [phoneNumberValidationResult, setPhoneNumberValidationResult] =
+    useState<number>(0); // 전화번호 유효성 체크
+  const [userIdValidationResult, setUserIdValidationResult] =
+    useState<number>(0); // 유저ID(이메일주소) 유효성 체크
+  const [passwordValidationResult, setPassowrdValidationResult] =
+    useState<number>(0); // 비밀번호 유효성 체크
+  const [passwordConfirmValidationResult, setPasswordConfirmValidationResult] =
+    useState<number>(0); // 비밀번호 확인 유효성 체크
+
+  const [validationStart, setValidationStart] = useState(false); // 입력시마다 검사 시작
+  const [moveScreen, setMoveScreen] = useState(0); // errorcase 발생시 해당 입력칸으로 이동하기위한 상태
+
+  const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(false);
+  const [popUpIsActive, setPopUpIsActive] = useState<boolean>(false);
+
+  const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
+
+  const { value: isLogin } = useAppSelector((state) => state.isLogin);
+  const dispatch = useAppDispatch();
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -195,6 +233,135 @@ const useEdit_account_info = () => {
     phoneNumberHandler();
   }, [countryCode]);
 
+  /** firstName 유효성 검사 */
+  const validationFirstname = () => {
+    let regexp = /^[A-Za-z]{1,20}$/;
+    if (regexp.test(firstName)) {
+      setfirstNameValidationResult(1);
+      return true;
+    }
+    setfirstNameValidationResult(2);
+    return false;
+  };
+  /** lastName 유효성 검사 */
+  const validationLastName = () => {
+    let regexp = /^[A-Za-z]{1,20}$/;
+    if (regexp.test(lastName)) {
+      setLastNameValidationResult(1);
+      return true;
+    }
+    setLastNameValidationResult(2);
+    return false;
+  };
+  /** country 유효성 검사 */
+  const validationCountry = () => {
+    if (Boolean(countryCode)) {
+      setCounryCodeValidationResult(1);
+      return true;
+    }
+    setCounryCodeValidationResult(2);
+    return false;
+  };
+  /** company name 유효성 검사 */
+  const validationCompanyName = () => {
+    if (companyName.length < 50) {
+      setCompanyNameValidationResult(1);
+      return true;
+    }
+    setCompanyNameValidationResult(2);
+    return false;
+  };
+  /** company url 유효성 검사 */
+  const validationHomepageUrl = () => {
+    if (homepageUrl.length < 50) {
+      setHomepageUrlValidationResult(1);
+      return true;
+    }
+    setHomepageUrlValidationResult(2);
+    return false;
+  };
+  /** country phone number 유효성 검사 */
+  const validationCoutryPhoneNumber = () => {
+    if (Boolean(countryPhoneNumber)) {
+      setCountryPhoneNumberValidationResult(1);
+      return true;
+    }
+    setCountryPhoneNumberValidationResult(2);
+    return false;
+  };
+  /** phone number 유효성 검사 */
+  const validationPhoneNumber = () => {
+    if (phoneNumber.length > 7) {
+      setPhoneNumberValidationResult(1);
+      return true;
+    }
+    setPhoneNumberValidationResult(2);
+    return false;
+  };
+  /** userId 유효성 검사 */
+  const validationUserId = () => {
+    let regexp = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/; // 이메일 유효성 검사 정규식
+    if (regexp.test(userId)) {
+      setUserIdValidationResult(1);
+      return true;
+    }
+    setUserIdValidationResult(2);
+    return false;
+  };
+  /** password 유효성 검사 */
+  const validationPassword = () => {
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (regexp.test(password)) {
+      setPassowrdValidationResult(1);
+      return true;
+    }
+    setPassowrdValidationResult(2);
+    return false;
+  };
+  /** passwordConfirm 유효성 검사 */
+  const validationPasswordConfirm = () => {
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (password == passwordConfirm && regexp.test(passwordConfirm)) {
+      setPasswordConfirmValidationResult(1);
+      return true;
+    }
+    setPasswordConfirmValidationResult(2);
+    return false;
+  };
+
+  /** 모든 유효성 검사 */
+  const validationAll = () => {
+    let validationResult = new Array(10);
+    validationResult[0] = validationFirstname();
+    validationResult[1] = validationLastName();
+    validationResult[2] = validationCountry();
+    validationResult[3] = validationCompanyName();
+    validationResult[4] = validationHomepageUrl();
+    validationResult[5] = validationCoutryPhoneNumber();
+    validationResult[6] = validationPhoneNumber();
+
+    //유효성 결과 false값있으면 그 input으로 포커스, 모두 true면 return true
+    for (let i = 0; i < 7; i++) {
+      if (validationResult[i] == false) {
+        console.log(ref.current[i]);
+        ref.current[i]?.focus();
+        ref.current[i]?.scrollIntoView({
+          block: "center",
+          inline: "start",
+        });
+        break;
+      }
+      if (i == 6) {
+        return true;
+      }
+    }
+  };
+
+  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
+  const validationCheckAndSignupRequest = () => {
+    validationAll() && router.push("/account_detail");
+  };
+
   return (
     <Container>
       <Main>
@@ -210,72 +377,139 @@ const useEdit_account_info = () => {
             <InputTitle>First name</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setFirstName(e.target.value)}
-              value="test"
-              disabled
+              value={firstName}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                setFirstName(e.target.value);
+              }}
+              ref={(element) => {
+                ref.current[0] = element;
+              }}
             />
+            <ErrorCase isActive={firstNameValidationResult}>
+              ErrorCase
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Last name</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setLastName(e.target.value)}
-              value="test"
-              disabled
+              value={lastName}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                setLastName(e.target.value);
+              }}
+              ref={(element) => {
+                ref.current[1] = element;
+              }}
             />
+            <ErrorCase isActive={lastNameValidationResult}>ErrorCase</ErrorCase>
           </InputContainer>
         </Wrapper>
         <InputContainer>
-          <InputTitle>Country</InputTitle>
-          <SelectBoxTemporary />
+          <InputTitle
+            ref={(element) => {
+              ref.current[2] = element;
+            }}
+          >
+            Country
+          </InputTitle>
+          <SelectBoxEdit
+            list={countryList}
+            value={countryCode}
+            setValue={setCounryCode}
+            validationStart={validationStart}
+            setValidationResult={setCounryCodeValidationResult}
+          />
+          <ErrorCase isActive={countryCodeValidationResult}>
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Company name</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
           <Input
             type="text"
-            onChange={(e) => setCompanyName(e.target.value)}
-            value="test"
-            disabled
+            value={companyName}
+            onChange={(e) => {
+              setCompanyName(e.target.value);
+            }}
+            ref={(element) => {
+              ref.current[3] = element;
+            }}
           />
+          <ErrorCase isActive={companyNameValidationResult}>
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
-          <SelectBoxTemporary />
+          <SelectBox
+            list={companyCategoryList}
+            setValue={setIndustryCode}
+            validationStart={validationStart}
+            setValidationResult={setIndustryCodeValidationResult}
+          />
+          <ErrorCase
+            isActive={industryCodeValidationResult}
+            ref={(element) => {
+              ref.current[4] = element;
+            }}
+          >
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Company URL</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
           <Input
             type="text"
-            onChange={(e) => setHomepageUrl(e.target.value)}
-            value="test"
-            disabled
+            value={homepageUrl}
+            onChange={(e) => {
+              setHomepageUrl(e.target.value);
+            }}
+            ref={(element) => {
+              ref.current[5] = element;
+            }}
           />
+          <ErrorCase isActive={homepageUrlValidationResult}>
+            ErrorCase
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Phone number</InputTitle>
           <Wrapper>
-            <SelectBoxCountryCodeNumTemporary />
-            <Input
-              type="text"
-              value="test"
-              onChange={(e) => inputHandlerOnlyNumber(e)}
-              disabled
-            />
+            <InputContainerCountryCodeNum>
+              <SelectBoxCountryCodeNum
+                list={countryList}
+                value={countryPhoneNumber}
+                setValue={setCountryPhoneNumber}
+                validationStart={validationStart}
+                setValidationResult={setCounryCodeValidationResult}
+              />
+              <ErrorCase isActive={countryPhoneNumberValidationResult}>
+                ErrorCase
+              </ErrorCase>
+            </InputContainerCountryCodeNum>
+            <InputContainerPhoneNumber>
+              <Input
+                type="text"
+                value={phoneNumber}
+                onChange={(e) => {
+                  inputHandlerOnlyNumber(e);
+                }}
+                ref={(element) => {
+                  ref.current[6] = element;
+                }}
+              />
+              <ErrorCase isActive={phoneNumberValidationResult}>
+                ErrorCase
+              </ErrorCase>
+            </InputContainerPhoneNumber>
           </Wrapper>
         </InputContainer>
-        {/**삭제할것인지 아닌지 체크필요 id와 email 입력이 둘다 email로 받기 때문 */}
-        <InputContainer>
-          <InputTitle>Email</InputTitle>
-          <Input
-            type="email"
-            onChange={(e) => setUserId(e.target.value)}
-            value="test"
-            disabled
-          />
-        </InputContainer>
+
         <ButtonWrapper>
           <Button>
             <Link href="/account_detail" style={{ textDecoration: "none" }}>
@@ -283,7 +517,9 @@ const useEdit_account_info = () => {
             </Link>
           </Button>
 
-          <Button onClick={() => router.push("/account_detail")}>Done</Button>
+          <Button onClick={() => validationCheckAndSignupRequest()}>
+            Done
+          </Button>
         </ButtonWrapper>
       </Main>
     </Container>
@@ -308,7 +544,7 @@ const SelectBoxCountryCodeNumTemporary = styled.div`
     margin-right: 8.5px;
     width: 77px;
     flex: 0 0 77px;
-  } ;
+  }
 `;
 const Container = styled.div`
   display: flex;
@@ -406,6 +642,25 @@ const Input = styled.input`
   &:disabled {
     background-color: #ffffff;
   }
+`;
+
+const InputContainerCountryCodeNum = styled.div``;
+const InputContainerPhoneNumber = styled.div`
+  width: 100%;
+`;
+
+const ErrorCase = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive == 2 ? "block" : "none";
+  }};
+  margin-top: 10px;
+  height: ${(props) => {
+    return props.isActive == 0 || props.isActive == 1 ? "0px" : "";
+  }};
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  color: #ff5c01;
 `;
 const Line = styled.div`
   margin-bottom: 20px;
