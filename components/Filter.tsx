@@ -34,9 +34,13 @@ export interface ListTempArray extends Array<TempList> {}
 const UseFilter = ({
   isActive,
   setIsActive,
+  sortFilterIsActive,
+  setSortFilterIsActive,
 }: {
   isActive: boolean;
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+  sortFilterIsActive: boolean;
+  setSortFilterIsActive: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [suppliesIsActive, setSuppliesIsActive] = useState(true);
   const [projectIsActive, setProjectIsActive] = useState(true);
@@ -333,6 +337,117 @@ const UseFilter = ({
     setWeightList([...arr]);
   };
 
+  /** 컬러클릭시 컬러에 따라 다른 체크 아이콘 리턴 */
+  const colorCheckHandler = (n: number) => {
+    let blackCheckArr = [8, 9, 12, 13, 14];
+
+    // 검은색 체크아이콘이 되어야 하는 컬러면 해당 체크 표시 반영
+    if (blackCheckArr.includes(n)) {
+      return ic_check_web_color_dk;
+    }
+    // 아니면 화이트 컬러
+    return ic_check_web_color;
+  };
+
+  /** 필터에 체크될 경우 클리어 버튼 활성화 */
+  const clearButtonHandler = () => {
+    let count = 0;
+    suppliesList.forEach((i) => {
+      if (i.isChecked == true) {
+        count++;
+        setSortFilterIsActive(true);
+        return;
+      }
+    });
+    projectList.forEach((i) => {
+      if (i.isChecked == true) {
+        count++;
+        setSortFilterIsActive(true);
+        return;
+      }
+    });
+    designList.forEach((i) => {
+      if (i.isChecked == true) {
+        count++;
+        setSortFilterIsActive(true);
+        return;
+      }
+    });
+    widthList.forEach((i) => {
+      if (i.isChecked == true) {
+        count++;
+        setSortFilterIsActive(true);
+        return;
+      }
+    });
+    weightList.forEach((i) => {
+      if (i.isChecked == true) {
+        count++;
+        setSortFilterIsActive(true);
+        return;
+      }
+    });
+    if (colorChecked.includes(true)) {
+      count++;
+      setSortFilterIsActive(true);
+      return;
+    }
+    if (count == 0) {
+      setSortFilterIsActive(false);
+    }
+  };
+
+  /** 필터들 체크되면 클리어버튼 활성화, 혹은 체크 모두 해제되면 비활성화 */
+  useEffect(() => {
+    clearButtonHandler();
+  }, [
+    suppliesList,
+    projectList,
+    designList,
+    widthList,
+    weightList,
+    colorChecked,
+  ]);
+
+  /** 클리어버튼 클릭시 필터 체크들 모두 해제 */
+  useEffect(() => {
+    if (sortFilterIsActive == false) {
+      let tempSupplieList = suppliesList;
+      let tempProjectList = projectList;
+      let tempDesignList = designList;
+      let tempWidthList = widthList;
+      let tempWeightList = weightList;
+      let tempColorList = colorChecked;
+
+      tempProjectList = tempProjectList.map((i) => {
+        return { ...i, isChecked: false };
+      });
+      tempProjectList = tempProjectList.map((i) => {
+        return { ...i, isChecked: false };
+      });
+      tempDesignList = tempDesignList.map((i) => {
+        return { ...i, isChecked: false };
+      });
+      tempWidthList = tempWidthList.map((i) => {
+        return { ...i, isChecked: false };
+      });
+      tempWeightList = tempWeightList.map((i) => {
+        return { ...i, isChecked: false };
+      });
+      tempColorList = tempColorList.map((i) => {
+        return false;
+      });
+
+      setSuppliesList([...tempSupplieList]);
+      setProjectList([...tempProjectList]);
+      setDesignList([...tempDesignList]);
+      setWidthList([...tempWidthList]);
+      setWeightList([...tempWeightList]);
+      setColorChecked([...tempColorList]);
+      console.log(tempProjectList);
+    }
+  }, [sortFilterIsActive]);
+
   return (
     <>
       <Background isActive={isActive} onClick={() => setIsActive(false)} />
@@ -360,7 +475,7 @@ const UseFilter = ({
                 key={`asdf${j}`}
               >
                 <ColorChecked isChecked={colorChecked[j]}>
-                  <Image src={ic_check_web_color} alt="ic_check_web_color" />
+                  <Image src={colorCheckHandler(j)} alt="check_icon" />
                 </ColorChecked>
               </ColorCircle>
             );
