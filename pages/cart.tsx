@@ -160,7 +160,7 @@ const useCart = () => {
 
               {tempResult.map((i, j) => {
                 return (
-                  <MeterageProductWrapper>
+                  <MeterageProductWrapper key={`meter-${j}`}>
                     <CartMeterageProduct
                       rollCheckArr={rollCheckArr}
                       setRollCheckArr={setRollCheckArr}
@@ -193,7 +193,7 @@ const useCart = () => {
 
               {tempResult.map((i, j) => {
                 return (
-                  <SampleProudctWrapper>
+                  <SampleProudctWrapper key={`sample-${j}`}>
                     <CartSampleProduct
                       sampleCheckArr={sampleCheckArr}
                       setSampleCheckArr={setSampleCheckArr}

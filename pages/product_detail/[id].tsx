@@ -271,6 +271,7 @@ const useId = () => {
                     isClicked={imgVideoClicked}
                     px={j * 69 + px}
                     onClick={() => slideHandler(j)}
+                    key={`imageVideo-${j}`}
                   >
                     {j}
                   </SmallImageVideo>
