@@ -9,7 +9,15 @@ import {
 } from "../assets";
 import Image from "next/image";
 
-const useCartSampleProduct = () => {
+const useCartSampleProduct = ({
+  sampleCheckArr, // 롤 체크 유무 배열
+  setSampleCheckArr,
+  order,
+}: {
+  sampleCheckArr: Array<boolean>;
+  setSampleCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
+  order: number;
+}) => {
   const [isChecked, setIsChecked] = useState(false);
   const [length, setLength] = useState<string>("1.0");
 
@@ -20,15 +28,25 @@ const useCartSampleProduct = () => {
     setLength((Number(length) + 1).toFixed(1).toString());
   };
 
+  const checkHandler = () => {
+    let temp = sampleCheckArr;
+    temp[order] = !temp[order];
+    setSampleCheckArr([...temp]);
+  };
+
   return (
     <Container>
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
-          id="test"
-          onChange={() => setIsChecked(!isChecked)}
+          id={`sample${order}`}
+          onChange={() => checkHandler()}
         />
-        <Label htmlFor="test" isChecked={isChecked} img={ic_check_wht.src} />
+        <Label
+          htmlFor={`sample${order}`}
+          isChecked={sampleCheckArr[order]}
+          img={ic_check_wht.src}
+        />
         Check to purchase
         <CloseButton>
           <Image src={ic_close} alt={"close_button"} width={18} height={18} />

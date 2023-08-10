@@ -9,8 +9,15 @@ import {
 } from "../assets";
 import Image from "next/image";
 
-const useCartMeterageProduct = () => {
-  const [isChecked, setIsChecked] = useState(false);
+const useCartMeterageProduct = ({
+  rollCheckArr, // 롤 체크 유무 배열
+  setRollCheckArr,
+  order,
+}: {
+  rollCheckArr: Array<boolean>;
+  setRollCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
+  order: number;
+}) => {
   const [length, setLength] = useState<string>("1");
 
   const minus = () => {
@@ -20,15 +27,25 @@ const useCartMeterageProduct = () => {
     setLength((Number(length) + 1).toString());
   };
 
+  const checkHandler = () => {
+    let temp = rollCheckArr;
+    temp[order] = !temp[order];
+    setRollCheckArr([...temp]);
+  };
+
   return (
     <Container>
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
-          id="test2"
-          onChange={() => setIsChecked(!isChecked)}
+          id={`meter${order}`}
+          onChange={() => checkHandler()}
         />
-        <Label htmlFor="test2" isChecked={isChecked} img={ic_check_wht.src} />
+        <Label
+          htmlFor={`meter${order}`}
+          isChecked={rollCheckArr[order]}
+          img={ic_check_wht.src}
+        />
         Check to purchase
         <CloseButton>
           <Image src={ic_close} alt={"close_button"} width={18} height={18} />
