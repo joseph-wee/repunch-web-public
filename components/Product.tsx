@@ -37,7 +37,10 @@ const Product = ({ product }: any) => {
   return (
     <Card>
       <Thumbnail>
-        <Link href="/product_detail/1" style={{ textDecoration: "none" }}>
+        <Link
+          href={`/product_detail/${product.productNo}`}
+          style={{ textDecoration: "none" }}
+        >
           <Image
             src={thumbnail}
             alt={"thumbnail"}
@@ -58,7 +61,9 @@ const Product = ({ product }: any) => {
 
       <InfoWrapper>
         <ProductTitle>{product.title}</ProductTitle>
-        <ProductCategory>jacquard</ProductCategory>
+        <ProductCategory>
+          {product.design ? product.design.name : "no data"}
+        </ProductCategory>
         <RatioWrapper>
           {product.materials.map((i: any, j: number) => {
             return (
@@ -77,7 +82,13 @@ const Product = ({ product }: any) => {
           {product.options.map((i: any, j: number) => {
             return (
               <Link
-                href="/product_detail/1"
+                href={{
+                  pathname: `/product_detail/${product.productNo}`,
+                  query: {
+                    option: i.productOptionNo,
+                  },
+                }}
+                as={`/product_detail/${product.productNo}`}
                 style={{ textDecoration: "none" }}
                 key={`link${j}`}
               >
