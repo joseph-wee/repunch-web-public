@@ -84,7 +84,7 @@ const Container = styled.nav<{ isActive: boolean }>`
   box-sizing: border-box;
   height: 64px;
 
-  background-color: #ffffff;
+  background-color: #fafafa;
   border-bottom: 1px solid #f2f6f8;
 
   @media screen and (max-width: 767px) {
