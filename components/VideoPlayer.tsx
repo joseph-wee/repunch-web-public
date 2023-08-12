@@ -30,9 +30,9 @@ const VideoPlayer = ({
   const videoSrc = url || "";
   const startTime = Math.floor(currentTime);
 
-  useEffect(() => {
-    console.log(currentTime);
-  }, [currentTime]);
+  // useEffect(() => {
+  //   console.log(currentTime);
+  // }, [currentTime]);
 
   /** 동영상 시간 업데이트 함수 */
   const addTimeUpdate = () => {
