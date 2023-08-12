@@ -16,7 +16,7 @@ import {
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setMeterage, setSample } from "../../features/login/cartSlice";
-import { productDetailRequest } from "../../utils/api";
+import { materialsRequest, productDetailRequest } from "../../utils/api";
 import { VideoPlayer } from "../../components";
 
 const useId = () => {
@@ -34,9 +34,13 @@ const useId = () => {
   const [rightEnd, setRightEnd] = useState(false);
   const [imgVideoClicked, setImgVideoClicked] = useState(1);
 
+  const [info, setInfo] = useState<any>();
+
   const [like, setLike] = useState(false); // 좋아요
 
   const ref = useRef<any>();
+
+  const [materials, setMaterials] = useState<any>();
 
   //////// 개발용 임시 데이터, 코드
 
@@ -127,12 +131,18 @@ const useId = () => {
     setCount(count + 1);
   };
 
-  const productDetailRequestHandler = (productNo: string | undefined) => {
-    productDetailRequest(productNo).then((res) => {
+  const productDetailRequestHandler = () => {
+    let reg = /[0-9]/g;
+    productDetailRequest(window.location.pathname.match(reg)).then((res) => {
       console.log(res.data.result);
-      setVideoUrl(res.data.result.files[1].resourceUrl);
+      setInfo(res.data.result);
+      // setVideoUrl(res.data.result.files[1].resourceUrl);
     });
   };
+
+  useEffect(() => {
+    productDetailRequestHandler();
+  }, []);
 
   const continueShoppingHandler = () => {
     setPopUpIsActive(0);
@@ -245,10 +255,53 @@ const useId = () => {
     }
   };
 
+  const materialRequestHandler = () => {
+    let res = materialsRequest();
+  };
+
+  /** 직물 리스트 */
+  const fabricList: any = [
+    "CO",
+    "LI",
+    "SI",
+    "CA",
+    "LY",
+    "WO",
+    "EL",
+    "PM",
+    "PL",
+    "NY",
+  ];
+
+  /** 임시 컬러 리스트 */
+  const tempColorList: any = [
+    "Emerald",
+    "Green",
+    "Red",
+    "Orange",
+    "Purple",
+    "Blue",
+    "Brown",
+    "Yellow",
+    "White",
+    "Ivory",
+    "Gray",
+    "Black",
+    "Silver",
+    "Gold",
+  ];
+
   useEffect(() => {
-    console.log(window.innerWidth);
-    console.log(window.outerWidth);
-  }, []);
+    info && console.log(info.certificated);
+  }, [info]);
+
+  const availableChanger = (info: any) => {
+    let value = 0;
+    info.options.forEach((i: any) => {
+      value += parseInt(i.quantity);
+    });
+    return value;
+  };
 
   return (
     <>
@@ -280,60 +333,85 @@ const useId = () => {
             </SmallImageVideoWrapper>
           </ImageVideoWrapper>
           <ProductInfoPurchaseContainer>
-            <Title>Leopard Viscose Crepe-Rose</Title>
+            <Title>{info ? info.title : ""}</Title>
             <Line />
             <InfoWrapper>
               <InfoTitle>Composition</InfoTitle>
               <InfoContent>
                 <RatioWrapper>
-                  <Ratio>EL 9%</Ratio>
-                  <Ratio>PA 94%</Ratio>
+                  {info
+                    ? info.materials.map((i: any, j: number) => {
+                        return (
+                          <Ratio key={`composition-${j}`}>{`${
+                            fabricList[parseInt(i.materialNo) - 1]
+                          } ${i.value}%`}</Ratio>
+                        );
+                      })
+                    : ""}
                 </RatioWrapper>
               </InfoContent>
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Certification</InfoTitle>
-              <InfoContent>Repp verifyed</InfoContent>
+              <InfoContent>
+                {info && info.certificated && "Repp verifyed"}
+              </InfoContent>
             </InfoWrapper>
             <InfoWrapper>
-              <InfoTitle>Available</InfoTitle>
-              <InfoContent>155.00m</InfoContent>
-            </InfoWrapper>
-            <InfoWrapper>
-              <InfoTitle>Supplies</InfoTitle>
-              <InfoContent>Patterns</InfoContent>
-            </InfoWrapper>
-            <InfoWrapper>
-              <InfoTitle>Project</InfoTitle>
-              <InfoContent>Patterns</InfoContent>
-            </InfoWrapper>
-            <InfoWrapper>
-              <InfoTitle>Color</InfoTitle>
-              <InfoContent>Red</InfoContent>
-            </InfoWrapper>
-            <InfoWrapper>
-              <InfoTitle>Design</InfoTitle>
-              <InfoContent>Check</InfoContent>
-            </InfoWrapper>
-            <InfoWrapper>
-              <InfoTitle>Width</InfoTitle>
-              <InfoContent>36 inches / 90cm</InfoContent>
+              <InfoTitle>Width/length</InfoTitle>
+              <InfoContent>
+                {info &&
+                  info.options.map((i: any, j: number) => {
+                    return (
+                      <WidthContent key={`width-${j}`}>
+                        {`${i.length}m`}
+                      </WidthContent>
+                    );
+                  })}
+              </InfoContent>
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Weight</InfoTitle>
-              <InfoContent>36 inches / 90cm</InfoContent>
+              <InfoContent>{`${info && info.weight}gms/sq.mt`}</InfoContent>
             </InfoWrapper>
             <InfoWrapper>
-              <InfoTitle>Yarn</InfoTitle>
-              <InfoContent>36 inches / 90cm</InfoContent>
+              <InfoTitle>Transparent</InfoTitle>
+              <InfoContent>{`${
+                info && info.transparent ? "Yes" : "No"
+              }`}</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Available</InfoTitle>
+              <InfoContent>{info && `${availableChanger(info)}`}</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Color</InfoTitle>
+              <InfoContent>
+                {info &&
+                  info.options.map((i: any, j: number) => {
+                    return (
+                      <WidthContent key={`color-${j}`}>
+                        {info && `${tempColorList[parseInt(i.colorNo) - 1]}`}
+                      </WidthContent>
+                    );
+                  })}
+              </InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Design</InfoTitle>
+              <InfoContent>{info && `${info.design}`}</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Project</InfoTitle>
+              <InfoContent>{info && `${info.project}`}</InfoContent>
+            </InfoWrapper>
+            <InfoWrapper>
+              <InfoTitle>Contry of origin</InfoTitle>
+              <InfoContent>{info && `${info.origin.name}`}</InfoContent>
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Descripttion</InfoTitle>
-              <InfoDescription>
-                Aruba 93 Azure Blue Stripe Cotton & Linen FabricAruba 93 Azure
-                Blue Stripe Cotton & Linen FabricAruba 93 Azure Blue Stripe
-                Cotton & Linen Fabric
-              </InfoDescription>
+              <InfoDescription>{info && `${info.description}`}</InfoDescription>
             </InfoWrapper>
           </ProductInfoPurchaseContainer>
         </ProductInfoContainer>
@@ -688,14 +766,14 @@ const Line = styled.div`
 const InfoWrapper = styled.div`
   margin-bottom: 12px;
   display: flex;
-  &:nth-of-type(13) {
+  &:last-of-type {
     margin-bottom: 0px;
   }
 `;
 const InfoTitle = styled.div`
-  margin-right: 22.84px;
+  margin-right: 6px;
   flex-shrink: 0;
-  width: 80px;
+  width: 101px;
 
   font-weight: 400;
   font-size: 14px;
@@ -712,6 +790,15 @@ const InfoContent = styled.div`
   letter-spacing: -0.011em;
 
   color: #333333;
+`;
+const WidthContent = styled.div`
+  margin-bottom: 12px;
+  &:last-of-type {
+    margin-bottom: 0px;
+  }
+`;
+const InfoWidthLengthWrapper = styled.div`
+  margin-bottom: 12px;
 `;
 const InfoDescription = styled.div`
   font-weight: 400;
