@@ -139,7 +139,9 @@ export const userInfoRequest = async (acessToken: string | null) => {
 };
 
 /** 상품(원단) 상세 조회 */
-export const productDetailRequest = async (productNo: string | undefined) => {
+export const productDetailRequest = async (
+  productNo: RegExpMatchArray | null
+) => {
   try {
     const res = await axios({
       method: "GET",
@@ -354,4 +356,18 @@ export const paymentRequest = async (token: string, payerId: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+/** 원단 소재 목록 조회 */
+export const materialsRequest = () => {
+  axios
+    .get("/product/materials")
+    .then((res: any) => {
+      console.log(res);
+      return res;
+    })
+    .catch((error) => {
+      console.log(error);
+      return error;
+    });
 };
