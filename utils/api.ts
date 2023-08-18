@@ -72,8 +72,22 @@ export const authEmailRequest = async (key: string[] | string | undefined) => {
   }
 };
 
-/** 상품(원단) 목록 조회 api */
-export const productsRequest = async (count: number, searchAfter: number) => {
+/** 처음에 실행될 상품(원단) 목록 조회 api */
+export const productsRequestFirst = async (count: number) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/products?count=${count}`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 처음이후 실행될 상품(원단) 목록 조회 api  */
+export const productsRequestNext = async (count: number, searchAfter: any) => {
   try {
     const res = await axios({
       method: "GET",
@@ -139,9 +153,7 @@ export const userInfoRequest = async (acessToken: string | null) => {
 };
 
 /** 상품(원단) 상세 조회 */
-export const productDetailRequest = async (
-  productNo: RegExpMatchArray | null
-) => {
+export const productDetailRequest = async (productNo: string | null) => {
   try {
     const res = await axios({
       method: "GET",
@@ -431,3 +443,35 @@ export const addAddressRequest = async (
     console.log(error);
   }
 };
+
+// /** 주소 추가 */
+// export const addCartRequest = async (
+//   productOptionNo: string,
+//   orderUnitType: string,
+//   count: number
+// ) => {
+//   try {
+//     const res = await axios({
+//       method: "POST",
+//       url: `/carts`,
+//       headers: {
+//         Authorization: `Bearer ${acessToken}`,
+//       },
+//       data: {
+//         title: title,
+//         firstName: firstName,
+//         lastName: lastName,
+//         companyName: companyName,
+//         countryCode: countryCode,
+//         state: state,
+//         streetAddress1: streetAddress1,
+//         streetAddress2: streetAddress2,
+//         postCode: postCode,
+//         phoneNumber: phoneNumber,
+//       },
+//     });
+//     return res;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
