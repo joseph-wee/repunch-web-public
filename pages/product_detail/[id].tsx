@@ -93,23 +93,20 @@ const useId = () => {
     );
     console.log(tempIndex);
 
-    tempThumbnailVideoList = tempThumbnailVideoList.map((el: any) => {
-      return { ...el, clicked: false };
-    });
-    tempThumbnailVideoList[tempIndex].clicked = true;
-
-    setThumbnailVideoList([...tempThumbnailVideoList]);
+    thumbnailClickHandler(tempIndex);
   };
 
   /** 옵션 클릭시 해당 옵션 포커스효과 */
   const clickHandler = (index: number) => {
     let tempOptionList = optionList;
     tempOptionList.forEach((el: any, index: number) => {
-      tempOptionList[index].checked = false;
+      tempOptionList[index].clicked = false;
     });
     tempOptionList[index].clicked = true;
 
     setOptionList([...tempOptionList]);
+
+    setSelectedOption({ ...tempOptionList[index] });
   };
 
   ////////
@@ -137,9 +134,10 @@ const useId = () => {
 
   /** 상품 상세 호출 및 info에 저장, 옵션 컬러 세팅 */
   const productDetailRequestHandler = () => {
+    console.log(window.location.pathname.slice(16));
     let reg = /[0-9]/g;
-    productDetailRequest(window.location.pathname.match(reg)).then((res) => {
-      console.log(res.data.result);
+    productDetailRequest(window.location.pathname.slice(16)).then((res) => {
+      console.log(res);
       setInfo(res.data.result);
 
       // 중복없이 컬러리스트 설정
@@ -178,6 +176,7 @@ const useId = () => {
 
       /** 썸네일 리스트 초기화 */
       let tempThumbnailVideoList = thumbnailVideoList;
+
       tempOptions.forEach((el: any) => {
         /** 썸네일 이미지 세팅 */
         tempThumbnailVideoList.push({
@@ -187,14 +186,17 @@ const useId = () => {
           videoUrl: "",
           clicked: false,
         });
+
         /** 동영상 세팅 */
-        tempThumbnailVideoList.push({
-          color: el.color.name,
-          type: "video",
-          imageUrl: el.files[0].resourceUrl,
-          videoUrl: el.files[1].resourceUrl,
-          clicked: false,
-        });
+        if (el.files[1]) {
+          tempThumbnailVideoList.push({
+            color: el.color.name,
+            type: "video",
+            imageUrl: el.files[0].resourceUrl,
+            videoUrl: el.files[1].resourceUrl,
+            clicked: false,
+          });
+        }
       });
       tempThumbnailVideoList[0].clicked = true;
       setSelect({ ...tempThumbnailVideoList[0] });
@@ -471,11 +473,11 @@ const useId = () => {
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Design</InfoTitle>
-              <InfoContent>{info && `${info.design}`}</InfoContent>
+              <InfoContent>{info && `${info.design.name}`}</InfoContent>
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Project</InfoTitle>
-              <InfoContent>{info && `${info.project}`}</InfoContent>
+              <InfoContent>{info && `${info.project.name}`}</InfoContent>
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Contry of origin</InfoTitle>
