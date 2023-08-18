@@ -41,7 +41,7 @@ const useAbout_us = () => {
   );
 };
 const Container = styled.div`
-  background-color: #eeeeee;
+  background-color: #fafafa;
 `;
 
 const Banner = styled.div`
