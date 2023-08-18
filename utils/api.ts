@@ -371,3 +371,63 @@ export const materialsRequest = () => {
       return error;
     });
 };
+
+/** 주소 목록 조회 */
+export const addressListRequest = async (
+  acessToken: string | null,
+  count: number,
+  searchAfter: number
+) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/user/addresses?count=${count}&searchAfter=${searchAfter}`,
+      headers: {
+        Authorization: `Bearer ${acessToken}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 주소 추가 */
+export const addAddressRequest = async (
+  acessToken: string | null,
+  title: string,
+  firstName: string,
+  lastName: string,
+  companyName: string,
+  countryCode: string | undefined,
+  state: string,
+  streetAddress1: string,
+  streetAddress2: string,
+  postCode: string,
+  phoneNumber: string
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/user/addresses`,
+      headers: {
+        Authorization: `Bearer ${acessToken}`,
+      },
+      data: {
+        title: title,
+        firstName: firstName,
+        lastName: lastName,
+        companyName: companyName,
+        countryCode: countryCode,
+        state: state,
+        streetAddress1: streetAddress1,
+        streetAddress2: streetAddress2,
+        postCode: postCode,
+        phoneNumber: phoneNumber,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
