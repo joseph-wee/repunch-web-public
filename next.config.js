@@ -14,9 +14,15 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.nona-source.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
 
 }
 
