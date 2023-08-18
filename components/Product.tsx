@@ -62,7 +62,7 @@ const Product = ({ product }: any) => {
       <InfoWrapper>
         <ProductTitle>{product.title}</ProductTitle>
         <ProductCategory>
-          {product.design ? product.design.name : "no data"}
+          {product.design ? product.design.name : "null"}
         </ProductCategory>
         <RatioWrapper>
           {product.materials.map((i: any, j: number) => {
