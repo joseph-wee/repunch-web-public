@@ -6,12 +6,10 @@ import Image from "next/image";
 
 const VideoPlayer = ({
   isActive,
-  url,
-  state,
+  select,
 }: {
   isActive: boolean;
-  url: string;
-  state: string;
+  select: any;
 }) => {
   const [nowPlaying, setNowPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -25,9 +23,10 @@ const VideoPlayer = ({
   const totalTime = (ref && ref.current && ref.current.duration) || 0;
   const videoElement = ref && ref.current;
 
+  useEffect(() => {});
+
   // const classProps = classNames(styles.video, className);
 
-  const videoSrc = url || "";
   const startTime = Math.floor(currentTime);
 
   // useEffect(() => {
@@ -207,68 +206,93 @@ const VideoPlayer = ({
   }, [showControl]);
 
   return (
-    <Container ref={containerRef}>
-      <Video
-        id="video"
-        key={url}
-        ref={ref}
-        loop={true}
-        onClick={() => {
-          onPlayIconClick();
-          setShowControl(true);
-          addTimeUpdate();
-        }}
-        // onMouseOver={() => console.log("마우스오버")}
-        // onMouseOut={() => setShowControl(false)}
-        onMouseMove={() => setShowControl(true)}
-      >
-        <source src={url} type="video/mp4" />
-        error
-      </Video>
-      <PlayButton
-        showControl={showControl}
-        nowPlaying={nowPlaying}
-        onMouseOver={() => setShowControl(true)}
-        onClick={() => {
-          onPlayIconClick();
-          setShowControl(true);
-          addTimeUpdate();
-        }}
-      >
-        <Image src={btn_play_l} alt="play_button" />
-      </PlayButton>
-      <PauseButton
-        showControl={showControl}
-        nowPlaying={nowPlaying}
-        onMouseOver={() => setShowControl(true)}
-        onClick={() => {
-          onPlayIconClick();
-          setShowControl(true);
-          addTimeUpdate();
-        }}
-      >
-        <Image src={btn_stop_l} alt="play_button" />
-      </PauseButton>
-      <ControllerWrapper showControl={showControl}>
-        <ProgressBar
-          onChange={(e) => onProgressChange(parseInt(e.target.value, 10))}
-          onMouseDown={() => onMouseDown()}
-          onMouseUp={() => onMouseUp()}
-          type="range"
-          min="0"
-          max="100"
-          step="0.01"
-          value={(currentTime / totalTime || 0) * 100}
-          fullScreenValue={fullScreenValue}
+    <>
+      <ImageContaienr isActive={select ? select.type : ""}>
+        <Image
+          src={select ? select.imageUrl : ""}
+          alt="image"
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
         />
-        <FullScreenButton onClick={() => fullScreenHandler()}>
-          <Image src={ic_play_fullscreen} alt="fullscreen" />
-        </FullScreenButton>
-      </ControllerWrapper>
-    </Container>
+      </ImageContaienr>
+      <VideoContainer ref={containerRef} isActive={select ? select.type : ""}>
+        <Video
+          id="video"
+          key={select ? select.videoUrl : ""}
+          ref={ref}
+          loop={true}
+          onClick={() => {
+            onPlayIconClick();
+            setShowControl(true);
+            addTimeUpdate();
+          }}
+          // onMouseOver={() => console.log("마우스오버")}
+          // onMouseOut={() => setShowControl(false)}
+          onMouseMove={() => setShowControl(true)}
+        >
+          <source src={select ? select.videoUrl : ""} type="video/mp4" />
+          error
+        </Video>
+        <PlayButton
+          showControl={showControl}
+          nowPlaying={nowPlaying}
+          onMouseOver={() => setShowControl(true)}
+          onClick={() => {
+            onPlayIconClick();
+            setShowControl(true);
+            addTimeUpdate();
+          }}
+        >
+          <Image src={btn_play_l} alt="play_button" />
+        </PlayButton>
+        <PauseButton
+          showControl={showControl}
+          nowPlaying={nowPlaying}
+          onMouseOver={() => setShowControl(true)}
+          onClick={() => {
+            onPlayIconClick();
+            setShowControl(true);
+            addTimeUpdate();
+          }}
+        >
+          <Image src={btn_stop_l} alt="play_button" />
+        </PauseButton>
+        <ControllerWrapper showControl={showControl}>
+          <ProgressBar
+            onChange={(e) => onProgressChange(parseInt(e.target.value, 10))}
+            onMouseDown={() => onMouseDown()}
+            onMouseUp={() => onMouseUp()}
+            type="range"
+            min="0"
+            max="100"
+            step="0.01"
+            value={(currentTime / totalTime || 0) * 100}
+            fullScreenValue={fullScreenValue}
+          />
+          <FullScreenButton onClick={() => fullScreenHandler()}>
+            <Image src={ic_play_fullscreen} alt="fullscreen" />
+          </FullScreenButton>
+        </ControllerWrapper>
+      </VideoContainer>
+    </>
   );
 };
-const Container = styled.div``;
+const ImageContaienr = styled.div<{ isActive: string }>`
+  margin-bottom: 4px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  display: ${(props) => {
+    return props.isActive == "thumbnail" ? `block` : `none`;
+  }};
+`;
+const VideoContainer = styled.div<{ isActive: string }>`
+  ${(props) => {
+    return props.isActive == "video" ? `display: block` : `display: none`;
+  }}
+`;
 const Video = styled.video`
   margin-bottom: 4px;
   position: absolute;

@@ -5,6 +5,7 @@ import Image from "next/image";
 import {
   btn_favorite_act_sm,
   btn_favorite_inact_sm,
+  btn_play_l,
   btn_review,
   btn_review_sm,
   ic_check_web_color,
@@ -44,69 +45,71 @@ const useId = () => {
 
   //////// 개발용 임시 데이터, 코드
 
-  const colorList = ["emerald", "green", "red"];
-  const [colorCheckedList, setColorCheckedList] = useState([
-    true,
-    false,
-    false,
-  ]);
-
-  const [productClicked, setProductClicked] = useState([
-    true,
-    false,
-    true,
-    false,
-    false,
-    false,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [colorList, setColorList] = useState<any>([]);
+  const [optionList, setOptionList] = useState<any>([]);
 
   const [price, setPrice] = useState(10);
   const [count, setCount] = useState(1);
 
-  useEffect(() => {
-    setCount(1);
-  }, [colorCheckedList]);
+  const [seletedOption, setSelectedOption] = useState<any>({});
+
+  const [thumbnailVideoList, setThumbnailVideoList] = useState<any>([]);
+  const [select, setSelect] = useState<any>(); // 선택된 썸네일 or 비디오
 
   useEffect(() => {
     setPrice(Number(count) * 10);
   }, [count]);
 
-  const checkHandler = (order: number) => {
-    let temp = colorCheckedList;
-    temp.forEach((i, j) => {
-      if (i == true) {
-        temp[j] = false;
-      }
+  /** 옵션에서 컬러 선택시 액션, 컬러 선택 바뀔 때마다 해당 첫번째 옵션 포커스 효과 핸들러 */
+  const colorCheckhandler = (index: number) => {
+    let tempColorList = colorList;
+    tempColorList.forEach((el: any, index: number) => {
+      tempColorList[index].checked = false;
     });
-    temp[order] = true;
-    setColorCheckedList([...temp]);
+
+    let temp: any = [];
+
+    tempColorList[index].checked = true;
+
+    let tempOptionList = optionList;
+    tempOptionList.forEach((el: any, j: number) => {
+      el.color == tempColorList[index].color && temp.push(j);
+      optionList[j].clicked = false;
+    });
+
+    tempOptionList[temp[0]].clicked = true;
+
+    setOptionList([...tempOptionList]);
+
+    setColorList([...tempColorList]);
+    setCount(1);
+
+    // 컬러리스트에서 컬러값 찾고 그 컬러값으로 썸네일 리스트에서 찾고 그거 click true
+    let colorArr = tempColorList.filter((el: any) => el.checked == true); // 클릭한 컬러 값
+    let tempThumbnailVideoList = thumbnailVideoList;
+
+    let tempIndex = tempThumbnailVideoList.findIndex(
+      (el: any) => el.color == colorArr[0].color
+    );
+    console.log(tempIndex);
+
+    tempThumbnailVideoList = tempThumbnailVideoList.map((el: any) => {
+      return { ...el, clicked: false };
+    });
+    tempThumbnailVideoList[tempIndex].clicked = true;
+
+    setThumbnailVideoList([...tempThumbnailVideoList]);
   };
 
-  const clickHandler = (order: number) => {
-    let temp = productClicked;
-    if (order >= 0 && order <= 1) {
-      for (let i = 0; i <= 1; i++) {
-        temp[i] = false;
-      }
-    }
-    if (order >= 2 && order <= 5) {
-      for (let i = 2; i <= 5; i++) {
-        temp[i] = false;
-      }
-    }
-    if (order >= 6 && order <= 11) {
-      for (let i = 6; i <= 11; i++) {
-        temp[i] = false;
-      }
-    }
-    temp[order] = true;
-    setProductClicked([...temp]);
+  /** 옵션 클릭시 해당 옵션 포커스효과 */
+  const clickHandler = (index: number) => {
+    let tempOptionList = optionList;
+    tempOptionList.forEach((el: any, index: number) => {
+      tempOptionList[index].checked = false;
+    });
+    tempOptionList[index].clicked = true;
+
+    setOptionList([...tempOptionList]);
   };
 
   ////////
@@ -128,18 +131,87 @@ const useId = () => {
     setCount(count - 1);
   };
   const plus = () => {
+    if (count == seletedOption.quantity) return;
     setCount(count + 1);
   };
 
+  /** 상품 상세 호출 및 info에 저장, 옵션 컬러 세팅 */
   const productDetailRequestHandler = () => {
     let reg = /[0-9]/g;
     productDetailRequest(window.location.pathname.match(reg)).then((res) => {
       console.log(res.data.result);
       setInfo(res.data.result);
+
+      // 중복없이 컬러리스트 설정
+      let tempOptions = res.data.result.options;
+      let tempColorList: any = [];
+      tempOptions.forEach((i: any) => {
+        !tempColorList.includes(i.color.name) &&
+          tempColorList.push({
+            color: i.color.name,
+            checked: false,
+          });
+      });
+      tempColorList[0].checked = true;
+
+      setColorList([...tempColorList]);
+
+      // 모든 옵션들 리스트 형태로 관리하기 위해 초기화
+      let tempOptionList: any = [];
+      tempOptions.forEach((el: any) => {
+        tempOptionList.push({
+          color: el.color.name,
+          width: res.data.result.width,
+          length: el.length,
+          price: el.price,
+          quantity: el.quantity,
+          samplePrice: el.samplePrice,
+          sampleQuantity: el.sampleQuantity,
+          clicked: false,
+        });
+      });
+      tempOptionList[0].clicked = true;
+      setOptionList([...tempOptionList]);
+
+      /** 선택된 옵션 초기화 */
+      setSelectedOption({ ...tempOptionList[0] });
+
+      /** 썸네일 리스트 초기화 */
+      let tempThumbnailVideoList = thumbnailVideoList;
+      tempOptions.forEach((el: any) => {
+        /** 썸네일 이미지 세팅 */
+        tempThumbnailVideoList.push({
+          color: el.color.name,
+          type: "thumbnail",
+          imageUrl: el.thumbnailUrl,
+          videoUrl: "",
+          clicked: false,
+        });
+        /** 동영상 세팅 */
+        tempThumbnailVideoList.push({
+          color: el.color.name,
+          type: "video",
+          imageUrl: el.files[0].resourceUrl,
+          videoUrl: el.files[1].resourceUrl,
+          clicked: false,
+        });
+      });
+      tempThumbnailVideoList[0].clicked = true;
+      setSelect({ ...tempThumbnailVideoList[0] });
+      setThumbnailVideoList([...tempThumbnailVideoList]);
+
       // setVideoUrl(res.data.result.files[1].resourceUrl);
     });
   };
 
+  useEffect(() => {
+    console.log("?");
+    console.log(optionList);
+  }, [optionList]);
+
+  // 컬러, 가격, 미터, 양
+
+  /** productDetailRequestHandler 호출 */
   useEffect(() => {
     productDetailRequestHandler();
   }, []);
@@ -158,65 +230,43 @@ const useId = () => {
   //   console.log(videoUrl);
   // }, [videoUrl]);
 
-  let temp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  /** 썸네일 클릭시 이동 및 강조 핸들러 */
+  const thumbnailClickHandler = (index: number) => {
+    let temp = thumbnailVideoList;
 
-  const slideClickHandler = (j: number) => {
-    console.log("j: " + j + " left: " + leftTarget + " right " + rightTarget);
+    // 클릭 세팅 및 선택된 썸네일 or 동영상 초기화//
+    temp = temp.map((el: any) => {
+      return { ...el, clicked: false };
+    });
+    temp[index].clicked = true;
+    setThumbnailVideoList([...temp]);
+    setSelect({ ...temp[index] });
+    //////////
 
-    setImgVideoClicked(j + 1);
-    // 왼쪽타겟이 첫번째위치지만 이동해야하는 경우
-    if (j == leftTarget && px == -46.5) {
-      setLeftEnd(true);
-      setLeftTarget(0);
-      setRightTarget(4);
-      setPx((prev) => prev + 46.5);
+    if (temp.length < 5) {
       return;
     }
-    // 오른쪽 끝으로 이동한 상태에서 왼쪽 타겟클릭시 이동해야하는 경우
-    if (j == leftTarget && j == temp.length - 5) {
-      setRightEnd(false);
-      setLeftTarget((prev) => prev - 1);
-      setRightTarget((prev) => prev - 1);
-      setPx((prev) => prev + 46.5);
+    if (index == 0) {
+      setPx(0);
       return;
     }
-    // 왼쪽 타겟클릭했지만 이동해서는 안되는 경우
-    if (j == leftTarget && leftEnd) {
+    if (index == 1) {
+      setPx(0);
       return;
     }
-    // 왼쪽 타겟 클릭시 이동
-    if (j == leftTarget) {
-      setLeftTarget((prev) => prev - 1);
-      setRightTarget((prev) => prev - 1);
-      setPx((prev) => prev + 69);
+    if (
+      index == temp.length - 4 ||
+      index == temp.length - 3 ||
+      index == temp.length - 2
+    ) {
+      setPx((temp.length - 5) * 68 + 24);
       return;
     }
-    // 오른쪽 타겟 클릭시 이동하는데 처음 이동하는 경우
-    if (j == rightTarget && j == 4) {
-      setLeftEnd(false);
-      setLeftTarget(0);
-      setRightTarget((prev) => prev + 1);
-      setPx((prev) => prev - 46.5);
+    if (index == temp.length - 1) {
+      setPx((temp.length - 5) * 68 + 24);
       return;
     }
-    // 오른쪽 타겟클릭했지만 이동해서는 안되는 경우
-    if (j == rightTarget && rightEnd) {
-      return;
-    }
-    // 오른쪽 타겟 클릭시 마지막 위치지만 이동해야하는 경우
-    if (j == rightTarget && j == temp.length - 1) {
-      setLeftTarget((prev) => prev + 1);
-      setRightEnd(true);
-      setPx((prev) => prev - 46.5);
-      return;
-    }
-    // 오른쪽 타겟 클릭시 이동하는 경우
-    if (j == rightTarget) {
-      setLeftTarget((prev) => prev + 1);
-      setRightTarget((prev) => prev + 1);
-      setPx((prev) => prev - 69);
-      return;
-    }
+    setPx((index - 2) * 68 + 46.5);
   };
 
   const test = () => {
@@ -224,35 +274,36 @@ const useId = () => {
   };
 
   const slideHandler = (n: number) => {
-    setImgVideoClicked(n + 1);
-    // 767px 이하에서는 작동안되게
-    if (window.innerWidth <= 767) {
-      return;
-    }
-    // 썸네일 이미지 개수가 5개 이하인 경우 스크롤 이동이 안되어야 하므로
-    if (temp.length <= 5) {
-      return;
-    }
-    // 첫번째 썸네일의 경우 무조건 스크롤 위치 0
-    if (n == 0) {
-      ref.current.scrollLeft = 0;
-      return;
-    }
-    // 마지막 썸네일의 경우 무조건 스크롤 위치 맨 끝
-    if (n == temp.length - 1) {
-      ref.current.scrollLeft = 69 * temp.length - 1;
-      return;
-    }
-    // 스크롤이 왼쪽으로 이동해야하는 경우
-    if (ref.current.scrollLeft >= 69 * n) {
-      ref.current.scrollLeft = 46.5 + 69 * (n - 1);
-      return;
-    }
-    // 스크롤이 오른쪽으로 이동해야하는 경우
-    if (ref.current.scrollLeft <= 69 * (n - 4) + 46.5) {
-      ref.current.scrollLeft = 69 * (n - 4) + 46.5;
-      return;
-    }
+    console.log("위에");
+    // setImgVideoClicked(n + 1);
+    // // 767px 이하에서는 작동안되게
+    // if (window.innerWidth <= 767) {
+    //   return;
+    // }
+    // // 썸네일 이미지 개수가 5개 이하인 경우 스크롤 이동이 안되어야 하므로
+    // if (thumbnailVideoList.length <= 5) {
+    //   return;
+    // }
+    // // 첫번째 썸네일의 경우 무조건 스크롤 위치 0
+    // if (n == 0) {
+    //   ref.current.scrollLeft = 0;
+    //   return;
+    // }
+    // // 마지막 썸네일의 경우 무조건 스크롤 위치 맨 끝
+    // if (n == thumbnailVideoList.length - 1) {
+    //   ref.current.scrollLeft = 69 * thumbnailVideoList.length - 1;
+    //   return;
+    // }
+    // // 스크롤이 왼쪽으로 이동해야하는 경우
+    // if (ref.current.scrollLeft >= 69 * n) {
+    //   ref.current.scrollLeft = 46.5 + 69 * (n - 1);
+    //   return;
+    // }
+    // // 스크롤이 오른쪽으로 이동해야하는 경우
+    // if (ref.current.scrollLeft <= 69 * (n - 4) + 46.5) {
+    //   ref.current.scrollLeft = 69 * (n - 4) + 46.5;
+    //   return;
+    // }
   };
 
   const materialRequestHandler = () => {
@@ -275,7 +326,7 @@ const useId = () => {
 
   /** 임시 컬러 리스트 */
   const tempColorList: any = [
-    "Emerald",
+    "Pink",
     "Green",
     "Red",
     "Orange",
@@ -292,7 +343,7 @@ const useId = () => {
   ];
 
   useEffect(() => {
-    info && console.log(info.certificated);
+    info && console.log(info.options);
   }, [info]);
 
   const availableChanger = (info: any) => {
@@ -303,13 +354,19 @@ const useId = () => {
     return value;
   };
 
+  const [options, setOptions] = useState("");
+
+  useEffect(() => {
+    console.log(select && select.type == "thumbnail");
+  }, [thumbnailVideoList]);
+
   return (
     <>
       <Container>
         <ProductInfoContainer>
           <ImageVideoWrapper>
             <BigImagevideoWrapper>
-              <VideoPlayer isActive={true} url={videoUrl} state={videoUrl} />
+              <VideoPlayer isActive={true} select={select} />
               <LikeButton onClick={() => setLike(!like)}>
                 <Image
                   src={like ? btn_review_sm : btn_favorite_inact_sm}
@@ -318,15 +375,30 @@ const useId = () => {
               </LikeButton>
             </BigImagevideoWrapper>
             <SmallImageVideoWrapper ref={ref}>
-              {temp.map((i, j) => {
+              {thumbnailVideoList.map((el: any, j: number) => {
                 return (
                   <SmallImageVideo
-                    isClicked={imgVideoClicked}
-                    px={j * 69 + px}
-                    onClick={() => slideHandler(j)}
+                    px={px}
+                    onClick={() => thumbnailClickHandler(j)}
                     key={`imageVideo-${j}`}
                   >
-                    {j}
+                    <BorderBox isClicked={el.clicked}></BorderBox>
+                    <PlayButton>
+                      {el.type == "video" && (
+                        <Image
+                          src={btn_play_l}
+                          alt="play_button"
+                          width={30}
+                          height={30}
+                        />
+                      )}
+                    </PlayButton>
+                    <Image
+                      src={el.imageUrl}
+                      width={68}
+                      height={68}
+                      alt="thumbnail"
+                    />
                   </SmallImageVideo>
                 );
               })}
@@ -364,7 +436,7 @@ const useId = () => {
                   info.options.map((i: any, j: number) => {
                     return (
                       <WidthContent key={`width-${j}`}>
-                        {`${i.length}m`}
+                        {`${info.width}cm*${i.length}m(W*L)`}
                       </WidthContent>
                     );
                   })}
@@ -418,15 +490,15 @@ const useId = () => {
         <PurchaseContainer>
           <PurchaseBox>
             <ColorWrapper>
-              {colorList.map((i, j) => {
+              {colorList.map((i: any, j: number) => {
                 return (
                   <ColorBox
-                    isChecked={colorCheckedList[j]}
-                    onClick={() => checkHandler(j)}
-                    key={i}
+                    isChecked={i.checked}
+                    onClick={() => colorCheckhandler(j)}
+                    key={`asdf${j}`}
                   >
-                    <ColorCircle color={i}>
-                      <CheckImageWrapper isChecked={colorCheckedList[j]}>
+                    <ColorCircle color={i.color}>
+                      <CheckImageWrapper isChecked={i.checked}>
                         <Image
                           src={ic_check_web_color}
                           alt="ic_check_web_color"
@@ -438,128 +510,30 @@ const useId = () => {
               })}
             </ColorWrapper>
             <ProductWrapper>
-              <Product
-                isRender={colorCheckedList[0]}
-                isActive={productClicked[0]}
-                onClick={() => clickHandler(0)}
-              >
-                <ColorName>Emerald</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[0]}
-                isActive={productClicked[1]}
-                onClick={() => clickHandler(1)}
-              >
-                <ColorName>Emerald</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[1]}
-                isActive={productClicked[2]}
-                onClick={() => clickHandler(2)}
-              >
-                <ColorName>Green</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[1]}
-                isActive={productClicked[3]}
-                onClick={() => clickHandler(3)}
-              >
-                <ColorName>Green</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>{" "}
-              <Product
-                isRender={colorCheckedList[1]}
-                isActive={productClicked[4]}
-                onClick={() => clickHandler(4)}
-              >
-                <ColorName>Green</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[1]}
-                isActive={productClicked[5]}
-                onClick={() => clickHandler(5)}
-              >
-                <ColorName>Green</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[2]}
-                isActive={productClicked[6]}
-                onClick={() => clickHandler(6)}
-              >
-                <ColorName>Red</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[2]}
-                isActive={productClicked[7]}
-                onClick={() => clickHandler(7)}
-              >
-                <ColorName>Red</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[2]}
-                isActive={productClicked[8]}
-                onClick={() => clickHandler(8)}
-              >
-                <ColorName>Red</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[2]}
-                isActive={productClicked[9]}
-                onClick={() => clickHandler(9)}
-              >
-                <ColorName>Red</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[2]}
-                isActive={productClicked[10]}
-                onClick={() => clickHandler(10)}
-              >
-                <ColorName>Red</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
-              <Product
-                isRender={colorCheckedList[2]}
-                isActive={productClicked[11]}
-                onClick={() => clickHandler(11)}
-              >
-                <ColorName>Red</ColorName>
-                <MiniCircle />
-                <LengthText>20cm*20cm</LengthText>
-                <UnitText>(W*L)</UnitText>
-              </Product>
+              {optionList &&
+                optionList.map((el: any, index: number) => {
+                  return (
+                    <Product
+                      isRender={
+                        el.color ==
+                        colorList.filter((el: any) => el.checked == true)[0]
+                          .color
+                      }
+                      isActive={el.clicked}
+                      onClick={() => clickHandler(index)}
+                      key={`reyrtjh${index}`}
+                    >
+                      <ColorName>{el.color}</ColorName>
+                      <MiniCircle />
+                      <LengthText>{`${el.width}m*${el.length}m`}</LengthText>
+                      <UnitText>(W*L)</UnitText>
+                    </Product>
+                  );
+                })}
             </ProductWrapper>
-            <AvailableText>20 Available</AvailableText>
+            <AvailableText>
+              {`${seletedOption.quantity} available`}
+            </AvailableText>
             <LengthWrapper>
               <ButtonInputWrapper>
                 <MinusButton onClick={() => minus()}>
@@ -576,8 +550,8 @@ const useId = () => {
                 </PlusButton>
               </ButtonInputWrapper>
               <ProductPriceWrapper>
-                <ProductUnit>1 Qty 20 m</ProductUnit>
-                <ProductPrice>$ {price}</ProductPrice>
+                <ProductUnit>{`1 Qty ${seletedOption.length} m`}</ProductUnit>
+                <ProductPrice>$ {seletedOption.price * count}</ProductPrice>
               </ProductPriceWrapper>
             </LengthWrapper>
             <PricePurchaseWrapper>
@@ -678,7 +652,9 @@ const ProductInfoContainer = styled.div`
     margin-bottom: 43px;
   }
 `;
-const ImageVideoWrapper = styled.div``;
+const ImageVideoWrapper = styled.div`
+  flex-shrink: 0;
+`;
 const BigImagevideoWrapper = styled.div`
   position: relative;
   margin-bottom: 4px;
@@ -727,27 +703,45 @@ const SmallImageVideoWrapper = styled.div`
     display: none;
   }
 `;
-const SmallImageVideo = styled.div<{ isClicked: number; px: number }>`
+const SmallImageVideo = styled.div<{
+  px: number;
+}>`
   margin-right: 1px;
-  position: absolute;
-  left: ${(props) => {
+  position: relative;
+  right: ${(props) => {
     return `${props.px}px`;
   }};
   width: 68px;
   height: 68px;
   background-color: #f2f6f8;
-  ${(props) => {
-    return `  &:nth-of-type(${props.isClicked}) {
-    border: 4px solid #e1ff20;
-  }`;
-  }}
   box-sizing: border-box;
+  transition: 0.5s;
+`;
+const BorderBox = styled.div<{ isClicked: boolean }>`
+  position: absolute;
+  ${(props) => {
+    return props.isClicked && `border: 4px solid #E1FF20`;
+  }};
+  box-sizing: border-box;
+  width: 68px;
+  height: 68px;
+`;
+const PlayButton = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  background: none;
+  padding: 0;
 `;
 const ProductInfoPurchaseContainer = styled.div`
+  width: 100%;
   padding-left: 20px;
   padding-right: 20px;
 
   @media screen and (max-width: 767px) {
+    width: auto;
     padding-top: 20px;
   }
 `;
@@ -859,14 +853,61 @@ const ColorCircle = styled.div<{ color: string }>`
   width: 32px;
   height: 32px;
   border-radius: 100%;
-  background-color: ${(props) => {
+  ${(props) => {
     switch (props.color) {
-      case "emerald":
-        return "#1B8F9F";
-      case "green":
-        return "#46ca43";
-      case "red":
-        return "#EC3939";
+      case "White":
+        return `    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    background-color: #ffffff;`;
+      case "Black":
+        return "background-color: #000000";
+      case "Gray":
+        return "background-color: #C4C4C4";
+      case "Beige":
+        return "background-color: #F1EBD3";
+      case "Brown":
+        return "background-color: #825757";
+      case "Red":
+        return "background-color: #EC3939";
+      case "Orange":
+        return "background-color: #FE7E36";
+      case "Yellow":
+        return "background-color: #F9D142";
+      case "Pink":
+        return "background-color: #FF96FB";
+      case "Purple":
+        return "background-color: #814FEC";
+      case "Blue":
+        return "background-color: #293DF0";
+      case "Green":
+        return "background-color: #46CA43";
+      case "Silver":
+        return `  background: linear-gradient(
+      156.04deg,
+      #a9a9a9 10.26%,
+      #dedede 43.51%,
+      #ffffff 52.57%,
+      #e1e1e1 61.64%,
+      #9a9a9a 93.16%
+    );`;
+      case "Gold":
+        return `    background: linear-gradient(
+      152.18deg,
+      #d3a810 5.76%,
+      #fff8de 44.11%,
+      #ffffff 49.34%,
+      #fff9e4 55.45%,
+      #d3a810 89.44%
+    ); `;
+      case "Multi":
+        return `    background: linear-gradient(
+      154.17deg,
+      #ff1001 17.26%,
+      #fff500 37.73%,
+      #24ff00 57.06%,
+      #00bdf9 72.22%,
+      #0075ff 90.03%
+    );`;
     }
   }};
 `;
