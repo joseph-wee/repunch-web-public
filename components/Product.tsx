@@ -10,7 +10,6 @@ import {
 } from "../assets";
 import Image from "next/legacy/image";
 import Link from "next/link";
-import { productsRequest } from "../utils/api";
 
 const Product = ({ product }: any) => {
   const [favoriteIsActive, setFavoriteIsActive] = useState(false);
