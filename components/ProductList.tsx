@@ -10,7 +10,7 @@ import {
 } from "../assets";
 import Image from "next/legacy/image";
 import Link from "next/link";
-import { productsRequest } from "../utils/api";
+import { productsRequestNext, productsRequestFirst } from "../utils/api";
 import Product from "./Product";
 
 const ProductList = () => {
@@ -18,15 +18,16 @@ const ProductList = () => {
 
   /** 상품 리스트 호출 함수 */
   const productListRequestFirst = (searchAfter: number) => {
-    productsRequest(10, 10).then((res) => {
+    productsRequestFirst(50).then((res) => {
       let tempArr = productList;
       tempArr = res.data.result.data;
       setProductList([...tempArr]);
+      console.log(tempArr);
     });
   };
 
   useEffect(() => {
-    productListRequestFirst(10);
+    productListRequestFirst(50);
   }, []);
 
   return (
