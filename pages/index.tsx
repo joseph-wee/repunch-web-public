@@ -14,8 +14,6 @@ import {
 import Image from "next/legacy/image";
 import { useState } from "react";
 import { Filter, ProductList } from "../components";
-import { useEffect } from "react";
-import { productsRequest } from "../utils/api";
 
 export default function Home() {
   const [sortIsActive, setSortIsActive] = useState(true);
