@@ -5,6 +5,7 @@ import { CheckOutMeterageProduct, Sample } from "../components";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { addressListRequest } from "../utils/api";
 
 const useCheck_out_sample = () => {
   const [deliveryIsChecked, setDeliveryIsChecked] = useState<number>(0);
@@ -21,6 +22,22 @@ const useCheck_out_sample = () => {
       ref.current.focus();
     }
   }, [popUpIsActive]);
+
+  // const at = localStorage.getItem("at"); // 엑세스 토큰
+
+  // /** 주문 목록 조회 핸들러 */
+  // const addressListRequestHandler = () => {
+  //   at &&
+  //     addressListRequest(at, 10, 10).then((res) => {
+  //       res?.data.result.data == null
+  //         ? router.push("/add_shipping_address")
+  //         : ""; // 서치 에프터 동작 확인 후 값 없을 때 까지 불러오는 코드 추가 해야함
+  //     });
+  // };
+
+  // useEffect(() => {
+  //   addressListRequestHandler();
+  // }, []);
 
   return (
     <>
