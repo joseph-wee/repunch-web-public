@@ -90,7 +90,7 @@ const useAddress = () => {
           <Title>Address</Title>
         </TitleWrapper>
         <ContentEditTitleBar>Shipping address</ContentEditTitleBar>
-        <AddAdressButton onClick={() => router.push("/edit_shipping_address")}>
+        <AddAdressButton onClick={() => router.push("/add_shipping_address")}>
           + Add a new address
         </AddAdressButton>
         <ContentWrapper>
