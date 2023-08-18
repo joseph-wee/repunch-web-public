@@ -47,9 +47,8 @@ const usePassword_reset = () => {
       pwResetRequest(sessionKey, password, passwordConfirm).then((res) => {
         if (res?.data == 200) {
           setPopUpIsActive(true);
+          router.push("/login");
         }
-
-        console.log(res?.data);
       });
     }
   };
