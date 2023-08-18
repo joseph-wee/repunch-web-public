@@ -1,0 +1,663 @@
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import {
+  MobileSideBar,
+  OrderInfoBox,
+  RecentOrders,
+  SideBar,
+  SelectBox,
+} from "../components";
+import { btn_web_back, garbage, ic_check_wht } from "../assets";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { goBack } from "../utils/functions";
+import { addAddressRequest } from "../utils/api";
+
+/** 국가, 카테고리 객체 타입 */
+export interface List {
+  name: string; // 이름
+  code: string; // 코드
+  code_num?: string; // 코드 번호
+}
+
+/** 국가, 카테고리 객체타입을 배열 형태로 확장 */
+export interface ListCountryArray extends Array<List> {}
+
+const useAdd_shiping_address = () => {
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [isExisted, setIsExisted] = useState<boolean>(false);
+
+  const [title, setTitle] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
+  const [state, setState] = useState("");
+  const [streetAddress1, setStreetAddress1] = useState("");
+  const [streetAddress2, setStreetAddress2] = useState("");
+  const [postCode, setPostCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const router = useRouter();
+
+  const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
+
+  /** 나라 리스트 숫자 코드는 업데이트 필요 */
+  const countryList: ListCountryArray = [
+    { name: "Republic of Korea", code: "KR", code_num: "82" },
+    { name: "United States of America", code: "US", code_num: "1" },
+    { name: "Greece", code: "GR", code_num: "99" },
+    { name: "Netherlands", code: "NL", code_num: "99" },
+    { name: "Nepal", code: "NP", code_num: "22" },
+    { name: "Norway", code: "NO", code_num: "22" },
+    { name: "Danmark", code: "DK", code_num: "22" },
+    { name: "Germany", code: "DE", code_num: "49" },
+    { name: "Laos", code: "LA", code_num: "22" },
+    { name: "Malaysia", code: "MY", code_num: "22" },
+    { name: "Mexico", code: "MX", code_num: "22" },
+    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
+    { name: "Bangladesh", code: "BD", code_num: "22" },
+    { name: "Viet Nam", code: "VN", code_num: "84" },
+    { name: "Belgium", code: "BE", code_num: "22" },
+    {
+      name: "United Kingdom of Great Britain and Northern Ireland",
+      code: "GB",
+      code_num: "44",
+    },
+    { name: "Australia", code: "AU", code_num: "61" },
+    { name: "Austria", code: "AT", code_num: "22" },
+    { name: "Uzbekistan", code: "UZ", code_num: "22" },
+    { name: "Egypt", code: "EG", code_num: "22" },
+    { name: "Italy", code: "IT", code_num: "22" },
+    { name: "India", code: "IN", code_num: "91" },
+    { name: "Indonesia", code: "ID", code_num: "22" },
+    { name: "Japan", code: "JP", code_num: "22" },
+    { name: "China", code: "CN", code_num: "86" },
+    { name: "Cambodia", code: "KH", code_num: "22" },
+    { name: "Canada", code: "CA", code_num: "1" },
+    { name: "Taiwan", code: "TW", code_num: "22" },
+    { name: "Thailand", code: "TH", code_num: "886" },
+    { name: "Turkey", code: "TR", code_num: "22" },
+    { name: "Portugal", code: "PT", code_num: "22" },
+    { name: "Poland", code: "PL", code_num: "22" },
+    { name: "Puerto Rico", code: "PR", code_num: "22" },
+    { name: "France", code: "FR", code_num: "33" },
+    { name: "Finland", code: "FI", code_num: "22" },
+    { name: "Philippines", code: "PH", code_num: "63" },
+    { name: "Hong Kong", code: "HK", code_num: "852" },
+  ];
+
+  const [titleValidationResult, setTitleValidationResult] = useState<number>(0); // 성 유효성 체크
+  const [firstNameValidationResult, setFirstNameValidationResult] =
+    useState<number>(0); // 이름 유효성 체크
+  const [lastNameValidationResult, setLastNameValidationResult] =
+    useState<number>(0); // 이름 유효성 체크
+  const [companyNameValidationResult, setCompanyNameValidationResult] =
+    useState<number>(0); // 회사이름 유효성 체크
+  const [countryCodeValidationResult, setCounryCodeValidationResult] =
+    useState<number>(0); // 국가코드 유효성 체크
+
+  const [stateValidationResult, setStateValidationResult] = useState<number>(0);
+
+  const [streetAddress1ValidationResult, setStreetAddress1ValidationResult] =
+    useState<number>(0);
+
+  const [streetAddress2ValidationResult, setStreetAddress2ValidationResult] =
+    useState<number>(0);
+
+  const [postCodeValidationResult, setPostCodeValidationResult] =
+    useState<number>(0);
+
+  const [phoneNumberValidationResult, setPhoneNumberValidationResult] =
+    useState<number>(0); // 전화번호 유효성 체크
+
+  const [validationStart, setValidationStart] = useState(false); // 입력시마다 검사 시작
+
+  let at: string | null = ""; // 엑세스 토큰
+
+  /** 그냥 선언시 에러나서 렌더링 후 저장 되게 함. */
+  useEffect(() => {
+    at = localStorage.getItem("at");
+  }, []);
+
+  /** title 유효성 검사 */
+  const validationTitle = () => {
+    if (Boolean(title)) {
+      setTitleValidationResult(1);
+      return true;
+    }
+    setTitleValidationResult(2);
+    return false;
+  };
+
+  /** firstName 유효성 검사 */
+  const validationFirstname = () => {
+    let regexp = /^[A-Za-z]{1,20}$/;
+    if (regexp.test(firstName)) {
+      setFirstNameValidationResult(1);
+      return true;
+    }
+    setFirstNameValidationResult(2);
+    return false;
+  };
+  /** lastName 유효성 검사 */
+  const validationLastName = () => {
+    let regexp = /^[A-Za-z]{1,20}$/;
+    if (regexp.test(lastName)) {
+      setLastNameValidationResult(1);
+      return true;
+    }
+    setLastNameValidationResult(2);
+    return false;
+  };
+  /** country 유효성 검사 */
+  const validationCountry = () => {
+    if (Boolean(countryCode)) {
+      setCounryCodeValidationResult(1);
+      return true;
+    }
+    setCounryCodeValidationResult(2);
+    return false;
+  };
+  /** company name 유효성 검사 */
+  const validationCompanyName = () => {
+    if (Boolean(companyName) && companyName.length < 50) {
+      setCompanyNameValidationResult(1);
+      return true;
+    }
+    setCompanyNameValidationResult(2);
+    return false;
+  };
+
+  /** 국가코드 유효성 검사 */
+  const validationState = () => {
+    if (Boolean(countryCode)) {
+      setStateValidationResult(1);
+      return true;
+    }
+    setStateValidationResult(2);
+    return false;
+  };
+
+  /** postcode 유효성 검사 */
+  const validationPostCode = () => {
+    if (postCode.length >= 5) {
+      setPostCodeValidationResult(1);
+      return true;
+    }
+    setPostCodeValidationResult(2);
+    return false;
+  };
+
+  /** streetAddress1 유효성 검사 */
+  const validationStreetAddress1 = () => {
+    if (Boolean(streetAddress1)) {
+      setStreetAddress1ValidationResult(1);
+      return true;
+    }
+    setStreetAddress1ValidationResult(2);
+    return false;
+  };
+
+  /** streetAddress2 유효성 검사 */
+  const validationStreetAddress2 = () => {
+    if (true) {
+      setStreetAddress2ValidationResult(1);
+      return true;
+    }
+    setStreetAddress2ValidationResult(2);
+    return false;
+  };
+
+  /** phone number 유효성 검사 */
+  const validationPhoneNumber = () => {
+    if (phoneNumber.length > 7) {
+      setPhoneNumberValidationResult(1);
+      return true;
+    }
+    setPhoneNumberValidationResult(2);
+    return false;
+  };
+
+  /** 모든 유효성 검사 */
+  const validationAll = () => {
+    let validationResult = new Array(10);
+    validationResult[0] = validationTitle();
+    validationResult[1] = validationFirstname();
+    validationResult[2] = validationLastName();
+    validationResult[3] = validationCompanyName();
+    validationResult[4] = validationCountry();
+    validationResult[5] = validationState();
+    validationResult[6] = validationStreetAddress1();
+    validationResult[7] = validationStreetAddress2();
+    validationResult[8] = validationPostCode();
+    validationResult[9] = validationPhoneNumber();
+
+    //유효성 결과 false값있으면 그 input으로 포커스, 모두 true면 return true
+    for (let i = 0; i < 10; i++) {
+      if (validationResult[i] == false) {
+        console.log(ref.current[i]);
+        ref.current[i]?.focus();
+        ref.current[i]?.scrollIntoView({
+          block: "center",
+          inline: "start",
+        });
+        break;
+      }
+      if (i == 9) {
+        return true;
+      }
+    }
+  };
+
+  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 어드레스 추가 아니면 모두 재검사 */
+  const addAddressRequestHandler = () => {
+    let validationAllValue = validationAll();
+    if (validationAllValue == true) {
+      addAddressRequest(
+        at,
+        title,
+        firstName,
+        lastName,
+        companyName,
+        countryCode,
+        state,
+        streetAddress1,
+        streetAddress2,
+        postCode,
+        phoneNumber
+      ).then((res) => {
+        if (res?.data?.status == 200) {
+          router.push("/address");
+          return;
+        }
+        alert("예상치 못한 에러가 발생하였습니다.");
+      });
+    }
+  };
+
+  return (
+    <Container>
+      <SideBar />
+      <Main>
+        <AddressInit isExisted={isExisted}>
+          <TitleWrapper>
+            <ImageWrapper onClick={() => goBack()}>
+              <Image src={btn_web_back} alt={"btn_web_back"} />
+            </ImageWrapper>
+            <Title>Edit shipping Address</Title>
+          </TitleWrapper>
+          <ContentTitleBar>Shipping address</ContentTitleBar>
+          <InputContainer>
+            <InputTitle>Address title</InputTitle>
+            <Input
+              type="text"
+              onChange={(e) => setTitle(e.target.value)}
+              ref={(element) => {
+                ref.current[0] = element;
+              }}
+            />
+            <ErrorCase isActive={titleValidationResult}>ErrorCase</ErrorCase>
+          </InputContainer>
+          <Wrapper>
+            <InputContainer>
+              <InputTitle>First name</InputTitle>
+              <Input
+                type="text"
+                onChange={(e) => {
+                  e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                  setFirstName(e.target.value);
+                }}
+                ref={(element) => {
+                  ref.current[1] = element;
+                }}
+              />
+              <ErrorCase isActive={firstNameValidationResult}>
+                ErrorCase
+              </ErrorCase>
+            </InputContainer>
+            <InputContainer>
+              <InputTitle>Last name</InputTitle>
+              <Input
+                type="text"
+                onChange={(e) => {
+                  e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                  setLastName(e.target.value);
+                }}
+                ref={(element) => {
+                  ref.current[2] = element;
+                }}
+              />{" "}
+              <ErrorCase isActive={lastNameValidationResult}>
+                ErrorCase
+              </ErrorCase>
+            </InputContainer>
+          </Wrapper>
+          <InputContainer>
+            <InputTitle>Company name</InputTitle>
+            <Input
+              type="text"
+              onChange={(e) => setCompanyName(e.target.value)}
+              ref={(element) => {
+                ref.current[3] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={companyNameValidationResult}>
+              ErrorCase
+            </ErrorCase>
+          </InputContainer>
+          <InputContainer>
+            <InputTitle
+              ref={(element) => {
+                ref.current[4] = element;
+              }}
+            >
+              Country
+            </InputTitle>
+            <SelectBox
+              list={countryList}
+              setValue={setCounryCode}
+              validationStart={validationStart}
+              setValidationResult={setCounryCodeValidationResult}
+            />{" "}
+            <ErrorCase isActive={countryCodeValidationResult}>
+              ErrorCase
+            </ErrorCase>
+          </InputContainer>
+          <InputContainer>
+            <InputTitle>State /Province</InputTitle>
+            <Input
+              type="text"
+              onChange={(e) => setState(e.target.value)}
+              ref={(element) => {
+                ref.current[5] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={stateValidationResult}>ErrorCase</ErrorCase>
+          </InputContainer>
+          <InputContainer>
+            <InputTitle>Street address</InputTitle>
+            <Input
+              type="text"
+              onChange={(e) => setStreetAddress1(e.target.value)}
+              ref={(element) => {
+                ref.current[6] = element;
+              }}
+            />{" "}
+            <Input
+              type="text"
+              onChange={(e) => setStreetAddress2(e.target.value)}
+              ref={(element) => {
+                ref.current[7] = element;
+              }}
+            />
+            <ErrorCase isActive={streetAddress1ValidationResult}>
+              ErrorCase
+            </ErrorCase>
+          </InputContainer>
+          <InputContainer>
+            <InputTitle>Postcode</InputTitle>
+            <Input
+              type="text"
+              onChange={(e) => setPostCode(e.target.value)}
+              ref={(element) => {
+                ref.current[8] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={postCodeValidationResult}>ErrorCase</ErrorCase>
+          </InputContainer>
+          <InputContainer>
+            <InputTitle>Phone number</InputTitle>
+            <Input
+              type="text"
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              ref={(element) => {
+                ref.current[9] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={phoneNumberValidationResult}>
+              ErrorCase
+            </ErrorCase>
+          </InputContainer>
+
+          <ButtonWrapper>
+            <Button>
+              <Link href="/address" style={{ textDecoration: "none" }}>
+                <LinkStyling>Cancel</LinkStyling>
+              </Link>
+            </Button>
+            <Button onClick={() => addAddressRequestHandler()}>Confirm</Button>
+          </ButtonWrapper>
+        </AddressInit>
+      </Main>
+      <MobileSideBar />
+    </Container>
+  );
+};
+const SelectBoxTemporary = styled.div`
+  width: 100%;
+  height: 40px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+`;
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  max-width: 637px;
+  @media screen and (max-width: 1279px) {
+    max-width: 608px;
+  }
+  @media screen and (max-width: 767px) {
+    display: block;
+    padding-left: 20px;
+    padding-right: 20px;
+    boxsizing: border-box;
+  }
+`;
+const Main = styled.div`
+  position: relative;
+  margin-left: 20px;
+  width: 100%;
+  @media screen and (max-width: 767px) {
+    margin-left: 0;
+    margin-bottom: 20px;
+  }
+`;
+const AddressInit = styled.div<{ isExisted: boolean }>`
+  display: ${(props) => {
+    return props.isExisted == true ? "none" : "block";
+  }};
+`;
+const AddressEdit = styled.div<{ isExisted: boolean }>`
+  display: ${(props) => {
+    return props.isExisted == true ? "block" : "none";
+  }};
+`;
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+const ImageWrapper = styled.div`
+  display: none;
+  @media screen and (max-width: 767px) {
+    display: flex;
+    align-items: center;
+  }
+`;
+const Title = styled.div`
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -0.011em;
+  color: #121822;
+  @media screen and (max-width: 767px) {
+    font-size: 22px;
+    line-height: 26px;
+    margin-left: 8px;
+  }
+`;
+const ContentTitleBar = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-left: 16px;
+  height: 30px;
+  background: #f2f6f8;
+  border: 0.79402px solid #dee8ec;
+  border-radius: 2px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+  color: #121822;
+`;
+const Wrapper = styled.div`
+  display: flex;
+  gap: 15px 10px;
+`;
+const InputContainer = styled.div`
+  margin-bottom: 20px;
+  width: 100%;
+`;
+const InputTitle = styled.div`
+  display: inline-block;
+  margin-right: 3.8px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0em;
+  text-align: left;
+`;
+const Input = styled.input`
+  display: inline-block;
+  padding-left: 16px;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 400;
+
+  &:nth-of-type(2) {
+    margin-top: 10px;
+  }
+`;
+const ErrorCase = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive == 2 ? "block" : "none";
+  }};
+  margin-top: 10px;
+  height: ${(props) => {
+    return props.isActive == 0 || props.isActive == 1 ? "0px" : "";
+  }};
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  color: #ff5c01;
+`;
+const CheckBox = styled.input`
+  display: none;
+`;
+const CheckBoxLabel = styled.label<{ isChecked: boolean }>`
+  display: flex;
+  margin-bottom: ${(props) => {
+    return props.isChecked == true ? "20px" : "22px";
+  }};
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #121822;
+`;
+const Box = styled.div<{ isChecked: boolean; img: string }>`
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+
+  border: ${(props) => {
+    return props.isChecked == true ? "none" : "1px solid #dee8ec;";
+  }};
+  border-radius: 2.66667px;
+
+  background-color: ${(props) => {
+    return props.isChecked == true ? "#FF5C01" : "#FFFFFF";
+  }};
+
+  background-image: ${(props) => {
+    return props.isChecked == true ? `url(${props.img})` : "";
+  }};
+  background-size: 9.5px 7.4px;
+  background-position: center;
+  background-repeat: no-repeat;
+`;
+const BillingAddressWrapper = styled.div<{ isChecked: boolean }>`
+  display: ${(props) => {
+    return props.isChecked == true ? "none" : "block";
+  }};
+`;
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 11px;
+  margin-bottom: 10px;
+`;
+
+const Button = styled.button`
+  display: flex;
+  margin-bottom: 20px;
+  height: 48px;
+  width: 100%;
+  box-sizing: border-box;
+
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Roboto";
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 130%;
+  color: #ffffff;
+
+  background-color: #121822;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+
+  overflow: hidden;
+  cursor: pointer;
+
+  &:nth-of-type(1) {
+    font-weight: 400;
+    color: #121822;
+    background-color: #f2f6f8;
+
+    @media screen and (max-width: 767px) {
+      margin-right: 11px;
+    }
+  }
+`;
+
+const LinkStyling = styled.div`
+  display: flex;
+  height: 48px;
+  width: 208px;
+  box-sizing: border-box;
+
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Roboto";
+  font-weight: 400;
+  color: #121822;
+  line-height: 130%;
+`;
+
+export default useAdd_shiping_address;
