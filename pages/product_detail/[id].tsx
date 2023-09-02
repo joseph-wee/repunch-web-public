@@ -84,16 +84,7 @@ const useId = () => {
     setColorList([...tempColorList]);
     setCount(1);
 
-    // 컬러리스트에서 컬러값 찾고 그 컬러값으로 썸네일 리스트에서 찾고 그거 click true
-    let colorArr = tempColorList.filter((el: any) => el.checked == true); // 클릭한 컬러 값
-    let tempThumbnailVideoList = thumbnailVideoList;
-
-    let tempIndex = tempThumbnailVideoList.findIndex(
-      (el: any) => el.color == colorArr[0].color
-    );
-    console.log(tempIndex);
-
-    thumbnailClickHandler(tempIndex);
+    thumbnailClickHandler(index);
   };
 
   /** 옵션 클릭시 해당 옵션 포커스효과 */
@@ -235,6 +226,12 @@ const useId = () => {
   /** 썸네일 클릭시 이동 및 강조 핸들러 */
   const thumbnailClickHandler = (index: number) => {
     let temp = thumbnailVideoList;
+    let parentWidth = ref.current.clientWidth;
+    let min = Math.floor((parentWidth + 1) / 69) + 1;
+    let remain = 68 - (parentWidth - 69 * (min - 1));
+
+    console.log(parentWidth);
+    console.log(min);
 
     // 클릭 세팅 및 선택된 썸네일 or 동영상 초기화//
     temp = temp.map((el: any) => {
@@ -245,7 +242,7 @@ const useId = () => {
     setSelect({ ...temp[index] });
     //////////
 
-    if (temp.length < 5) {
+    if (temp.length < min) {
       return;
     }
     if (index == 0) {
@@ -256,20 +253,19 @@ const useId = () => {
       setPx(0);
       return;
     }
-    if (
-      index == temp.length - 4 ||
-      index == temp.length - 3 ||
-      index == temp.length - 2
-    ) {
-      setPx((temp.length - 5) * 68 + 24);
+    if (index > temp.length - min && index <= temp.length - 2) {
+      setPx((temp.length - min) * 69 + remain);
       return;
     }
     if (index == temp.length - 1) {
-      setPx((temp.length - 5) * 68 + 24);
+      setPx((temp.length - min) * 69 + remain);
       return;
     }
     setPx((index - 2) * 68 + 46.5);
   };
+
+  // 46.5 = 68 - ( 320 - ( 69 * 4 ) )
+  // 마지막 이동해야하는 거리 = 68 - ( parentWidth - ( 69 * min )  )
 
   const test = () => {
     return `100`;
@@ -477,7 +473,7 @@ const useId = () => {
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Project</InfoTitle>
-              <InfoContent>{info && `${info.project.name}`}</InfoContent>
+              <InfoContent>{info && `${info.project?.name}`}</InfoContent>
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Contry of origin</InfoTitle>
