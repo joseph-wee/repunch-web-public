@@ -58,8 +58,15 @@ const useLogin = () => {
       loginRequest(userId, password).then((res) => {
         if (res?.data?.status == 200) {
           dispatch(login());
-          localStorage.setItem("at", res.data.result.access_token);
-          localStorage.setItem("rt", res.data.result.refresh_token);
+
+          if (isChecked) {
+            localStorage.setItem("at", res.data.result.access_token);
+            localStorage.setItem("rt", res.data.result.refresh_token);
+          } else {
+            sessionStorage.setItem("at", res.data.result.access_token);
+            sessionStorage.setItem("rt", res.data.result.refresh_token);
+          }
+
           router.push("/");
           return;
         }
