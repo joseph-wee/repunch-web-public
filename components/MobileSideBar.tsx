@@ -14,6 +14,7 @@ const MobileSideBar = () => {
 
   const logoutHandler = () => {
     sessionStorage.clear();
+    localStorage.clear();
     dispatch(logout());
     router.push("/");
   };
