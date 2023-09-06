@@ -17,7 +17,12 @@ import {
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setMeterage, setSample } from "../../features/login/cartSlice";
-import { materialsRequest, productDetailRequest } from "../../utils/api";
+import {
+  addCartRequest,
+  loginRefreshRequest,
+  materialsRequest,
+  productDetailRequest,
+} from "../../utils/api";
 import { VideoPlayer } from "../../components";
 
 const useId = () => {
@@ -158,6 +163,7 @@ const useId = () => {
       let tempOptionList: any = [];
       tempOptions.forEach((el: any) => {
         tempOptionList.push({
+          productOptionNo: el.productOptionNo,
           color: el.color.name,
           width: res.data.result.width,
           length: el.length,
@@ -179,6 +185,34 @@ const useId = () => {
 
       tempOptions.forEach((el: any) => {
         /** 썸네일 이미지 세팅 */
+        tempThumbnailVideoList.push({
+          color: el.color.name,
+          type: "thumbnail",
+          imageUrl: el.thumbnailUrl,
+          videoUrl: "",
+          clicked: false,
+        });
+        tempThumbnailVideoList.push({
+          color: el.color.name,
+          type: "thumbnail",
+          imageUrl: el.thumbnailUrl,
+          videoUrl: "",
+          clicked: false,
+        });
+        tempThumbnailVideoList.push({
+          color: el.color.name,
+          type: "thumbnail",
+          imageUrl: el.thumbnailUrl,
+          videoUrl: "",
+          clicked: false,
+        });
+        tempThumbnailVideoList.push({
+          color: el.color.name,
+          type: "thumbnail",
+          imageUrl: el.thumbnailUrl,
+          videoUrl: "",
+          clicked: false,
+        });
         tempThumbnailVideoList.push({
           color: el.color.name,
           type: "thumbnail",
@@ -235,6 +269,8 @@ const useId = () => {
   /** 썸네일 클릭시 이동 및 강조 핸들러 */
   const thumbnailClickHandler = (index: number) => {
     let temp = thumbnailVideoList;
+    let parentWidth = ref.current.clientWidth;
+    let min = Math.floor((parentWidth + 1) / 69) + 1;
 
     // 클릭 세팅 및 선택된 썸네일 or 동영상 초기화//
     temp = temp.map((el: any) => {
@@ -245,67 +281,41 @@ const useId = () => {
     setSelect({ ...temp[index] });
     //////////
 
-    if (temp.length < 5) {
+    if (temp.length < min) {
+      console.log(0);
       return;
     }
     if (index == 0) {
       setPx(0);
+      console.log(1);
       return;
     }
     if (index == 1) {
       setPx(0);
+      console.log(2);
       return;
     }
-    if (
-      index == temp.length - 4 ||
-      index == temp.length - 3 ||
-      index == temp.length - 2
-    ) {
-      setPx((temp.length - 5) * 68 + 24);
+    if (index > temp.length - min && index <= temp.length - 2) {
+      setPx((temp.length - min) * 69 + 24);
+      console.log(3);
       return;
     }
     if (index == temp.length - 1) {
-      setPx((temp.length - 5) * 68 + 24);
+      setPx((temp.length - min) * 69 + 24);
+      console.log(4);
       return;
     }
     setPx((index - 2) * 68 + 46.5);
+    console.log(5);
   };
+
+  // 69(x-1) + 68 = witdth
+  // 69x -1 = width
+  // 69x = width + 1
+  // x = (width + 1) / 69
 
   const test = () => {
     return `100`;
-  };
-
-  const slideHandler = (n: number) => {
-    console.log("위에");
-    // setImgVideoClicked(n + 1);
-    // // 767px 이하에서는 작동안되게
-    // if (window.innerWidth <= 767) {
-    //   return;
-    // }
-    // // 썸네일 이미지 개수가 5개 이하인 경우 스크롤 이동이 안되어야 하므로
-    // if (thumbnailVideoList.length <= 5) {
-    //   return;
-    // }
-    // // 첫번째 썸네일의 경우 무조건 스크롤 위치 0
-    // if (n == 0) {
-    //   ref.current.scrollLeft = 0;
-    //   return;
-    // }
-    // // 마지막 썸네일의 경우 무조건 스크롤 위치 맨 끝
-    // if (n == thumbnailVideoList.length - 1) {
-    //   ref.current.scrollLeft = 69 * thumbnailVideoList.length - 1;
-    //   return;
-    // }
-    // // 스크롤이 왼쪽으로 이동해야하는 경우
-    // if (ref.current.scrollLeft >= 69 * n) {
-    //   ref.current.scrollLeft = 46.5 + 69 * (n - 1);
-    //   return;
-    // }
-    // // 스크롤이 오른쪽으로 이동해야하는 경우
-    // if (ref.current.scrollLeft <= 69 * (n - 4) + 46.5) {
-    //   ref.current.scrollLeft = 69 * (n - 4) + 46.5;
-    //   return;
-    // }
   };
 
   const materialRequestHandler = () => {
@@ -361,6 +371,26 @@ const useId = () => {
   useEffect(() => {
     console.log(select && select.type == "thumbnail");
   }, [thumbnailVideoList]);
+
+  /** 장바구니 추가 핸들러 */
+  const addCartHandler = () => {
+    let at;
+    let rt;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    addCartRequest(at, seletedOption.productOptionNo, count).then((res) => {
+      // if(res?.data.code == 1003) {
+      //   loginRefreshRequest(rt)
+      // }
+    });
+  };
 
   return (
     <>
@@ -477,7 +507,7 @@ const useId = () => {
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Project</InfoTitle>
-              <InfoContent>{info && `${info.project.name}`}</InfoContent>
+              <InfoContent>{info && `${info.project?.name}`}</InfoContent>
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Contry of origin</InfoTitle>
@@ -557,7 +587,7 @@ const useId = () => {
               </ProductPriceWrapper>
             </LengthWrapper>
             <PricePurchaseWrapper>
-              <PurchaseButton onClick={() => setPopUpIsActive(1)}>
+              <PurchaseButton onClick={() => addCartHandler()}>
                 Add to cart
               </PurchaseButton>
             </PricePurchaseWrapper>
