@@ -229,3 +229,15 @@ export const passwordConfirmValidation = (
     return;
   }
 };
+
+/** 로그인 유무 판별 */
+export const loginCheck = () => {
+  if (localStorage.getItem("at")) {
+    console.log(localStorage.getItem("at"));
+    return true;
+  }
+  if (sessionStorage.getItem("at")) {
+    return true;
+  }
+  return false;
+};
