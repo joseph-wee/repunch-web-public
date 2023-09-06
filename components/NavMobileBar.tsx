@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import Image from "next/image";
 import { ic_cart_wht, ic_favorite_wht } from "../assets";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { logout } from "../features/login/loginSlice";
+import { logout, login } from "../features/login/loginSlice";
+import { loginCheck } from "../utils/functions";
 
 const NavMobileBar = ({
   isActive,
@@ -17,11 +18,21 @@ const NavMobileBar = ({
 
   const dispatch = useAppDispatch();
 
+  /** 로그인 확인 후 로그인 상태 처리 */
+  const loginCheckHandler = () => {
+    loginCheck() && dispatch(login());
+  };
+
   const logoutHandler = () => {
     location.reload();
     sessionStorage.clear();
     dispatch(logout);
   };
+
+  /** 로컬에 저장된 후에 홈페이지 재접속 했을 때 로그인 되게 */
+  useEffect(() => {
+    loginCheckHandler();
+  }, []);
 
   return (
     <>
