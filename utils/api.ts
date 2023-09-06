@@ -475,3 +475,44 @@ export const addAddressRequest = async (
 //     console.log(error);
 //   }
 // };
+
+/** 장바구니 추가 */
+export const addCartRequest = async (
+  acessToken: string | null,
+  productOptionNo: string,
+  count: number
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/carts`,
+      headers: {
+        Authorization: `Bearer ${acessToken}`,
+      },
+      data: {
+        productOptionNo: productOptionNo,
+        orderUnitType: "ROLL",
+        count: count,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 로그인 갱신, 리프레쉬 토큰으로 새로운 엑세스 토큰 발급 받음 */
+export const loginRefreshRequest = async (refreshToken: any) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/token`,
+      data: {
+        refreshToken: refreshToken,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
