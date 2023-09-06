@@ -17,16 +17,63 @@ import NavTopBar from "./NavTopBar";
 import NavMobileBar from "./NavMobileBar";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../features/login/loginSlice";
+import { loginCheck } from "../utils/functions";
+import { useRouter } from "next/router";
 
 const useHeaderBar = () => {
   const [isActive, setIsActive] = useState<boolean>(false);
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
+
+  const router = useRouter();
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     sessionStorage.getItem("rt") ? dispatch(login()) : "";
   }, []);
+
+  // 엑티브 비활성화
+  // 로그인 체크 후 false면 로그인 페이지로 이동
+  // true면 해당 페이지로 이동
+  /** 아이콘 클릭 핸들러 */
+  const clickHandler = (url: string) => {
+    setIsActive(false);
+    if (loginCheck()) {
+      router.push(url);
+      return;
+    }
+    router.push("/login");
+  };
+
+  /** 스위치 해당 페이지 제외하고 나머지 페이지의 경우 로그인 체크 후 false일 때 로그인 페이지로 이동 */
+  useEffect(() => {
+    switch (router.pathname) {
+      case "/":
+        break;
+      case "/register":
+        break;
+      case "/login":
+        break;
+      case "/lost_password":
+        break;
+      case "/new_arrivals":
+        break;
+      case "/password_reset/[key]":
+        break;
+      case "/product_detail/[id]":
+        break;
+      case "/shop_fabrics":
+        break;
+      case "/shop_project":
+        break;
+      case "/shop_supplies":
+        break;
+      case "/about_us":
+        break;
+      default:
+        !loginCheck() && router.push("/login");
+    }
+  }, [router]);
 
   return (
     <>
@@ -46,15 +93,11 @@ const useHeaderBar = () => {
             alt="button_menu"
           />
         </Menu>
-        <Menu onClick={() => setIsActive(false)}>
-          <Link href="/cart" style={{ textDecoration: "none" }}>
-            <Image src={ic_cart_wht} alt="cart_menu_button" />
-          </Link>
+        <Menu onClick={() => clickHandler("/cart")}>
+          <Image src={ic_cart_wht} alt="cart_menu_button" />
         </Menu>
-        <Menu onClick={() => setIsActive(false)}>
-          <Link href="/favorite" style={{ textDecoration: "none" }}>
-            <Image src={ic_favorite_wht} alt="favorite_menu_button" />
-          </Link>
+        <Menu onClick={() => clickHandler("/favorite")}>
+          <Image src={ic_favorite_wht} alt="favorite_menu_button" />
         </Menu>
       </Container>
       <NavTopBar />
