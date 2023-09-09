@@ -17,6 +17,8 @@ const VideoPlayer = ({
   const [fullScreenValue, setFullScreenValue] = useState(false);
   const [tValue, setTValue] = useState(0);
 
+  const [imageClicked, setImageClicked] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -205,9 +207,25 @@ const VideoPlayer = ({
     }
   }, [showControl]);
 
+  /** 이미지 클릭 핸들러 */
+  const imageClickHandler = (num: number) => {
+    console.log(window.innerWidth);
+    if (num == 0) {
+      window.innerWidth > 767 && setImageClicked(true);
+      return;
+    }
+    if (num == 1) {
+      setImageClicked(false);
+      return;
+    }
+  };
+
   return (
     <>
-      <ImageContaienr isActive={select ? select.type : ""}>
+      <ImageContaienr
+        isActive={select ? select.type : ""}
+        onClick={() => imageClickHandler(0)}
+      >
         <Image
           src={select ? select.imageUrl : ""}
           alt="image"
@@ -275,9 +293,42 @@ const VideoPlayer = ({
           </FullScreenButton>
         </ControllerWrapper>
       </VideoContainer>
+
+      <BackGround
+        imageClicked={imageClicked}
+        onClick={() => imageClickHandler(1)}
+      >
+        <ClickedImageContaienr
+          isActive={select ? select.type : ""}
+          imageClicked={imageClicked}
+        >
+          <Image
+            src={select ? select.imageUrl : ""}
+            alt="image"
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+          />
+        </ClickedImageContaienr>
+      </BackGround>
     </>
   );
 };
+const BackGround = styled.div<{ imageClicked: boolean }>`
+  z-index: 3;
+  display: ${(props) => {
+    return props.imageClicked ? "block" : "none";
+  }};
+  position: fixed;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+`;
+
 const ImageContaienr = styled.div<{ isActive: string }>`
   margin-bottom: 4px;
   position: absolute;
@@ -286,6 +337,29 @@ const ImageContaienr = styled.div<{ isActive: string }>`
 
   display: ${(props) => {
     return props.isActive == "thumbnail" ? `block` : `none`;
+  }};
+`;
+const ClickedImageContaienr = styled.div<{
+  isActive: string;
+  imageClicked: boolean;
+}>`
+  position: absolute;
+  width: 50vw;
+  &::after {
+    display: block;
+    content: "";
+
+    padding-bottom: 100%;
+  }
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: ${(props) => {
+    return props.isActive == "thumbnail" && props.imageClicked
+      ? `block`
+      : `none`;
   }};
 `;
 const VideoContainer = styled.div<{ isActive: string }>`
