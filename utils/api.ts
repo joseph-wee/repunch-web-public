@@ -502,14 +502,35 @@ export const addCartRequest = async (
 };
 
 /** 로그인 갱신, 리프레쉬 토큰으로 새로운 엑세스 토큰 발급 받음 */
-export const loginRefreshRequest = async (refreshToken: any) => {
+export const loginRefreshRequest = async (refreshToken: string | null) => {
   try {
     const res = await axios({
       method: "POST",
-      url: `/token`,
-      data: {
-        refreshToken: refreshToken,
+      url: `/token?refresh_token=${refreshToken}`,
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 장바구니 목록 조회 */
+export const cartListRequest = async (
+  accessToken: string | null,
+  orderUnitType: any,
+  count: any,
+  searchAfter: any
+) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
+      url:
+        searchAfter == 0
+          ? `/carts?orderUnitType=${orderUnitType}&count=${count}`
+          : `/carts?orderUnitType=${orderUnitType}&count=${count}&searchAfter=${searchAfter}`,
     });
     return res;
   } catch (error) {
