@@ -10,21 +10,27 @@ import {
 import Image from "next/image";
 
 const useCartMeterageProduct = ({
+  data,
   rollCheckArr, // 롤 체크 유무 배열
   setRollCheckArr,
   order,
 }: {
+  data: any;
   rollCheckArr: Array<boolean>;
   setRollCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
   order: number;
 }) => {
-  const [length, setLength] = useState<string>("1");
+  const [count, setCount] = useState(data.count);
 
   const minus = () => {
-    setLength((Number(length) - 1).toString());
+    if (count == 1) {
+      return;
+    }
+    setCount(count - 1);
   };
   const plus = () => {
-    setLength((Number(length) + 1).toString());
+    if (count == data.quantity) return;
+    setCount(count + 1);
   };
 
   const checkHandler = () => {
@@ -53,23 +59,23 @@ const useCartMeterageProduct = ({
       </CheckCancelWrapper>
       <ProductWrapper>
         <ImageWrapper>
-          <Image src={test_thumbnail} alt={"test"} width={80} height={80} />
+          <Image src={data.thumbnail} alt={"test"} width={80} height={80} />
         </ImageWrapper>
         <TextWrapper>
-          <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
+          <ProductTitle>{data.title}</ProductTitle>
           <OptionWrapper>
-            <Color />
-            Red
+            <Color color={data.color} />
+            {data.color}
             <VerticalLine />
-            20m*20m
+            {`${data.width}m*${data.length}m`}
           </OptionWrapper>
         </TextWrapper>
       </ProductWrapper>
       <Line />
       <LengthWrapper>
         <LengthPriceWrapper>
-          <Length>20m*20m</Length>
-          <PriceInfo>$ 4.06</PriceInfo>
+          <Length>{`${data.width}m*${data.length}m`}</Length>
+          <PriceInfo>{`$ ${data.price}`}</PriceInfo>
         </LengthPriceWrapper>
         <ButtonInputWrapper>
           <MinusButton onClick={() => minus()}>
@@ -78,8 +84,8 @@ const useCartMeterageProduct = ({
           <LengthInput
             type="number"
             step="1"
-            value={length}
-            onChange={(e) => setLength(e.target.value)}
+            value={count}
+            onChange={(e) => setCount(e.target.value)}
           />
           <PlusButton onClick={() => plus()}>
             <Image src={ic_plus} alt={"plus_button"} />
@@ -187,12 +193,68 @@ const OptionWrapper = styled.div`
   letter-spacing: -0.011em;
   color: #536c6d;
 `;
-const Color = styled.div`
+const Color = styled.div<{ color: string }>`
   margin-right: 4px;
   width: 12px;
   height: 12px;
-  background-color: #ec3939;
   border-radius: 100%;
+  ${(props) => {
+    switch (props.color) {
+      case "White":
+        return `    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    background-color: #ffffff;`;
+      case "Black":
+        return "background-color: #000000";
+      case "Gray":
+        return "background-color: #C4C4C4";
+      case "Beige":
+        return "background-color: #F1EBD3";
+      case "Brown":
+        return "background-color: #825757";
+      case "Red":
+        return "background-color: #EC3939";
+      case "Orange":
+        return "background-color: #FE7E36";
+      case "Yellow":
+        return "background-color: #F9D142";
+      case "Pink":
+        return "background-color: #FF96FB";
+      case "Purple":
+        return "background-color: #814FEC";
+      case "Blue":
+        return "background-color: #293DF0";
+      case "Green":
+        return "background-color: #46CA43";
+      case "Silver":
+        return `  background: linear-gradient(
+      156.04deg,
+      #a9a9a9 10.26%,
+      #dedede 43.51%,
+      #ffffff 52.57%,
+      #e1e1e1 61.64%,
+      #9a9a9a 93.16%
+    );`;
+      case "Gold":
+        return `    background: linear-gradient(
+      152.18deg,
+      #d3a810 5.76%,
+      #fff8de 44.11%,
+      #ffffff 49.34%,
+      #fff9e4 55.45%,
+      #d3a810 89.44%
+    ); `;
+      case "Multi":
+        return `    background: linear-gradient(
+      154.17deg,
+      #ff1001 17.26%,
+      #fff500 37.73%,
+      #24ff00 57.06%,
+      #00bdf9 72.22%,
+      #0075ff 90.03%
+    );`;
+    }
+  }};
 `;
 const VerticalLine = styled.div`
   width: 1px;
