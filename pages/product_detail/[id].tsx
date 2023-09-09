@@ -130,10 +130,8 @@ const useId = () => {
 
   /** 상품 상세 호출 및 info에 저장, 옵션 컬러 세팅 */
   const productDetailRequestHandler = () => {
-    console.log(window.location.pathname.slice(16));
     let reg = /[0-9]/g;
     productDetailRequest(window.location.pathname.slice(16)).then((res) => {
-      console.log(res);
       setInfo(res.data.result);
 
       // 중복없이 컬러리스트 설정
@@ -231,11 +229,6 @@ const useId = () => {
     });
   };
 
-  useEffect(() => {
-    console.log("?");
-    console.log(optionList);
-  }, [optionList]);
-
   // 컬러, 가격, 미터, 양
 
   /** productDetailRequestHandler 호출 */
@@ -264,9 +257,6 @@ const useId = () => {
     let min = Math.floor((parentWidth + 1) / 69) + 1;
     let remain = 68 - (parentWidth - 69 * (min - 1));
 
-    console.log(parentWidth);
-    console.log(min);
-
     // 클릭 세팅 및 선택된 썸네일 or 동영상 초기화//
     temp = temp.map((el: any) => {
       return { ...el, clicked: false };
@@ -281,12 +271,12 @@ const useId = () => {
     }
     if (index == 0) {
       setPx(0);
-      console.log(1);
+
       return;
     }
     if (index == 1) {
       setPx(0);
-      console.log(2);
+
       return;
     }
     if (index > temp.length - min && index <= temp.length - 2) {
@@ -298,7 +288,6 @@ const useId = () => {
       return;
     }
     setPx((index - 2) * 68 + 46.5);
-    console.log(5);
   };
 
   // 46.5 = 68 - ( 320 - ( 69 * 4 ) )
@@ -344,10 +333,6 @@ const useId = () => {
     "Gold",
   ];
 
-  useEffect(() => {
-    info && console.log(info.options);
-  }, [info]);
-
   const availableChanger = (info: any) => {
     let value = 0;
     info.options.forEach((i: any) => {
@@ -358,14 +343,10 @@ const useId = () => {
 
   const [options, setOptions] = useState("");
 
-  useEffect(() => {
-    console.log(select && select.type == "thumbnail");
-  }, [thumbnailVideoList]);
-
   /** 장바구니 추가 핸들러 */
   const addCartHandler = () => {
     let at;
-    let rt;
+    let rt: string | null;
 
     if (sessionStorage.getItem("at")) {
       at = sessionStorage.getItem("at");
@@ -376,9 +357,36 @@ const useId = () => {
     }
 
     addCartRequest(at, seletedOption.productOptionNo, count).then((res) => {
-      // if(res?.data.code == 1003) {
-      //   loginRefreshRequest(rt)
-      // }
+      console.log(res);
+      if (res?.data.code == 1003) {
+        loginRefreshRequest(rt).then((res) => {
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+
+            addCartRequest(at, seletedOption.productOptionNo, count).then(
+              (res) => {
+                if (res?.data.status == 200) {
+                  setPopUpIsActive(1);
+                }
+              }
+            );
+          }
+        });
+        return;
+      }
+
+      if (res?.data.status == 200) {
+        setPopUpIsActive(1);
+      }
     });
   };
 
