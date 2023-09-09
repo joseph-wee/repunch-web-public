@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setMeterage, setSample } from "../features/login/cartSlice";
 import { useRouter } from "next/router";
+import { cartListRequest, loginRefreshRequest } from "../utils/api";
 
 const useCart = () => {
   const [isActive, setIsActive] = useState(false);
@@ -27,6 +28,8 @@ const useCart = () => {
 
   const [rollSelectCount, setRollSelectCount] = useState(0);
   const [sampleSelectCount, setSampleSelectCount] = useState(0);
+
+  const [rollList, setRollList] = useState<any>([]); // 카트 목록 담길 state
 
   const cartPurchaseHandler = () => {
     if (cartValue == 0) {
@@ -115,6 +118,104 @@ const useCart = () => {
     setSampleAllCheck(false);
   }, [sampleCheckArr]);
 
+  /** 카트 목록 핸들러 */
+  const cartListHandler = () => {
+    let at;
+    let rt: string | null;
+    let orderUnitType: string | null;
+    cartValue == 0 ? (orderUnitType = "ROLL") : (orderUnitType = "Sample");
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    cartListRequest(at, orderUnitType, 50, 0).then((res) => {
+      let tempList = rollList; // 장바구니 리스트
+      console.log(res);
+      // 실패 case (토큰 유효하지 않음)
+      if (res?.data.code == 1003) {
+        loginRefreshRequest(rt).then((res) => {
+          // 토큰 재발급 성공 case
+          // 엑세스 토큰, 리프레쉬 토큰 세팅 후 카트목록 재요청
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+
+            // 카트목록 재요청
+            cartListRequest(at, orderUnitType, 50, 0).then((res) => {
+              // 성공 case
+              if (res?.data.status == 200) {
+                // response 가공해서 저장
+                res?.data.result.data.forEach((el: any, index: number) => {
+                  // 카트에 담긴거 필터링해서 옵션에 할당
+                  let option = el.product.options.filter(
+                    (x: any) => x.productOptionNo == el.productOptionNo
+                  )[0];
+
+                  // 리스트에 푸시
+                  tempList.push({
+                    thumbnail: option.files[0].resourceUrl, // 썸네일
+                    title: el.product.title, // 제목
+                    color: option.color, // 컬러
+                    width: el.product.width, // 너비
+                    length: option.length, // 길이
+                    price: option.price, // 가격
+                    count: el.count, // 담은 개수
+                    quantity: option.quantity, // 판매 가능 개수
+                  });
+                });
+              }
+            });
+          }
+        });
+        setRollList([...tempList]);
+        return;
+      }
+
+      // 성공 case
+      if (res?.data.status == 200) {
+        // response 가공해서 저장
+        res?.data.result.data.forEach((el: any, index: number) => {
+          // 카트에 담긴거 필터링해서 옵션에 할당
+          let option = el.product.options.filter(
+            (x: any) => x.productOptionNo == el.productOptionNo
+          )[0];
+
+          // 리스트에 푸시
+          tempList.push({
+            thumbnail: option.files[0].resourceUrl, // 썸네일
+            title: el.product.title, // 제목
+            color: option.color, // 컬러
+            width: el.product.width, // 너비
+            length: option.length, // 길이
+            price: option.price, // 가격
+            count: el.count, // 담은 개수
+            quantity: option.quantity, // 판매 가능 개수
+          });
+        });
+
+        setRollList([...tempList]);
+        return;
+      }
+    });
+  };
+
+  useEffect(() => {
+    cartListHandler();
+  }, []);
+
   return (
     <>
       <Container>
@@ -157,20 +258,48 @@ const useCart = () => {
                 />
                 Select all
               </SelectAllBoxWrapper>
-
-              {tempResult.map((i, j) => {
+              {rollList.map((el: any, index: number) => {
                 return (
-                  <MeterageProductWrapper key={`meter-${j}`}>
+                  <MeterageProductWrapper key={`meter-${index}`}>
                     <CartMeterageProduct
+                      data={el}
                       rollCheckArr={rollCheckArr}
                       setRollCheckArr={setRollCheckArr}
-                      order={j}
+                      order={index}
                     />
                   </MeterageProductWrapper>
                 );
               })}
             </>
           ) : (
+            // <>
+            //   <SelectAllBoxWrapper>
+            //     <Checkbox
+            //       type="checkbox"
+            //       id="roll_all"
+            //       onChange={() => setRollAllCheck(!rollAllCheck)}
+            //     />
+            //     <Label
+            //       htmlFor="roll_all"
+            //       isChecked={rollAllCheck}
+            //       img={ic_check_wht.src}
+            //       onClick={() => rollCheckAll()}
+            //     />
+            //     Select all
+            //   </SelectAllBoxWrapper>
+
+            //   {tempResult.map((i, j) => {
+            //     return (
+            //       <MeterageProductWrapper key={`meter-${j}`}>
+            //         <CartMeterageProduct
+            //           rollCheckArr={rollCheckArr}
+            //           setRollCheckArr={setRollCheckArr}
+            //           order={j}
+            //         />
+            //       </MeterageProductWrapper>
+            //     );
+            //   })}
+            // </>
             <>
               <SampleInfoMessage>
                 <Image src={ic_info} alt={"ic_info"} />
