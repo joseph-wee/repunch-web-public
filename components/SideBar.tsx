@@ -15,7 +15,6 @@ const useSideBar = () => {
   };
 
   const addressPathCheck = () => {
-    console.log(router.pathname);
     return router.pathname.includes("address");
   };
 
