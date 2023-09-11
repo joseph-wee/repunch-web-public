@@ -181,34 +181,6 @@ const useId = () => {
           videoUrl: "",
           clicked: false,
         });
-        tempThumbnailVideoList.push({
-          color: el.color.name,
-          type: "thumbnail",
-          imageUrl: el.thumbnailUrl,
-          videoUrl: "",
-          clicked: false,
-        });
-        tempThumbnailVideoList.push({
-          color: el.color.name,
-          type: "thumbnail",
-          imageUrl: el.thumbnailUrl,
-          videoUrl: "",
-          clicked: false,
-        });
-        tempThumbnailVideoList.push({
-          color: el.color.name,
-          type: "thumbnail",
-          imageUrl: el.thumbnailUrl,
-          videoUrl: "",
-          clicked: false,
-        });
-        tempThumbnailVideoList.push({
-          color: el.color.name,
-          type: "thumbnail",
-          imageUrl: el.thumbnailUrl,
-          videoUrl: "",
-          clicked: false,
-        });
 
         /** 동영상 세팅 */
         if (el.files[1]) {
@@ -358,8 +330,15 @@ const useId = () => {
 
     addCartRequest(at, seletedOption.productOptionNo, count).then((res) => {
       console.log(res);
+
+      // 성공 case: 장바구니 추가
+      if (res?.data.status == 200) {
+        setPopUpIsActive(1);
+      }
+      // 실패 case: 장바구니 추가
       if (res?.data.code == 1003) {
-        loginRefreshRequest(rt).then((res) => {
+        loginRefreshRequest("").then((res) => {
+          // 성공 case: 토큰갱신
           if (res?.data.status == 200) {
             at = res.data.result.access_token;
             rt = res.data.result.refresh_token;
@@ -374,18 +353,24 @@ const useId = () => {
 
             addCartRequest(at, seletedOption.productOptionNo, count).then(
               (res) => {
+                // 성공 case: 토큰갱신 후 장바구니 추가
                 if (res?.data.status == 200) {
                   setPopUpIsActive(1);
+                  return;
                 }
               }
             );
+            return;
+          }
+
+          // 실패 case: 토큰만료 or 비로그인
+          console.log(res);
+          if (res?.data.code == 9999) {
+            router.push("/login");
+            return;
           }
         });
         return;
-      }
-
-      if (res?.data.status == 200) {
-        setPopUpIsActive(1);
       }
     });
   };
