@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   ic_check_wht,
@@ -8,48 +8,93 @@ import {
   test_thumbnail,
 } from "../assets";
 import Image from "next/image";
+import Link from "next/link";
 
 const useCartMeterageProduct = ({
-  data,
+  el,
+  rollList,
+  setRollList,
   rollCheckArr, // 롤 체크 유무 배열
   setRollCheckArr,
-  order,
+  index,
 }: {
-  data: any;
+  el: any;
+  rollList: any;
+  setRollList: React.Dispatch<React.SetStateAction<Array<boolean>>>;
   rollCheckArr: Array<boolean>;
   setRollCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
-  order: number;
+  index: number;
 }) => {
-  const [count, setCount] = useState(data.count);
-
+  /** -버튼 클릭시 */
   const minus = () => {
-    if (count == 1) {
+    if (el.count <= 1) {
+      let temp = rollList;
+      temp[index].count = 1;
+      setRollList([...temp]);
       return;
     }
-    setCount(count - 1);
-  };
-  const plus = () => {
-    if (count == data.quantity) return;
-    setCount(count + 1);
+    let temp = rollList;
+    temp[index].count -= 1;
+    setRollList([...temp]);
   };
 
+  /** +버튼 클릭시 */
+  const plus = () => {
+    if (el.count >= el.quantity) {
+      let temp = rollList;
+      temp[index].count = el.quantity;
+      setRollList([...temp]);
+      return;
+    }
+    let temp = rollList;
+    temp[index].count = Number(temp[index].count) + 1;
+    setRollList([...temp]);
+  };
+
+  /** 체크박스 체크 핸들러 */
   const checkHandler = () => {
     let temp = rollCheckArr;
-    temp[order] = !temp[order];
+    temp[index] = !temp[index];
     setRollCheckArr([...temp]);
   };
+
+  /** 카운트 핸들러 */
+  const countHandler = (e: any) => {
+    if (e.target.value < 1) {
+      let temp = rollList;
+      temp[index].count = 1;
+      setRollList([...temp]);
+      return;
+    }
+
+    if (e.target.value > el.quantity) {
+      let temp = rollList;
+      temp[index].count = el.quantity;
+      setRollList([...temp]);
+      return;
+    }
+    let temp = rollList;
+    temp[index].count = e.target.value;
+    setRollList([...temp]);
+  };
+
+  useEffect(() => {
+    let temp = rollList;
+    temp[index].totalPrice = Math.floor(el.price * el.count * 100) / 100;
+    setRollList([...temp]);
+  }, [el.count]);
 
   return (
     <Container>
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
-          id={`meter${order}`}
+          id={`meter${index}`}
           onChange={() => checkHandler()}
         />
         <Label
-          htmlFor={`meter${order}`}
-          isChecked={rollCheckArr[order]}
+          htmlFor={`meter${index}`}
+          isChecked={rollCheckArr[index]}
           img={ic_check_wht.src}
         />
         Check to purchase
@@ -58,24 +103,34 @@ const useCartMeterageProduct = ({
         </CloseButton>
       </CheckCancelWrapper>
       <ProductWrapper>
-        <ImageWrapper>
-          <Image src={data.thumbnail} alt={"test"} width={80} height={80} />
-        </ImageWrapper>
+        <Link
+          href={`/product_detail/${el.productNo}`}
+          style={{ textDecoration: "none" }}
+        >
+          <ImageWrapper>
+            <Image src={el.thumbnail} alt={"test"} width={80} height={80} />
+          </ImageWrapper>
+        </Link>
         <TextWrapper>
-          <ProductTitle>{data.title}</ProductTitle>
+          <Link
+            href={`/product_detail/${el.productNo}`}
+            style={{ textDecoration: "none" }}
+          >
+            <ProductTitle>{el.title}</ProductTitle>
+          </Link>
           <OptionWrapper>
-            <Color color={data.color} />
-            {data.color}
+            <Color color={el.color} />
+            {el.color}
             <VerticalLine />
-            {`${data.width}m*${data.length}m`}
+            {`${el.width}m*${el.length}m`}
           </OptionWrapper>
         </TextWrapper>
       </ProductWrapper>
       <Line />
       <LengthWrapper>
         <LengthPriceWrapper>
-          <Length>{`${data.width}m*${data.length}m`}</Length>
-          <PriceInfo>{`$ ${data.price}`}</PriceInfo>
+          <Length>{`${el.width}m*${el.length}m`}</Length>
+          <PriceInfo>{`$ ${el.price}`}</PriceInfo>
         </LengthPriceWrapper>
         <ButtonInputWrapper>
           <MinusButton onClick={() => minus()}>
@@ -84,8 +139,8 @@ const useCartMeterageProduct = ({
           <LengthInput
             type="number"
             step="1"
-            value={count}
-            onChange={(e) => setCount(e.target.value)}
+            value={el.count}
+            onChange={(e) => countHandler(e)}
           />
           <PlusButton onClick={() => plus()}>
             <Image src={ic_plus} alt={"plus_button"} />
@@ -95,7 +150,7 @@ const useCartMeterageProduct = ({
       <Line />
       <PriceWrapper>
         <Exvat>EX VAT</Exvat>
-        <Price>$ 4.06</Price>
+        <Price>{`$ ${el.totalPrice}`}</Price>
       </PriceWrapper>
     </Container>
   );

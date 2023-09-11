@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setMeterage, setSample } from "../features/login/cartSlice";
 import { useRouter } from "next/router";
 import { cartListRequest, loginRefreshRequest } from "../utils/api";
+import { setTempOrderList } from "../features/login/tempOrderSlice";
 
 const useCart = () => {
   const [isActive, setIsActive] = useState(false);
@@ -30,6 +31,10 @@ const useCart = () => {
   const [sampleSelectCount, setSampleSelectCount] = useState(0);
 
   const [rollList, setRollList] = useState<any>([]); // 카트 목록 담길 state
+  const [sampleList, setSampleList] = useState<any>([]); // 샘플 목록 담길 state
+  const { value: tempOrderList } = useAppSelector(
+    (state) => state.tempOrderList
+  );
 
   const cartPurchaseHandler = () => {
     if (cartValue == 0) {
@@ -119,10 +124,11 @@ const useCart = () => {
   }, [sampleCheckArr]);
 
   /** 카트 목록 핸들러 */
-  const cartListHandler = () => {
+  const cartListHandler = async (searchAfter: number) => {
     let at;
     let rt: string | null;
     let orderUnitType: string | null;
+
     cartValue == 0 ? (orderUnitType = "ROLL") : (orderUnitType = "Sample");
 
     if (sessionStorage.getItem("at")) {
@@ -133,9 +139,16 @@ const useCart = () => {
       rt = localStorage.getItem("rt");
     }
 
-    cartListRequest(at, orderUnitType, 50, 0).then((res) => {
-      let tempList = rollList; // 장바구니 리스트
+    let nextSearchAfter = await cartListRequest(
+      at,
+      orderUnitType,
+      50,
+      searchAfter
+    ).then((res) => {
       console.log(res);
+      let tempList = rollList; // 장바구니 리스트
+      let tempNextSearchAfter; // 다음 장바구니 목록 가져오기 위한 임시 저장 변수
+
       // 실패 case (토큰 유효하지 않음)
       if (res?.data.code == 1003) {
         loginRefreshRequest(rt).then((res) => {
@@ -154,9 +167,11 @@ const useCart = () => {
             }
 
             // 카트목록 재요청
-            cartListRequest(at, orderUnitType, 50, 0).then((res) => {
+            cartListRequest(at, orderUnitType, 50, searchAfter).then((res) => {
               // 성공 case
               if (res?.data.status == 200) {
+                // nextSearchAfter 저장
+                tempNextSearchAfter = res?.data.result.metadata.searchAfter;
                 // response 가공해서 저장
                 res?.data.result.data.forEach((el: any, index: number) => {
                   // 카트에 담긴거 필터링해서 옵션에 할당
@@ -166,6 +181,7 @@ const useCart = () => {
 
                   // 리스트에 푸시
                   tempList.push({
+                    productNo: option.productNo, // 상품 번호
                     thumbnail: option.files[0].resourceUrl, // 썸네일
                     title: el.product.title, // 제목
                     color: option.color, // 컬러
@@ -186,6 +202,8 @@ const useCart = () => {
 
       // 성공 case
       if (res?.data.status == 200) {
+        // nextSearchAfter 저장
+        tempNextSearchAfter = res?.data.result.metadata.searchAfter;
         // response 가공해서 저장
         res?.data.result.data.forEach((el: any, index: number) => {
           // 카트에 담긴거 필터링해서 옵션에 할당
@@ -195,6 +213,7 @@ const useCart = () => {
 
           // 리스트에 푸시
           tempList.push({
+            productNo: option.productNo, // 상품 번호
             thumbnail: option.files[0].resourceUrl, // 썸네일
             title: el.product.title, // 제목
             color: option.color, // 컬러
@@ -202,18 +221,58 @@ const useCart = () => {
             length: option.length, // 길이
             price: option.price, // 가격
             count: el.count, // 담은 개수
+            totalPrice: el.count * option.price, // 토탈 가격
             quantity: option.quantity, // 판매 가능 개수
           });
         });
 
         setRollList([...tempList]);
-        return;
+        return tempNextSearchAfter;
+      }
+
+      // 실패 case: 장바구니 목록 더 이상 조회할게 없음
+      if (res?.data.code == 9999) {
+        return -1;
       }
     });
+    return nextSearchAfter;
+  };
+
+  /** 카트 목록 끝까지 요청 일단 500개까지만 되도록 해놓음 */
+  const totalCartListHandler = async () => {
+    let nextSearchAfter: any = 0;
+    for (let i = 0; i < 10; i++) {
+      console.log(i);
+      nextSearchAfter = await cartListHandler(nextSearchAfter);
+      if (nextSearchAfter == -1) {
+        break;
+      }
+    }
+  };
+
+  /** 선택목록 데이터 주문 페이지로 넘기기 */
+  const purchaseHandler = () => {
+    let temp: any = [];
+    // ROLL 구매 case
+    if (cartValue == 0) {
+      rollCheckArr.forEach((el: any, index: number) => {
+        el && temp.push(rollList[index]);
+      });
+    }
+    // Sample 구매 case
+    if (cartValue == 1) {
+      rollCheckArr.forEach((el: any, index: number) => {
+        el && temp.push(sampleList[index]);
+      });
+    }
+    dispatch(setTempOrderList(temp));
+    if (temp.length > 0) {
+      router.push("/check_out");
+    }
   };
 
   useEffect(() => {
-    cartListHandler();
+    totalCartListHandler();
   }, []);
 
   return (
@@ -232,7 +291,7 @@ const useCart = () => {
               isActive={cartValue}
               onClick={() => dispatch(setMeterage())}
             >
-              Roll ({rollTotalCount})
+              Roll ({rollList.length})
             </MeterageButton>
             <SampleButton
               isActive={cartValue}
@@ -262,10 +321,12 @@ const useCart = () => {
                 return (
                   <MeterageProductWrapper key={`meter-${index}`}>
                     <CartMeterageProduct
-                      data={el}
+                      el={el}
+                      rollList={rollList}
+                      setRollList={setRollList}
                       rollCheckArr={rollCheckArr}
                       setRollCheckArr={setRollCheckArr}
-                      order={index}
+                      index={index}
                     />
                   </MeterageProductWrapper>
                 );
@@ -341,7 +402,7 @@ const useCart = () => {
           <RemoveButton>
             Remove({cartValue == 0 ? rollSelectCount : sampleSelectCount})
           </RemoveButton>
-          <PurchaseButton onClick={() => cartPurchaseHandler()}>
+          <PurchaseButton onClick={() => purchaseHandler()}>
             Process to purchase(
             {cartValue == 0 ? rollSelectCount : sampleSelectCount})
           </PurchaseButton>
