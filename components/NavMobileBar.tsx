@@ -25,6 +25,7 @@ const NavMobileBar = ({
 
   const logoutHandler = () => {
     location.reload();
+    localStorage.clear();
     sessionStorage.clear();
     dispatch(logout);
   };
