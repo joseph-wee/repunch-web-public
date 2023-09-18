@@ -123,13 +123,10 @@ const useCart = () => {
     setSampleAllCheck(false);
   }, [sampleCheckArr]);
 
-  /** 카트 목록 핸들러 */
+  /** ROLL 카트 목록 핸들러 */
   const cartListHandler = async (searchAfter: number) => {
     let at;
     let rt: string | null;
-    let orderUnitType: string | null;
-
-    cartValue == 0 ? (orderUnitType = "ROLL") : (orderUnitType = "Sample");
 
     if (sessionStorage.getItem("at")) {
       at = sessionStorage.getItem("at");
@@ -141,7 +138,7 @@ const useCart = () => {
 
     let nextSearchAfter = await cartListRequest(
       at,
-      orderUnitType,
+      "ROLL",
       50,
       searchAfter
     ).then((res) => {
@@ -167,7 +164,7 @@ const useCart = () => {
             }
 
             // 카트목록 재요청
-            cartListRequest(at, orderUnitType, 50, searchAfter).then((res) => {
+            cartListRequest(at, "ROLL", 50, searchAfter).then((res) => {
               // 성공 case
               if (res?.data.status == 200) {
                 // nextSearchAfter 저장
@@ -238,17 +235,139 @@ const useCart = () => {
     return nextSearchAfter;
   };
 
+  /** ROLL 카트 목록 핸들러 */
+  const SampleCartListHandler = async (searchAfter: number) => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    let nextSearchAfter = await cartListRequest(
+      at,
+      "SAMPLE",
+      50,
+      searchAfter
+    ).then((res) => {
+      console.log(res);
+      let tempList = sampleList; // 장바구니 리스트
+      let tempNextSearchAfter; // 다음 장바구니 목록 가져오기 위한 임시 저장 변수
+
+      // 실패 case (토큰 유효하지 않음)
+      if (res?.data.code == 1003) {
+        loginRefreshRequest(rt).then((res) => {
+          // 토큰 재발급 성공 case
+          // 엑세스 토큰, 리프레쉬 토큰 세팅 후 카트목록 재요청
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+
+            // 카트목록 재요청
+            cartListRequest(at, "SAMPLE", 50, searchAfter).then((res) => {
+              // 성공 case
+              if (res?.data.status == 200) {
+                // nextSearchAfter 저장
+                tempNextSearchAfter = res?.data.result.metadata.searchAfter;
+                // response 가공해서 저장
+                res?.data.result.data.forEach((el: any, index: number) => {
+                  // 카트에 담긴거 필터링해서 옵션에 할당
+                  let option = el.product.options.filter(
+                    (x: any) => x.productOptionNo == el.productOptionNo
+                  )[0];
+
+                  // 리스트에 푸시
+                  tempList.push({
+                    productNo: option.productNo, // 상품 번호
+                    thumbnail: option.files[0].resourceUrl, // 썸네일
+                    title: el.product.title, // 제목
+                    color: option.color, // 컬러
+                    width: el.product.width, // 너비
+                    length: option.length, // 길이
+                    price: option.price, // 가격
+                    count: el.count, // 담은 개수
+                    quantity: option.quantity, // 판매 가능 개수
+                  });
+                });
+              }
+            });
+          }
+        });
+        setSampleList([...tempList]);
+        return;
+      }
+
+      // 성공 case
+      if (res?.data.status == 200) {
+        // nextSearchAfter 저장
+        tempNextSearchAfter = res?.data.result.metadata.searchAfter;
+        // response 가공해서 저장
+        res?.data.result.data.forEach((el: any, index: number) => {
+          // 카트에 담긴거 필터링해서 옵션에 할당
+          let option = el.product.options.filter(
+            (x: any) => x.productOptionNo == el.productOptionNo
+          )[0];
+
+          // 리스트에 푸시
+          tempList.push({
+            productNo: option.productNo, // 상품 번호
+            thumbnail: option.files[0].resourceUrl, // 썸네일
+            title: el.product.title, // 제목
+            color: option.color, // 컬러
+            width: el.product.width, // 너비
+            length: option.length, // 길이
+            price: option.price, // 가격
+            count: el.count, // 담은 개수
+            totalPrice: el.count * option.price, // 토탈 가격
+            quantity: option.quantity, // 판매 가능 개수
+          });
+        });
+
+        setSampleList([...tempList]);
+        return tempNextSearchAfter;
+      }
+
+      // 실패 case: 장바구니 목록 더 이상 조회할게 없음
+      if (res?.data.code == 9999) {
+        return -1;
+      }
+    });
+    return nextSearchAfter;
+  };
+
   /** 카트 목록 끝까지 요청 일단 500개까지만 되도록 해놓음 */
   const totalCartListHandler = async () => {
     let nextSearchAfter: any = 0;
     for (let i = 0; i < 10; i++) {
-      console.log(i);
       nextSearchAfter = await cartListHandler(nextSearchAfter);
       if (nextSearchAfter == -1) {
         break;
       }
     }
+    nextSearchAfter = 0;
+    for (let i = 0; i < 10; i++) {
+      nextSearchAfter = await SampleCartListHandler(nextSearchAfter);
+      if (nextSearchAfter == -1) {
+        break;
+      }
+    }
   };
+
+  useEffect(() => {
+    console.log(sampleList);
+  }, [sampleList]);
 
   /** 선택목록 데이터 주문 페이지로 넘기기 */
   const purchaseHandler = () => {
