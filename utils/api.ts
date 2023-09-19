@@ -480,6 +480,7 @@ export const addAddressRequest = async (
 export const addCartRequest = async (
   acessToken: string | null,
   productOptionNo: string,
+  orderUnitType: string,
   count: number
 ) => {
   try {
@@ -491,7 +492,7 @@ export const addCartRequest = async (
       },
       data: {
         productOptionNo: productOptionNo,
-        orderUnitType: "ROLL",
+        orderUnitType: orderUnitType,
         count: count,
       },
     });

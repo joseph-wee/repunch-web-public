@@ -60,6 +60,8 @@ const useId = () => {
 
   const [thumbnailVideoList, setThumbnailVideoList] = useState<any>([]);
   const [select, setSelect] = useState<any>(); // 선택된 썸네일 or 비디오
+  const [totalMeterPrice, setTotalMeterPrice] = useState(0);
+  const [totalSamplePrice, setTotalSamplePrice] = useState(0);
 
   useEffect(() => {
     setPrice(Number(count) * 10);
@@ -315,7 +317,7 @@ const useId = () => {
 
   const [options, setOptions] = useState("");
 
-  /** 장바구니 추가 핸들러 */
+  /** 미터 장바구니 추가 핸들러 */
   const addCartHandler = () => {
     let at;
     let rt: string | null;
@@ -328,52 +330,128 @@ const useId = () => {
       rt = localStorage.getItem("rt");
     }
 
-    addCartRequest(at, seletedOption.productOptionNo, count).then((res) => {
-      console.log(res);
+    addCartRequest(at, seletedOption.productOptionNo, "ROLL", count).then(
+      (res) => {
+        console.log(res);
 
-      // 성공 case: 장바구니 추가
-      if (res?.data.status == 200) {
-        setPopUpIsActive(1);
-      }
-      // 실패 case: 장바구니 추가
-      if (res?.data.code == 1003) {
-        loginRefreshRequest("").then((res) => {
-          // 성공 case: 토큰갱신
-          if (res?.data.status == 200) {
-            at = res.data.result.access_token;
-            rt = res.data.result.refresh_token;
+        // 성공 case: 장바구니 추가
+        if (res?.data.status == 200) {
+          setPopUpIsActive(1);
+        }
+        // 실패 case: 장바구니 추가
+        if (res?.data.code == 1003) {
+          loginRefreshRequest("").then((res) => {
+            // 성공 case: 토큰갱신
+            if (res?.data.status == 200) {
+              at = res.data.result.access_token;
+              rt = res.data.result.refresh_token;
 
-            if (sessionStorage.getItem("at")) {
-              sessionStorage.setItem("at", at);
-              sessionStorage.setItem("rt", `${rt}`);
-            } else {
-              localStorage.setItem("at", at);
-              localStorage.setItem("rt", `${rt}`);
-            }
+              if (sessionStorage.getItem("at")) {
+                sessionStorage.setItem("at", at);
+                sessionStorage.setItem("rt", `${rt}`);
+              } else {
+                localStorage.setItem("at", at);
+                localStorage.setItem("rt", `${rt}`);
+              }
 
-            addCartRequest(at, seletedOption.productOptionNo, count).then(
-              (res) => {
+              addCartRequest(
+                at,
+                seletedOption.productOptionNo,
+                "ROLL",
+                count
+              ).then((res) => {
                 // 성공 case: 토큰갱신 후 장바구니 추가
                 if (res?.data.status == 200) {
                   setPopUpIsActive(1);
                   return;
                 }
-              }
-            );
-            return;
-          }
+              });
+              return;
+            }
 
-          // 실패 case: 토큰만료 or 비로그인
-          console.log(res);
-          if (res?.data.code == 9999) {
-            router.push("/login");
-            return;
-          }
-        });
-        return;
+            // 실패 case: 토큰만료 or 비로그인
+            console.log(res);
+            if (res?.data.code == 9999) {
+              router.push("/login");
+              return;
+            }
+          });
+          return;
+        }
       }
-    });
+    );
   };
+
+  /** 샘플 장바구니 추가 핸들러 */
+  const addSampleCartHandler = () => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    addCartRequest(at, seletedOption.productOptionNo, "SAMPLE", count).then(
+      (res) => {
+        console.log(res);
+
+        // 성공 case: 장바구니 추가
+        if (res?.data.status == 200) {
+          setPopUpIsActive(2);
+        }
+        // 실패 case: 장바구니 추가
+        if (res?.data.code == 1003) {
+          loginRefreshRequest("").then((res) => {
+            // 성공 case: 토큰갱신
+            if (res?.data.status == 200) {
+              at = res.data.result.access_token;
+              rt = res.data.result.refresh_token;
+
+              if (sessionStorage.getItem("at")) {
+                sessionStorage.setItem("at", at);
+                sessionStorage.setItem("rt", `${rt}`);
+              } else {
+                localStorage.setItem("at", at);
+                localStorage.setItem("rt", `${rt}`);
+              }
+
+              addCartRequest(
+                at,
+                seletedOption.productOptionNo,
+                "SAMPLE",
+                count
+              ).then((res) => {
+                // 성공 case: 토큰갱신 후 장바구니 추가
+                if (res?.data.status == 200) {
+                  setPopUpIsActive(2);
+                  return;
+                }
+              });
+              return;
+            }
+
+            // 실패 case: 토큰만료 or 비로그인
+            console.log(res);
+            if (res?.data.code == 9999) {
+              router.push("/login");
+              return;
+            }
+          });
+          return;
+        }
+      }
+    );
+  };
+
+  // useEffect(() => {
+  //   let temp = rollList;
+  //   temp[index].totalPrice = Math.floor(el.price * el.count * 100) / 100;
+  //   setRollList([...temp]);
+  // }, [el.count]);
 
   return (
     <>
@@ -566,7 +644,9 @@ const useId = () => {
               </ButtonInputWrapper>
               <ProductPriceWrapper>
                 <ProductUnit>{`1 Qty ${seletedOption.length} m`}</ProductUnit>
-                <ProductPrice>$ {seletedOption.price * count}</ProductPrice>
+                <ProductPrice>
+                  $ {Math.floor(seletedOption.price * count * 100) / 100}
+                </ProductPrice>
               </ProductPriceWrapper>
             </LengthWrapper>
             <PricePurchaseWrapper>
@@ -574,9 +654,12 @@ const useId = () => {
                 Add to cart
               </PurchaseButton>
             </PricePurchaseWrapper>
-            <RequestSample onClick={() => setPopUpIsActive(2)}>
+            <RequestSample onClick={() => addSampleCartHandler()}>
               Request sample(Add to cart)&nbsp;
-              <BoldText>$ 8.38(-30%)</BoldText>
+              <BoldText>
+                $ {Math.floor(seletedOption.samplePrice * count * 100) / 100}
+                (-30%)
+              </BoldText>
             </RequestSample>
             <DiscountMessage>-30% Open Promotion Due to ‘23.10</DiscountMessage>
             <SmapleMessage>
