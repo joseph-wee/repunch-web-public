@@ -9,6 +9,7 @@ import {
   btn_review,
   btn_review_sm,
   ic_check_web_color,
+  ic_check_web_color_dk,
   ic_favorite_wht,
   ic_info,
   ic_minus,
@@ -60,8 +61,8 @@ const useId = () => {
 
   const [thumbnailVideoList, setThumbnailVideoList] = useState<any>([]);
   const [select, setSelect] = useState<any>(); // 선택된 썸네일 or 비디오
-  const [totalMeterPrice, setTotalMeterPrice] = useState(0);
-  const [totalSamplePrice, setTotalSamplePrice] = useState(0);
+
+  const [samplePopUp, setSamplePopUp] = useState(0);
 
   useEffect(() => {
     setPrice(Number(count) * 10);
@@ -85,6 +86,7 @@ const useId = () => {
     });
 
     tempOptionList[temp[0]].clicked = true;
+    setSelectedOption({ ...tempOptionList[temp[0]] });
 
     setOptionList([...tempOptionList]);
 
@@ -110,17 +112,25 @@ const useId = () => {
   ////////
 
   const dispatch = useAppDispatch();
-  const cartStateHandler = () => {
+
+  /** 뷰 카트 핸들러 */
+  const viewCartButtonHandler = () => {
     if (popUpIsActive == 1) {
       dispatch(setMeterage());
+      return;
     }
     if (popUpIsActive == 2) {
       dispatch(setSample());
+      return;
+    }
+    if (samplePopUp == 1) {
+      dispatch(setSample());
+      return;
     }
   };
 
   const minus = () => {
-    if (count == 1) {
+    if (count == 0) {
       return;
     }
     setCount(count - 1);
@@ -133,75 +143,121 @@ const useId = () => {
   /** 상품 상세 호출 및 info에 저장, 옵션 컬러 세팅 */
   const productDetailRequestHandler = () => {
     let reg = /[0-9]/g;
-    productDetailRequest(window.location.pathname.slice(16)).then((res) => {
-      setInfo(res.data.result);
+    productDetailRequest(window.location.pathname.slice(16)).then(
+      async (res) => {
+        setInfo(res.data.result);
 
-      // 중복없이 컬러리스트 설정
-      let tempOptions = res.data.result.options;
-      let tempColorList: any = [];
-      tempOptions.forEach((i: any) => {
-        !tempColorList.includes(i.color.name) &&
+        // 임시로 옵션들 소팅 후 할당
+        let tempOptions = res.data.result.options.sort(
+          (a: any, b: any) =>
+            Number(a.productOptionNo) - Number(b.productOptionNo)
+        );
+
+        // 임시 컬러 배열 할당
+        let tempColorArr: any = [];
+        tempOptions.forEach((el: any, index: number) => {
+          tempColorArr.push(el.color.name);
+        });
+
+        // 임시 컬러 배열에서 중복 제거
+        tempColorArr = Array.from(new Set(tempColorArr));
+
+        // 임시 컬러리스트 할당, 쿼리값에 해당되는 인덱스 할당
+        let tempColorList: any = []; // 임시 컬러리스트
+        let tempColorIndex = 0;
+        tempColorArr.forEach((el: any, index: number) => {
           tempColorList.push({
-            color: i.color.name,
+            color: el,
             checked: false,
           });
-      });
-      tempColorList[0].checked = true;
-
-      setColorList([...tempColorList]);
-
-      // 모든 옵션들 리스트 형태로 관리하기 위해 초기화
-      let tempOptionList: any = [];
-      tempOptions.forEach((el: any) => {
-        tempOptionList.push({
-          productOptionNo: el.productOptionNo,
-          color: el.color.name,
-          width: res.data.result.width,
-          length: el.length,
-          price: el.price,
-          quantity: el.quantity,
-          samplePrice: el.samplePrice,
-          sampleQuantity: el.sampleQuantity,
-          clicked: false,
-        });
-      });
-      tempOptionList[0].clicked = true;
-      setOptionList([...tempOptionList]);
-
-      /** 선택된 옵션 초기화 */
-      setSelectedOption({ ...tempOptionList[0] });
-
-      /** 썸네일 리스트 초기화 */
-      let tempThumbnailVideoList = thumbnailVideoList;
-
-      tempOptions.forEach((el: any) => {
-        /** 썸네일 이미지 세팅 */
-        tempThumbnailVideoList.push({
-          color: el.color.name,
-          type: "thumbnail",
-          imageUrl: el.thumbnailUrl,
-          videoUrl: "",
-          clicked: false,
+          if (el == router.query.color) {
+            tempColorIndex = index;
+          }
         });
 
-        /** 동영상 세팅 */
-        if (el.files[1]) {
-          tempThumbnailVideoList.push({
+        // 쿼리값 인덱스 혹은 첫번째값 checked : true
+        tempColorList[tempColorIndex].checked = true;
+
+        // setState 컬러리스트
+        setColorList([
+          ...tempColorList.sort(
+            (a: any, b: any) =>
+              Number(a.productOptionNo) - Number(b.productOptionNo)
+          ),
+        ]);
+
+        // 모든 옵션들 리스트 형태로 관리하기 위해 초기화
+        let tempOptionList: any = [];
+        let tempOptionListIndex = 0;
+
+        tempOptions.forEach((el: any, index: number) => {
+          tempOptionList.push({
+            productOptionNo: el.productOptionNo,
             color: el.color.name,
-            type: "video",
-            imageUrl: el.files[0].resourceUrl,
-            videoUrl: el.files[1].resourceUrl,
+            width: res.data.result.width,
+            length: el.length,
+            price: el.price,
+            quantity: el.quantity,
+            samplePrice: el.samplePrice,
+            sampleQuantity: el.sampleQuantity,
             clicked: false,
           });
-        }
-      });
-      tempThumbnailVideoList[0].clicked = true;
-      setSelect({ ...tempThumbnailVideoList[0] });
-      setThumbnailVideoList([...tempThumbnailVideoList]);
 
-      // setVideoUrl(res.data.result.files[1].resourceUrl);
-    });
+          // 쿼리 옵션 바로 표시하기 위해 index찾기
+          if (tempOptionListIndex == 0 && el.color.name == router.query.color) {
+            tempOptionListIndex = index;
+          }
+        });
+
+        tempOptionList[tempOptionListIndex].clicked = true;
+        setOptionList([
+          ...tempOptionList.sort(
+            (a: any, b: any) =>
+              Number(a.productOptionNo) - Number(b.productOptionNo)
+          ),
+        ]);
+
+        /** 선택된 옵션 초기화 */
+        setSelectedOption({ ...tempOptionList[tempOptionListIndex] });
+
+        /** 썸네일 리스트 초기화 */
+        let tempThumbnailVideoList = thumbnailVideoList;
+
+        tempOptions.forEach((el: any) => {
+          /** 썸네일 이미지 세팅 */
+          tempThumbnailVideoList.push({
+            color: el.color.name,
+            type: "thumbnail",
+            imageUrl: el.thumbnailUrl,
+            videoUrl: "",
+            clicked: false,
+          });
+
+          /** 동영상 세팅 */
+          if (el.files[1]) {
+            tempThumbnailVideoList.push({
+              color: el.color.name,
+              type: "video",
+              imageUrl: el.files[0].resourceUrl,
+              videoUrl: el.files[1].resourceUrl,
+              clicked: false,
+            });
+          }
+        });
+        tempThumbnailVideoList[0].clicked = true;
+        setSelect({ ...tempThumbnailVideoList[0] });
+        setThumbnailVideoList([...tempThumbnailVideoList]);
+
+        // setVideoUrl(res.data.result.files[1].resourceUrl);
+      }
+    );
   };
+
+  // code test
+
+  useEffect(() => {
+    console.log(optionList);
+  }, [optionList]);
 
   // 컬러, 가격, 미터, 양
 
@@ -210,14 +266,15 @@ const useId = () => {
     productDetailRequestHandler();
   }, []);
 
+  /** continueShopping버튼 클릭시 초기화 */
   const continueShoppingHandler = () => {
     setPopUpIsActive(0);
+    setSamplePopUp(0);
     setCount(1);
   };
 
   useEffect(() => {
-    // let productNo = window.location.href.split("/").pop();
-    // productDetailRequestHandler(productNo);
+    console.log(router);
   }, []);
 
   // useEffect(() => {
@@ -395,13 +452,17 @@ const useId = () => {
       rt = localStorage.getItem("rt");
     }
 
-    addCartRequest(at, seletedOption.productOptionNo, "SAMPLE", count).then(
+    addCartRequest(at, seletedOption.productOptionNo, "SAMPLE", 1).then(
       (res) => {
         console.log(res);
 
         // 성공 case: 장바구니 추가
         if (res?.data.status == 200) {
           setPopUpIsActive(2);
+        }
+        // 성공 case: 샘플 1개 초과로 담을 때
+        if (res?.data.code == 9999) {
+          setSamplePopUp(1);
         }
         // 실패 case: 장바구니 추가
         if (res?.data.code == 1003) {
@@ -423,7 +484,7 @@ const useId = () => {
                 at,
                 seletedOption.productOptionNo,
                 "SAMPLE",
-                count
+                1
               ).then((res) => {
                 // 성공 case: 토큰갱신 후 장바구니 추가
                 if (res?.data.status == 200) {
@@ -447,11 +508,42 @@ const useId = () => {
     );
   };
 
-  // useEffect(() => {
-  //   let temp = rollList;
-  //   temp[index].totalPrice = Math.floor(el.price * el.count * 100) / 100;
-  //   setRollList([...temp]);
-  // }, [el.count]);
+  /** 컬러클릭시 컬러에 따라 다른 체크 아이콘 리턴 */
+  const BWCheckHandler = (n: string) => {
+    let blackCheckArr = [
+      "White",
+      "Gray",
+      "Beige",
+      "Silver",
+      "Gold",
+      "Multicolor",
+    ];
+
+    // 검은색 체크아이콘이 되어야 하는 컬러면 해당 체크 표시 반영
+    if (blackCheckArr.includes(n)) {
+      return ic_check_web_color_dk;
+    }
+    // 아니면 화이트 컬러
+    return ic_check_web_color;
+  };
+
+  /** 카운트 핸들러 */
+  const countHandler = (e: any) => {
+    if (e.target.value < 1) {
+      setCount(1);
+      return;
+    }
+
+    if (e.target.value > seletedOption.quantity) {
+      setCount(seletedOption.quantity);
+      return;
+    }
+    setCount(e.target.value);
+  };
+
+  useEffect(() => {
+    console.log(seletedOption);
+  }, [seletedOption]);
 
   return (
     <>
@@ -593,7 +685,7 @@ const useId = () => {
                     <ColorCircle color={i.color}>
                       <CheckImageWrapper isChecked={i.checked}>
                         <Image
-                          src={ic_check_web_color}
+                          src={BWCheckHandler(i.color)}
                           alt="ic_check_web_color"
                         ></Image>
                       </CheckImageWrapper>
@@ -636,7 +728,8 @@ const useId = () => {
                   type="number"
                   step="1"
                   value={count}
-                  onChange={(e) => setCount(parseInt(e.target.value))}
+                  onChange={(e) => countHandler(e)}
+                  disabled
                 />
                 <PlusButton onClick={() => plus()}>
                   <Image src={ic_plus} alt={"plus_button"} />
@@ -645,7 +738,10 @@ const useId = () => {
               <ProductPriceWrapper>
                 <ProductUnit>{`1 Qty ${seletedOption.length} m`}</ProductUnit>
                 <ProductPrice>
-                  $ {Math.floor(seletedOption.price * count * 100) / 100}
+                  ${" "}
+                  {Math.floor(seletedOption.price * count * 100) / 100
+                    ? Math.floor(seletedOption.price * count * 100) / 100
+                    : "0"}
                 </ProductPrice>
               </ProductPriceWrapper>
             </LengthWrapper>
@@ -657,7 +753,7 @@ const useId = () => {
             <RequestSample onClick={() => addSampleCartHandler()}>
               Request sample(Add to cart)&nbsp;
               <BoldText>
-                $ {Math.floor(seletedOption.samplePrice * count * 100) / 100}
+                $ {seletedOption.samplePrice}
                 (-30%)
               </BoldText>
             </RequestSample>
@@ -710,9 +806,11 @@ const useId = () => {
             <br />
             continue shopping?
           </PopUpMessage>
-          <ButtonWrapper onClick={() => cartStateHandler()}>
+          <ButtonWrapper>
             <Link href="/cart" style={{ textDecoration: "none" }}>
-              <PopUpButton>View cart</PopUpButton>
+              <PopUpButton onClick={() => viewCartButtonHandler()}>
+                View cart
+              </PopUpButton>
             </Link>
             <PopUpButton onClick={() => continueShoppingHandler()}>
               Continue shopping
@@ -720,6 +818,26 @@ const useId = () => {
           </ButtonWrapper>
         </ContentBox>
       </PopUpBox>
+      <SamplePopUpBox isActive={samplePopUp}>
+        <ContentBox>
+          <PopUpTitle>Already added to cart.</PopUpTitle>
+          <PopUpMessage>
+            Would you like to view cart to purchase or
+            <br />
+            continue shopping?
+          </PopUpMessage>
+          <ButtonWrapper>
+            <Link href="/cart" style={{ textDecoration: "none" }}>
+              <PopUpButton onClick={() => viewCartButtonHandler()}>
+                View cart
+              </PopUpButton>
+            </Link>
+            <PopUpButton onClick={() => continueShoppingHandler()}>
+              Continue shopping
+            </PopUpButton>
+          </ButtonWrapper>
+        </ContentBox>
+      </SamplePopUpBox>
     </>
   );
 };
@@ -1134,6 +1252,9 @@ const LengthInput = styled.input`
     -webkit-appearance: none;
     margin: 0;
   }
+  &:disabled {
+    background-color: #ffffff;
+  }
 
   text-align: center;
 
@@ -1335,6 +1456,19 @@ const Text = styled.div`
 `;
 
 const PopUpBox = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive == 0 ? "none" : "flex";
+  }};
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+`;
+const SamplePopUpBox = styled.div<{ isActive: number }>`
   display: ${(props) => {
     return props.isActive == 0 ? "none" : "flex";
   }};
