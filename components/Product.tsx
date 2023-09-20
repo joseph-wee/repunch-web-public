@@ -84,7 +84,7 @@ const Product = ({ product }: any) => {
                 href={{
                   pathname: `/product_detail/${product.productNo}`,
                   query: {
-                    option: i.productOptionNo,
+                    color: i.color.name,
                   },
                 }}
                 as={`/product_detail/${product.productNo}`}
