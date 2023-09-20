@@ -538,3 +538,16 @@ export const cartListRequest = async (
     console.log(error);
   }
 };
+
+/** 컬러 목록 조회 */
+export const colorsRequest = async () => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/product/colors`,
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -19,6 +19,8 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../features/login/loginSlice";
 import { loginCheck } from "../utils/functions";
 import { useRouter } from "next/router";
+import { colorsRequest } from "../utils/api";
+import { setColors } from "../features/login/colorSlice";
 
 const useHeaderBar = () => {
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -30,7 +32,22 @@ const useHeaderBar = () => {
 
   useEffect(() => {
     sessionStorage.getItem("rt") ? dispatch(login()) : "";
+    colorsRequestHandler();
   }, []);
+
+  /** color값 세팅 */
+  const colorsRequestHandler = async () => {
+    let tempColors: any = [];
+    await colorsRequest().then((res) => {
+      res?.data.result.forEach((el: any, index: number) => {
+        tempColors.push({
+          colorNo: el.colorNo,
+          name: el.name,
+        });
+      });
+    });
+    dispatch(setColors(tempColors));
+  };
 
   // 엑티브 비활성화
   // 로그인 체크 후 false면 로그인 페이지로 이동
