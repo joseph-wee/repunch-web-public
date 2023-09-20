@@ -64,6 +64,8 @@ const useId = () => {
 
   const [samplePopUp, setSamplePopUp] = useState(0);
 
+  const { value: colors } = useAppSelector((state) => state.colors);
+
   useEffect(() => {
     setPrice(Number(count) * 10);
   }, [count]);
@@ -221,29 +223,55 @@ const useId = () => {
         setSelectedOption({ ...tempOptionList[tempOptionListIndex] });
 
         /** 썸네일 리스트 초기화 */
-        let tempThumbnailVideoList = thumbnailVideoList;
+        let tempThumbnailVideoList: any = thumbnailVideoList;
 
         tempOptions.forEach((el: any) => {
-          /** 썸네일 이미지 세팅 */
-          tempThumbnailVideoList.push({
-            color: el.color.name,
-            type: "thumbnail",
-            imageUrl: el.thumbnailUrl,
-            videoUrl: "",
-            clicked: false,
+          el.files.forEach((sl: any) => {
+            // 썸네일 이미지 세팅
+            if (sl.type == "IMAGE") {
+              tempThumbnailVideoList.push({
+                color: el.color.name,
+                type: "thumbnail",
+                imageUrl: sl.resourceUrl,
+                videoUrl: "",
+                clicked: false,
+              });
+            }
+            // 비디오 세팅
+            if (sl.type == "VIDEO") {
+              tempThumbnailVideoList.push({
+                color: el.color.name,
+                type: "video",
+                imageUrl: sl.imageUrl,
+                videoUrl: sl.resourceUrl,
+                clicked: false,
+              });
+              return;
+            }
           });
-
-          /** 동영상 세팅 */
-          if (el.files[1]) {
-            tempThumbnailVideoList.push({
-              color: el.color.name,
-              type: "video",
-              imageUrl: el.files[0].resourceUrl,
-              videoUrl: el.files[1].resourceUrl,
-              clicked: false,
-            });
-          }
         });
+
+        //   /** 썸네일 이미지 세팅 */
+        //   tempThumbnailVideoList.push({
+        //     color: el.color.name,
+        //     type: "thumbnail",
+        //     imageUrl: el.thumbnailUrl,
+        //     videoUrl: "",
+        //     clicked: false,
+        //   });
+
+        //   /** 동영상 세팅 */
+        //   if (el.files[1]) {
+        //     tempThumbnailVideoList.push({
+        //       color: el.color.name,
+        //       type: "video",
+        //       imageUrl: el.files[0].resourceUrl,
+        //       videoUrl: el.files[1].resourceUrl,
+        //       clicked: false,
+        //     });
+        //   }
+        // });
+
         tempThumbnailVideoList[0].clicked = true;
         setSelect({ ...tempThumbnailVideoList[0] });
         setThumbnailVideoList([...tempThumbnailVideoList]);
@@ -344,24 +372,6 @@ const useId = () => {
     "PM",
     "PL",
     "NY",
-  ];
-
-  /** 임시 컬러 리스트 */
-  const tempColorList: any = [
-    "Pink",
-    "Green",
-    "Red",
-    "Orange",
-    "Purple",
-    "Blue",
-    "Brown",
-    "Yellow",
-    "White",
-    "Ivory",
-    "Gray",
-    "Black",
-    "Silver",
-    "Gold",
   ];
 
   const availableChanger = (info: any) => {
@@ -545,6 +555,10 @@ const useId = () => {
     console.log(seletedOption);
   }, [seletedOption]);
 
+  useEffect(() => {
+    console.log(info);
+  }, [info]);
+
   return (
     <>
       <Container>
@@ -611,7 +625,7 @@ const useId = () => {
             <InfoWrapper>
               <InfoTitle>Certification</InfoTitle>
               <InfoContent>
-                {info && info.certificated && "Repp verifyed"}
+                {info && info.certificated ? "Repp verifyed" : "false"}
               </InfoContent>
             </InfoWrapper>
             <InfoWrapper>
@@ -648,7 +662,12 @@ const useId = () => {
                   info.options.map((i: any, j: number) => {
                     return (
                       <WidthContent key={`color-${j}`}>
-                        {info && `${tempColorList[parseInt(i.colorNo) - 1]}`}
+                        {info &&
+                          `${
+                            colors.filter(
+                              (el: any) => el.colorNo == i.colorNo
+                            )[0].name
+                          }`}
                       </WidthContent>
                     );
                   })}
@@ -1115,7 +1134,7 @@ const ColorCircle = styled.div<{ color: string }>`
       #fff9e4 55.45%,
       #d3a810 89.44%
     ); `;
-      case "Multi":
+      case "Multicolor":
         return `    background: linear-gradient(
       154.17deg,
       #ff1001 17.26%,
