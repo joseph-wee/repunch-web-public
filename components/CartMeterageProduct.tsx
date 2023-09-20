@@ -141,6 +141,7 @@ const useCartMeterageProduct = ({
             step="1"
             value={el.count}
             onChange={(e) => countHandler(e)}
+            disabled
           />
           <PlusButton onClick={() => plus()}>
             <Image src={ic_plus} alt={"plus_button"} />
@@ -383,6 +384,9 @@ const LengthInput = styled.input`
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+  &:disabled {
+    background-color: #ffffff;
   }
 
   text-align: center;
