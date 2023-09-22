@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -12,6 +12,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { goBack } from "../utils/functions";
+import {
+  addAddressRequest,
+  addressListRequest,
+  loginRefreshRequest,
+} from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -24,9 +29,10 @@ export interface List {
 export interface ListCountryArray extends Array<List> {}
 
 const useAddress = () => {
-  const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isExisted, setIsExisted] = useState<boolean>(false);
+  const [addressList, setAddressList] = useState([]);
+
   const router = useRouter();
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
@@ -74,6 +80,73 @@ const useAddress = () => {
     { name: "Hong Kong", code: "HK", code_num: "852" },
   ];
 
+  const addressListRequestHandler = () => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    addressListRequest(at, 50).then((res) => {
+      // 통신 성공 case
+      if (res?.data.status == 200) {
+        console.log(res);
+        // 주소목록 있는 case
+        if (res?.data.result.data) {
+          setAddressList(res?.data.result.data);
+          return;
+        }
+        // 주소목록 없는 case
+        if (res?.data.result.data == null) {
+          router.push("/add_shipping_address");
+          return;
+        }
+      }
+      // 토큰 만료 case
+      if (res?.data.code == 1003) {
+        loginRefreshRequest(rt).then((res) => {
+          // 토큰 갱신 성공 case
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+            addressListRequest(at, 50).then((res) => {
+              // 통신 성공 case
+              if (res?.data.status == 200) {
+                // 주소목록 있는 case
+                if (res?.data.result.data) {
+                  setAddressList(res?.data.result.data);
+                  return;
+                }
+                // 주소목록 없는 case
+                if (res?.data.result.data == null) {
+                  router.push("/add_shipping_address");
+                  return;
+                }
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    addressListRequestHandler();
+  }, []);
+
   const moveTop = () => {
     setIsExisted(true);
     window.scrollTo({ top: 0 });
@@ -93,36 +166,28 @@ const useAddress = () => {
         <AddAdressButton onClick={() => router.push("/add_shipping_address")}>
           + Add a new address
         </AddAdressButton>
-        <ContentWrapper>
-          <EditButton onClick={() => router.push("/edit_shipping_address")}>
-            Edit
-          </EditButton>
-          <DeleteButton>
-            <Image src={garbage} alt={"garbage_icon"} />
-          </DeleteButton>
-          <AddressTitle>My1</AddressTitle>
-          <AddressText>#809</AddressText>
-          <AddressText>#809, 8dong ssangyoung</AddressText>
-          <AddressText>daechi dong, gangnamgu</AddressText>
-          <AddressText>korea</AddressText>
-          <AddressText>06285</AddressText>
-          <AddressPhoneNumber>821086281024</AddressPhoneNumber>
-        </ContentWrapper>
-        <ContentWrapper>
-          <EditButton onClick={() => router.push("/edit_shipping_address")}>
-            Edit
-          </EditButton>
-          <DeleteButton>
-            <Image src={garbage} alt={"garbage_icon"} />
-          </DeleteButton>
-          <AddressTitle>My1</AddressTitle>
-          <AddressText>#809</AddressText>
-          <AddressText>#809, 8dong ssangyoung</AddressText>
-          <AddressText>daechi dong, gangnamgu</AddressText>
-          <AddressText>korea</AddressText>
-          <AddressText>06285</AddressText>
-          <AddressPhoneNumber>821086281024</AddressPhoneNumber>
-        </ContentWrapper>
+
+        {addressList.map((el: any, index: number) => {
+          return (
+            <ContentWrapper key={`asbcc-${index}`}>
+              <EditButton onClick={() => router.push("/edit_shipping_address")}>
+                Edit
+              </EditButton>
+              <DeleteButton>
+                <Image src={garbage} alt={"garbage_icon"} />
+              </DeleteButton>
+              <AddressTitle>{el.title}</AddressTitle>
+              <AddressText>{el.streetAddress2}</AddressText>
+              <AddressText>{el.streetAddress1}</AddressText>
+              <AddressText>{el.state}</AddressText>
+              <AddressText>
+                {countryList.filter((x: any) => x.code == "KR")[0].name}
+              </AddressText>
+              <AddressText>{el.postCode}</AddressText>
+              <AddressPhoneNumber>{el.phoneNumber}</AddressPhoneNumber>
+            </ContentWrapper>
+          );
+        })}
       </Main>
       <MobileSideBar />
     </Container>
