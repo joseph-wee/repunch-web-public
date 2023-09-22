@@ -171,22 +171,19 @@ const useCart = () => {
                 tempNextSearchAfter = res?.data.result.metadata.searchAfter;
                 // response 가공해서 저장
                 res?.data.result.data.forEach((el: any, index: number) => {
-                  // 카트에 담긴거 필터링해서 옵션에 할당
-                  let option = el.product.options.filter(
-                    (x: any) => x.productOptionNo == el.productOptionNo
-                  )[0];
-
                   // 리스트에 푸시
                   tempList.push({
-                    productNo: option.productNo, // 상품 번호
-                    thumbnail: option.files[0].resourceUrl, // 썸네일
+                    productNo: el.option.productNo, // 상품 번호
+                    productOpionNo: el.option.productNo, // 옵션 번호
+                    thumbnail: el.option.thumbnailUrl, // 썸네일
                     title: el.product.title, // 제목
-                    color: option.color, // 컬러
+                    color: el.option.color.name, // 컬러
                     width: el.product.width, // 너비
-                    length: option.length, // 길이
-                    price: option.price, // 가격
+                    length: el.option.length, // 길이
+                    price: el.option.price, // 가격
                     count: el.count, // 담은 개수
-                    quantity: option.quantity, // 판매 가능 개수
+                    totalPrice: el.count * el.option.price, // 토탈 가격
+                    quantity: el.option.quantity, // 판매 가능 개수
                   });
                 });
               }
@@ -203,26 +200,22 @@ const useCart = () => {
         tempNextSearchAfter = res?.data.result.metadata.searchAfter;
         // response 가공해서 저장
         res?.data.result.data.forEach((el: any, index: number) => {
-          // 카트에 담긴거 필터링해서 옵션에 할당
-          let option = el.product.options.filter(
-            (x: any) => x.productOptionNo == el.productOptionNo
-          )[0];
-
           // 리스트에 푸시
           tempList.push({
-            productNo: option.productNo, // 상품 번호
-            thumbnail: option.files[0].resourceUrl, // 썸네일
+            productNo: el.option.productNo, // 상품 번호
+            productOpionNo: el.option.productNo, // 옵션 번호
+            thumbnail: el.option.thumbnailUrl, // 썸네일
             title: el.product.title, // 제목
-            color: option.color, // 컬러
+            color: el.option.color.name, // 컬러
             width: el.product.width, // 너비
-            length: option.length, // 길이
-            price: option.price, // 가격
+            length: el.option.length, // 길이
+            price: el.option.price, // 가격
             count: el.count, // 담은 개수
-            totalPrice: el.count * option.price, // 토탈 가격
-            quantity: option.quantity, // 판매 가능 개수
+            totalPrice: el.count * el.option.price, // 토탈 가격
+            quantity: el.option.quantity, // 판매 가능 개수
           });
         });
-
+        console.log(tempList);
         setRollList([...tempList]);
         return tempNextSearchAfter;
       }
@@ -283,22 +276,19 @@ const useCart = () => {
                 tempNextSearchAfter = res?.data.result.metadata.searchAfter;
                 // response 가공해서 저장
                 res?.data.result.data.forEach((el: any, index: number) => {
-                  // 카트에 담긴거 필터링해서 옵션에 할당
-                  let option = el.product.options.filter(
-                    (x: any) => x.productOptionNo == el.productOptionNo
-                  )[0];
-
                   // 리스트에 푸시
                   tempList.push({
-                    productNo: option.productNo, // 상품 번호
-                    thumbnail: option.files[0].resourceUrl, // 썸네일
+                    productNo: el.option.productNo, // 상품 번호
+                    productOptionNo: el.productOptionNo,
+                    thumbnail: el.option.thumbnailUrl, // 썸네일
                     title: el.product.title, // 제목
-                    color: option.color, // 컬러
+                    color: el.option.color.name, // 컬러
                     width: el.product.width, // 너비
-                    length: option.length, // 길이
-                    price: option.price, // 가격
+                    length: el.option.length, // 길이
+                    price: el.option.price, // 가격
                     count: el.count, // 담은 개수
-                    quantity: option.quantity, // 판매 가능 개수
+                    totalPrice: el.count * el.price, // 토탈 가격
+                    quantity: el.option.quantity, // 판매 가능 개수
                   });
                 });
               }
@@ -315,23 +305,19 @@ const useCart = () => {
         tempNextSearchAfter = res?.data.result.metadata.searchAfter;
         // response 가공해서 저장
         res?.data.result.data.forEach((el: any, index: number) => {
-          // 카트에 담긴거 필터링해서 옵션에 할당
-          let option = el.product.options.filter(
-            (x: any) => x.productOptionNo == el.productOptionNo
-          )[0];
-
           // 리스트에 푸시
           tempList.push({
-            productNo: option.productNo, // 상품 번호
-            thumbnail: option.files[0].resourceUrl, // 썸네일
+            productNo: el.option.productNo, // 상품 번호
+            productOptionNo: el.productOptionNo, // 옵션 번호
+            thumbnail: el.option.thumbnailUrl, // 썸네일
             title: el.product.title, // 제목
-            color: option.color, // 컬러
+            color: el.option.color.name, // 컬러
             width: el.product.width, // 너비
-            length: option.length, // 길이
-            price: option.price, // 가격
+            length: el.option.length, // 길이
+            price: el.option.price, // 가격
             count: el.count, // 담은 개수
-            totalPrice: el.count * option.price, // 토탈 가격
-            quantity: option.quantity, // 판매 가능 개수
+            totalPrice: el.count * el.price, // 토탈 가격
+            quantity: el.option.quantity, // 판매 가능 개수
           });
         });
 
@@ -377,16 +363,29 @@ const useCart = () => {
       rollCheckArr.forEach((el: any, index: number) => {
         el && temp.push(rollList[index]);
       });
+
+      // 체크한게 있어야 구매 진행
+      if (temp.length > 0) {
+        dispatch(setTempOrderList(temp));
+        router.push("/check_out");
+      }
     }
     // Sample 구매 case
     if (cartValue == 1) {
       rollCheckArr.forEach((el: any, index: number) => {
         el && temp.push(sampleList[index]);
       });
-    }
-    dispatch(setTempOrderList(temp));
-    if (temp.length > 0) {
-      router.push("/check_out");
+      // 체크한게 10~20개일 때만 구매 진행
+      if (temp.length >= 10 && temp.length <= 20) {
+        dispatch(setTempOrderList(temp));
+
+        router.push("/checkout_sample");
+        return;
+      }
+      // 체크한게 10~20개 아니면
+      if (temp.length < 10 || temp.length > 20) {
+        setIsActive(true);
+      }
     }
   };
 
@@ -500,13 +499,14 @@ const useCart = () => {
                 Select all
               </SelectAllBoxWrapper>
 
-              {tempResult.map((i, j) => {
+              {sampleList.map((el: any, index: number) => {
                 return (
-                  <SampleProudctWrapper key={`sample-${j}`}>
+                  <SampleProudctWrapper key={`sample-${index}`}>
                     <CartSampleProduct
+                      el={el}
                       sampleCheckArr={sampleCheckArr}
                       setSampleCheckArr={setSampleCheckArr}
-                      order={j}
+                      index={index}
                     />
                   </SampleProudctWrapper>
                 );
@@ -535,9 +535,7 @@ const useCart = () => {
             <Bold>10-20</Bold> pieces.
           </PopUpMessage>
           <ButtonWrapper onClick={() => setIsActive(false)}>
-            <Link href="/checkout_sample" style={{ textDecoration: "none" }}>
-              <PopUpButton>OK</PopUpButton>
-            </Link>
+            <PopUpButton>OK</PopUpButton>
           </ButtonWrapper>
         </ContentBox>
       </PopUpBox>
