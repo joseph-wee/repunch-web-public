@@ -10,27 +10,22 @@ import {
 import Image from "next/image";
 
 const useCartSampleProduct = ({
+  el,
   sampleCheckArr, // 롤 체크 유무 배열
   setSampleCheckArr,
-  order,
+  index,
 }: {
+  el: any;
   sampleCheckArr: Array<boolean>;
   setSampleCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
-  order: number;
+  index: number;
 }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [length, setLength] = useState<string>("1.0");
 
-  const minus = () => {
-    setLength((Number(length) - 1).toFixed(1).toString());
-  };
-  const plus = () => {
-    setLength((Number(length) + 1).toFixed(1).toString());
-  };
-
   const checkHandler = () => {
     let temp = sampleCheckArr;
-    temp[order] = !temp[order];
+    temp[index] = !temp[index];
     setSampleCheckArr([...temp]);
   };
 
@@ -39,12 +34,12 @@ const useCartSampleProduct = ({
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
-          id={`sample${order}`}
+          id={`sample${index}`}
           onChange={() => checkHandler()}
         />
         <Label
-          htmlFor={`sample${order}`}
-          isChecked={sampleCheckArr[order]}
+          htmlFor={`sample${index}`}
+          isChecked={sampleCheckArr[index]}
           img={ic_check_wht.src}
         />
         Check to purchase
@@ -54,13 +49,13 @@ const useCartSampleProduct = ({
       </CheckCancelWrapper>
       <ProductWrapper>
         <ImageWrapper>
-          <Image src={test_thumbnail} alt={"test"} width={80} height={80} />
+          <Image src={el.thumbnail} alt={"test"} width={80} height={80} />
         </ImageWrapper>
         <TextWrapper>
-          <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
+          <ProductTitle>{el.title}</ProductTitle>
           <OptionWrapper>
-            <Color />
-            Red
+            <Color color={el.color} />
+            {el.color}
             <VerticalLine />
             Sample
           </OptionWrapper>
@@ -70,7 +65,7 @@ const useCartSampleProduct = ({
 
       <PriceWrapper>
         <Exvat>EX VAT</Exvat>
-        <Price>$ 4.06</Price>
+        <Price>$ {`${el.price}`}</Price>
       </PriceWrapper>
     </Container>
   );
@@ -177,6 +172,63 @@ const Color = styled.div`
   height: 12px;
   background-color: #ec3939;
   border-radius: 100%;
+  ${(props) => {
+    switch (props.color) {
+      case "White":
+        return `    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    background-color: #ffffff;`;
+      case "Black":
+        return "background-color: #000000";
+      case "Gray":
+        return "background-color: #C4C4C4";
+      case "Beige":
+        return "background-color: #F1EBD3";
+      case "Brown":
+        return "background-color: #825757";
+      case "Red":
+        return "background-color: #EC3939";
+      case "Orange":
+        return "background-color: #FE7E36";
+      case "Yellow":
+        return "background-color: #F9D142";
+      case "Pink":
+        return "background-color: #FF96FB";
+      case "Purple":
+        return "background-color: #814FEC";
+      case "Blue":
+        return "background-color: #293DF0";
+      case "Green":
+        return "background-color: #46CA43";
+      case "Silver":
+        return `  background: linear-gradient(
+      156.04deg,
+      #a9a9a9 10.26%,
+      #dedede 43.51%,
+      #ffffff 52.57%,
+      #e1e1e1 61.64%,
+      #9a9a9a 93.16%
+    );`;
+      case "Gold":
+        return `    background: linear-gradient(
+      152.18deg,
+      #d3a810 5.76%,
+      #fff8de 44.11%,
+      #ffffff 49.34%,
+      #fff9e4 55.45%,
+      #d3a810 89.44%
+    ); `;
+      case "Multi":
+        return `    background: linear-gradient(
+      154.17deg,
+      #ff1001 17.26%,
+      #fff500 37.73%,
+      #24ff00 57.06%,
+      #00bdf9 72.22%,
+      #0075ff 90.03%
+    );`;
+    }
+  }}
 `;
 const VerticalLine = styled.div`
   width: 1px;
