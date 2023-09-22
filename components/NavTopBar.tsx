@@ -56,19 +56,27 @@ const useNavTopBar = () => {
       <Container isActive={isActive}>
         <Wrapper>
           <Link href="/new_arrivals" style={{ textDecoration: "none" }}>
-            <Menu>New arrivals</Menu>
+            <Menu isActive={router.pathname == "/new_arrivals"}>
+              New arrivals
+            </Menu>
           </Link>
           <Link href="/shop_fabrics" style={{ textDecoration: "none" }}>
-            <Menu>Shop fabric </Menu>
+            <Menu isActive={router.pathname == "/shop_fabrics"}>
+              Shop fabric{" "}
+            </Menu>
           </Link>
           <Link href="/shop_supplies" style={{ textDecoration: "none" }}>
-            <Menu>Shop supplies</Menu>
+            <Menu isActive={router.pathname == "/shop_supplies"}>
+              Shop supplies
+            </Menu>
           </Link>
           <Link href="/shop_project" style={{ textDecoration: "none" }}>
-            <Menu>Shop by project </Menu>
+            <Menu isActive={router.pathname == "/shop_project"}>
+              Shop by project{" "}
+            </Menu>
           </Link>
           <Link href="/about_us" style={{ textDecoration: "none" }}>
-            <Menu>About us</Menu>
+            <Menu isActive={router.pathname == "/about_us"}>About us</Menu>
           </Link>
         </Wrapper>
       </Container>
@@ -97,14 +105,28 @@ const Wrapper = styled.ul`
   justify-content: space-between;
   width: 459px;
 `;
-const Menu = styled.li`
+const Menu = styled.li<{ isActive: boolean }>`
+  display: flex;
+  align-items: center;
+  height: 65px;
   font-size: 14px;
   font-weight: 400;
   line-height: 18px;
   letter-spacing: -0.011em;
   text-align: left;
-
   color: #000000;
+
+  ${(props) => {
+    return (
+      props.isActive &&
+      `
+  padding-top: 2px;
+  height: 61px;
+  border-bottom: 2px solid black;
+  font-weight: 700;
+  `
+    );
+  }};
 `;
 
 export default useNavTopBar;
