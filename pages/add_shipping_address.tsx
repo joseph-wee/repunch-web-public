@@ -12,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { goBack } from "../utils/functions";
-import { addAddressRequest } from "../utils/api";
+import { addAddressRequest, loginRefreshRequest } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -113,13 +113,6 @@ const useAdd_shiping_address = () => {
     useState<number>(0); // 전화번호 유효성 체크
 
   const [validationStart, setValidationStart] = useState(false); // 입력시마다 검사 시작
-
-  let at: string | null = ""; // 엑세스 토큰
-
-  /** 그냥 선언시 에러나서 렌더링 후 저장 되게 함. */
-  useEffect(() => {
-    at = localStorage.getItem("at");
-  }, []);
 
   /** title 유효성 검사 */
   const validationTitle = () => {
@@ -253,6 +246,17 @@ const useAdd_shiping_address = () => {
 
   /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 어드레스 추가 아니면 모두 재검사 */
   const addAddressRequestHandler = () => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
     let validationAllValue = validationAll();
     if (validationAllValue == true) {
       addAddressRequest(
@@ -268,9 +272,51 @@ const useAdd_shiping_address = () => {
         postCode,
         phoneNumber
       ).then((res) => {
+        console.log(res);
+        console.log("여기서에러?");
+        // 성공 case
         if (res?.data?.status == 200) {
           router.push("/address");
           return;
+        }
+
+        // 유효하지 않은 토큰 case
+        if (res?.data.code == 1003) {
+          loginRefreshRequest(rt).then((res) => {
+            // 토큰 재발급 성공 case
+            // 엑세스 토큰, 리프레쉬 토큰 세팅 후 카트목록 재요청
+            if (res?.data.status == 200) {
+              at = res.data.result.access_token;
+              rt = res.data.result.refresh_token;
+
+              if (sessionStorage.getItem("at")) {
+                sessionStorage.setItem("at", at);
+                sessionStorage.setItem("rt", `${rt}`);
+              } else {
+                localStorage.setItem("at", at);
+                localStorage.setItem("rt", `${rt}`);
+              }
+              addAddressRequest(
+                at,
+                title,
+                firstName,
+                lastName,
+                companyName,
+                countryCode,
+                state,
+                streetAddress1,
+                streetAddress2,
+                postCode,
+                phoneNumber
+              ).then((res) => {
+                // 성공 case
+                if (res?.data?.status == 200) {
+                  router.push("/address");
+                  return;
+                }
+              });
+            }
+          });
         }
         alert("예상치 못한 에러가 발생하였습니다.");
       });
