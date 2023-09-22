@@ -387,13 +387,12 @@ export const materialsRequest = () => {
 /** 주소 목록 조회 */
 export const addressListRequest = async (
   acessToken: string | null,
-  count: number,
-  searchAfter: number
+  count: number
 ) => {
   try {
     const res = await axios({
       method: "GET",
-      url: `/user/addresses?count=${count}&searchAfter=${searchAfter}`,
+      url: `/user/addresses?count=${count}`,
       headers: {
         Authorization: `Bearer ${acessToken}`,
       },
