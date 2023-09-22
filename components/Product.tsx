@@ -19,6 +19,57 @@ const Product = ({ product }: any) => {
   const [thumbnail, setThumnail] = useState(product.options[0].thumbnailUrl);
   const [productList, setProductList] = useState([]);
   const [price, setPrice] = useState(product.options[0].price);
+  const [colorList, setColorList] = useState<any>([]);
+
+  /** 컬러 중복 제거 */
+  const colordupleHandler = () => {
+    // 임시로 컬러만 뽑아서 할당
+    let tempColorArr: any = [];
+    product.options.forEach((el: any) => {
+      tempColorArr.push(el.color.name);
+    });
+    console.log(tempColorArr);
+    // 임시 컬러배열에서 중복 제거
+    tempColorArr = Array.from(new Set(tempColorArr));
+
+    // 컬러만 할당해놓고
+    let tempColorObject = tempColorArr.map((el: any) => {
+      return {
+        color: el,
+        thumbnail: "",
+        imagePath: "",
+        totalLength: 0,
+      };
+    });
+
+    // 처음 썸네일, 처음 이미지주소만 할당, 같은 색이면 length 합
+    product.options.forEach((el: any, index: number) => {
+      if (
+        tempColorObject.find((x: any) => x.color == el.color.name).thumbnail ==
+        ""
+      ) {
+        tempColorObject.find((x: any) => x.color == el.color.name).thumbnail =
+          el.thumbnailUrl;
+      }
+      if (
+        tempColorObject.find((x: any) => x.color == el.color.name).imagePath ==
+        ""
+      ) {
+        tempColorObject.find((x: any) => x.color == el.color.name).imagePath =
+          el.color.imagePath;
+      }
+
+      tempColorObject.find((x: any) => x.color == el.color.name).totalLength +=
+        el.length;
+    });
+    console.log(tempColorObject);
+    setColorList([...tempColorObject]);
+  };
+
+  // 컬러 중복등록 없어져서 필요없어짐
+  // useEffect(() => {
+  //   colordupleHandler();
+  // }, []);
 
   const fabricList: any = {
     Cotton: "CO",
@@ -32,6 +83,9 @@ const Product = ({ product }: any) => {
     Polyester: "PL",
     Nylon: "NY",
   };
+  useEffect(() => {
+    console.log(colorList);
+  }, []);
 
   return (
     <Card>
@@ -145,12 +199,10 @@ const LikeButton = styled.div`
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 32px;
-  height: 32px;
-  background: rgba(10, 68, 89, 0.2);
-  border-radius: 22px;
+  top: 19px;
+  right: 19px;
+  width: 22px;
+  height: 22px;
 
   cursor: pointer;
 `;
