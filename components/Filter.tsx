@@ -50,7 +50,7 @@ const UseFilter = ({
   const [widthIsActive, setWidthIsActive] = useState(true);
   const [weightIsActive, setWeightIsActive] = useState(true);
   const [yarnIsActive, setYarnIsActive] = useState(true);
-  const [colorChecked, setColorChecked] = useState(new Array(15).fill(false));
+  const [colorChecked, setColorChecked] = useState(new Array(16).fill(false));
 
   const [suppliesList, setSuppliesList] = useState<ListCountryArray>([
     {
@@ -339,7 +339,7 @@ const UseFilter = ({
 
   /** 컬러클릭시 컬러에 따라 다른 체크 아이콘 리턴 */
   const colorCheckHandler = (n: number) => {
-    let blackCheckArr = [8, 9, 12, 13, 14];
+    let blackCheckArr = [9, 10, 13, 14, 15];
 
     // 검은색 체크아이콘이 되어야 하는 컬러면 해당 체크 표시 반영
     if (blackCheckArr.includes(n)) {
@@ -825,20 +825,23 @@ const ColorCircle = styled.div`
     background-color: #f9d142;
   }
   &:nth-of-type(9) {
+    background-color: #ff96fb;
+  }
+  &:nth-of-type(10) {
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     background-color: #ffffff;
   }
-  &:nth-of-type(10) {
+  &:nth-of-type(11) {
     background-color: #f7f4e9;
   }
-  &:nth-of-type(11) {
+  &:nth-of-type(12) {
     background-color: #c4c4c4;
   }
-  &:nth-of-type(12) {
+  &:nth-of-type(13) {
     background-color: #000000;
   }
-  &:nth-of-type(13) {
+  &:nth-of-type(14) {
     margin-bottom: 0;
     background: linear-gradient(
       156.04deg,
@@ -849,7 +852,7 @@ const ColorCircle = styled.div`
       #9a9a9a 93.16%
     );
   }
-  &:nth-of-type(14) {
+  &:nth-of-type(15) {
     margin-bottom: 0;
     background: linear-gradient(
       152.18deg,
@@ -860,7 +863,7 @@ const ColorCircle = styled.div`
       #d3a810 89.44%
     );
   }
-  &:nth-of-type(15) {
+  &:nth-of-type(16) {
     margin-bottom: 0;
     background: linear-gradient(
       154.17deg,
