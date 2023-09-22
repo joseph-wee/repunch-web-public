@@ -71,7 +71,7 @@ const useId = () => {
   }, [count]);
 
   /** 옵션에서 컬러 선택시 액션, 컬러 선택 바뀔 때마다 해당 첫번째 옵션 포커스 효과 핸들러 */
-  const colorCheckhandler = (index: number) => {
+  const colorCheckhandler = (index: number, color: string) => {
     let tempColorList = colorList;
     tempColorList.forEach((el: any, index: number) => {
       tempColorList[index].checked = false;
@@ -95,7 +95,9 @@ const useId = () => {
     setColorList([...tempColorList]);
     setCount(1);
 
-    thumbnailClickHandler(index);
+    thumbnailClickHandler(
+      thumbnailVideoList.findIndex((el: any) => el.color == color)
+    );
   };
 
   /** 옵션 클릭시 해당 옵션 포커스효과 */
@@ -162,7 +164,7 @@ const useId = () => {
         });
 
         // 임시 컬러 배열에서 중복 제거
-        tempColorArr = Array.from(new Set(tempColorArr));
+        // tempColorArr = Array.from(new Set(tempColorArr));
 
         // 임시 컬러리스트 할당, 쿼리값에 해당되는 인덱스 할당
         let tempColorList: any = []; // 임시 컬러리스트
@@ -272,8 +274,22 @@ const useId = () => {
         //   }
         // });
 
-        tempThumbnailVideoList[0].clicked = true;
-        setSelect({ ...tempThumbnailVideoList[0] });
+        if (router.query.color) {
+          tempThumbnailVideoList.find(
+            (el: any) => el.color == router.query.color
+          ).clicked = true;
+          setSelect({
+            ...tempThumbnailVideoList[
+              tempThumbnailVideoList.findIndex(
+                (el: any) => el.color == router.query.color
+              )
+            ],
+          });
+        } else {
+          tempThumbnailVideoList[0].clicked = true;
+          setSelect({ ...tempThumbnailVideoList[0] });
+        }
+
         setThumbnailVideoList([...tempThumbnailVideoList]);
 
         // setVideoUrl(res.data.result.files[1].resourceUrl);
@@ -625,7 +641,7 @@ const useId = () => {
             <InfoWrapper>
               <InfoTitle>Certification</InfoTitle>
               <InfoContent>
-                {info && info.certificated ? "Repp verifyed" : "false"}
+                {info && info.certificated ? "Repp verifyed" : "No"}
               </InfoContent>
             </InfoWrapper>
             <InfoWrapper>
@@ -698,7 +714,7 @@ const useId = () => {
                 return (
                   <ColorBox
                     isChecked={i.checked}
-                    onClick={() => colorCheckhandler(j)}
+                    onClick={() => colorCheckhandler(j, i.color)}
                     key={`asdf${j}`}
                   >
                     <ColorCircle color={i.color}>
