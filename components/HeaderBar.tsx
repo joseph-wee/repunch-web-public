@@ -117,7 +117,7 @@ const useHeaderBar = () => {
           <Image src={ic_favorite_wht} alt="favorite_menu_button" />
         </Menu>
       </Container>
-      <NavTopBar />
+      {/* <NavTopBar /> */}
       <NavMobileBar isActive={isActive} setIsActive={setIsActive} />
     </>
   );
