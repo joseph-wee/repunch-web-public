@@ -74,6 +74,8 @@ const useRegister = () => {
   const [authPageIsActive, setAuthPageIsActive] = useState<boolean>(false);
   const [popUpIsActive, setPopUpIsActive] = useState<boolean>(false);
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const router = useRouter();
   const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
 
@@ -283,8 +285,9 @@ const useRegister = () => {
 
     //유효성 결과 false값있으면 그 input으로 포커스, 모두 true면 return true
     for (let i = 0; i < 10; i++) {
+      console.log("??");
       if (validationResult[i] == false) {
-        console.log(ref.current[i]);
+        console.log(i);
         ref.current[i]?.focus();
         ref.current[i]?.scrollIntoView({
           block: "center",
@@ -328,14 +331,20 @@ const useRegister = () => {
           });
         } else if (res?.data.status == 500) {
           setUserIdValidationResult(2);
-          ref.current[0]?.focus();
-          ref.current[0]?.scrollIntoView({
+          ref.current[7]?.focus();
+          ref.current[7]?.scrollIntoView({
             block: "center",
             inline: "start",
           });
         }
       });
     }
+  };
+
+  /** 특수문자, 숫자, 공백 차단 */
+  const charBlocker = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const reg = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=0-9]/gi;
+    e.target.value = e.target.value.replace(reg, "");
   };
 
   return (
@@ -349,7 +358,7 @@ const useRegister = () => {
             <Input
               type="text"
               onChange={(e) => {
-                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                charBlocker(e);
                 setFirstName(e.target.value);
               }}
               ref={(element) => {
@@ -365,7 +374,7 @@ const useRegister = () => {
             <Input
               type="text"
               onChange={(e) => {
-                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                charBlocker(e);
                 setLastName(e.target.value);
               }}
               ref={(element) => {
@@ -409,7 +418,7 @@ const useRegister = () => {
             ErrorCase
           </ErrorCase>
         </InputContainer>
-        <InputContainer>
+        {/* <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
           <SelectBox
@@ -426,7 +435,7 @@ const useRegister = () => {
           >
             ErrorCase
           </ErrorCase>
-        </InputContainer>
+        </InputContainer> */}
         <InputContainer>
           <InputTitle>Company URL</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
