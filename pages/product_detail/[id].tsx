@@ -931,12 +931,10 @@ const LikeButton = styled.div`
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 40px;
-  height: 40px;
-  background: rgba(10, 68, 89, 0.2);
-  border-radius: 22px;
+  top: 19px;
+  right: 19px;
+  width: 22px;
+  height: 22px;
 
   cursor: pointer;
 `;
