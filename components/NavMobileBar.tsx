@@ -43,13 +43,13 @@ const NavMobileBar = ({
           <Menu>
             <Link
               onClick={() => setIsActive(false)}
-              href="/new_arrivals"
+              href="/"
               style={{ textDecoration: "none", color: "#121822" }}
             >
-              New Arrivals
+              Shop
             </Link>
           </Menu>
-          <Menu>
+          {/* <Menu>
             <Link
               onClick={() => setIsActive(false)}
               href="/shop_fabrics"
@@ -75,7 +75,7 @@ const NavMobileBar = ({
             >
               Shop by project
             </Link>
-          </Menu>
+          </Menu> */}
           <Menu>
             <Link
               onClick={() => setIsActive(false)}
