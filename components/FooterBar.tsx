@@ -97,20 +97,19 @@ const Text = styled.div`
   display: flex;
   margin-bottom: 15.7px;
   justify-content: center;
-  align:items: center;
+  align-items: center;
   height: 16px;
 
   font-weight: 400;
   font-size: 11px;
-  line-height: 14px;  
-  color: #536C6D;
-  
+  line-height: 14px;
+  color: #536c6d;
 `;
 
 const IconWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align:items: center;
+  align-items: center;
 `;
 const A = styled.a`
   margin-left: 4px;
