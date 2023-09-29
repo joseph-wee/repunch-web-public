@@ -352,7 +352,6 @@ const useAdd_shiping_address = () => {
               <Input
                 type="text"
                 onChange={(e) => {
-                  e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
                   setFirstName(e.target.value);
                 }}
                 ref={(element) => {
@@ -368,7 +367,6 @@ const useAdd_shiping_address = () => {
               <Input
                 type="text"
                 onChange={(e) => {
-                  e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
                   setLastName(e.target.value);
                 }}
                 ref={(element) => {
