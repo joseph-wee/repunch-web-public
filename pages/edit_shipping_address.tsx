@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { goBack } from "../utils/functions";
+import { addAddressRequest, loginRefreshRequest } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -24,11 +25,23 @@ export interface List {
 export interface ListCountryArray extends Array<List> {}
 
 const useEdit_shipping_address = () => {
-  const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isExisted, setIsExisted] = useState<boolean>(false);
 
+  const [title, setTitle] = useState<any>("");
+  const [firstName, setFirstName] = useState<any>("");
+  const [lastName, setLastName] = useState<any>("");
+  const [companyName, setCompanyName] = useState<any>("");
+  const [countryCode, setCounryCode] = useState<any>(""); // 국가코드
+  const [state, setState] = useState<any>("");
+  const [streetAddress1, setStreetAddress1] = useState<any>("");
+  const [streetAddress2, setStreetAddress2] = useState<any>("");
+  const [postCode, setPostCode] = useState<any>("");
+  const [phoneNumber, setPhoneNumber] = useState<any>("");
+
   const router = useRouter();
+
+  const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -75,6 +88,269 @@ const useEdit_shipping_address = () => {
     { name: "Hong Kong", code: "HK", code_num: "852" },
   ];
 
+  const [titleValidationResult, setTitleValidationResult] = useState<number>(0); // 성 유효성 체크
+  const [firstNameValidationResult, setFirstNameValidationResult] =
+    useState<number>(0); // 이름 유효성 체크
+  const [lastNameValidationResult, setLastNameValidationResult] =
+    useState<number>(0); // 이름 유효성 체크
+  const [companyNameValidationResult, setCompanyNameValidationResult] =
+    useState<number>(0); // 회사이름 유효성 체크
+  const [countryCodeValidationResult, setCounryCodeValidationResult] =
+    useState<number>(0); // 국가코드 유효성 체크
+
+  const [stateValidationResult, setStateValidationResult] = useState<number>(0);
+
+  const [streetAddress1ValidationResult, setStreetAddress1ValidationResult] =
+    useState<number>(0);
+
+  const [streetAddress2ValidationResult, setStreetAddress2ValidationResult] =
+    useState<number>(0);
+
+  const [postCodeValidationResult, setPostCodeValidationResult] =
+    useState<number>(0);
+
+  const [phoneNumberValidationResult, setPhoneNumberValidationResult] =
+    useState<number>(0); // 전화번호 유효성 체크
+
+  const [validationStart, setValidationStart] = useState(false); // 입력시마다 검사 시작
+
+  /** title 유효성 검사 */
+  const validationTitle = () => {
+    if (Boolean(title)) {
+      setTitleValidationResult(1);
+      return true;
+    }
+    setTitleValidationResult(2);
+    return false;
+  };
+
+  /** firstName 유효성 검사 */
+  const validationFirstname = () => {
+    let regexp = /^[A-Za-z]{1,20}$/;
+    if (regexp.test(firstName)) {
+      setFirstNameValidationResult(1);
+      return true;
+    }
+    setFirstNameValidationResult(2);
+    return false;
+  };
+  /** lastName 유효성 검사 */
+  const validationLastName = () => {
+    let regexp = /^[A-Za-z]{1,20}$/;
+    if (regexp.test(lastName)) {
+      setLastNameValidationResult(1);
+      return true;
+    }
+    setLastNameValidationResult(2);
+    return false;
+  };
+  /** country 유효성 검사 */
+  const validationCountry = () => {
+    if (Boolean(countryCode)) {
+      setCounryCodeValidationResult(1);
+      return true;
+    }
+    setCounryCodeValidationResult(2);
+    return false;
+  };
+  /** company name 유효성 검사 */
+  const validationCompanyName = () => {
+    if (Boolean(companyName) && companyName.length < 50) {
+      setCompanyNameValidationResult(1);
+      return true;
+    }
+    setCompanyNameValidationResult(2);
+    return false;
+  };
+
+  /** 국가코드 유효성 검사 */
+  const validationState = () => {
+    if (Boolean(countryCode)) {
+      setStateValidationResult(1);
+      return true;
+    }
+    setStateValidationResult(2);
+    return false;
+  };
+
+  /** postcode 유효성 검사 */
+  const validationPostCode = () => {
+    if (postCode.length >= 5) {
+      setPostCodeValidationResult(1);
+      return true;
+    }
+    setPostCodeValidationResult(2);
+    return false;
+  };
+
+  /** streetAddress1 유효성 검사 */
+  const validationStreetAddress1 = () => {
+    if (Boolean(streetAddress1)) {
+      setStreetAddress1ValidationResult(1);
+      return true;
+    }
+    setStreetAddress1ValidationResult(2);
+    return false;
+  };
+
+  /** streetAddress2 유효성 검사 */
+  const validationStreetAddress2 = () => {
+    if (true) {
+      setStreetAddress2ValidationResult(1);
+      return true;
+    }
+    setStreetAddress2ValidationResult(2);
+    return false;
+  };
+
+  /** phone number 유효성 검사 */
+  const validationPhoneNumber = () => {
+    if (phoneNumber.length > 7) {
+      setPhoneNumberValidationResult(1);
+      return true;
+    }
+    setPhoneNumberValidationResult(2);
+    return false;
+  };
+
+  /** 모든 유효성 검사 */
+  const validationAll = () => {
+    let validationResult = new Array(10);
+    validationResult[0] = validationTitle();
+    validationResult[1] = validationFirstname();
+    validationResult[2] = validationLastName();
+    validationResult[3] = validationCompanyName();
+    validationResult[4] = validationCountry();
+    validationResult[5] = validationState();
+    validationResult[6] = validationStreetAddress1();
+    validationResult[7] = validationStreetAddress2();
+    validationResult[8] = validationPostCode();
+    validationResult[9] = validationPhoneNumber();
+
+    //유효성 결과 false값있으면 그 input으로 포커스, 모두 true면 return true
+    for (let i = 0; i < 10; i++) {
+      if (validationResult[i] == false) {
+        console.log(ref.current[i]);
+        ref.current[i]?.focus();
+        ref.current[i]?.scrollIntoView({
+          block: "center",
+          inline: "start",
+        });
+        break;
+      }
+      if (i == 9) {
+        return true;
+      }
+    }
+  };
+
+  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 어드레스 추가 아니면 모두 재검사 */
+  const addAddressRequestHandler = () => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    let validationAllValue = validationAll();
+    if (validationAllValue == true) {
+      addAddressRequest(
+        at,
+        title,
+        firstName,
+        lastName,
+        companyName,
+        countryCode,
+        state,
+        streetAddress1,
+        streetAddress2,
+        postCode,
+        phoneNumber
+      ).then((res) => {
+        console.log(res);
+        console.log("여기서에러?");
+        // 성공 case
+        if (res?.data?.status == 200) {
+          router.push("/address");
+          return;
+        }
+
+        // 유효하지 않은 토큰 case
+        if (res?.data.code == 1003) {
+          loginRefreshRequest(rt).then((res) => {
+            // 토큰 재발급 성공 case
+            // 엑세스 토큰, 리프레쉬 토큰 세팅 후 카트목록 재요청
+            if (res?.data.status == 200) {
+              at = res.data.result.access_token;
+              rt = res.data.result.refresh_token;
+
+              if (sessionStorage.getItem("at")) {
+                sessionStorage.setItem("at", at);
+                sessionStorage.setItem("rt", `${rt}`);
+              } else {
+                localStorage.setItem("at", at);
+                localStorage.setItem("rt", `${rt}`);
+              }
+              addAddressRequest(
+                at,
+                title,
+                firstName,
+                lastName,
+                companyName,
+                countryCode,
+                state,
+                streetAddress1,
+                streetAddress2,
+                postCode,
+                phoneNumber
+              ).then((res) => {
+                // 성공 case
+                if (res?.data?.status == 200) {
+                  router.push("/address");
+                  return;
+                }
+              });
+            }
+          });
+        }
+        alert("예상치 못한 에러가 발생하였습니다.");
+      });
+    }
+  };
+  /** 쿼리 데이터 체크 */
+  const queryCheck = () => {
+    if (router.query.addressNo == undefined) {
+      router.push("/address");
+    }
+  };
+
+  /** 주소 코드로  */
+
+  /** 주소 데이터 초기화 */
+  const addressDataInit = () => {
+    setTitle(router.query.title);
+    setFirstName(router.query.firstName);
+    setLastName(router.query.lastName);
+    setCompanyName(router.query.companyName);
+    setCounryCode(router.query.countryCode);
+    setState(router.query.state);
+    setStreetAddress1(router.query.streetAddress1);
+    router.query.streetAddress2 &&
+      setStreetAddress2(router.query.streetAddress2);
+    setPostCode(router.query.postCode);
+    setPhoneNumber(router.query.phoneNumber);
+  };
+
+  useEffect(() => {
+    queryCheck();
+    addressDataInit();
+  }, []);
+
   return (
     <Container>
       <SideBar />
@@ -89,42 +365,142 @@ const useEdit_shipping_address = () => {
           <ContentTitleBar>Shipping address</ContentTitleBar>
           <InputContainer>
             <InputTitle>Address title</InputTitle>
-            <Input type="text" />
+            <Input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              ref={(element) => {
+                ref.current[0] = element;
+              }}
+            />
+            <ErrorCase isActive={titleValidationResult}>ErrorCase</ErrorCase>
           </InputContainer>
           <Wrapper>
             <InputContainer>
               <InputTitle>First name</InputTitle>
-              <Input type="text" />
+              <Input
+                type="text"
+                value={firstName}
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                }}
+                ref={(element) => {
+                  ref.current[1] = element;
+                }}
+              />
+              <ErrorCase isActive={firstNameValidationResult}>
+                ErrorCase
+              </ErrorCase>
             </InputContainer>
             <InputContainer>
               <InputTitle>Last name</InputTitle>
-              <Input type="text" />
+              <Input
+                type="text"
+                value={lastName}
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                }}
+                ref={(element) => {
+                  ref.current[2] = element;
+                }}
+              />{" "}
+              <ErrorCase isActive={lastNameValidationResult}>
+                ErrorCase
+              </ErrorCase>
             </InputContainer>
           </Wrapper>
           <InputContainer>
             <InputTitle>Company name</InputTitle>
-            <Input type="text" />
+            <Input
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              ref={(element) => {
+                ref.current[3] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={companyNameValidationResult}>
+              ErrorCase
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
-            <InputTitle>Country</InputTitle>
-            <SelectBoxTemporary />
+            <InputTitle
+              ref={(element) => {
+                ref.current[4] = element;
+              }}
+            >
+              Country
+            </InputTitle>
+            <SelectBox
+              list={countryList}
+              value={countryCode}
+              setValue={setCounryCode}
+              validationStart={validationStart}
+              setValidationResult={setCounryCodeValidationResult}
+            />{" "}
+            <ErrorCase isActive={countryCodeValidationResult}>
+              ErrorCase
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>State /Province</InputTitle>
-            <Input type="text" />
+            <Input
+              type="text"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+              ref={(element) => {
+                ref.current[5] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={stateValidationResult}>ErrorCase</ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Street address</InputTitle>
-            <Input type="text" />
-            <Input type="text" />
+            <Input
+              type="text"
+              value={streetAddress1}
+              onChange={(e) => setStreetAddress1(e.target.value)}
+              ref={(element) => {
+                ref.current[6] = element;
+              }}
+            />{" "}
+            <Input
+              type="text"
+              value={streetAddress2}
+              onChange={(e) => setStreetAddress2(e.target.value)}
+              ref={(element) => {
+                ref.current[7] = element;
+              }}
+            />
+            <ErrorCase isActive={streetAddress1ValidationResult}>
+              ErrorCase
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Postcode</InputTitle>
-            <Input type="text" />
+            <Input
+              type="text"
+              value={postCode}
+              onChange={(e) => setPostCode(e.target.value)}
+              ref={(element) => {
+                ref.current[8] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={postCodeValidationResult}>ErrorCase</ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Phone number</InputTitle>
-            <Input type="text" />
+            <Input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              ref={(element) => {
+                ref.current[9] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={phoneNumberValidationResult}>
+              ErrorCase
+            </ErrorCase>
           </InputContainer>
 
           <ButtonWrapper>
@@ -133,7 +509,7 @@ const useEdit_shipping_address = () => {
                 <LinkStyling>Cancel</LinkStyling>
               </Link>
             </Button>
-            <Button onClick={() => router.push("/address")}>Confirm</Button>
+            <Button onClick={() => addAddressRequestHandler()}>Confirm</Button>
           </ButtonWrapper>
         </AddressInit>
       </Main>
@@ -257,6 +633,19 @@ const Input = styled.input`
   &:nth-of-type(2) {
     margin-top: 10px;
   }
+`;
+const ErrorCase = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive == 2 ? "block" : "none";
+  }};
+  margin-top: 10px;
+  height: ${(props) => {
+    return props.isActive == 0 || props.isActive == 1 ? "0px" : "";
+  }};
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  color: #ff5c01;
 `;
 const CheckBox = styled.input`
   display: none;
