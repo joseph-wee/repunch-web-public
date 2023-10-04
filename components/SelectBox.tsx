@@ -11,12 +11,14 @@ import { valueValidation } from "../utils/functions";
 // setValue: 값을 세팅
 const SelectBox = ({
   list,
+  value,
   setValue,
   validationStart,
   setValidationResult,
 }: {
   list: ListCountryArray;
-  setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
+  value: string | string[] | undefined;
+  setValue: any;
   validationStart: boolean;
   setValidationResult: React.Dispatch<React.SetStateAction<number>>;
 }) => {
@@ -29,6 +31,55 @@ const SelectBox = ({
     setValue(i.code);
     valueValidation(i.code, validationStart, setValidationResult);
   };
+
+  /** 나라 리스트 숫자 코드는 업데이트 필요 */
+  const countryList: ListCountryArray = [
+    { name: "Republic of Korea", code: "KR", code_num: "82" },
+    { name: "United States of America", code: "US", code_num: "1" },
+    { name: "Greece", code: "GR", code_num: "99" },
+    { name: "Netherlands", code: "NL", code_num: "99" },
+    { name: "Nepal", code: "NP", code_num: "22" },
+    { name: "Norway", code: "NO", code_num: "22" },
+    { name: "Danmark", code: "DK", code_num: "22" },
+    { name: "Germany", code: "DE", code_num: "49" },
+    { name: "Laos", code: "LA", code_num: "22" },
+    { name: "Malaysia", code: "MY", code_num: "22" },
+    { name: "Mexico", code: "MX", code_num: "22" },
+    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
+    { name: "Bangladesh", code: "BD", code_num: "22" },
+    { name: "Viet Nam", code: "VN", code_num: "84" },
+    { name: "Belgium", code: "BE", code_num: "22" },
+    {
+      name: "United Kingdom of Great Britain and Northern Ireland",
+      code: "GB",
+      code_num: "44",
+    },
+    { name: "Australia", code: "AU", code_num: "61" },
+    { name: "Austria", code: "AT", code_num: "22" },
+    { name: "Uzbekistan", code: "UZ", code_num: "22" },
+    { name: "Egypt", code: "EG", code_num: "22" },
+    { name: "Italy", code: "IT", code_num: "22" },
+    { name: "India", code: "IN", code_num: "91" },
+    { name: "Indonesia", code: "ID", code_num: "22" },
+    { name: "Japan", code: "JP", code_num: "22" },
+    { name: "China", code: "CN", code_num: "86" },
+    { name: "Cambodia", code: "KH", code_num: "22" },
+    { name: "Canada", code: "CA", code_num: "1" },
+    { name: "Taiwan", code: "TW", code_num: "22" },
+    { name: "Thailand", code: "TH", code_num: "886" },
+    { name: "Turkey", code: "TR", code_num: "22" },
+    { name: "Portugal", code: "PT", code_num: "22" },
+    { name: "Poland", code: "PL", code_num: "22" },
+    { name: "Puerto Rico", code: "PR", code_num: "22" },
+    { name: "France", code: "FR", code_num: "33" },
+    { name: "Finland", code: "FI", code_num: "22" },
+    { name: "Philippines", code: "PH", code_num: "63" },
+    { name: "Hong Kong", code: "HK", code_num: "852" },
+  ];
+
+  useEffect(() => {
+    value && setText(countryList.find((el) => el.code == value).name);
+  }, [value]);
 
   return (
     <>

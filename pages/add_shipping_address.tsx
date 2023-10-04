@@ -401,6 +401,7 @@ const useAdd_shiping_address = () => {
             </InputTitle>
             <SelectBox
               list={countryList}
+              value={countryCode}
               setValue={setCounryCode}
               validationStart={validationStart}
               setValidationResult={setCounryCodeValidationResult}

@@ -394,6 +394,7 @@ const useRegister = () => {
           </InputTitle>
           <SelectBox
             list={countryList}
+            value={countryCode}
             setValue={setCounryCode}
             validationStart={validationStart}
             setValidationResult={setCounryCodeValidationResult}
