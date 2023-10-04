@@ -15,6 +15,7 @@ import { goBack } from "../utils/functions";
 import {
   addAddressRequest,
   addressListRequest,
+  deleteAddress,
   loginRefreshRequest,
 } from "../utils/api";
 
@@ -95,7 +96,6 @@ const useAddress = () => {
     addressListRequest(at, 50).then((res) => {
       // 통신 성공 case
       if (res?.data.status == 200) {
-        console.log(res);
         // 주소목록 있는 case
         if (res?.data.result.data) {
           setAddressList(res?.data.result.data);
@@ -152,6 +152,59 @@ const useAddress = () => {
     window.scrollTo({ top: 0 });
   };
 
+  /** 삭제 버튼 클릭시 */
+  const deleteAddressHandler = (addressNo: number) => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    deleteAddress(addressNo, at).then((res) => {
+      // 성공 case
+      if (res?.data.status == 200) {
+        location.reload();
+        return;
+      }
+      // 주소 없는 case
+      if (res?.data.code == 9999) {
+        alert("해당 주소가 없습니다.");
+        location.reload();
+        return;
+      }
+      // 토큰 만료 case
+      if (res?.data.code == 1003) {
+        loginRefreshRequest(rt).then((res) => {
+          // 토큰 갱신 성공 case
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+            deleteAddress(addressNo, at).then((res) => {
+              // 삭제 성공 case
+              if (res?.data.status == 200) {
+                location.reload();
+                return;
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+
   return (
     <Container>
       <SideBar />
@@ -170,14 +223,43 @@ const useAddress = () => {
         {addressList.map((el: any, index: number) => {
           return (
             <ContentWrapper key={`asbcc-${index}`}>
-              <EditButton onClick={() => router.push("/edit_shipping_address")}>
-                Edit
-              </EditButton>
-              <DeleteButton>
+              <Link
+                href={{
+                  pathname: `/edit_shipping_address`,
+                  query: {
+                    addressNo: el.addressNo,
+                    title: el.title,
+                    firstName: el.firstName,
+                    lastName: el.lastName,
+                    companyName: el.companyName,
+                    countryCode: el.countryCode,
+                    state: el.state,
+                    streetAddress2: el.streetAddress2,
+                    streetAddress1: el.streetAddress1,
+                    postCode: el.postCode,
+                    phoneNumber: el.phoneNumber,
+                  },
+                }}
+                as={`/edit_shipping_address`}
+                style={{ textDecoration: "none" }}
+              >
+                <EditButton>Edit</EditButton>
+              </Link>
+              {/** 임시 코드 팝업으로 해야함 */}
+              <DeleteButton
+                onClick={() => {
+                  confirm("삭제하시겠습니까?") &&
+                    deleteAddressHandler(el.addressNo);
+                }}
+              >
                 <Image src={garbage} alt={"garbage_icon"} />
               </DeleteButton>
               <AddressTitle>{el.title}</AddressTitle>
-              <AddressText>{el.streetAddress2}</AddressText>
+              {/** address2 없으면 렌더링 안함 */}
+              {el.streetAddress2 && (
+                <AddressText>{el.streetAddress2}</AddressText>
+              )}
+
               <AddressText>{el.streetAddress1}</AddressText>
               <AddressText>{el.state}</AddressText>
               <AddressText>
