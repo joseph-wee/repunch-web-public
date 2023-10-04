@@ -550,3 +550,63 @@ export const colorsRequest = async () => {
     console.log(error);
   }
 };
+
+/** 주소 삭제 */
+export const deleteAddress = async (
+  addressNo: number,
+  accessToken: string | null
+) => {
+  try {
+    const res = await axios({
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      url: `/user/addresses/${addressNo}`,
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 주소 수정 */
+export const editAddress = async (
+  addressNo: number,
+  accessToken: string | null,
+  title: string,
+  firstName: string,
+  lastName: string,
+  companyName: string,
+  countryCode: string,
+  state: string,
+  streetAddress1: string,
+  streetAddress2: string,
+  postCode: string,
+  phoneNumber: string
+) => {
+  try {
+    const res = await axios({
+      method: "PUT",
+      url: `/user/addresses/${addressNo}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        title: title,
+        firstName: firstName,
+        lastName: lastName,
+        companyName: companyName,
+        countryCode: countryCode,
+        state: state,
+        streetAddress1: streetAddress1,
+        streetAddress2: streetAddress2,
+        postCode: postCode,
+        phoneNumber: phoneNumber,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
