@@ -23,7 +23,7 @@ const SelectBox = ({
   setValidationResult: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [isActive, setIsActive] = useState<boolean>(false); // 셀렉트박스 활성 유무
-  const [text, setText] = useState<string>(""); // 선택된 값이 보여지는 텍스트
+  const [text, setText] = useState<any>(""); // 선택된 값이 보여지는 텍스트
 
   /** 옵션 선택하면 해당 값이 세팅 */
   const optionHandler = (i: List) => {
@@ -78,7 +78,8 @@ const SelectBox = ({
   ];
 
   useEffect(() => {
-    value && setText(countryList.find((el) => el.code == value).name);
+    let temp = countryList.find((el) => el.code == value)?.name;
+    value && setText(temp);
   }, [value]);
 
   return (
