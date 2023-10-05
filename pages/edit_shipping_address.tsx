@@ -280,7 +280,9 @@ const useEdit_shipping_address = () => {
         console.log("여기서에러?");
         // 성공 case
         if (res?.data?.status == 200) {
-          router.push("/address");
+          router.query.backLink
+            ? router.push(`${router.query.backLink}`)
+            : router.push("/address");
           return;
         }
 
@@ -316,7 +318,9 @@ const useEdit_shipping_address = () => {
               ).then((res) => {
                 // 성공 case
                 if (res?.data?.status == 200) {
-                  router.push("/address");
+                  router.query.back
+                    ? router.push("/order_temp1")
+                    : router.push("/address");
                   return;
                 }
               });
