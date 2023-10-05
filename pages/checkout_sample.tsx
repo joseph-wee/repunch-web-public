@@ -203,8 +203,8 @@ const useCheck_out_sample = () => {
         <SampleContainer>
           <SampleWrapper>
             {tempOrderList.length > 0 &&
-              tempOrderList.map((el: any) => {
-                return <Sample data={el} />;
+              tempOrderList.map((el: any, index: number) => {
+                return <Sample data={el} key={`${index} asdf`} />;
               })}
           </SampleWrapper>
           <QtyWrapper>
