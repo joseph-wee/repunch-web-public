@@ -228,7 +228,7 @@ const useCart = () => {
     return nextSearchAfter;
   };
 
-  /** ROLL 카트 목록 핸들러 */
+  /** Sample 카트 목록 핸들러 */
   const SampleCartListHandler = async (searchAfter: number) => {
     let at;
     let rt: string | null;
@@ -285,7 +285,7 @@ const useCart = () => {
                     color: el.option.color.name, // 컬러
                     width: el.product.width, // 너비
                     length: el.option.length, // 길이
-                    price: el.option.price, // 가격
+                    price: el.option.samplePrice, // 가격
                     count: el.count, // 담은 개수
                     totalPrice: el.count * el.price, // 토탈 가격
                     quantity: el.option.quantity, // 판매 가능 개수
@@ -314,7 +314,7 @@ const useCart = () => {
             color: el.option.color.name, // 컬러
             width: el.product.width, // 너비
             length: el.option.length, // 길이
-            price: el.option.price, // 가격
+            price: el.option.samplePrice, // 가격
             count: el.count, // 담은 개수
             totalPrice: el.count * el.price, // 토탈 가격
             quantity: el.option.quantity, // 판매 가능 개수
@@ -367,16 +367,16 @@ const useCart = () => {
       // 체크한게 있어야 구매 진행
       if (temp.length > 0) {
         dispatch(setTempOrderList(temp));
-        router.push("/check_out");
+        router.push("/order_temp1");
       }
     }
     // Sample 구매 case
     if (cartValue == 1) {
-      rollCheckArr.forEach((el: any, index: number) => {
+      sampleCheckArr.forEach((el: any, index: number) => {
         el && temp.push(sampleList[index]);
       });
       // 체크한게 10~20개일 때만 구매 진행
-      if (temp.length >= 10 && temp.length <= 20) {
+      if (temp.length >= 1 && temp.length <= 20) {
         dispatch(setTempOrderList(temp));
 
         router.push("/checkout_sample");
