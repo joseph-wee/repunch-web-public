@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ic_air } from "../../assets";
+import { useAppSelector } from "../../redux/hooks";
 
 const useOrder_temp = () => {
   const [deliveryIsChecked, setDeliveryIsChecked] = useState<number>(0);
@@ -16,6 +17,29 @@ const useOrder_temp = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [popUpIsActive, setPopUpIsActive] = useState<number>(0);
   const [preparation, setPreparation] = useState<boolean>(false);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  const { value: tempOrderList } = useAppSelector(
+    (state) => state.tempOrderList
+  );
+
+  /** total price 계산 및 저장*/
+  const totalPriceHandler = async () => {
+    let sum = 0;
+    // 주문 리스트가 있을경우에만 실행
+    if (tempOrderList.length > 0) {
+      for (const el of tempOrderList) {
+        sum += el.price;
+      }
+    }
+    setTotalPrice(sum);
+  };
+
+  useEffect(() => {
+    // tempOrderListChekck();
+    totalPriceHandler();
+    console.log(tempOrderList);
+  }, []);
 
   const ref = useRef<any>();
 
@@ -66,7 +90,17 @@ const useOrder_temp = () => {
           </Notice>
         )}
         <ContentTitle>Product</ContentTitle>
-        <CheckOutMeterageProduct />
+        <OrderListWrapper>
+          {tempOrderList.length > 0 &&
+            tempOrderList.map((el: any, index: number) => {
+              return <CheckOutMeterageProduct data={el} />;
+            })}
+          <DotLine />
+          <PriceWrapper1>
+            <Exvat>EX VAT</Exvat>
+            <Price1>$ {totalPrice}</Price1>
+          </PriceWrapper1>
+        </OrderListWrapper>
         <ContentTitle>Shipping Address</ContentTitle>
         <ContentWrapper>
           <AddressTitle>My1</AddressTitle>
@@ -248,6 +282,37 @@ const ContentTitle = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
+  color: #121822;
+`;
+
+const OrderListWrapper = styled.div`
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  box-sizing: border-box;
+`;
+const DotLine = styled.div`
+  margin-bottom: 16px;
+  border-bottom: 1px dashed #dee8ec;
+`;
+const PriceWrapper1 = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: right;
+`;
+const Exvat = styled.div`
+  margin-right: 6px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 13px;
+  color: #121822;
+`;
+const Price1 = styled.div`
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+
   color: #121822;
 `;
 
