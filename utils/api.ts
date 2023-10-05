@@ -572,7 +572,7 @@ export const deleteAddress = async (
 
 /** 주소 수정 */
 export const editAddress = async (
-  addressNo: number,
+  addressNo: any,
   accessToken: string | null,
   title: string,
   firstName: string,
