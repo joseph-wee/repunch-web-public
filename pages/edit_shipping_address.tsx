@@ -12,7 +12,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { goBack } from "../utils/functions";
-import { addAddressRequest, loginRefreshRequest } from "../utils/api";
+import {
+  addAddressRequest,
+  editAddress,
+  loginRefreshRequest,
+} from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -126,8 +130,7 @@ const useEdit_shipping_address = () => {
 
   /** firstName 유효성 검사 */
   const validationFirstname = () => {
-    let regexp = /^[A-Za-z]{1,20}$/;
-    if (regexp.test(firstName)) {
+    if (Boolean(firstName)) {
       setFirstNameValidationResult(1);
       return true;
     }
@@ -136,8 +139,7 @@ const useEdit_shipping_address = () => {
   };
   /** lastName 유효성 검사 */
   const validationLastName = () => {
-    let regexp = /^[A-Za-z]{1,20}$/;
-    if (regexp.test(lastName)) {
+    if (Boolean(lastName)) {
       setLastNameValidationResult(1);
       return true;
     }
@@ -163,9 +165,9 @@ const useEdit_shipping_address = () => {
     return false;
   };
 
-  /** 국가코드 유효성 검사 */
+  /** state, provicne 유효성 검사 */
   const validationState = () => {
-    if (Boolean(countryCode)) {
+    if (Boolean(state)) {
       setStateValidationResult(1);
       return true;
     }
@@ -195,7 +197,7 @@ const useEdit_shipping_address = () => {
 
   /** streetAddress2 유효성 검사 */
   const validationStreetAddress2 = () => {
-    if (true) {
+    if (Boolean(streetAddress2)) {
       setStreetAddress2ValidationResult(1);
       return true;
     }
@@ -244,10 +246,11 @@ const useEdit_shipping_address = () => {
     }
   };
 
-  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 어드레스 추가 아니면 모두 재검사 */
-  const addAddressRequestHandler = () => {
+  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 어드레스 편집 아니면 모두 재검사 */
+  const editAddressHandler = () => {
     let at;
     let rt: string | null;
+    const addressNo = router.query.addressNo;
 
     if (sessionStorage.getItem("at")) {
       at = sessionStorage.getItem("at");
@@ -259,7 +262,8 @@ const useEdit_shipping_address = () => {
 
     let validationAllValue = validationAll();
     if (validationAllValue == true) {
-      addAddressRequest(
+      editAddress(
+        addressNo,
         at,
         title,
         firstName,
@@ -296,7 +300,8 @@ const useEdit_shipping_address = () => {
                 localStorage.setItem("at", at);
                 localStorage.setItem("rt", `${rt}`);
               }
-              addAddressRequest(
+              editAddress(
+                addressNo,
                 at,
                 title,
                 firstName,
@@ -373,7 +378,9 @@ const useEdit_shipping_address = () => {
                 ref.current[0] = element;
               }}
             />
-            <ErrorCase isActive={titleValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={titleValidationResult}>
+              Please enter your address title.
+            </ErrorCase>
           </InputContainer>
           <Wrapper>
             <InputContainer>
@@ -389,7 +396,7 @@ const useEdit_shipping_address = () => {
                 }}
               />
               <ErrorCase isActive={firstNameValidationResult}>
-                ErrorCase
+                Please enter your first name.
               </ErrorCase>
             </InputContainer>
             <InputContainer>
@@ -405,7 +412,7 @@ const useEdit_shipping_address = () => {
                 }}
               />{" "}
               <ErrorCase isActive={lastNameValidationResult}>
-                ErrorCase
+                Please enter your last name.
               </ErrorCase>
             </InputContainer>
           </Wrapper>
@@ -420,7 +427,7 @@ const useEdit_shipping_address = () => {
               }}
             />{" "}
             <ErrorCase isActive={companyNameValidationResult}>
-              ErrorCase
+              Please enter your company name.
             </ErrorCase>
           </InputContainer>
           <InputContainer>
@@ -439,7 +446,7 @@ const useEdit_shipping_address = () => {
               setValidationResult={setCounryCodeValidationResult}
             />{" "}
             <ErrorCase isActive={countryCodeValidationResult}>
-              ErrorCase
+              Please select your country.
             </ErrorCase>
           </InputContainer>
           <InputContainer>
@@ -452,7 +459,9 @@ const useEdit_shipping_address = () => {
                 ref.current[5] = element;
               }}
             />{" "}
-            <ErrorCase isActive={stateValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={stateValidationResult}>
+              Please enter your state /province.
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Street address</InputTitle>
@@ -464,6 +473,9 @@ const useEdit_shipping_address = () => {
                 ref.current[6] = element;
               }}
             />{" "}
+            <ErrorCase isActive={streetAddress1ValidationResult}>
+              Please enter your street address.
+            </ErrorCase>
             <Input
               type="text"
               value={streetAddress2}
@@ -472,8 +484,8 @@ const useEdit_shipping_address = () => {
                 ref.current[7] = element;
               }}
             />
-            <ErrorCase isActive={streetAddress1ValidationResult}>
-              ErrorCase
+            <ErrorCase isActive={streetAddress2ValidationResult}>
+              Please enter your street address.
             </ErrorCase>
           </InputContainer>
           <InputContainer>
@@ -486,7 +498,9 @@ const useEdit_shipping_address = () => {
                 ref.current[8] = element;
               }}
             />{" "}
-            <ErrorCase isActive={postCodeValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={postCodeValidationResult}>
+              Please enter your postcode.
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Phone number</InputTitle>
@@ -499,7 +513,7 @@ const useEdit_shipping_address = () => {
               }}
             />{" "}
             <ErrorCase isActive={phoneNumberValidationResult}>
-              ErrorCase
+              Please enter your phone number.
             </ErrorCase>
           </InputContainer>
 
@@ -509,7 +523,7 @@ const useEdit_shipping_address = () => {
                 <LinkStyling>Cancel</LinkStyling>
               </Link>
             </Button>
-            <Button onClick={() => addAddressRequestHandler()}>Confirm</Button>
+            <Button onClick={() => editAddressHandler()}>Confirm</Button>
           </ButtonWrapper>
         </AddressInit>
       </Main>
