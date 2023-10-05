@@ -5,7 +5,7 @@ import Image from "next/image";
 const Sample = ({ data }: any) => {
   return (
     <ImageWrapper>
-      <Image src={data.thumbnail} alt={"test"} width={48} height={48} />
+      <Image src={data && data.thumbnail} alt={"test"} width={48} height={48} />
     </ImageWrapper>
   );
 };

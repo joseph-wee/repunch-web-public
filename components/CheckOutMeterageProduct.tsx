@@ -6,21 +6,24 @@ import { test_thumbnail } from "../assets";
 const CheckOutMeterageProduct = ({ data }: any) => {
   return (
     <Container>
-      <ProductWrapper>
-        <ImageWrapper>
-          <Image src={data.thumbnail} alt={"test"} width={80} height={80} />
-        </ImageWrapper>
-        <TextWrapper>
-          <ProductTitle>{data.title}</ProductTitle>
-          <OptionWrapper>
-            <Color color={data.color} />
-            {data.color}
-            <VerticalLine />
-            {data.width}*{data.length}
-          </OptionWrapper>
-          <ProductQty>{data.count} Qty</ProductQty>
-        </TextWrapper>
-      </ProductWrapper>
+      {data && (
+        <ProductWrapper>
+          <ImageWrapper>
+            <Image src={data.thumbnail} alt={"test"} width={80} height={80} />
+          </ImageWrapper>
+          <TextWrapper>
+            <ProductTitle>{data.title}</ProductTitle>
+            <OptionWrapper>
+              <Color color={data.color} />
+              {data.color}
+              <VerticalLine />
+              {data.width}*{data.length}
+            </OptionWrapper>
+            <ProductQty>{data.count} Qty</ProductQty>
+          </TextWrapper>
+        </ProductWrapper>
+      )}
+
       {/* <Line />
       <PriceWrapper>
         <Exvat>EX VAT</Exvat>
