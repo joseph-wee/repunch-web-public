@@ -250,8 +250,8 @@ const useRegister = () => {
   };
   /** password 유효성 검사 */
   const validationPassword = () => {
-    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
-    if (regexp.test(password)) {
+    // let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (password.length >= 10) {
       setPassowrdValidationResult(1);
       return true;
     }
@@ -260,8 +260,8 @@ const useRegister = () => {
   };
   /** passwordConfirm 유효성 검사 */
   const validationPasswordConfirm = () => {
-    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
-    if (password == passwordConfirm && regexp.test(passwordConfirm)) {
+    // let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (password == passwordConfirm && passwordConfirm.length > 0) {
       setPasswordConfirmValidationResult(1);
       return true;
     }
@@ -366,7 +366,7 @@ const useRegister = () => {
               }}
             />
             <ErrorCase isActive={firstNameValidationResult}>
-              ErrorCase
+              Please enter your first name.
             </ErrorCase>
           </InputContainer>
           <InputContainer>
@@ -381,7 +381,9 @@ const useRegister = () => {
                 ref.current[1] = element;
               }}
             />
-            <ErrorCase isActive={lastNameValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={lastNameValidationResult}>
+              Please enter your last name.
+            </ErrorCase>
           </InputContainer>
         </Wrapper>
         <InputContainer>
@@ -400,7 +402,7 @@ const useRegister = () => {
             setValidationResult={setCounryCodeValidationResult}
           />
           <ErrorCase isActive={countryCodeValidationResult}>
-            ErrorCase
+            Please select your country.
           </ErrorCase>
         </InputContainer>
         <InputContainer>
@@ -416,7 +418,7 @@ const useRegister = () => {
             }}
           />
           <ErrorCase isActive={companyNameValidationResult}>
-            ErrorCase
+            Please enter your company name.
           </ErrorCase>
         </InputContainer>
         {/* <InputContainer>
@@ -465,7 +467,7 @@ const useRegister = () => {
                 setValidationResult={setCounryCodeValidationResult}
               />
               <ErrorCase isActive={countryPhoneNumberValidationResult}>
-                ErrorCase
+                Please select your country number.
               </ErrorCase>
             </InputContainerCountryCodeNum>
             <InputContainerPhoneNumber>
@@ -480,7 +482,7 @@ const useRegister = () => {
                 }}
               />
               <ErrorCase isActive={phoneNumberValidationResult}>
-                ErrorCase
+                Please enter your phone number.
               </ErrorCase>
             </InputContainerPhoneNumber>
           </Wrapper>
@@ -498,7 +500,9 @@ const useRegister = () => {
               ref.current[7] = element;
             }}
           />
-          <ErrorCase isActive={userIdValidationResult}>ErrorCase</ErrorCase>
+          <ErrorCase isActive={userIdValidationResult}>
+            Please enter a valid email address.
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password</InputTitle>
@@ -512,7 +516,9 @@ const useRegister = () => {
               ref.current[8] = element;
             }}
           />
-          <ErrorCase isActive={passwordValidationResult}>ErrorCase</ErrorCase>
+          <ErrorCase isActive={passwordValidationResult}>
+            Please enter a password of at least 10 characters.
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password confirm</InputTitle>
@@ -527,7 +533,7 @@ const useRegister = () => {
             }}
           />
           <ErrorCase isActive={passwordConfirmValidationResult}>
-            ErrorCase
+            Please enter a same password.
           </ErrorCase>
         </InputContainer>
         <Wrapper>
