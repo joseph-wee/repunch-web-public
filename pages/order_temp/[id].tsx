@@ -93,7 +93,7 @@ const useOrder_temp = () => {
         <OrderListWrapper>
           {tempOrderList.length > 0 &&
             tempOrderList.map((el: any, index: number) => {
-              return <CheckOutMeterageProduct data={el} />;
+              return <CheckOutMeterageProduct data={el} key={"afs" + index} />;
             })}
           <DotLine />
           <PriceWrapper1>
