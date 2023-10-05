@@ -446,6 +446,7 @@ const useEdit_account_info = () => {
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
           <SelectBox
+            value={industryCode}
             list={companyCategoryList}
             setValue={setIndustryCode}
             validationStart={validationStart}
