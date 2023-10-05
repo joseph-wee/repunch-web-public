@@ -5,23 +5,104 @@ import { CheckOutMeterageProduct, Sample } from "../components";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { addressListRequest } from "../utils/api";
+import { addressListRequest, loginRefreshRequest } from "../utils/api";
+import { useAppSelector } from "../redux/hooks";
+
+/** 국가, 카테고리 객체 타입 */
+export interface List {
+  name: string; // 이름
+  code: string; // 코드
+  code_num?: string; // 코드 번호
+}
+
+/** 국가, 카테고리 객체타입을 배열 형태로 확장 */
+export interface ListCountryArray extends Array<List> {}
 
 const useCheck_out_sample = () => {
   const [deliveryIsChecked, setDeliveryIsChecked] = useState<number>(0);
   const [paymentIsChecked, setPaymentIsChecked] = useState<number>(0);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [popUpIsActive, setPopUpIsActive] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [addressList, setAddressList] = useState<any>([]);
+  const [selectAdress, setSelectAddress] = useState<any>();
+
+  const { value: tempOrderList } = useAppSelector(
+    (state) => state.tempOrderList
+  );
 
   const ref = useRef<any>();
 
   const router = useRouter();
+
+  /** 나라 리스트 숫자 코드는 업데이트 필요 */
+  const countryList: ListCountryArray = [
+    { name: "Republic of Korea", code: "KR", code_num: "82" },
+    { name: "United States of America", code: "US", code_num: "1" },
+    { name: "Greece", code: "GR", code_num: "99" },
+    { name: "Netherlands", code: "NL", code_num: "99" },
+    { name: "Nepal", code: "NP", code_num: "22" },
+    { name: "Norway", code: "NO", code_num: "22" },
+    { name: "Danmark", code: "DK", code_num: "22" },
+    { name: "Germany", code: "DE", code_num: "49" },
+    { name: "Laos", code: "LA", code_num: "22" },
+    { name: "Malaysia", code: "MY", code_num: "22" },
+    { name: "Mexico", code: "MX", code_num: "22" },
+    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
+    { name: "Bangladesh", code: "BD", code_num: "22" },
+    { name: "Viet Nam", code: "VN", code_num: "84" },
+    { name: "Belgium", code: "BE", code_num: "22" },
+    {
+      name: "United Kingdom of Great Britain and Northern Ireland",
+      code: "GB",
+      code_num: "44",
+    },
+    { name: "Australia", code: "AU", code_num: "61" },
+    { name: "Austria", code: "AT", code_num: "22" },
+    { name: "Uzbekistan", code: "UZ", code_num: "22" },
+    { name: "Egypt", code: "EG", code_num: "22" },
+    { name: "Italy", code: "IT", code_num: "22" },
+    { name: "India", code: "IN", code_num: "91" },
+    { name: "Indonesia", code: "ID", code_num: "22" },
+    { name: "Japan", code: "JP", code_num: "22" },
+    { name: "China", code: "CN", code_num: "86" },
+    { name: "Cambodia", code: "KH", code_num: "22" },
+    { name: "Canada", code: "CA", code_num: "1" },
+    { name: "Taiwan", code: "TW", code_num: "22" },
+    { name: "Thailand", code: "TH", code_num: "886" },
+    { name: "Turkey", code: "TR", code_num: "22" },
+    { name: "Portugal", code: "PT", code_num: "22" },
+    { name: "Poland", code: "PL", code_num: "22" },
+    { name: "Puerto Rico", code: "PR", code_num: "22" },
+    { name: "France", code: "FR", code_num: "33" },
+    { name: "Finland", code: "FI", code_num: "22" },
+    { name: "Philippines", code: "PH", code_num: "63" },
+    { name: "Hong Kong", code: "HK", code_num: "852" },
+  ];
+
+  /** 총 개수, 총 가격 계산 */
+  const totalCountPriceHandler = () => {
+    let countSum = 0;
+    let countPrice = 0;
+    tempOrderList.forEach((el: any) => {
+      countSum += el.count;
+      countPrice += el.price;
+    });
+    setTotalCount(countSum);
+    setTotalPrice(countPrice);
+  };
 
   useEffect(() => {
     if (popUpIsActive == 1) {
       ref.current.focus();
     }
   }, [popUpIsActive]);
+
+  useEffect(() => {
+    totalCountPriceHandler();
+    console.log(tempOrderList);
+  }, []);
 
   // const at = localStorage.getItem("at"); // 엑세스 토큰
 
@@ -39,6 +120,81 @@ const useCheck_out_sample = () => {
   //   addressListRequestHandler();
   // }, []);
 
+  const addressListRequestHandler = () => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    addressListRequest(at, 50).then((res) => {
+      // 통신 성공 case
+      if (res?.data.status == 200) {
+        console.log(res?.data.result.data[0]);
+        // 주소목록 있는 case
+        if (res?.data.result.data) {
+          setAddressList(res?.data.result.data);
+          setSelectAddress(res?.data.result.data[0]);
+          return;
+        }
+        // 주소목록 없는 case
+        if (res?.data.result.data == null) {
+          router.push("/add_shipping_address");
+          return;
+        }
+      }
+      // 토큰 만료 case
+      if (res?.data.code == 1003) {
+        loginRefreshRequest(rt).then((res) => {
+          // 토큰 갱신 성공 case
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+            addressListRequest(at, 50).then((res) => {
+              // 통신 성공 case
+              if (res?.data.status == 200) {
+                // 주소목록 있는 case
+                if (res?.data.result.data) {
+                  setAddressList(res?.data.result.data);
+                  setSelectAddress(res?.data.result.data[0]);
+                  return;
+                }
+                // 주소목록 없는 case
+                if (res?.data.result.data == null) {
+                  router.push("/add_shipping_address");
+                  return;
+                }
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+
+  /** 주소 선택시 */
+  const selectAdressHandler = (index: number) => {
+    setPopUpIsActive(0);
+    setSelectAddress(addressList[index]);
+  };
+
+  useEffect(() => {
+    addressListRequestHandler();
+  }, []);
+
   return (
     <>
       <Container>
@@ -46,28 +202,19 @@ const useCheck_out_sample = () => {
         <ContentTitle>Product</ContentTitle>
         <SampleContainer>
           <SampleWrapper>
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
+            {tempOrderList.length > 0 &&
+              tempOrderList.map((el: any) => {
+                return <Sample data={el} />;
+              })}
           </SampleWrapper>
           <QtyWrapper>
             <QtyTitle>Qty</QtyTitle>
-            <Qty>13</Qty>
+            <Qty>{totalCount}</Qty>
           </QtyWrapper>
           <DottedLine />
           <SamplePriceWrapper>
             <Exvat>EX VAT</Exvat>
-            <SamplePrice>$ 42.78</SamplePrice>
+            <SamplePrice>$ {totalPrice}</SamplePrice>
           </SamplePriceWrapper>
         </SampleContainer>
         {/* <ContentTitle>Order Profile</ContentTitle>
@@ -78,15 +225,53 @@ const useCheck_out_sample = () => {
           <ProfilePhoneNumber>+82(0)10-8628-1024</ProfilePhoneNumber>
         </ContentWrapper> */}
         <ContentTitle>Shipping Address</ContentTitle>
+
         <ContentWrapper>
-          <AddressTitle>My1</AddressTitle>
-          <AddressText>#809</AddressText>
-          <AddressText>#809, 8dong ssangyoung</AddressText>
-          <AddressText>daechi dong, gangnamgu</AddressText>
-          <AddressText>korea</AddressText>
-          <AddressText>06285</AddressText>
-          <AddressPhoneNumber>+82 1086281024</AddressPhoneNumber>
-          <AddressButton onClick={() => router.push("/edit_shipping_address")}>
+          {selectAdress && (
+            <>
+              <Link
+                href={{
+                  pathname: `/edit_shipping_address`,
+                  query: {
+                    addressNo: selectAdress.addressNo,
+                    title: selectAdress.title,
+                    firstName: selectAdress.firstName,
+                    lastName: selectAdress.lastName,
+                    companyName: selectAdress.companyName,
+                    countryCode: selectAdress.countryCode,
+                    state: selectAdress.state,
+                    streetAddress2: selectAdress.streetAddress2,
+                    streetAddress1: selectAdress.streetAddress1,
+                    postCode: selectAdress.postCode,
+                    phoneNumber: selectAdress.phoneNumber,
+                    backLink: "/checkout_sample",
+                  },
+                }}
+                as={`/edit_shipping_address`}
+                style={{ textDecoration: "none" }}
+              >
+                <EditButton>Edit</EditButton>
+              </Link>
+              <AddressTitle>{selectAdress.title}</AddressTitle>
+              <ProfileCorperationName>
+                {selectAdress.companyName}
+              </ProfileCorperationName>
+              <ProfileName>
+                {selectAdress.firstName},{selectAdress.lastName}
+              </ProfileName>
+              <AddressText>{selectAdress.streetAddress2}</AddressText>
+              <AddressText>{selectAdress.streetAddress1}</AddressText>
+              <AddressText>{selectAdress.state}</AddressText>
+              <AddressText>
+                {countryList.filter((x: any) => x.code == "KR")[0].name}
+              </AddressText>
+              <AddressText>{selectAdress.postCode}</AddressText>
+              <AddressPhoneNumber>
+                {selectAdress.phoneNumber}
+              </AddressPhoneNumber>
+            </>
+          )}
+          <AddressButton onClick={() => router.push("/add_shiping_address")}>
             + Add a new address
           </AddressButton>
           <AddressButton onClick={() => setPopUpIsActive(1)}>
@@ -209,7 +394,7 @@ const useCheck_out_sample = () => {
         <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
-            <Price>$42.78</Price>
+            <Price>${totalPrice}</Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
@@ -222,12 +407,12 @@ const useCheck_out_sample = () => {
             <PriceTitle>
               Tax <QuestionMark>?</QuestionMark>
             </PriceTitle>
-            <Price>$32.25</Price>
+            <Price>$7.25</Price>
           </FlexWrapper>
           <Line />
           <FlexWrapper>
             <TotalTitle>Total</TotalTitle>
-            <TotalPrice>$75.03</TotalPrice>
+            <TotalPrice>${Number(totalPrice + 7.25)}</TotalPrice>
           </FlexWrapper>
           <InfoText>
             <Image src={ic_info} alt={"ic_info"} />
@@ -247,9 +432,16 @@ const useCheck_out_sample = () => {
       </ButtonWrapper>
       <PopUpBox isActive={popUpIsActive}>
         <ContentBox tabIndex={0} onBlur={() => setPopUpIsActive(0)} ref={ref}>
-          <AddressMenu onClick={() => setPopUpIsActive(0)}>My1</AddressMenu>
-          <BorderLine />
-          <AddressMenu onClick={() => setPopUpIsActive(0)}>My2</AddressMenu>
+          {addressList.map((el: any, index: number) => {
+            return (
+              <>
+                <AddressMenu onClick={() => selectAdressHandler(index)}>
+                  {el.title}
+                </AddressMenu>
+                {index + 1 != addressList.length && <BorderLine />}
+              </>
+            );
+          })}
         </ContentBox>
       </PopUpBox>
     </>
