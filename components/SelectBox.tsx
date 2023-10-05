@@ -78,7 +78,12 @@ const SelectBox = ({
   ];
 
   useEffect(() => {
-    let temp = countryList.find((el) => el.code == value)?.name;
+    let temp: string = "";
+    countryList.forEach((el) => {
+      if (el.code == value) {
+        temp = el.name;
+      }
+    });
     value && setText(temp);
   }, [value]);
 
