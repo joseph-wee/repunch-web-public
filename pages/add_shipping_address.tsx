@@ -126,8 +126,7 @@ const useAdd_shiping_address = () => {
 
   /** firstName 유효성 검사 */
   const validationFirstname = () => {
-    let regexp = /^[A-Za-z]{1,20}$/;
-    if (regexp.test(firstName)) {
+    if (Boolean(firstName)) {
       setFirstNameValidationResult(1);
       return true;
     }
@@ -136,8 +135,7 @@ const useAdd_shiping_address = () => {
   };
   /** lastName 유효성 검사 */
   const validationLastName = () => {
-    let regexp = /^[A-Za-z]{1,20}$/;
-    if (regexp.test(lastName)) {
+    if (Boolean(lastName)) {
       setLastNameValidationResult(1);
       return true;
     }
@@ -163,9 +161,9 @@ const useAdd_shiping_address = () => {
     return false;
   };
 
-  /** 국가코드 유효성 검사 */
+  /** state, provicne 유효성 검사 */
   const validationState = () => {
-    if (Boolean(countryCode)) {
+    if (Boolean(state)) {
       setStateValidationResult(1);
       return true;
     }
@@ -195,7 +193,7 @@ const useAdd_shiping_address = () => {
 
   /** streetAddress2 유효성 검사 */
   const validationStreetAddress2 = () => {
-    if (true) {
+    if (Boolean(streetAddress2)) {
       setStreetAddress2ValidationResult(1);
       return true;
     }
@@ -344,7 +342,9 @@ const useAdd_shiping_address = () => {
                 ref.current[0] = element;
               }}
             />
-            <ErrorCase isActive={titleValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={titleValidationResult}>
+              Please enter your address title.
+            </ErrorCase>
           </InputContainer>
           <Wrapper>
             <InputContainer>
@@ -359,7 +359,7 @@ const useAdd_shiping_address = () => {
                 }}
               />
               <ErrorCase isActive={firstNameValidationResult}>
-                ErrorCase
+                Please enter your first name.
               </ErrorCase>
             </InputContainer>
             <InputContainer>
@@ -374,7 +374,7 @@ const useAdd_shiping_address = () => {
                 }}
               />{" "}
               <ErrorCase isActive={lastNameValidationResult}>
-                ErrorCase
+                Please enter your last name.
               </ErrorCase>
             </InputContainer>
           </Wrapper>
@@ -388,7 +388,7 @@ const useAdd_shiping_address = () => {
               }}
             />{" "}
             <ErrorCase isActive={companyNameValidationResult}>
-              ErrorCase
+              Please enter your company name.
             </ErrorCase>
           </InputContainer>
           <InputContainer>
@@ -407,7 +407,7 @@ const useAdd_shiping_address = () => {
               setValidationResult={setCounryCodeValidationResult}
             />{" "}
             <ErrorCase isActive={countryCodeValidationResult}>
-              ErrorCase
+              Please select your country.
             </ErrorCase>
           </InputContainer>
           <InputContainer>
@@ -419,7 +419,9 @@ const useAdd_shiping_address = () => {
                 ref.current[5] = element;
               }}
             />{" "}
-            <ErrorCase isActive={stateValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={stateValidationResult}>
+              Please enter your state /province.
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Street address</InputTitle>
@@ -430,6 +432,9 @@ const useAdd_shiping_address = () => {
                 ref.current[6] = element;
               }}
             />{" "}
+            <ErrorCase isActive={streetAddress1ValidationResult}>
+              Please enter your street address.
+            </ErrorCase>
             <Input
               type="text"
               onChange={(e) => setStreetAddress2(e.target.value)}
@@ -437,8 +442,8 @@ const useAdd_shiping_address = () => {
                 ref.current[7] = element;
               }}
             />
-            <ErrorCase isActive={streetAddress1ValidationResult}>
-              ErrorCase
+            <ErrorCase isActive={streetAddress2ValidationResult}>
+              Please enter your street address.
             </ErrorCase>
           </InputContainer>
           <InputContainer>
@@ -450,7 +455,9 @@ const useAdd_shiping_address = () => {
                 ref.current[8] = element;
               }}
             />{" "}
-            <ErrorCase isActive={postCodeValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={postCodeValidationResult}>
+              Please enter your postcode.
+            </ErrorCase>
           </InputContainer>
           <InputContainer>
             <InputTitle>Phone number</InputTitle>
@@ -462,7 +469,7 @@ const useAdd_shiping_address = () => {
               }}
             />{" "}
             <ErrorCase isActive={phoneNumberValidationResult}>
-              ErrorCase
+              Please enter your phone number.
             </ErrorCase>
           </InputContainer>
 
