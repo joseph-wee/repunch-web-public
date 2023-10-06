@@ -49,7 +49,7 @@ const Container = styled.div`
   padding-bottom: 40px;
   padding-right: 20px;
   padding-left: 20px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-top: 20px;
   }
 `;
@@ -65,7 +65,7 @@ const Wrapper = styled.div`
   border: 0.79402px solid #dee8ec;
   border-radius: 2px;
   box-sizing: border-box;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-top: 11px;
   }
 `;

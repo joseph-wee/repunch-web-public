@@ -118,7 +118,7 @@ const Container = styled.div`
   max-width: 427.75px;
 
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -224,7 +224,7 @@ const Button = styled.button`
     border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 768px) {
       margin-right: 11px;
     }
   }

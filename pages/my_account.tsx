@@ -82,7 +82,7 @@ const Container = styled.div`
   @media screen and (max-width: 1279px) {
     max-width: 608px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
     padding-top: 20px;
     padding-left: 20px;
@@ -94,7 +94,7 @@ const Main = styled.div`
   position: relative;
   margin-left: 20px;
   width: 100%;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-left: 0;
     margin-bottom: 20px;
   }
@@ -105,7 +105,7 @@ const Title = styled.div`
   line-height: 28px;
   letter-spacing: -0.011em;
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 9px;
     font-size: 22px;
     line-height: 26px;
@@ -120,7 +120,7 @@ const WelcomeText = styled.div`
   line-height: 12px;
   letter-spacing: -0.011em;
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     position: static;
   }
 `;
@@ -136,7 +136,7 @@ const FavoriteCartOrderCountWrapper = styled.div`
   background-color: #f2f6f8;
   border: 0.79402px solid #dee8ec;
   border-radius: 2px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 10%;
     padding-right: 10%;
   }
@@ -166,7 +166,7 @@ const CountTitle = styled.div`
 `;
 const InfoContainer = styled.div`
   margin-top: 10px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-top: 20px;
   }
 `;

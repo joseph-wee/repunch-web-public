@@ -57,7 +57,7 @@ const Background = styled.div`
 const BannerTextWrapper = styled.div`
   margin: 0 auto;
   z-index: 1;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     width: 75%;
   }
   text-align: center;
@@ -70,7 +70,7 @@ const Title = styled.div`
   line-height: 28px;
 `;
 const Text = styled.span`
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
   font-weight: 400;
@@ -79,7 +79,7 @@ const Text = styled.span`
 `;
 const TextMobile = styled.span`
   display: none;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
   }
   font-weight: 400;

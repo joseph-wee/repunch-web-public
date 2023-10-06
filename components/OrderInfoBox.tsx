@@ -293,7 +293,7 @@ const Container = styled.div`
   border: 1px solid #dee8ec;
   border-radius: 2px;
   margin-bottom: 8px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 8px;
   }
 `;

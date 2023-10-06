@@ -886,7 +886,7 @@ const Container = styled.div`
     padding-left: 74px;
     padding-right: 74px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-top: 0;
     padding-left: 0;
     padding-right: 0;
@@ -898,7 +898,7 @@ const ProductInfoContainer = styled.div`
   @media screen and (max-width: 1279px) {
     margin-bottom: 16px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
     margin-bottom: 43px;
   }
@@ -915,7 +915,7 @@ const BigImagevideoWrapper = styled.div`
     display: block;
     content: "";
     padding-bottom: 250px;
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 768px) {
       padding-bottom: 100%;
     }
   }
@@ -943,7 +943,7 @@ const SmallImageVideoWrapper = styled.div`
   position: relative;
   width: 320px;
   height: 68px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     width: 100%;
   }
   overflow-x: overlay;
@@ -989,7 +989,7 @@ const ProductInfoPurchaseContainer = styled.div`
   padding-left: 20px;
   padding-right: 20px;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     width: auto;
     padding-top: 20px;
   }
@@ -1059,7 +1059,7 @@ const PurchaseContainer = styled.div`
     padding-left: 0px;
     margin-bottom: 20px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -1238,7 +1238,7 @@ const LengthWrapper = styled.div`
   width: 100%;
   height: 40px;
   box-sizing: border-box;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
     height: auto;
     margin-bottom: 16px;
@@ -1257,7 +1257,7 @@ const LengthTitle = styled.div`
 const ButtonInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 16px;
   }
 `;
@@ -1291,7 +1291,7 @@ const LengthInput = styled.input`
 
   text-align: center;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     width: 100%;
   }
 `;
@@ -1310,7 +1310,7 @@ const PlusButton = styled.button`
 const ProductPriceWrapper = styled.div`
   display: flex;
   gap: 11.48px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
   }
 `;
@@ -1322,7 +1322,7 @@ const ProductUnit = styled.div`
   font-weight: 400;
   line-height: 130%;
   letter-spacing: -0.132px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
     text-align: center;
   }
@@ -1333,7 +1333,7 @@ const ProductPrice = styled.div`
   font-weight: 700;
   line-height: 130%;
   letter-spacing: -0.308px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     text-align: center;
   }
 `;
@@ -1402,7 +1402,7 @@ const RequestSample = styled.button`
 
   color: #121822;
   cursor: pointer;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
   }
 `;

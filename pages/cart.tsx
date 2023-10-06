@@ -553,7 +553,7 @@ const Container = styled.div`
   @media screen and (max-width: 1279px) {
     max-width: 608px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
@@ -563,7 +563,7 @@ const Container = styled.div`
 const Main = styled.div`
   margin-left: 20px;
   width: 100%;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-left: 0;
   }
 `;
@@ -574,7 +574,7 @@ const TitleWrapper = styled.div`
 `;
 const ImageWrapper = styled.div`
   display: none;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: flex;
     align-items: center;
   }
@@ -585,7 +585,7 @@ const Title = styled.div`
   line-height: 28px;
   letter-spacing: -0.011em;
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     font-size: 22px;
     line-height: 26px;
     margin-left: 8px;
@@ -714,7 +714,7 @@ const ButtonContainer = styled.div`
   padding-bottom: 20px;
   padding-left: 20px;
   padding-right: 20px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-top: 16px;
     padding-bottom: 16px;
   }
@@ -734,7 +734,7 @@ const RemovePurchaseButtonWrapper = styled.div`
   @media screen and (max-width: 1279px) {
     padding-left: 180px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 0px;
   }
 `;
@@ -753,7 +753,7 @@ const RemoveButton = styled.button`
   line-height: 18px;
   color: #121822;
   cursor: pointer;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     flex-shrink: 1;
     width: 30%;
     min-width: 94px;
@@ -775,7 +775,7 @@ const PurchaseButton = styled.button`
   line-height: 18px;
   color: #121822;
   cursor: pointer;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     width: 70%;
     min-width: 178px;
   }

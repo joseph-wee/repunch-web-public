@@ -69,7 +69,7 @@ const Container = styled.div<{ isActive: boolean }>`
   width: 120px;
   flex: 0 0 120px;
   height: 40px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-right: 8.5px;
     width: 77px;
     flex: 0 0 77px;

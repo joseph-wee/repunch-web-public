@@ -271,7 +271,7 @@ const Container = styled.div`
   border: 1px solid #dee8ec;
   border-radius: 2px;
   margin-bottom: 8px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 8px;
   }
 `;
@@ -799,7 +799,7 @@ const SampleWrapper = styled.div`
   row-gap: 9px;
   column-gap: 9.5px;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     row-gap: 2px;
     column-gap: 2px;

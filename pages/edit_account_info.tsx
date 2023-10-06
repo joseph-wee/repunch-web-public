@@ -541,7 +541,7 @@ const SelectBoxCountryCodeNumTemporary = styled.div`
   height: 40px;
   border: 1px solid #dee8ec;
   border-radius: 2px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-right: 8.5px;
     width: 77px;
     flex: 0 0 77px;
@@ -554,7 +554,7 @@ const Container = styled.div`
   padding-top: 30px;
   padding-bottom: 40px;
   max-width: 427px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
     max-width: 100%; // 사이드바 추가하는거면 나중에 여기 삭제
     padding-left: 20px;
@@ -566,7 +566,7 @@ const Main = styled.div`
   position: relative;
   margin-left: 20px;
   width: 100%;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-left: 0;
     margin-bottom: 20px;
   }
@@ -578,7 +578,7 @@ const TitleWrapper = styled.div`
 `;
 const ImageWrapper = styled.div`
   display: none;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: flex;
     align-items: center;
   }
@@ -589,7 +589,7 @@ const Title = styled.div`
   line-height: 26px;
   letter-spacing: -0.011em;
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     font-size: 22px;
     line-height: 26px;
     margin-left: 8px;
@@ -701,7 +701,7 @@ const Button = styled.button`
     border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 768px) {
       margin-right: 11px;
     }
   }

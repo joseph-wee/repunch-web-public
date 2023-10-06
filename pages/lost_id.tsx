@@ -142,11 +142,11 @@ const SelectBoxCountryCodeNumTemporary = styled.div`
   height: 40px;
   border: 1px solid #dee8ec;
   border-radius: 2px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-right: 8.5px;
     width: 77px;
     flex: 0 0 77px;
-  } ;
+  }
 `;
 
 const ContainerFindId = styled.div<{ idLength: number }>`
@@ -157,7 +157,7 @@ const ContainerFindId = styled.div<{ idLength: number }>`
   max-width: 427.75px;
 
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -174,7 +174,7 @@ const Title = styled.div`
   letter-spacing: 0em;
   text-align: left;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 4px;
   }
 `;
@@ -198,7 +198,7 @@ const WelcomeText = styled.div`
 const Line = styled.div`
   margin-bottom: 20px;
   border-top: 1px dashed #dee8ec;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
 `;
@@ -268,7 +268,7 @@ const Button = styled.button`
     border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 768px) {
       margin-right: 11px;
     }
   }
@@ -297,7 +297,7 @@ const ContainerYourId = styled.div<{ idLength: number }>`
   max-width: 280px;
 
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -316,7 +316,7 @@ const TitleYourId = styled.div`
   line-height: 29px;
   letter-spacing: 0em;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 4px;
   }
 `;

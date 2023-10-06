@@ -142,13 +142,13 @@ const Menu = styled.div`
   right: 20px;
   &:nth-of-type(2) {
     right: 64px;
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 768px) {
       display: none;
     }
   }
   &:nth-of-type(3) {
     right: 108px;
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 768px) {
       display: none;
     }
   }

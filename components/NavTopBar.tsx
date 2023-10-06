@@ -95,7 +95,7 @@ const Container = styled.nav<{ isActive: boolean }>`
   background-color: #ffffff;
   border-bottom: 1px solid #f2f6f8;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
 `;

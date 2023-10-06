@@ -144,7 +144,7 @@ const Container = styled.div`
   margin: 0 auto;
   padding-top: 24px;
   max-width: 427px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
@@ -158,7 +158,7 @@ const Title = styled.div`
   line-height: 28px;
   letter-spacing: -0.011em;
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 20px;
     font-size: 22px;
     line-height: 26px;
@@ -602,7 +602,7 @@ const ButtonWrapper = styled.div`
   max-width: 427px;
   display: flex;
   gap: 10.5px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
     max-width: 100%;

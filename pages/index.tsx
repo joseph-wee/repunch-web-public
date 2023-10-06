@@ -145,7 +145,7 @@ const Banner = styled.div`
   height: 280px;
   overflow: hidden;
   box-sizing: border-box;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin: 0;
   }
 `;
@@ -153,7 +153,7 @@ const Banner = styled.div`
 const BackgroundMobile = styled.div`
   display: none;
   height: 280px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
   }
 `;
@@ -163,7 +163,7 @@ const BackgroundPad = styled.div`
   @media screen and (max-width: 1279px) {
     display: block;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
 `;
@@ -186,7 +186,7 @@ const BannerTextWrapper = styled.div`
   box-sizing: border-box;
   color: #ffffff;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-right: 14px;
   }
 `;
@@ -208,7 +208,7 @@ const Title = styled.div`
   text-transform: uppercase;
   color: #e1ff20;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-right: 1.5px;
   }
 `;
@@ -231,7 +231,7 @@ const LineLime = styled.div`
 
   border-bottom: 1px solid #e1ff20;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-right: 0px;
   }
 `;
@@ -303,7 +303,7 @@ const Main = styled.div`
     padding-right: 80px;
   }
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -489,7 +489,7 @@ const ProductListGridWrapper = styled.div`
     row-gap: 40px;
     column-gap: 18px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     grid-template-columns: 1fr 1fr;
     row-gap: 15px;
     column-gap: 15px;

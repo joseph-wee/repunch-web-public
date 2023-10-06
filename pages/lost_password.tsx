@@ -113,7 +113,7 @@ const ContainerFindId = styled.div<{ isActive: boolean }>`
   max-width: 427.75px;
 
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -130,7 +130,7 @@ const Title = styled.div`
   letter-spacing: 0em;
   text-align: left;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 4px;
   }
 `;
@@ -226,7 +226,7 @@ const Button = styled.button`
     background-color: #f2f6f8;
     border: 1px solid #dee8ec;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 768px) {
       margin-right: 11px;
     }
   }
@@ -248,7 +248,7 @@ const LinkStyling = styled.div`
 `;
 
 const InfoMessage = styled.div`
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
   font-weight: 400;
@@ -280,7 +280,7 @@ const ContainerYourPassword = styled.div<{ isActive: boolean }>`
   max-width: 427.75px;
 
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }

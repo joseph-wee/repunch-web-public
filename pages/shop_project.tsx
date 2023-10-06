@@ -123,7 +123,7 @@ const Background = styled.div`
 const BannerTextWrapper = styled.div`
   margin: 0 auto;
   z-index: 1;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     width: 75%;
   }
   text-align: center;
@@ -136,7 +136,7 @@ const Title = styled.div`
   line-height: 28px;
 `;
 const Text = styled.span`
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
   font-weight: 400;
@@ -145,7 +145,7 @@ const Text = styled.span`
 `;
 const TextMobile = styled.span`
   display: none;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
   }
   font-weight: 400;
@@ -154,7 +154,7 @@ const TextMobile = styled.span`
 `;
 
 const Br = styled.br`
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
 `;
@@ -174,7 +174,7 @@ const Main = styled.div`
     padding-right: 80px;
   }
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -360,7 +360,7 @@ const ProductListGridWrapper = styled.div`
     row-gap: 40px;
     column-gap: 18px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     grid-template-columns: 1fr 1fr;
     row-gap: 15px;
     column-gap: 15px;

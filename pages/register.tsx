@@ -616,7 +616,7 @@ const Title = styled.div`
   letter-spacing: 0em;
   text-align: left;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-bottom: 4px;
   }
 `;
@@ -633,7 +633,7 @@ const WelcomeText = styled.div`
   line-height: 100%;
   color: #a4abba;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     position: static;
     font-family: "Roboto";
     font-size: 12px;
@@ -737,7 +737,7 @@ const Button = styled.button`
     border: 1px solid #dee8ec;
     background-color: #f2f6f8;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 768px) {
       margin-right: 11px;
     }
   }
@@ -786,7 +786,7 @@ const AuthContainer = styled.div<{ isActive: boolean }>`
   padding-bottom: 40px;
   padding-right: 20px;
   padding-left: 20px;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-top: 20px;
   }
 `;
@@ -802,7 +802,7 @@ const AuthWrapper = styled.div`
   border: 0.79402px solid #dee8ec;
   border-radius: 2px;
   box-sizing: border-box;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-top: 11px;
   }
 `;

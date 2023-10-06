@@ -67,7 +67,7 @@ const Container = styled.div`
   @media screen and (max-width: 1279px) {
     max-width: 608px;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
     padding-top: 20px;
     padding-left: 20px;
@@ -79,7 +79,7 @@ const Main = styled.div`
   position: relative;
   margin-left: 20px;
   width: 100%;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     margin-left: 0;
     margin-bottom: 20px;
   }
@@ -91,7 +91,7 @@ const TitleWrapper = styled.div`
 `;
 const ImageWrapper = styled.div`
   display: none;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: flex;
     align-items: center;
   }
@@ -102,7 +102,7 @@ const Title = styled.div`
   line-height: 28px;
   letter-spacing: -0.011em;
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     font-size: 22px;
     line-height: 26px;
     margin-left: 8px;

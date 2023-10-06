@@ -31,7 +31,7 @@ const Container = styled.div`
   max-width: 427px;
 
   color: #121822;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -83,13 +83,13 @@ const ButtonHome = styled.button`
 
 const Br1 = styled.br`
   display: none;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: block;
   }
 `;
 const Br2 = styled.br`
   display: block;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
 `;
