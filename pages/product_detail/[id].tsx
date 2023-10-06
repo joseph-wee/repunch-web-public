@@ -114,6 +114,9 @@ const useId = () => {
   };
 
   ////////
+  useEffect(() => {
+    console.log(select);
+  }, [select]);
 
   const dispatch = useAppDispatch();
 
@@ -289,6 +292,8 @@ const useId = () => {
           tempThumbnailVideoList[0].clicked = true;
           setSelect({ ...tempThumbnailVideoList[0] });
         }
+
+        console.log(thumbnailVideoList);
 
         setThumbnailVideoList([...tempThumbnailVideoList]);
 
@@ -596,6 +601,8 @@ const useId = () => {
                     px={px}
                     onClick={() => thumbnailClickHandler(j)}
                     key={`imageVideo-${j}`}
+                    color={el.color}
+                    selectedColor={select.color}
                   >
                     <BorderBox isClicked={el.clicked}></BorderBox>
                     <PlayButton>
@@ -954,7 +961,12 @@ const SmallImageVideoWrapper = styled.div`
 `;
 const SmallImageVideo = styled.div<{
   px: number;
+  color: string;
+  selectedColor: string;
 }>`
+  display: ${(props) => {
+    return props.color == props.selectedColor ? "block" : "none";
+  }};
   margin-right: 1px;
   position: relative;
   right: ${(props) => {
