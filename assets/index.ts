@@ -11,7 +11,7 @@ export { default as btn_to_facebook } from "./btn_to_facebook.svg";
 export { default as btn_to_facebook_wht } from "./btn_to_facebook_wht.svg";
 export { default as btn_to_instagram_wht } from "./btn_to_instagram_wht.svg";
 export { default as btn_to_mail_wht } from "./btn_to_mail_wht.svg";
-export { default as home_image_mobile } from "./home_image_mobile.png";
+export { default as home_image_mobile } from "./home_image_mobile.jpg";
 export { default as home_image_pad } from "./home_image_pad.png";
 export { default as home_image_desktop } from "./home_image_desktop.png";
 export { default as ic_filter } from "./ic_filter.svg";
