@@ -292,7 +292,7 @@ const useId = () => {
           tempThumbnailVideoList[0].clicked = true;
           setSelect({ ...tempThumbnailVideoList[0] });
         }
-
+        console.log("test");
         console.log(thumbnailVideoList);
 
         setThumbnailVideoList([...tempThumbnailVideoList]);
@@ -964,9 +964,9 @@ const SmallImageVideo = styled.div<{
   color: string;
   selectedColor: string;
 }>`
-  display: ${(props) => {
+  /* display: ${(props) => {
     return props.color == props.selectedColor ? "block" : "none";
-  }};
+  }}; */
   margin-right: 1px;
   position: relative;
   right: ${(props) => {
