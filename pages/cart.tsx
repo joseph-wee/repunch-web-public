@@ -167,12 +167,18 @@ const useCart = () => {
             cartListRequest(at, "ROLL", 50, searchAfter).then((res) => {
               // 성공 case
               if (res?.data.status == 200) {
+                // 장바구니 개수가 0개이면 리턴
+                if (res.data.result.data == null) {
+                  return;
+                }
+
                 // nextSearchAfter 저장
                 tempNextSearchAfter = res?.data.result.metadata.searchAfter;
                 // response 가공해서 저장
                 res?.data.result.data.forEach((el: any, index: number) => {
                   // 리스트에 푸시
                   tempList.push({
+                    cartNo: el.cartNo, // 카트 번호
                     productNo: el.option.productNo, // 상품 번호
                     productOpionNo: el.option.productNo, // 옵션 번호
                     thumbnail: el.option.thumbnailUrl, // 썸네일
@@ -196,12 +202,18 @@ const useCart = () => {
 
       // 성공 case
       if (res?.data.status == 200) {
+        // 장바구니 개수가 0개이면 리턴
+        if (res.data.result.data == null) {
+          return;
+        }
+        console.log(res);
         // nextSearchAfter 저장
         tempNextSearchAfter = res?.data.result.metadata.searchAfter;
         // response 가공해서 저장
         res?.data.result.data.forEach((el: any, index: number) => {
           // 리스트에 푸시
           tempList.push({
+            cartNo: el.cartNo, // 카트 번호
             productNo: el.option.productNo, // 상품 번호
             productOpionNo: el.option.productNo, // 옵션 번호
             thumbnail: el.option.thumbnailUrl, // 썸네일
@@ -257,6 +269,10 @@ const useCart = () => {
           // 토큰 재발급 성공 case
           // 엑세스 토큰, 리프레쉬 토큰 세팅 후 카트목록 재요청
           if (res?.data.status == 200) {
+            // 장바구니 개수가 0개이면 리턴
+            if (res.data.result.data == null) {
+              return;
+            }
             at = res.data.result.access_token;
             rt = res.data.result.refresh_token;
 
@@ -272,12 +288,17 @@ const useCart = () => {
             cartListRequest(at, "SAMPLE", 50, searchAfter).then((res) => {
               // 성공 case
               if (res?.data.status == 200) {
+                // 장바구니 개수가 0개이면 리턴
+                if (res.data.result.data == null) {
+                  return;
+                }
                 // nextSearchAfter 저장
                 tempNextSearchAfter = res?.data.result.metadata.searchAfter;
                 // response 가공해서 저장
                 res?.data.result.data.forEach((el: any, index: number) => {
                   // 리스트에 푸시
                   tempList.push({
+                    cartNo: el.cartNo, // 카트 번호
                     productNo: el.option.productNo, // 상품 번호
                     productOptionNo: el.productOptionNo,
                     thumbnail: el.option.thumbnailUrl, // 썸네일
@@ -301,12 +322,18 @@ const useCart = () => {
 
       // 성공 case
       if (res?.data.status == 200) {
+        // 장바구니 개수가 0개이면 리턴
+        if (res.data.result.data == null) {
+          return;
+        }
+        console.log(res);
         // nextSearchAfter 저장
         tempNextSearchAfter = res?.data.result.metadata.searchAfter;
         // response 가공해서 저장
         res?.data.result.data.forEach((el: any, index: number) => {
           // 리스트에 푸시
           tempList.push({
+            cartNo: el.cartNo, // 카트 번호
             productNo: el.option.productNo, // 상품 번호
             productOptionNo: el.productOptionNo, // 옵션 번호
             thumbnail: el.option.thumbnailUrl, // 썸네일
@@ -415,7 +442,7 @@ const useCart = () => {
               isActive={cartValue}
               onClick={() => dispatch(setSample())}
             >
-              Sample ({sampleTotalCount})
+              Sample ({sampleList.length})
             </SampleButton>
           </AllMeterSampleButtonWrapper>
 
