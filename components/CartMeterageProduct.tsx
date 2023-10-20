@@ -9,6 +9,7 @@ import {
 } from "../assets";
 import Image from "next/image";
 import Link from "next/link";
+import { cartDelteRequest } from "../utils/api";
 
 const useCartMeterageProduct = ({
   el,
@@ -25,6 +26,8 @@ const useCartMeterageProduct = ({
   setRollCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
   index: number;
 }) => {
+  const [exist, setExist] = useState(true);
+
   /** -버튼 클릭시 */
   const minus = () => {
     if (el.count <= 1) {
@@ -78,14 +81,32 @@ const useCartMeterageProduct = ({
     setRollList([...temp]);
   };
 
+  /** 장바구니 삭제 핸들러 */
+  const cartDeleteRequestHandler = (cartNo: number) => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    cartDelteRequest(at, cartNo);
+    setExist(false);
+  };
+
   useEffect(() => {
     let temp = rollList;
     temp[index].totalPrice = Math.floor(el.price * el.count * 100) / 100;
     setRollList([...temp]);
+    console.log(el);
   }, [el.count]);
 
   return (
-    <Container>
+    <Container exist={exist}>
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
@@ -98,7 +119,7 @@ const useCartMeterageProduct = ({
           img={ic_check_wht.src}
         />
         Check to purchase
-        <CloseButton>
+        <CloseButton onClick={() => cartDeleteRequestHandler(el.cartNo)}>
           <Image src={ic_close} alt={"close_button"} width={18} height={18} />
         </CloseButton>
       </CheckCancelWrapper>
@@ -157,7 +178,10 @@ const useCartMeterageProduct = ({
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ exist: boolean }>`
+  display: ${(props) => {
+    return props.exist ? "block" : "none";
+  }};
   margin-bottom: 10px;
   border: 1px solid #dee8ec;
   border-radius: 2px;
