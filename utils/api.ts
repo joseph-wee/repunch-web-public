@@ -538,6 +538,25 @@ export const cartListRequest = async (
   }
 };
 
+/** 장바구니 삭제 */
+export const cartDelteRequest = async (
+  accessToken: string | null,
+  cartNo: number
+) => {
+  try {
+    const res = await axios({
+      method: "DELTE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      url: `/carts/${cartNo}`,
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 /** 컬러 목록 조회 */
 export const colorsRequest = async () => {
   try {
@@ -603,6 +622,77 @@ export const editAddress = async (
         streetAddress2: streetAddress2,
         postCode: postCode,
         phoneNumber: phoneNumber,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const createOrderRequest = async (
+  accessToken: string | null,
+  orderUnitType: string,
+  productNo: number,
+  productOptionNo: number,
+  amount: number,
+  count: number,
+  cartNo: number,
+  addressNo: number,
+  firstName: string,
+  lastName: string,
+  postalCode: string,
+  countryCode: string,
+  state: string,
+  streetAddress1: string,
+  streetAddress2: string,
+  phoneNumber: string,
+  deliveryMethod: string,
+  totalAmount: number
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/orders`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        orderUnitType: orderUnitType,
+        items: [
+          {
+            orderUnitType: orderUnitType,
+            productNo: productNo,
+            productOptionNo: productOptionNo,
+            amount: amount,
+            count: count,
+            cartNo: cartNo,
+            shippingAddress: {
+              addressNo: addressNo,
+              firstName: firstName,
+              lastName: lastName,
+              postalCode: postalCode,
+              countryCode: countryCode,
+              state: state,
+              streetAddress1: streetAddress1,
+              streetAddress2: streetAddress2,
+              phoneNumber: phoneNumber,
+            },
+          },
+        ],
+        deliveryMethod: deliveryMethod,
+        shippingAddress: {
+          addressNo: addressNo,
+          firstName: firstName,
+          lastName: lastName,
+          postalCode: postalCode,
+          countryCode: countryCode,
+          state: state,
+          streetAddress1: streetAddress1,
+          streetAddress2: streetAddress2,
+          phoneNumber: phoneNumber,
+        },
+        totalAmount: totalAmount,
       },
     });
     return res;
