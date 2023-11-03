@@ -262,70 +262,70 @@ export const carts = async (
 };
 
 /** 주문 생성 */
-export const createOrder = async (
-  orderUnitType: string,
-  productNo: number,
-  itemAmount: number,
-  count: number,
-  cartNo: number,
-  addressNo: number,
-  firstName: string,
-  lastName: string,
-  postalCode: number,
-  countryCode: string,
-  state: string,
-  streetAddress1: string,
-  streetAddress2: string,
-  phoneNumber: string,
-  deliveryMethod: string,
-  amount: number
-) => {
-  try {
-    const res = await axios({
-      method: "POST",
-      url: `/orders`,
-      data: {
-        orderUnitType: orderUnitType,
-        items: [
-          {
-            orderUnitType: orderUnitType,
-            productNo: productNo,
-            amount: itemAmount,
-            count: count,
-            cartNo: cartNo,
-            shippingAddress: {
-              addressNo: addressNo,
-              firstName: firstName,
-              lastName: lastName,
-              postalCode: postalCode,
-              countryCode: countryCode,
-              state: state,
-              streetAddress1: streetAddress1,
-              streetAddress2: streetAddress2,
-              phoneNumber: phoneNumber,
-            },
-          },
-        ],
-        deliveryMethod: deliveryMethod,
-        shippingAddress: {
-          addressNo: addressNo,
-          firstName: firstName,
-          lastName: lastName,
-          postalCode: postalCode,
-          countryCode: countryCode,
-          state: state,
-          streetAddress1: streetAddress1,
-          streetAddress2: streetAddress2,
-          phoneNumber: phoneNumber,
-        },
-        amount: amount,
-      },
-    });
-    return res;
-  } catch (error) {
-    console.log(error);
-  }
-};
+// export const createOrder = async (
+//   orderUnitType: string,
+//   productNo: number,
+//   itemAmount: number,
+//   count: number,
+//   cartNo: number,
+//   addressNo: number,
+//   firstName: string,
+//   lastName: string,
+//   postalCode: number,
+//   countryCode: string,
+//   state: string,
+//   streetAddress1: string,
+//   streetAddress2: string,
+//   phoneNumber: string,
+//   deliveryMethod: string,
+//   amount: number
+// ) => {
+//   try {
+//     const res = await axios({
+//       method: "POST",
+//       url: `/orders`,
+//       data: {
+//         orderUnitType: orderUnitType,
+//         items: [
+//           {
+//             orderUnitType: orderUnitType,
+//             productNo: productNo,
+//             amount: itemAmount,
+//             count: count,
+//             cartNo: cartNo,
+//             shippingAddress: {
+//               addressNo: addressNo,
+//               firstName: firstName,
+//               lastName: lastName,
+//               postalCode: postalCode,
+//               countryCode: countryCode,
+//               state: state,
+//               streetAddress1: streetAddress1,
+//               streetAddress2: streetAddress2,
+//               phoneNumber: phoneNumber,
+//             },
+//           },
+//         ],
+//         deliveryMethod: deliveryMethod,
+//         shippingAddress: {
+//           addressNo: addressNo,
+//           firstName: firstName,
+//           lastName: lastName,
+//           postalCode: postalCode,
+//           countryCode: countryCode,
+//           state: state,
+//           streetAddress1: streetAddress1,
+//           streetAddress2: streetAddress2,
+//           phoneNumber: phoneNumber,
+//         },
+//         amount: amount,
+//       },
+//     });
+//     return res;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 /** 주문 생성(가결제) */
 export const paymentCapture = async (
@@ -630,7 +630,7 @@ export const editAddress = async (
   }
 };
 
-export const createOrderRequest = async (
+export const createOrder = async (
   accessToken: string | null,
   orderUnitType: string,
   productNo: number,
@@ -638,6 +638,7 @@ export const createOrderRequest = async (
   amount: number,
   count: number,
   cartNo: number,
+  deliveryMethod: string,
   addressNo: number,
   firstName: string,
   lastName: string,
@@ -647,7 +648,6 @@ export const createOrderRequest = async (
   streetAddress1: string,
   streetAddress2: string,
   phoneNumber: string,
-  deliveryMethod: string,
   totalAmount: number
 ) => {
   try {
@@ -667,17 +667,6 @@ export const createOrderRequest = async (
             amount: amount,
             count: count,
             cartNo: cartNo,
-            shippingAddress: {
-              addressNo: addressNo,
-              firstName: firstName,
-              lastName: lastName,
-              postalCode: postalCode,
-              countryCode: countryCode,
-              state: state,
-              streetAddress1: streetAddress1,
-              streetAddress2: streetAddress2,
-              phoneNumber: phoneNumber,
-            },
           },
         ],
         deliveryMethod: deliveryMethod,
@@ -698,5 +687,19 @@ export const createOrderRequest = async (
     return res;
   } catch (error) {
     console.log(error);
+  }
+};
+
+/** 주문 상세 */
+export const orderDetailRequest = async (orderNo: string) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/orders/${orderNo}`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
   }
 };
