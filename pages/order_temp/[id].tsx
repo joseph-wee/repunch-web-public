@@ -10,6 +10,17 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ic_air } from "../../assets";
 import { useAppSelector } from "../../redux/hooks";
+import { orderDetailRequest } from "../../utils/api";
+
+/** 국가, 카테고리 객체 타입 */
+export interface List {
+  name: string; // 이름
+  code: string; // 코드
+  code_num?: string; // 코드 번호
+}
+
+/** 국가, 카테고리 객체타입을 배열 형태로 확장 */
+export interface ListCountryArray extends Array<List> {}
 
 const useOrder_temp = () => {
   const [deliveryIsChecked, setDeliveryIsChecked] = useState<number>(0);
@@ -19,9 +30,80 @@ const useOrder_temp = () => {
   const [preparation, setPreparation] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState(0);
 
+  const [address, setAddress] = useState({
+    title: "",
+    firstName: "",
+    lastName: "",
+    companyName: "",
+    countryCode: "",
+    postCode: "",
+    state: "",
+    streetAddress1: "",
+    streetAddress2: "",
+    phoneNumber: "",
+  });
+
+  const [product, setProduct] = useState([
+    {
+      thumbnail: "",
+      title: "",
+      color: "",
+      width: "",
+      length: "",
+      count: "",
+    },
+  ]);
+
+  const [deliveryMethod, setdeliverMethod] = useState("");
+
   const { value: tempOrderList } = useAppSelector(
     (state) => state.tempOrderList
   );
+
+  /** 나라 리스트 숫자 코드는 업데이트 필요 */
+  const countryList: ListCountryArray = [
+    { name: "Republic of Korea", code: "KR", code_num: "82" },
+    { name: "United States of America", code: "US", code_num: "1" },
+    { name: "Greece", code: "GR", code_num: "99" },
+    { name: "Netherlands", code: "NL", code_num: "99" },
+    { name: "Nepal", code: "NP", code_num: "22" },
+    { name: "Norway", code: "NO", code_num: "22" },
+    { name: "Danmark", code: "DK", code_num: "22" },
+    { name: "Germany", code: "DE", code_num: "49" },
+    { name: "Laos", code: "LA", code_num: "22" },
+    { name: "Malaysia", code: "MY", code_num: "22" },
+    { name: "Mexico", code: "MX", code_num: "22" },
+    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
+    { name: "Bangladesh", code: "BD", code_num: "22" },
+    { name: "Viet Nam", code: "VN", code_num: "84" },
+    { name: "Belgium", code: "BE", code_num: "22" },
+    {
+      name: "United Kingdom of Great Britain and Northern Ireland",
+      code: "GB",
+      code_num: "44",
+    },
+    { name: "Australia", code: "AU", code_num: "61" },
+    { name: "Austria", code: "AT", code_num: "22" },
+    { name: "Uzbekistan", code: "UZ", code_num: "22" },
+    { name: "Egypt", code: "EG", code_num: "22" },
+    { name: "Italy", code: "IT", code_num: "22" },
+    { name: "India", code: "IN", code_num: "91" },
+    { name: "Indonesia", code: "ID", code_num: "22" },
+    { name: "Japan", code: "JP", code_num: "22" },
+    { name: "China", code: "CN", code_num: "86" },
+    { name: "Cambodia", code: "KH", code_num: "22" },
+    { name: "Canada", code: "CA", code_num: "1" },
+    { name: "Taiwan", code: "TW", code_num: "22" },
+    { name: "Thailand", code: "TH", code_num: "886" },
+    { name: "Turkey", code: "TR", code_num: "22" },
+    { name: "Portugal", code: "PT", code_num: "22" },
+    { name: "Poland", code: "PL", code_num: "22" },
+    { name: "Puerto Rico", code: "PR", code_num: "22" },
+    { name: "France", code: "FR", code_num: "33" },
+    { name: "Finland", code: "FI", code_num: "22" },
+    { name: "Philippines", code: "PH", code_num: "63" },
+    { name: "Hong Kong", code: "HK", code_num: "852" },
+  ];
 
   /** total price 계산 및 저장*/
   const totalPriceHandler = async () => {
@@ -50,6 +132,45 @@ const useOrder_temp = () => {
       ref.current.focus();
     }
   }, [popUpIsActive]);
+
+  useEffect(() => {
+    console.log(window.location.pathname.split("/")[2]);
+  }, []);
+
+  /** 주문 상세 요청 */
+  const orderDetailRequestHandelr = () => {
+    const orderNo = window.location.pathname.split("/")[2];
+    orderDetailRequest(orderNo).then((res) => {
+      // 성공 case
+      if (res?.status == 200) {
+        console.log(res);
+        const data = res?.data.result.shippingAddress;
+        setAddress({
+          ...{
+            title: data.title,
+            firstName: data.firstName,
+            lastName: data.lastNAme,
+            companyName: data.companyName,
+            countryCode: data.countryCode,
+            postCode: data.postCode,
+            state: data.state,
+            streetAddress1: data.streetAddress1,
+            streetAddress2: data.streetAddress2,
+            phoneNumber: data.phoneNumber,
+          },
+        });
+        return;
+      }
+
+      // 실패 case : 토큰 만료
+
+      // 실패 case
+    });
+  };
+
+  useEffect(() => {
+    orderDetailRequestHandelr();
+  }, []);
 
   return (
     <>
@@ -103,13 +224,19 @@ const useOrder_temp = () => {
         </OrderListWrapper>
         <ContentTitle>Shipping Address</ContentTitle>
         <ContentWrapper>
-          <AddressTitle>My1</AddressTitle>
-          <AddressText>#809</AddressText>
-          <AddressText>#809, 8dong ssangyoung</AddressText>
-          <AddressText>daechi dong, gangnamgu</AddressText>
-          <AddressText>korea</AddressText>
-          <AddressText>06285</AddressText>
-          <AddressPhoneNumber>+82 1086281024</AddressPhoneNumber>
+          <AddressTitle>{address.title}</AddressTitle>
+          <ProfileCorperationName>{address.companyName}</ProfileCorperationName>
+          <ProfileName>
+            {address.firstName},{address.lastName}
+          </ProfileName>
+          <AddressText>{address.streetAddress2}</AddressText>
+          <AddressText>{address.streetAddress1}</AddressText>
+          <AddressText>{address.state}</AddressText>
+          <AddressText>
+            {countryList.filter((x: any) => x.code == "KR")[0].name}
+          </AddressText>
+          <AddressText>{address.postCode}</AddressText>
+          <AddressPhoneNumber>{address.phoneNumber}</AddressPhoneNumber>
         </ContentWrapper>
         <ContentTitle>Delivery</ContentTitle>
         <ContentWrapper>
