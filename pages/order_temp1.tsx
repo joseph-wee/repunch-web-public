@@ -6,7 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ic_air } from "../assets";
-import { addressListRequest, loginRefreshRequest } from "../utils/api";
+import {
+  addressListRequest,
+  createOrder,
+  loginRefreshRequest,
+} from "../utils/api";
 import { useAppSelector } from "../redux/hooks";
 
 /** 국가, 카테고리 객체 타입 */
@@ -197,6 +201,132 @@ const useOrder_temp1 = () => {
   useEffect(() => {
     addressListRequestHandler();
   }, []);
+
+  // /** 주문 생성 요청 */
+  const createOrderRequestHandler = (deliveryMethod: string) => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+    /**
+     * cartNo
+     * count
+     * length
+     * price
+     * productNo d
+     * productOptionNo d
+     * quantity
+     * thumbnail
+     * title
+     * totalPrice
+     * width
+     */
+
+    createOrder(
+      at,
+      "ROLL",
+      tempOrderList[0].productNo,
+      tempOrderList[0].productOptionNo,
+      tempOrderList[0].price,
+      tempOrderList[0].count,
+      tempOrderList[0].cartNo,
+      deliveryMethod,
+      selectAdress.addressNo,
+      selectAdress.firstName,
+      selectAdress.lastName,
+      selectAdress.postCode,
+      selectAdress.countryCode,
+      selectAdress.state,
+      selectAdress.streetAddress1,
+      selectAdress.streetAddress2,
+      selectAdress.phoneNumber,
+      tempOrderList[0].totalPrice
+    ).then((res) => {
+      console.log(res);
+      // 성공 case
+      if (res?.data.status == 200) {
+        const orderNo = res?.data.result.orderNo;
+        router.push(`order_temp/${orderNo}`);
+        return;
+      }
+
+      // 실패 case: 토큰 만료
+      if (res?.data.code == 403) {
+        loginRefreshRequest(rt).then((res) => {
+          // 토큰 갱신 성공 case
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+            createOrder(
+              at,
+              "ROLL",
+              tempOrderList[0].productNo,
+              tempOrderList[0].productOptionNo,
+              tempOrderList[0].price,
+              tempOrderList[0].count,
+              tempOrderList[0].cartNo,
+              deliveryMethod,
+              selectAdress.addressNo,
+              selectAdress.firstName,
+              selectAdress.lastName,
+              selectAdress.postCode,
+              selectAdress.countryCode,
+              selectAdress.state,
+              selectAdress.streetAddress1,
+              selectAdress.streetAddress2,
+              selectAdress.phoneNumber,
+              tempOrderList[0].totalPrice
+            ).then((res) => {
+              // 성공 case
+              if (res?.data.status == 200) {
+                const orderNo = res?.data.result.orderNo;
+                router.push(`order_temp/${orderNo}`);
+                return;
+              }
+              // 실패 case
+            });
+            return;
+            // 토큰 갱신 실패 case
+          }
+        });
+      }
+
+      // 실패 case
+    });
+  };
+
+  /** 주문생성 or 결제 요청 */
+  const orderPaymentHandler = () => {
+    // AIR Case
+    if (deliveryIsChecked == 0) {
+      createOrderRequestHandler("AIR");
+      return;
+    }
+    // SHIP Case
+    if (deliveryIsChecked == 1) {
+      createOrderRequestHandler("SHIP");
+      return;
+    }
+    // PICK UP Case
+    if (deliveryIsChecked == 2) {
+      // 결제 api 코드 입력
+      return;
+    }
+  };
 
   return (
     <>
@@ -411,7 +541,7 @@ const useOrder_temp1 = () => {
       <Line />
       <ButtonWrapper>
         <CancelButton onClick={() => router.push("/cart")}>Cancel</CancelButton>
-        <CheckoutButton onClick={() => router.push("/order_temp/1")}>
+        <CheckoutButton onClick={() => orderPaymentHandler()}>
           {deliveryIsChecked == 2 ? "Checkout" : "Confirm"}
         </CheckoutButton>
       </ButtonWrapper>
