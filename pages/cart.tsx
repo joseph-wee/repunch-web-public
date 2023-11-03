@@ -180,7 +180,7 @@ const useCart = () => {
                   tempList.push({
                     cartNo: el.cartNo, // 카트 번호
                     productNo: el.option.productNo, // 상품 번호
-                    productOpionNo: el.option.productNo, // 옵션 번호
+                    productOptionNo: el.option.productNo, // 옵션 번호
                     thumbnail: el.option.thumbnailUrl, // 썸네일
                     title: el.product.title, // 제목
                     color: el.option.color.name, // 컬러
@@ -215,7 +215,7 @@ const useCart = () => {
           tempList.push({
             cartNo: el.cartNo, // 카트 번호
             productNo: el.option.productNo, // 상품 번호
-            productOpionNo: el.option.productNo, // 옵션 번호
+            productOptionNo: el.option.productOptionNo, // 옵션 번호
             thumbnail: el.option.thumbnailUrl, // 썸네일
             title: el.product.title, // 제목
             color: el.option.color.name, // 컬러
