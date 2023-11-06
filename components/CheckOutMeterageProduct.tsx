@@ -2,17 +2,30 @@ import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { test_thumbnail } from "../assets";
+import Link from "next/link";
 
 const CheckOutMeterageProduct = ({ data }: any) => {
   return (
     <Container>
       {data && (
         <ProductWrapper>
-          <ImageWrapper>
-            <Image src={data.thumbnail} alt={"test"} width={80} height={80} />
-          </ImageWrapper>
+          <Link
+            href={`/product_detail/${data.productNo}`}
+            target="_blank"
+            style={{ textDecoration: "none" }}
+          >
+            <ImageWrapper>
+              <Image src={data.thumbnail} alt={"test"} width={80} height={80} />
+            </ImageWrapper>
+          </Link>
           <TextWrapper>
-            <ProductTitle>{data.title}</ProductTitle>
+            <Link
+              href={`/product_detail/${data.productNo}`}
+              target="_blank"
+              style={{ textDecoration: "none" }}
+            >
+              <ProductTitle>{data.title}</ProductTitle>
+            </Link>
             <OptionWrapper>
               <Color color={data.color} />
               {data.color}
