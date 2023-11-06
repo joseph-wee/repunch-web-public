@@ -106,7 +106,7 @@ const useOrder_temp1 = () => {
     // tempOrderListChekck();
     totalPriceHandler();
     console.log(tempOrderList);
-  }, []);
+  }, [tempOrderList]);
 
   useEffect(() => {
     if (popUpIsActive == 1) {
@@ -202,7 +202,7 @@ const useOrder_temp1 = () => {
     addressListRequestHandler();
   }, []);
 
-  // /** 주문 생성 요청 */
+  /** 주문 생성 요청 */
   const createOrderRequestHandler = (deliveryMethod: string) => {
     let at;
     let rt: string | null;
@@ -214,28 +214,33 @@ const useOrder_temp1 = () => {
       at = localStorage.getItem("at");
       rt = localStorage.getItem("rt");
     }
-    /**
-     * cartNo
-     * count
-     * length
-     * price
-     * productNo d
-     * productOptionNo d
-     * quantity
-     * thumbnail
-     * title
-     * totalPrice
-     * width
-     */
+
+    const items = tempOrderList.map((el: any, index: number) => {
+      return {
+        orderUnitType: "ROLL",
+        productNo: el.productNo,
+        productOptionNo: el.productOptionNo,
+        amount: el.price,
+        count: el.count,
+        cartNo: el.cartNo,
+      };
+    });
+
+    /** 총 가격 계산 */
+    const totalAmountHandler = () => {
+      let sum = 0;
+      for (const el of tempOrderList) {
+        sum += el.totalPrice;
+      }
+      return sum;
+    };
+
+    const totalAmount = totalAmountHandler();
 
     createOrder(
       at,
       "ROLL",
-      tempOrderList[0].productNo,
-      tempOrderList[0].productOptionNo,
-      tempOrderList[0].price,
-      tempOrderList[0].count,
-      tempOrderList[0].cartNo,
+      items,
       deliveryMethod,
       selectAdress.addressNo,
       selectAdress.firstName,
@@ -246,7 +251,7 @@ const useOrder_temp1 = () => {
       selectAdress.streetAddress1,
       selectAdress.streetAddress2,
       selectAdress.phoneNumber,
-      tempOrderList[0].totalPrice
+      totalAmount
     ).then((res) => {
       console.log(res);
       // 성공 case
@@ -271,14 +276,19 @@ const useOrder_temp1 = () => {
               localStorage.setItem("at", at);
               localStorage.setItem("rt", `${rt}`);
             }
+            /**
+             * orderUnitType: orderUnitType,
+            productNo: productNo,
+            productOptionNo: productOptionNo,
+            amount: amount,
+            count: count,
+            cartNo: cartNo,
+             * 
+             */
             createOrder(
               at,
               "ROLL",
-              tempOrderList[0].productNo,
-              tempOrderList[0].productOptionNo,
-              tempOrderList[0].price,
-              tempOrderList[0].count,
-              tempOrderList[0].cartNo,
+              items,
               deliveryMethod,
               selectAdress.addressNo,
               selectAdress.firstName,
@@ -289,7 +299,7 @@ const useOrder_temp1 = () => {
               selectAdress.streetAddress1,
               selectAdress.streetAddress2,
               selectAdress.phoneNumber,
-              tempOrderList[0].totalPrice
+              totalAmount
             ).then((res) => {
               // 성공 case
               if (res?.data.status == 200) {
@@ -398,7 +408,7 @@ const useOrder_temp1 = () => {
               </AddressPhoneNumber>
             </>
           )}
-          <AddressButton onClick={() => router.push("/add_shiping_address")}>
+          <AddressButton onClick={() => router.push("/add_shipping_address")}>
             + Add a new address
           </AddressButton>
           <AddressButton onClick={() => setPopUpIsActive(1)}>
