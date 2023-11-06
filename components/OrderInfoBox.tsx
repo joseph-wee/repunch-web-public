@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
+  ic_check_web_status_check,
+  ic_check_web_status_dot,
   ic_close_wht,
   ic_down_bk,
   ic_up_bk,
@@ -10,9 +12,13 @@ import {
 import Image from "next/image";
 
 const useOrderInfoBox = ({
+  data,
+  clicked,
   accomplish,
   myAccount,
 }: {
+  data: any;
+  clicked: number;
   accomplish: boolean;
   myAccount: boolean;
 }) => {
@@ -21,6 +27,7 @@ const useOrderInfoBox = ({
   const [questionDeliveryIsActive, setQuestionDeliveryIsActive] =
     useState(false);
   const [questionTaxIsActive, setQuestionTaxIsActive] = useState(false);
+  const [render, setRender] = useState(true); // 렌더링 유무
   const questionDeliveryRef = useRef<any>();
   const questionTaxRef = useRef<any>();
 
@@ -36,52 +43,81 @@ const useOrderInfoBox = ({
     }
   }, [questionTaxIsActive]);
 
+  useEffect(() => {
+    if (clicked == 1) {
+      setRender(true);
+      return;
+    }
+    let status = "";
+
+    clicked == 2 && (status = "IN_REVIEW");
+    clicked == 3 && (status = "ORDER_CONFIRMED");
+    clicked == 4 && (status = "IN_PRODUCTION");
+    clicked == 5 && (status = "SHIPPED");
+    clicked == 6 && (status = "DELIVERED");
+    clicked == 7 && (status = "PICK_UP");
+
+    status == data.status ? setRender(true) : setRender(false);
+  }, [clicked]);
+
+  useEffect(() => {
+    console.log(data);
+    data.status == "";
+  }, []);
+
   return (
-    <>
+    <Box render={render}>
       <Container>
-        <ProductWrapper>
-          <ImageWrapper>
-            <Image src={test_thumbnail} alt={"test"} width={80} height={80} />
-          </ImageWrapper>
-          <TextWrapper>
-            <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
-            <OptionWrapper>
-              <Color />
-              Red
-              <VerticalLine />
-              20m*20m
-            </OptionWrapper>
-            <ProductQty>3 Qty</ProductQty>
-          </TextWrapper>
-        </ProductWrapper>
-        <ProductWrapper>
-          <ImageWrapper>
-            <Image src={test_thumbnail} alt={"test"} width={80} height={80} />
-          </ImageWrapper>
-          <TextWrapper>
-            <ProductTitle>Leopard Viscose Crepe-Rose</ProductTitle>
-            <OptionWrapper>
-              <ColorGreen />
-              Green
-              <VerticalLine />
-              20m*20m
-            </OptionWrapper>
-            <ProductQty>3 Qty</ProductQty>
-          </TextWrapper>
-        </ProductWrapper>
+        {data.items.map((el: any, index: number) => {
+          return (
+            <ProductWrapper key={`${index}33`}>
+              <ImageWrapper>
+                <Image
+                  src={test_thumbnail}
+                  alt={"test"}
+                  width={80}
+                  height={80}
+                />
+              </ImageWrapper>
+              <TextWrapper>
+                <ProductTitle>{data.name}</ProductTitle>
+                <OptionWrapper>
+                  <Color />
+                  Red
+                  <VerticalLine />
+                  20m*20m
+                </OptionWrapper>
+                <ProductQty>{el.product.count} Qty</ProductQty>
+              </TextWrapper>
+            </ProductWrapper>
+          );
+        })}
         <DashLine1 />
         {/* <OrderInfoWrapper>
           <OrderInfoTitle>Length (m)</OrderInfoTitle>
           <OrderInfoContent>10 m</OrderInfoContent>
         </OrderInfoWrapper> */}
-        <OrderInfoWrapper>
-          <OrderInfoTitle>Order no.</OrderInfoTitle>
-          <OrderInfoContent>0906ZG5D72045J</OrderInfoContent>
-        </OrderInfoWrapper>
-        <OrderInfoWrapper>
-          <OrderInfoTitle>Order time</OrderInfoTitle>
-          <OrderInfoContent>JUN 10, 2023 / 23:12</OrderInfoContent>
-        </OrderInfoWrapper>
+
+        {data.status == "IN_REVIEW" ? (
+          <OrderInfoWrapper>
+            <OrderInfoTitle>Delivery</OrderInfoTitle>
+            <OrderInfoContent>
+              {data.deliveryMethod == "AIR" ? "By air" : "By ship"} ($
+              {data.deliveryFee} / {`{{date}}`})
+            </OrderInfoContent>
+          </OrderInfoWrapper>
+        ) : (
+          <>
+            <OrderInfoWrapper>
+              <OrderInfoTitle>Order no.</OrderInfoTitle>
+              <OrderInfoContent>{data.orderNumber}</OrderInfoContent>
+            </OrderInfoWrapper>
+            <OrderInfoWrapper>
+              <OrderInfoTitle>Order time</OrderInfoTitle>
+              <OrderInfoContent>JUN 10, 2023 / 23:12</OrderInfoContent>
+            </OrderInfoWrapper>
+          </>
+        )}
         {/* <OrderInfoWrapper>
           <OrderCanceled>Order canceled</OrderCanceled>
           <OrderInfoContent>
@@ -89,11 +125,18 @@ const useOrderInfoBox = ({
             <br /> Please adjust the quantity and order again.
           </OrderInfoContent>
         </OrderInfoWrapper> 여기 남겨두고 나중에 지우기*/}
-        <DashLine1 />
-        <TotalPriceWrapper>
-          <Total>Total</Total>
-          <Price>$ 62.25</Price>
-        </TotalPriceWrapper>
+        {data.status == "IN_REVIEW" ? (
+          ""
+        ) : (
+          <>
+            <DashLine1 />
+            <TotalPriceWrapper>
+              <Total>Total</Total>
+              <Price>$ 62.25</Price>
+            </TotalPriceWrapper>
+          </>
+        )}
+
         <Line />
         <OrderDetailContainer>
           <OrderDetailButtonWrapper>
@@ -189,55 +232,104 @@ const useOrderInfoBox = ({
           </OrderDetailContent>
         </OrderDetailContainer>
       </Container>
-      <DeliveredContainer>
-        <DeliveredTitle>Shipped</DeliveredTitle>
-        <DeliveredProgressWrapper>
-          <ProgressLine />
-          <ProgressLineGray />
-          <DeliveredCircle />
-          <DeliveredCircle />
-          <DeliveredCircle />
-          <DeliveredCircleGray />
-          <DeliveredBigCircle4 />
-        </DeliveredProgressWrapper>
-      </DeliveredContainer>
-      <TrackOrderContainer>
-        <OrderDetailButtonWrapper>
-          <OrderDetailButtonBox
-            onClick={() => setTrackorderIsActive(!trackorderIsActive)}
-          >
-            <OrderDetailButton>Trackorder</OrderDetailButton>
-            <Image
-              src={trackorderIsActive ? ic_up_bk : ic_down_bk}
-              alt={"sort_arrow_button"}
-            />
-          </OrderDetailButtonBox>
-        </OrderDetailButtonWrapper>
-        <TrackOrderContent isActive={trackorderIsActive}>
-          <TrackOrderContentWrapper>
-            <TrackOrderCircle />
-            <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          <TrackOrderContentWrapper>
-            <TrackOrderCircle />
-            <TrackOrderContentTitle>Order Complete</TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          <TrackOrderContentWrapper>
-            <TrackOrderCircle />
-            <TrackOrderContentTitle>In Production</TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          <TrackOrderContentWrapper>
-            <TrackOrderCircle />
-            <TrackOrderContentTitle>
-              Shipped (
-              <ShippingNumber>&nbsp;DHL 102002102&nbsp;</ShippingNumber> )
-            </TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          <TrackOrderContentWrapper>
-            <TrackorderCircleGray />
-            <TrackOrderContentTitle>Delivered</TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          {/* 
+
+      {data.status == "IN_REVIEW" || "ORDER_CONFIRMED" ? (
+        <>
+          <ProgressContainer>
+            <ModelWrapper>
+              <Circle1 status={data.status} />
+              <LinkLine status={data.status} />
+              <Circle2 status={data.status} />
+            </ModelWrapper>
+            <ModelTitleWrapper>
+              <ModelTitle1>
+                <TempBox1>
+                  Prepare fabric and
+                  <br />
+                  caculating
+                </TempBox1>
+              </ModelTitle1>
+              <ModelTitle2>
+                <TempBox2>
+                  Proceed to
+                  <br />
+                  purchase
+                </TempBox2>
+              </ModelTitle2>
+            </ModelTitleWrapper>
+          </ProgressContainer>
+          {data.status == "IN_REVIEW" ? (
+            <Notice status={data.status}>
+              Awaiting proceed to purchase. If payment is not made within 48
+              hours, the payment will be automatically canceled.
+            </Notice>
+          ) : (
+            <Notice status={data.status}>
+              We will prepare the products you ordered as quickly as possible.
+              It may take up to 2 business days to get to the payment stage.
+            </Notice>
+          )}
+        </>
+      ) : (
+        <>
+          <DeliveredContainer>
+            <DeliveredTitle>Shipped</DeliveredTitle>
+            <DeliveredProgressWrapper>
+              <ProgressLine />
+              <ProgressLineGray />
+              <DeliveredCircle />
+              <DeliveredCircle />
+              <DeliveredCircle />
+              <DeliveredCircleGray />
+              <DeliveredBigCircle4 />
+            </DeliveredProgressWrapper>
+          </DeliveredContainer>
+          <TrackOrderContainer>
+            <OrderDetailButtonWrapper>
+              <OrderDetailButtonBox
+                onClick={() => setTrackorderIsActive(!trackorderIsActive)}
+              >
+                <OrderDetailButton>Trackorder</OrderDetailButton>
+                <Image
+                  src={trackorderIsActive ? ic_up_bk : ic_down_bk}
+                  alt={"sort_arrow_button"}
+                />
+              </OrderDetailButtonBox>
+            </OrderDetailButtonWrapper>
+            <TrackOrderContent isActive={trackorderIsActive}>
+              <TrackOrderContentWrapper>
+                <TrackOrderCircle />
+                <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper>
+                <TrackOrderCircle />
+                <TrackOrderContentTitle>Order Complete</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper>
+                <TrackOrderCircle />
+                <TrackOrderContentTitle>In Production</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper>
+                <TrackOrderCircle />
+                <TrackOrderContentTitle>
+                  Shipped (
+                  <ShippingNumber>&nbsp;DHL 102002102&nbsp;</ShippingNumber> )
+                </TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper>
+                <TrackorderCircleGray />
+                <TrackOrderContentTitle>Delivered</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackorderProgressLine />
+              <TrackorderProgressLineGray />
+
+              <TrackOrderBigCircle4 />
+            </TrackOrderContent>
+          </TrackOrderContainer>
+        </>
+      )}
+
+      {/* 
           <TrackorderProgressLine />
           <TrackOrderContentWrapper>
             <TrackorderCircleGray />
@@ -262,12 +354,23 @@ const useOrderInfoBox = ({
             <TrackOrderContentTitle>Returns</TrackOrderContentTitle>
           </TrackOrderContentWrapper> */}
 
-          <TrackorderProgressLine />
-          <TrackorderProgressLineGray />
+      {/** 상태에따라 버튼 노출 */}
 
-          <TrackOrderBigCircle4 />
-        </TrackOrderContent>
-      </TrackOrderContainer>
+      {/** in review case */}
+      {data.status == "IN_REVIEW" && <CancelButton>Cancel order</CancelButton>}
+
+      {/** order confirmed case */}
+      {data.status == "ORDER_CONFIRMED" && (
+        <Wrapper>
+          <CancelButton>Cancel order</CancelButton>
+          <OrderButton>Order</OrderButton>
+        </Wrapper>
+      )}
+
+      {/** delivered case */}
+
+      {/** pick up case */}
+
       <ButtonWrapper myAccount={myAccount}>
         <AccomplishInvoiceButton isActive={accomplish}>
           Order accomplish
@@ -285,9 +388,15 @@ const useOrderInfoBox = ({
           Invoice Download
         </AccomplishInvoiceButton>
       </ButtonWrapper>
-    </>
+    </Box>
   );
 };
+
+const Box = styled.div<{ render: boolean }>`
+  display: ${(props) => {
+    return props.render == true ? "block" : "none";
+  }};
+`;
 
 const Container = styled.div`
   border: 1px solid #dee8ec;
@@ -420,7 +529,7 @@ const OrderInfoWrapper = styled.div`
   margin-top: 6px;
   margin-left: 16px;
   margin-right: 16px;
-  margin-bottom: 6px;
+  margin-bottom: 16px;
   justify-content: space-between;
   align-items: center;
 `;
@@ -569,7 +678,7 @@ const ContentTitle = styled.div`
 const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-itmes: center;
+  align-items: center;
   margin-top: 2px;
 `;
 const SummaryPriceTitle = styled.div`
@@ -684,6 +793,115 @@ const BilledPrice = styled.div`
   line-height: 18px;
   color: #121822;
 `;
+
+const ProgressContainer = styled.div`
+  margin-bottom: 10px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  padding-top: 33px;
+  padding-bottom: 38px;
+`;
+const ModelWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 11px;
+`;
+const Circle1 = styled.div<{ status: string }>`
+  width: 26px;
+  height: 26px;
+  border: 1px solid #121822;
+  border-radius: 100%;
+  ${(props) => {
+    switch (props.status) {
+      case "ORDER_CONFIRMED":
+        return `
+        background-image: url(${ic_check_web_status_dot.src});
+        `;
+      case "IN_REVIEW":
+        return `
+          background-image: url(${ic_check_web_status_check.src});
+          `;
+    }
+  }};
+  background-color: #e1ff20;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+`;
+const Circle2 = styled.div<{ status: string }>`
+  width: 26px;
+  height: 26px;
+  ${(props) => {
+    switch (props.status) {
+      case "ORDER_CONFIRMED":
+        return `
+        border: 1px solid #121822;
+        background-image: url(${ic_check_web_status_check.src});
+        background-color: #E1FF20;
+        background-position: center;
+        background-repeat: no-repeat;
+        `;
+      case "IN_REVIEW":
+        return `
+          border: 1px solid #DEE8EC;
+          `;
+    }
+  }};
+  border-radius: 100%;
+  box-sizing: border-box;
+`;
+const LinkLine = styled.div<{ status: string }>`
+  width: 100px;
+  border-top: ${(props) => {
+    return props.status == "ORDER_CONFIRMED"
+      ? `1px solid #536C6D`
+      : `1px solid #DEE8EC`;
+  }};
+`;
+const ModelTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  color: #121822;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 11px;
+`;
+const ModelTitle1 = styled.div`
+  position: relative;
+  width: 26px;
+  margin-right: 100px;
+`;
+const ModelTitle2 = styled.div`
+  position: relative;
+  width: 26px;
+`;
+const TempBox1 = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95px;
+  margin: 0 auto;
+`;
+const TempBox2 = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 53px;
+  margin: 0 auto;
+`;
+const Notice = styled.div<{ status: string }>`
+  color: ${(props) => {
+    return props.status == "ORDER_CONFIRMED" ? `#FF2F01` : `#536C6D`;
+  }};
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14.3px;
+`;
+
 const DeliveredContainer = styled.div`
   padding-top: 16px;
   padding-bottom: 16px;
@@ -834,6 +1052,47 @@ const TrackOrderBigCircle4 = styled.div`
   border-radius: 100%;
   background-color: #e1ff20;
 `;
+const CancelButton = styled.button`
+  margin-top: 16px;
+  margin-bottom: 16px;
+
+  width: 100%;
+  height: 40px;
+  color: #121822;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.2px;
+  background-color: #ffffff;
+
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+
+  cursor: pointer;
+`;
+const Wrapper = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+const OrderButton = styled.button`
+  margin-top: 16px;
+  margin-bottom: 16px;
+
+  width: 100%;
+  height: 40px;
+  color: #121822;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18.2px;
+  background-color: #e1ff20;
+
+  border: 1px solid #d4f01e;
+  border-radius: 2px;
+
+  cursor: pointer;
+`;
+
 const ButtonWrapper = styled.div<{ myAccount: boolean }>`
   display: ${(props) => {
     return props.myAccount == true ? "none" : "block";
