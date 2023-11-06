@@ -45,13 +45,13 @@ const useCart = () => {
     }
   };
 
-  let tempResult = [1, 2, 3];
-
-  /** api 콜 이후에 체크리스트 할당 */
+  /** 카트 목록 길이에 만큼 체크박스 할당 */
   useEffect(() => {
-    setRollCheckArr(new Array(tempResult.length).fill(false));
-    setSampleCheckArr(new Array(tempResult.length).fill(false));
-  }, []);
+    setRollCheckArr(new Array(rollList.length).fill(false));
+  }, [rollList]);
+  useEffect(() => {
+    setSampleCheckArr(new Array(sampleList.length).fill(false));
+  }, [sampleList]);
 
   /** roll 모두 체크 혹은 해제 */
   const rollCheckAll = () => {
@@ -93,6 +93,7 @@ const useCart = () => {
 
   /** roll 체크 감지하여 roll selct all 체크 혹은 해제 */
   useEffect(() => {
+    console.log(rollCheckArr);
     let count = 0;
     rollCheckArr.forEach((i) => {
       if (i) {
@@ -365,14 +366,14 @@ const useCart = () => {
     let nextSearchAfter: any = 0;
     for (let i = 0; i < 10; i++) {
       nextSearchAfter = await cartListHandler(nextSearchAfter);
-      if (nextSearchAfter == -1) {
+      if (nextSearchAfter == -1 || nextSearchAfter == null) {
         break;
       }
     }
     nextSearchAfter = 0;
     for (let i = 0; i < 10; i++) {
       nextSearchAfter = await SampleCartListHandler(nextSearchAfter);
-      if (nextSearchAfter == -1) {
+      if (nextSearchAfter == -1 || nextSearchAfter == null) {
         break;
       }
     }
@@ -389,6 +390,7 @@ const useCart = () => {
     if (cartValue == 0) {
       rollCheckArr.forEach((el: any, index: number) => {
         el && temp.push(rollList[index]);
+        console.log(index);
       });
 
       // 체크한게 있어야 구매 진행
