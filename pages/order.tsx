@@ -1,13 +1,76 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { MobileSideBar, OrderInfoBox, SideBar } from "../components";
 import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back } from "../assets";
 import { goBack } from "../utils/functions";
+import { ordersAllRequest } from "../utils/api";
 
 const useOrder = () => {
-  const [clicked, setClicked] = useState(1);
+  const [clicked, setClicked] = useState(1); // 클릭 상태
+  const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
+  const [orders, setOrders] = useState<any>([]); // 주문 리스트
+
+  /** 주문 요청 핸들러 - ALL */
+  const ordersAllRequestHandler = () => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    ordersAllRequest(at, -1).then((res) => {
+      console.log(res);
+      // 성공 case
+      setOrders([...res?.data.result.data]);
+
+      // 실패 case: 토큰 만료
+      // 실패 case
+    });
+  };
+
+  /** recent orders 개수 계산 */
+  const calculator = (clicked: number) => {
+    let status = ""; // 상태
+    let count = 0; // 합
+
+    clicked == 1 && (status = "ALL");
+    clicked == 2 && (status = "IN_REVIEW");
+    clicked == 3 && (status = "ORDER_CONFIRMED");
+    clicked == 4 && (status = "IN_PRODUCTION");
+    clicked == 5 && (status = "SHIPPED");
+    clicked == 6 && (status = "DELIVERED");
+    clicked == 7 && (status = "PICK_UP");
+
+    // ALL case
+    if (status == "ALL") {
+      setSum(orders.length);
+      return;
+    }
+
+    // 나머지 case
+    for (const el of orders) {
+      el.status == status && count++;
+    }
+
+    setSum(count);
+  };
+
+  /** 처음 렌더링시 주문 목록 세팅 */
+  useEffect(() => {
+    ordersAllRequestHandler();
+  }, []);
+
+  /** recent orders 개수 계산 - clickd, orders 변경감지 */
+  useEffect(() => {
+    orders.length > 0 && calculator(clicked);
+  }, [clicked, orders]);
 
   return (
     <Container>
@@ -42,15 +105,18 @@ const useOrder = () => {
             Pick up (0)
           </CanceledButton>
         </ButtonWrapper>
-
-        {clicked == 1 || clicked == 5 ? (
-          <>
-            <RecentOrders>Recent orders 1</RecentOrders>
-            <OrderInfoBox accomplish={false} myAccount={false} />
-          </>
-        ) : (
-          <RecentOrders>Recent orders 0</RecentOrders>
-        )}
+        <RecentOrders>Recent orders {sum}</RecentOrders>
+        {orders.map((el: any, index: number) => {
+          return (
+            <OrderInfoBox
+              data={el}
+              clicked={clicked}
+              accomplish={false}
+              myAccount={false}
+              key={`eas-${index}`}
+            />
+          );
+        })}
       </Main>
       <MobileSideBar />
     </Container>
