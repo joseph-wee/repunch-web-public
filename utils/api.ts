@@ -633,11 +633,7 @@ export const editAddress = async (
 export const createOrder = async (
   accessToken: string | null,
   orderUnitType: string,
-  productNo: number,
-  productOptionNo: number,
-  amount: number,
-  count: number,
-  cartNo: number,
+  items: any,
   deliveryMethod: string,
   addressNo: number,
   firstName: string,
@@ -659,16 +655,7 @@ export const createOrder = async (
       },
       data: {
         orderUnitType: orderUnitType,
-        items: [
-          {
-            orderUnitType: orderUnitType,
-            productNo: productNo,
-            productOptionNo: productOptionNo,
-            amount: amount,
-            count: count,
-            cartNo: cartNo,
-          },
-        ],
+        items: items,
         deliveryMethod: deliveryMethod,
         shippingAddress: {
           addressNo: addressNo,
@@ -676,6 +663,7 @@ export const createOrder = async (
           lastName: lastName,
           postalCode: postalCode,
           countryCode: countryCode,
+          // city: "test",
           state: state,
           streetAddress1: streetAddress1,
           streetAddress2: streetAddress2,
@@ -696,6 +684,75 @@ export const orderDetailRequest = async (orderNo: string) => {
     const res = await axios({
       method: "GET",
       url: `/orders/${orderNo}`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 주문 목록 - ALL */
+export const ordersAllRequest = async (
+  accessToken: string | null,
+  searchAfter: number
+) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url:
+        searchAfter == -1
+          ? `/orders?count=50`
+          : `/orders?count=50&searchAfter=${searchAfter}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 주문 목록 - DELIVERED */
+export const ordersDeliveredRequest = async (
+  accessToken: string | null,
+  searchAfter: number
+) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url:
+        searchAfter == -1
+          ? `/orders?orderStatus=DELIVERED&count=50`
+          : `/orders?orderStatus=DELIVERED&count=50&searchAfter=${searchAfter}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 주문 목록 - PICK_UP */
+export const ordersPickUpRequest = async (
+  accessToken: string | null,
+  searchAfter: number
+) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url:
+        searchAfter == -1
+          ? `/orders?orderStatus=PICKUP&count=50`
+          : `/orders?orderStatus=DELIVERED&count=50&searchAfter=${searchAfter}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
     return res;
   } catch (error: any) {
