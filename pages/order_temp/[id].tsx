@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {
   ic_check_web_status_check,
   ic_check_web_status_dot,
+  ic_ship,
 } from "../../assets";
 import { CheckOutMeterageProduct } from "../../components";
 import Image from "next/image";
@@ -54,7 +55,7 @@ const useOrder_temp = () => {
     },
   ]);
 
-  const [deliveryMethod, setdeliverMethod] = useState("");
+  const [deliveryMethod, setDeliveryMethod] = useState("");
 
   const { value: tempOrderList } = useAppSelector(
     (state) => state.tempOrderList
@@ -141,15 +142,16 @@ const useOrder_temp = () => {
   const orderDetailRequestHandelr = () => {
     const orderNo = window.location.pathname.split("/")[2];
     orderDetailRequest(orderNo).then((res) => {
+      console.log(res);
       // 성공 case
-      if (res?.status == 200) {
-        console.log(res);
+      if (res?.data.status == 200) {
         const data = res?.data.result.shippingAddress;
+
         setAddress({
           ...{
             title: data.title,
             firstName: data.firstName,
-            lastName: data.lastNAme,
+            lastName: data.lastName,
             companyName: data.companyName,
             countryCode: data.countryCode,
             postCode: data.postCode,
@@ -159,12 +161,18 @@ const useOrder_temp = () => {
             phoneNumber: data.phoneNumber,
           },
         });
+
+        setDeliveryMethod(res?.data.result.deliveryMethod);
         return;
       }
 
       // 실패 case : 토큰 만료
 
       // 실패 case
+      if (res?.data.code == 9999) {
+        console.log("주문 없음");
+        return;
+      }
     });
   };
 
@@ -225,10 +233,10 @@ const useOrder_temp = () => {
         <ContentTitle>Shipping Address</ContentTitle>
         <ContentWrapper>
           <AddressTitle>{address.title}</AddressTitle>
-          <ProfileCorperationName>{address.companyName}</ProfileCorperationName>
-          <ProfileName>
+          <AddressText>
             {address.firstName},{address.lastName}
-          </ProfileName>
+          </AddressText>
+          <ProfileCorperationName>{address.companyName}</ProfileCorperationName>
           <AddressText>{address.streetAddress2}</AddressText>
           <AddressText>{address.streetAddress1}</AddressText>
           <AddressText>{address.state}</AddressText>
@@ -241,9 +249,21 @@ const useOrder_temp = () => {
         <ContentTitle>Delivery</ContentTitle>
         <ContentWrapper>
           <DeliveryWrapper>
-            <Image src={ic_air} alt={"air_image"} width={16} height={16} />
-            <DeliveryAirText>By air&nbsp;</DeliveryAirText>
-            <DeliveryFreeText>(about 1week)</DeliveryFreeText>
+            {deliveryMethod == "AIR" && (
+              <>
+                <Image src={ic_air} alt={"air_image"} width={16} height={16} />
+                <DeliveryAirText>By air&nbsp;</DeliveryAirText>
+                <DeliveryFreeText>(about 3week)</DeliveryFreeText>
+              </>
+            )}
+
+            {deliveryMethod == "SHIP" && (
+              <>
+                <Image src={ic_ship} alt={"air_image"} width={16} height={16} />
+                <DeliveryAirText>By air&nbsp;</DeliveryAirText>
+                <DeliveryFreeText>(about 5week)</DeliveryFreeText>
+              </>
+            )}
           </DeliveryWrapper>
         </ContentWrapper>
       </Container>
@@ -479,8 +499,8 @@ const EditButton = styled.button`
   cursor: pointer;
 `;
 const ProfileCorperationName = styled.div`
-  margin-bottom: 4px;
-  font-weight: 700;
+  margin-bottom: 13px;
+  font-weight: 400;
   font-size: 12px;
   line-height: 16px;
   color: #121822;
@@ -504,7 +524,7 @@ const BillingAddressWrapper = styled.div<{ isChecked: boolean }>`
   }};
 `;
 const AddressTitle = styled.div`
-  margin-bottom: 12px;
+  margin-bottom: 13px;
   font-weight: 700;
   font-size: 14px;
   line-height: 18px;
