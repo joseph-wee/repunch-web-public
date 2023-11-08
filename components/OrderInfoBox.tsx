@@ -214,39 +214,50 @@ const useOrderInfoBox = ({
                 />
               </ImageBox>
             </TaxQuestionInfoBox>
-            <ContentTitle>Order Summary</ContentTitle>
-            <FlexWrapper>
-              <SummaryPriceTitle>Item subtotal</SummaryPriceTitle>
-              <SummaryPrice>$32.25</SummaryPrice>
-            </FlexWrapper>
-            <FlexWrapper>
-              <SummaryPriceTitle>
-                Delivery by ship
-                <QuestionMark onClick={() => setQuestionDeliveryIsActive(true)}>
-                  ?
-                </QuestionMark>
-              </SummaryPriceTitle>
-              <SummaryPrice>Free</SummaryPrice>
-            </FlexWrapper>
-            <FlexWrapper>
-              <SummaryPriceTitle>
-                Tax{" "}
-                <QuestionMark onClick={() => setQuestionTaxIsActive(true)}>
-                  ?
-                </QuestionMark>
-              </SummaryPriceTitle>
-              <SummaryPrice>$32.25</SummaryPrice>
-            </FlexWrapper>
-            <SummaryTotalPriceWrapper>
-              <Total>Total</Total>
-              <Price>$ 62.25</Price>
-            </SummaryTotalPriceWrapper>
-            <Line />
-            <PaymentTitle>Payment</PaymentTitle>
-            <PaymentWrapper>
-              <Image src={payment_express} alt="payment_express" />
-              <PaymentNumber>**** 9987</PaymentNumber>
-            </PaymentWrapper>
+
+            {/** 결제전에는 order summary 노출 안함 */}
+            {(data.status == "IN_PRODUCTION" ||
+              data.status == "SHIPPED" ||
+              data.status == "DELIVERED" ||
+              data.status == "PICK_UP") && (
+              <>
+                <ContentTitle>Order Summary</ContentTitle>
+                <FlexWrapper>
+                  <SummaryPriceTitle>Item subtotal</SummaryPriceTitle>
+                  <SummaryPrice>$32.25</SummaryPrice>
+                </FlexWrapper>
+                <FlexWrapper>
+                  <SummaryPriceTitle>
+                    Delivery by ship
+                    <QuestionMark
+                      onClick={() => setQuestionDeliveryIsActive(true)}
+                    >
+                      ?
+                    </QuestionMark>
+                  </SummaryPriceTitle>
+                  <SummaryPrice>Free</SummaryPrice>
+                </FlexWrapper>
+                <FlexWrapper>
+                  <SummaryPriceTitle>
+                    Tax{" "}
+                    <QuestionMark onClick={() => setQuestionTaxIsActive(true)}>
+                      ?
+                    </QuestionMark>
+                  </SummaryPriceTitle>
+                  <SummaryPrice>$32.25</SummaryPrice>
+                </FlexWrapper>
+                <SummaryTotalPriceWrapper>
+                  <Total>Total</Total>
+                  <Price>$ 62.25</Price>
+                </SummaryTotalPriceWrapper>
+                <Line />
+                <PaymentTitle>Payment</PaymentTitle>
+                <PaymentWrapper>
+                  <Image src={payment_express} alt="payment_express" />
+                  <PaymentNumber>**** 9987</PaymentNumber>
+                </PaymentWrapper>
+              </>
+            )}
             <Line />
             <ContentTitle>Delivered to</ContentTitle>
             <AddressTitle>My1</AddressTitle>
@@ -632,6 +643,7 @@ const Price = styled.div`
   color: #ff5c01;
 `;
 const Line = styled.div`
+  margin-top: 9.7px;
   border-bottom: 1px solid #dee8ec;
 `;
 const OrderDetailContainer = styled.div`
