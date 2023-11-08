@@ -5,7 +5,11 @@ import { CheckOutMeterageProduct, Sample } from "../components";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { addressListRequest, loginRefreshRequest } from "../utils/api";
+import {
+  addressListRequest,
+  loginRefreshRequest,
+  paymentRequest1,
+} from "../utils/api";
 import { useAppSelector } from "../redux/hooks";
 
 /** 국가, 카테고리 객체 타입 */
@@ -194,6 +198,30 @@ const useCheck_out_sample = () => {
   useEffect(() => {
     addressListRequestHandler();
   }, []);
+
+  /** 결제 요청 - sample 결제 나온 후 작업 */
+  // const paymentRequest1Handler = () => {
+  //   let at;
+  //   let rt: string | null;
+
+  //   if (sessionStorage.getItem("at")) {
+  //     at = sessionStorage.getItem("at");
+  //     rt = sessionStorage.getItem("rt");
+  //   } else {
+  //     at = localStorage.getItem("at");
+  //     rt = localStorage.getItem("rt");
+  //   }
+
+  //   paymentRequest1(
+  //     at,
+  //     order.orderNo,
+  //     order.orderNumber,
+  //     "PAYPAL",
+  //     order.paymentAmount,
+  //     order.pointAmount,
+  //     order.totalAmount
+  //   ).then((res) => console.log(res));
+  // };
 
   return (
     <>
@@ -407,12 +435,12 @@ const useCheck_out_sample = () => {
             <PriceTitle>
               Tax <QuestionMark>?</QuestionMark>
             </PriceTitle>
-            <Price>$7.25</Price>
+            <Price>$0</Price>
           </FlexWrapper>
           <Line />
           <FlexWrapper>
             <TotalTitle>Total</TotalTitle>
-            <TotalPrice>${Number(totalPrice + 7.25)}</TotalPrice>
+            <TotalPrice>${Number(totalPrice)}</TotalPrice>
           </FlexWrapper>
           <InfoText>
             <Image src={ic_info} alt={"ic_info"} />
