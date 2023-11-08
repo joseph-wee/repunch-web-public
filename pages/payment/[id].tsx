@@ -154,6 +154,9 @@ const usePayment = () => {
 
         // 총 가격 + 나중에 세금 추가
         setTotalPrice(res?.data.result.totalAmount);
+
+        // 로컬스토리지에 세팅
+
         return;
       }
 
@@ -195,7 +198,7 @@ const usePayment = () => {
     ).then((res) => {
       // 성공 case
       if (res?.data.status == 200) {
-        window.open(res?.data.result.paymentUrl);
+        location.href = res?.data.result.paymentUrl;
       }
     });
   };
@@ -287,7 +290,7 @@ const usePayment = () => {
         <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
-            <Price>${order.totalAmount}</Price>
+            <Price>${order.paymentAmount}</Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
