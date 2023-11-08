@@ -43,7 +43,7 @@ const useMy_account = () => {
           </Link>
         </FavoriteCartOrderCountWrapper>
         <RecentOrders />
-        <OrderInfoBox accomplish={true} myAccount={true} />
+        {/* <OrderInfoBox accomplish={true} myAccount={true} /> */}
         <InfoContainer>
           <InfoWrapper>
             <InfoTitle>Mail Address</InfoTitle>

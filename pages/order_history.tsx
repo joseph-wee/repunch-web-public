@@ -41,7 +41,7 @@ const useOrder_history = () => {
         </AllMeterSampleButtonWrapper>
         <RecentOrders />
         <MeterageOrderWrapper isActive={orderCategory}>
-          <OrderInfoBox accomplish={true} myAccount={false} />
+          {/* <OrderInfoBox accomplish={true} myAccount={false} /> */}
         </MeterageOrderWrapper>
         <SampleOrderWrapper isActive={orderCategory}>
           <OrderInfoBoxSample accomplish={true} myAccount={false} />
