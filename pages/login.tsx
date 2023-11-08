@@ -50,6 +50,13 @@ const useLogin = () => {
     }
   };
 
+  /** 로그인 유지를 위한 쿠키 세팅 */
+  const setCookie = () => {
+    let date = new Date();
+    date.setTime(date.getTime() + 7 * 24 * 60 * 60 * 1000); // 기간 일주일
+    document.cookie = `keep=`;
+  };
+
   /** 로그인 api 요청후 결과에 따라 액션 */
   const loginRequestHandler = (userId: string, password: string) => {
     let idValidationValue = idValidationCheck();
@@ -59,13 +66,8 @@ const useLogin = () => {
         if (res?.data?.status == 200) {
           dispatch(login());
 
-          if (isChecked) {
-            localStorage.setItem("at", res.data.result.access_token);
-            localStorage.setItem("rt", res.data.result.refresh_token);
-          } else {
-            sessionStorage.setItem("at", res.data.result.access_token);
-            sessionStorage.setItem("rt", res.data.result.refresh_token);
-          }
+          localStorage.setItem("at", res.data.result.access_token);
+          localStorage.setItem("rt", res.data.result.refresh_token);
 
           router.push("/");
           return;
