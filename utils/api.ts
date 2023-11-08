@@ -813,3 +813,56 @@ export const paymentRequest1 = async (
     console.log(error);
   }
 };
+
+/** 주문 결제 -2단계 승인 */
+export const paymentRequest2 = async (accessToken: string | null) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/payment/request`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        orderUnitType: "ROLL",
+        items: [
+          {
+            orderUnitType: "ROLL",
+            productNo: 10000,
+            productOptionNo: 2,
+            amount: 700,
+            count: 1,
+            cartNo: 2,
+            shippingAddress: {
+              addressNo: 1,
+              firstName: "Yosup",
+              lastName: "Wee",
+              postalCode: "12235",
+              countryCode: "KR",
+              state: "Gyonggi-do Namyangju-si",
+              streetAddress1: "Gyeongchun-ro 885beon-gil",
+              streetAddress2: "22-7, 103호",
+              phoneNumber: "01099088763",
+            },
+          },
+        ],
+        deliveryMethod: "AIR",
+        shippingAddress: {
+          addressNo: 1,
+          firstName: "Yosup",
+          lastName: "Wee",
+          postalCode: "12235",
+          countryCode: "KR",
+          state: "Gyonggi-do Namyangju-si",
+          streetAddress1: "Gyeongchun-ro 885beon-gil",
+          streetAddress2: "22-7, 103호",
+          phoneNumber: "01099088763",
+        },
+        totalAmount: 10,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
