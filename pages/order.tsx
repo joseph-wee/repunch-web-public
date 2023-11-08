@@ -12,6 +12,13 @@ const useOrder = () => {
   const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
   const [orders, setOrders] = useState<any>([]); // 주문 리스트
 
+  const [countInReview, setCountInReview] = useState(0);
+  const [countOrderConfirmed, setCountOrderConfiremd] = useState(0);
+  const [countInProduction, setCountInProduction] = useState(0);
+  const [countShipped, setCountShipped] = useState(0);
+  const [countDelivered, setCountDelivered] = useState(0);
+  const [countPickUp, setCountPickUp] = useState(0);
+
   /** 주문 요청 핸들러 - ALL */
   const ordersAllRequestHandler = () => {
     let at;
@@ -26,40 +33,45 @@ const useOrder = () => {
     }
 
     ordersAllRequest(at, -1).then((res) => {
+      let sumInReview = countInReview;
+      let sumOrderConfirmed = countOrderConfirmed;
+      let sumInProduction = countInProduction;
+      let sumShipped = countShipped;
+      let sumDelivered = countDelivered;
+      let sumPickUp = countPickUp;
+
       console.log(res);
       // 성공 case
       setOrders([...res?.data.result.data]);
+      for (const el of res?.data.result.data) {
+        el.status == "IN_REVIEW" && (sumInReview += 1);
+        el.status == "ORDER_CONFIRMED" && (sumOrderConfirmed += 1);
+        el.status == "IN_PRODUCTION" && (sumInProduction += 1);
+        el.status == "SHIPPED" && (sumShipped += 1);
+        el.status == "DELIVERED" && (sumDelivered += 1);
+        el.status == "PICK_UP" && (sumPickUp += 1);
+      }
+      setCountInReview(sumInReview);
+      setCountOrderConfiremd(sumOrderConfirmed);
+      setCountInProduction(sumInProduction);
+      setCountShipped(sumShipped);
+      setCountDelivered(sumDelivered);
+      setCountPickUp(sumPickUp);
 
       // 실패 case: 토큰 만료
       // 실패 case
     });
   };
 
-  /** recent orders 개수 계산 */
+  /** recent orders, All, in review... 개수 계산 */
   const calculator = (clicked: number) => {
-    let status = ""; // 상태
-    let count = 0; // 합
-
-    clicked == 1 && (status = "ALL");
-    clicked == 2 && (status = "IN_REVIEW");
-    clicked == 3 && (status = "ORDER_CONFIRMED");
-    clicked == 4 && (status = "IN_PRODUCTION");
-    clicked == 5 && (status = "SHIPPED");
-    clicked == 6 && (status = "DELIVERED");
-    clicked == 7 && (status = "PICK_UP");
-
-    // ALL case
-    if (status == "ALL") {
-      setSum(orders.length);
-      return;
-    }
-
-    // 나머지 case
-    for (const el of orders) {
-      el.status == status && count++;
-    }
-
-    setSum(count);
+    clicked == 1 && setSum(orders.length);
+    clicked == 2 && setSum(countInReview);
+    clicked == 3 && setSum(countOrderConfirmed);
+    clicked == 4 && setSum(countInProduction);
+    clicked == 5 && setSum(countShipped);
+    clicked == 6 && setSum(countDelivered);
+    clicked == 7 && setSum(countPickUp);
   };
 
   /** 처음 렌더링시 주문 목록 세팅 */
@@ -87,22 +99,22 @@ const useOrder = () => {
             ALL
           </AllButton>
           <ReviewButton onClick={() => setClicked(2)} clicked={clicked}>
-            In Review (0)
+            In Review ({countInReview})
           </ReviewButton>
           <ConfirmButton onClick={() => setClicked(3)} clicked={clicked}>
-            Order confirmed (0)
+            Order confirmed ({countOrderConfirmed})
           </ConfirmButton>
           <ShipButton onClick={() => setClicked(4)} clicked={clicked}>
-            In production (0)
+            In production ({countInProduction})
           </ShipButton>
           <DeliveredButton onClick={() => setClicked(5)} clicked={clicked}>
-            Shipped (1)
+            Shipped ({countShipped})
           </DeliveredButton>
           <PickupButton onClick={() => setClicked(6)} clicked={clicked}>
-            Delivered (0)
+            Delivered ({countDelivered})
           </PickupButton>
           <CanceledButton onClick={() => setClicked(7)} clicked={clicked}>
-            Pick up (0)
+            Pick up ({countPickUp})
           </CanceledButton>
         </ButtonWrapper>
         <RecentOrders>Recent orders {sum}</RecentOrders>
