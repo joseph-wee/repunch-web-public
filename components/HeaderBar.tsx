@@ -93,21 +93,21 @@ const useHeaderBar = () => {
   }, [router]);
 
   /** 쿠키 값 없으면 로컬스토리지 삭제 */
-  useEffect(() => {
-    // 결제 콜백, 캔슬때에는 로컬 스토리지 삭제 x
-    if (
-      router.pathname.includes("/payment/callback") ||
-      router.pathname.includes("/payment/cancel")
-    ) {
-      return;
-    }
-    // 로그인 유지 쿠키 값 없으면 로컬 스토리지 삭제
-    if (document.cookie == "") {
-      localStorage.removeItem("at");
-      localStorage.removeItem("rt");
-      return;
-    }
-  }, []);
+  // useEffect(() => {
+  //   // 결제 콜백, 캔슬때에는 로컬 스토리지 삭제 x
+  //   if (
+  //     router.pathname.includes("/payment/callback") ||
+  //     router.pathname.includes("/payment/cancel")
+  //   ) {
+  //     return;
+  //   }
+  //   // 로그인 유지 쿠키 값 없으면 로컬 스토리지 삭제
+  //   if (document.cookie == "") {
+  //     localStorage.removeItem("at");
+  //     localStorage.removeItem("rt");
+  //     return;
+  //   }
+  // }, []);
 
   return (
     <>
