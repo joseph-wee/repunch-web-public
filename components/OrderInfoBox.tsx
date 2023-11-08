@@ -397,9 +397,7 @@ const useOrderInfoBox = ({
             Cancel order
           </CancelButton>
 
-          <OrderButton
-            onClick={() => router.push(`/check_out/${data.orderNo}`)}
-          >
+          <OrderButton onClick={() => router.push(`/payment/${data.orderNo}`)}>
             Order
           </OrderButton>
         </Wrapper>
