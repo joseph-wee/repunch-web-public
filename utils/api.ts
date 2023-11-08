@@ -815,13 +815,19 @@ export const paymentRequest1 = async (
 };
 
 /** 주문 결제 -2단계 승인 */
-export const paymentRequest2 = async (accessToken: string | null) => {
+export const paymentRequest2 = async (
+  accessToken: string | null,
+  token: string,
+  PayerID: string
+) => {
   try {
     const res = await axios({
       method: "POST",
       url: `/payment/request`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        token: token,
+        PayerID: PayerID,
       },
       data: {
         orderUnitType: "ROLL",

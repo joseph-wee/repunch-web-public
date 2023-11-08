@@ -6,15 +6,15 @@ const useCallback = () => {
   const router = useRouter();
 
   const paymentHandler = () => {
-    paymentRequest2(localStorage.getItem("at")).then((res) => {
+    const token = router.asPath.split("&")[0].split("token=")[1];
+    const PayerID = router.asPath.split("&")[1].split("PayerID=")[1];
+
+    paymentRequest2(localStorage.getItem("at"), token, PayerID).then((res) => {
       console.log(res);
     });
   };
 
   useEffect(() => {
-    const token = router.asPath.split("&")[0].split("token=")[1];
-    const PayerID = router.asPath.split("&")[1].split("PayerID=")[1];
-
     paymentHandler();
   }, []);
   return <div>callback</div>;
