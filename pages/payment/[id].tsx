@@ -192,7 +192,12 @@ const usePayment = () => {
       order.paymentAmount,
       order.pointAmount,
       order.totalAmount
-    ).then((res) => console.log(res));
+    ).then((res) => {
+      // 성공 case
+      if (res?.data.status == 200) {
+        window.open(res?.data.result.paymentUrl);
+      }
+    });
   };
 
   return (
