@@ -50,11 +50,16 @@ const useLogin = () => {
     }
   };
 
-  /** 로그인 유지를 위한 쿠키 세팅 */
+  /** 로그인 유지 체크박스 체크 */
   const setCookie = () => {
     let date = new Date();
     date.setTime(date.getTime() + 7 * 24 * 60 * 60 * 1000); // 기간 일주일
-    document.cookie = `keep=`;
+    document.cookie = `keep=true; expires=${date.toUTCString()}; path=/`;
+  };
+
+  /** 로그인 유지 체크박스 해제 */
+  const deleteCooke = () => {
+    document.cookie = `keep=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   };
 
   /** 로그인 api 요청후 결과에 따라 액션 */
@@ -98,11 +103,6 @@ const useLogin = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(isChecked);
-  //   console.log(ic_check_wht.src);
-  // }, [isChecked]);
-
   return (
     <>
       <Container isActive={authPageIsActive}>
@@ -133,6 +133,7 @@ const useLogin = () => {
             type="checkbox"
             id="test"
             onChange={() => setIsChecked(!isChecked)}
+            onClick={() => (isChecked ? deleteCooke() : setCookie())}
           />
           Remember
           {/* <Link href="/lost_id" style={{ textDecoration: "none" }}>
