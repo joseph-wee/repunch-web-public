@@ -10,6 +10,9 @@ import {
   test_thumbnail,
 } from "../assets";
 import Image from "next/image";
+import { orderCancelRequest } from "../utils/api";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const useOrderInfoBox = ({
   data,
@@ -30,6 +33,8 @@ const useOrderInfoBox = ({
   const [render, setRender] = useState(true); // 렌더링 유무
   const questionDeliveryRef = useRef<any>();
   const questionTaxRef = useRef<any>();
+
+  const router = useRouter();
 
   useEffect(() => {
     if (questionDeliveryIsActive) {
@@ -64,6 +69,28 @@ const useOrderInfoBox = ({
     console.log(data);
     data.status == "";
   }, []);
+
+  /** 주문취소후 새로고침 */
+  const orderCancelHandler = (orderNo: number) => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    orderCancelRequest(at, orderNo).then((res) => {
+      console.log(res);
+      if (res?.data.status == 200) {
+        location.reload();
+        return;
+      }
+    });
+  };
 
   return (
     <Box render={render}>
@@ -125,7 +152,7 @@ const useOrderInfoBox = ({
             <br /> Please adjust the quantity and order again.
           </OrderInfoContent>
         </OrderInfoWrapper> 여기 남겨두고 나중에 지우기*/}
-        {data.status == "IN_REVIEW" ? (
+        {data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED" ? (
           ""
         ) : (
           <>
@@ -356,22 +383,49 @@ const useOrderInfoBox = ({
 
       {/** 상태에따라 버튼 노출 */}
 
-      {/** in review case */}
-      {data.status == "IN_REVIEW" && <CancelButton>Cancel order</CancelButton>}
+      {/** in review case: 취소 가능 */}
+      {data.status == "IN_REVIEW" && (
+        <CancelButton onClick={() => orderCancelHandler(data.orderNo)}>
+          Cancel order
+        </CancelButton>
+      )}
 
-      {/** order confirmed case */}
+      {/** order confirmed case: 취소, 주문 가능 */}
       {data.status == "ORDER_CONFIRMED" && (
         <Wrapper>
-          <CancelButton>Cancel order</CancelButton>
-          <OrderButton>Order</OrderButton>
+          <CancelButton onClick={() => orderCancelHandler(data.orderNo)}>
+            Cancel order
+          </CancelButton>
+
+          <OrderButton
+            onClick={() => router.push(`/check_out/${data.orderNo}`)}
+          >
+            Order
+          </OrderButton>
         </Wrapper>
       )}
 
-      {/** delivered case */}
+      {/** delivered case: 주문 확정 가능 */}
+      {data.status == "DELIVERED" && (
+        <>
+          <AccomplishButton>Order accomplish</AccomplishButton>
+          <NoticeText>
+            After 10 days, it will be automatically checked for completion.
+            <br />
+            If you have any problems with delivery, please contact us via&nbsp;
+            <u>support@requnch.io</u> or&nbsp;<u>Contact us</u>
+          </NoticeText>
+        </>
+      )}
 
-      {/** pick up case */}
+      {/** closing order case: 인보이스 다운 */}
+      {/** pick up case: 인보이스 다운 */}
+      {data.status == "CLOSING_ORDER" ||
+        (data.status == "PICK_UP" && (
+          <InvoiceButton>Invoice Download</InvoiceButton>
+        ))}
 
-      <ButtonWrapper myAccount={myAccount}>
+      {/* <ButtonWrapper myAccount={myAccount}>
         <AccomplishInvoiceButton isActive={accomplish}>
           Order accomplish
         </AccomplishInvoiceButton>
@@ -387,7 +441,7 @@ const useOrderInfoBox = ({
         <AccomplishInvoiceButton isActive={!accomplish}>
           Invoice Download
         </AccomplishInvoiceButton>
-      </ButtonWrapper>
+      </ButtonWrapper> */}
     </Box>
   );
 };
@@ -1098,10 +1152,7 @@ const ButtonWrapper = styled.div<{ myAccount: boolean }>`
     return props.myAccount == true ? "none" : "block";
   }};
 `;
-const AccomplishInvoiceButton = styled.button<{ isActive: boolean }>`
-  display: ${(props) => {
-    return props.isActive == true ? "none" : "block";
-  }};
+const AccomplishButton = styled.button`
   margin-bottom: 8px;
   width: 100%;
   height: 40px;
@@ -1113,14 +1164,20 @@ const AccomplishInvoiceButton = styled.button<{ isActive: boolean }>`
   line-height: 14px;
   color: #121822;
   cursor: pointer;
-  &:last-of-type {
-    margin-bottom: 0px;
-  }
 `;
-const NoticeText = styled.div<{ isActive: boolean }>`
-  display: ${(props) => {
-    return props.isActive == true ? "none" : "block";
-  }};
+const InvoiceButton = styled.button`
+  width: 100%;
+  height: 40px;
+  background-color: #ffffff;
+  border: 1px solid #121822;
+  border-radius: 2px;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 14px;
+  color: #121822;
+  cursor: pointer;
+`;
+const NoticeText = styled.div`
   color: #536c6d;
   font-size: 11px;
   font-weight: 400;
