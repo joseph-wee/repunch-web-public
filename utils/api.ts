@@ -630,6 +630,7 @@ export const editAddress = async (
   }
 };
 
+/** 주문 생성 */
 export const createOrder = async (
   accessToken: string | null,
   orderUnitType: string,
@@ -758,5 +759,57 @@ export const ordersPickUpRequest = async (
   } catch (error: any) {
     console.log(error);
     return error;
+  }
+};
+
+/** 주문 취소 */
+export const orderCancelRequest = async (
+  accessToken: string | null,
+  orderNo: number
+) => {
+  try {
+    const res = await axios({
+      method: "PUT",
+      url: `/orders/${orderNo}/cancel`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 주문 결제 - 1단계 */
+export const paymentRequest1 = async (
+  accessToken: string | null,
+  orderNo: number,
+  orderNumber: number,
+  paymentMethod: string,
+  paymentAmount: number,
+  pointAmount: number,
+  totalAmount: number
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/payment/request`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        orderNo: orderNo,
+        orderNumber: orderNumber,
+        paymentMethod: paymentMethod,
+        paymentAmount: paymentAmount,
+        pointAmount: pointAmount,
+        totalAmount: totalAmount,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
   }
 };
