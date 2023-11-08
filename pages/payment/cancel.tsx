@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 
-useEffect(() => {
-  console.log();
-}, []);
-
-const cancel = () => {
+const useCancel = () => {
+  useEffect(() => {
+    console.log();
+  }, []);
   return <div>cancel</div>;
 };
 
-export default cancel;
+export default useCancel;

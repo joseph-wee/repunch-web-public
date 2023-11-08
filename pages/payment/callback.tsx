@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
-const callback = () => {
+const useCallback = () => {
   const router = useRouter();
 
   useEffect(() => {
@@ -11,4 +11,4 @@ const callback = () => {
   return <div>callback</div>;
 };
 
-export default callback;
+export default useCallback;
