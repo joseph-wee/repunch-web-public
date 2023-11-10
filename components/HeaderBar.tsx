@@ -111,7 +111,7 @@ const useHeaderBar = () => {
 
   return (
     <>
-      <Container>
+      <Container isActive={router.pathname}>
         <Link
           href="/"
           style={{ textDecoration: "none" }}
@@ -140,9 +140,11 @@ const useHeaderBar = () => {
   );
 };
 
-const Container = styled.header`
+const Container = styled.header<{ isActive: string }>`
+  display: ${(props) => {
+    return props.isActive == "/about_us" ? "none" : "flex";
+  }};
   z-index: 3;
-  display: flex;
   position: fixed;
   padding-left: 17px;
   padding-right: 20px;
