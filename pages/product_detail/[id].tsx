@@ -71,7 +71,7 @@ const useId = () => {
   }, [count]);
 
   /** 옵션에서 컬러 선택시 액션, 컬러 선택 바뀔 때마다 해당 첫번째 옵션 포커스 효과 핸들러 */
-  const colorCheckhandler = (index: number, color: string) => {
+  const colorCheckhandler = (index: number, color: string, value: boolean) => {
     let tempColorList = colorList;
     tempColorList.forEach((el: any, index: number) => {
       tempColorList[index].checked = false;
@@ -95,9 +95,11 @@ const useId = () => {
     setColorList([...tempColorList]);
     setCount(1);
 
-    thumbnailClickHandler(
-      thumbnailVideoList.findIndex((el: any) => el.color == color)
-    );
+    value &&
+      thumbnailClickHandler(
+        thumbnailVideoList.findIndex((el: any) => el.color == color),
+        !value
+      );
   };
 
   /** 옵션 클릭시 해당 옵션 포커스효과 */
@@ -330,8 +332,8 @@ const useId = () => {
   //   console.log(videoUrl);
   // }, [videoUrl]);
 
-  /** 썸네일 클릭시 이동 및 강조 핸들러 */
-  const thumbnailClickHandler = (index: number) => {
+  /** 썸네일 클릭시 이동, 포커스, 컬러 선택 변경 핸들러 */
+  const thumbnailClickHandler = (index: number, value: boolean) => {
     let temp = thumbnailVideoList;
     let parentWidth = ref.current.clientWidth;
     let min = Math.floor((parentWidth + 1) / 69) + 1;
@@ -346,6 +348,13 @@ const useId = () => {
     setSelect({ ...temp[index] });
     //////////
 
+    // 하단 컬러 포커스
+    const colorIndex = optionList.findIndex(
+      (x: any) => x.color == temp[index].color
+    );
+    value && colorCheckhandler(colorIndex, temp[index].color, !value);
+
+    // 픽셀 이동
     if (temp.length < min) {
       return;
     }
@@ -599,7 +608,7 @@ const useId = () => {
                 return (
                   <SmallImageVideo
                     px={px}
-                    onClick={() => thumbnailClickHandler(j)}
+                    onClick={() => thumbnailClickHandler(j, true)}
                     key={`imageVideo-${j}`}
                     color={el.color}
                     selectedColor={select.color}
@@ -626,6 +635,10 @@ const useId = () => {
               })}
             </SmallImageVideoWrapper>
           </ImageVideoWrapper>
+
+          {/** 모바일에서의 타이틀 */}
+          <TitleMobile>{info ? info.title : ""}</TitleMobile>
+
           <ProductInfoPurchaseContainer>
             <Title>{info ? info.title : ""}</Title>
             <Line />
@@ -721,7 +734,7 @@ const useId = () => {
                 return (
                   <ColorBox
                     isChecked={i.checked}
-                    onClick={() => colorCheckhandler(j, i.color)}
+                    onClick={() => colorCheckhandler(j, i.color, true)}
                     key={`asdf${j}`}
                   >
                     <ColorCircle color={i.color}>
@@ -736,28 +749,27 @@ const useId = () => {
                 );
               })}
             </ColorWrapper>
-            <ProductWrapper>
-              {optionList &&
-                optionList.map((el: any, index: number) => {
-                  return (
-                    <Product
-                      isRender={
-                        el.color ==
-                        colorList.filter((el: any) => el.checked == true)[0]
-                          .color
-                      }
-                      isActive={el.clicked}
-                      onClick={() => clickHandler(index)}
-                      key={`reyrtjh${index}`}
-                    >
-                      <ColorName>{el.color}</ColorName>
-                      <MiniCircle />
-                      <LengthText>{`${el.width}m*${el.length}m`}</LengthText>
-                      <UnitText>(W*L)</UnitText>
-                    </Product>
-                  );
-                })}
-            </ProductWrapper>
+
+            {optionList &&
+              optionList.map((el: any, index: number) => {
+                return (
+                  <Product
+                    isRender={
+                      el.color ==
+                      colorList.filter((el: any) => el.checked == true)[0].color
+                    }
+                    isActive={el.clicked}
+                    onClick={() => clickHandler(index)}
+                    key={`reyrtjh${index}`}
+                  >
+                    <ColorName>{el.color}</ColorName>
+                    <MiniCircle />
+                    <LengthText>{`${el.width}m*${el.length}m`}</LengthText>
+                    <UnitText>(W*L)</UnitText>
+                  </Product>
+                );
+              })}
+
             <AvailableText>
               {`${seletedOption.quantity} available`}
             </AvailableText>
@@ -778,7 +790,9 @@ const useId = () => {
                 </PlusButton>
               </ButtonInputWrapper>
               <ProductPriceWrapper>
-                <ProductUnit>{`1 Qty ${seletedOption.length} m`}</ProductUnit>
+                <ProductUnit>{`${count} Qty ${
+                  seletedOption.length * count
+                } m`}</ProductUnit>
                 <ProductPrice>
                   ${" "}
                   {Math.floor(seletedOption.price * count * 100) / 100
@@ -806,6 +820,93 @@ const useId = () => {
             </SmapleMessage>
           </PurchaseBox>
         </PurchaseContainer>
+
+        {/** 모바일, 태블릿에서의 상품 정보 */}
+        <ProductInfoPurchaseContainerMobile>
+          <InfoWrapper>
+            <InfoTitle>Composition</InfoTitle>
+            <InfoContent>
+              <RatioWrapper>
+                {info
+                  ? info.materials.map((i: any, j: number) => {
+                      return (
+                        <Ratio key={`composition-${j}`}>{`${
+                          fabricList[parseInt(i.materialNo) - 1]
+                        } ${i.value}%`}</Ratio>
+                      );
+                    })
+                  : ""}
+              </RatioWrapper>
+            </InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Certification</InfoTitle>
+            <InfoContent>
+              {info && info.certificated ? "Repp verifyed" : "No"}
+            </InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Width/length</InfoTitle>
+            <InfoContent>
+              {info &&
+                info.options.map((i: any, j: number) => {
+                  return (
+                    <WidthContent key={`width-${j}`}>
+                      {`${info.width}cm*${i.length}m(W*L)`}
+                    </WidthContent>
+                  );
+                })}
+            </InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Weight</InfoTitle>
+            <InfoContent>{`${info && info.weight}gms/sq.mt`}</InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Transparent</InfoTitle>
+            <InfoContent>{`${
+              info && info.transparent ? "Yes" : "No"
+            }`}</InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Available</InfoTitle>
+            <InfoContent>{info && `${availableChanger(info)}`}</InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Color</InfoTitle>
+            <InfoContent>
+              {info &&
+                info.options.map((i: any, j: number) => {
+                  return (
+                    <WidthContent key={`color-${j}`}>
+                      {info &&
+                        `${
+                          colors.filter((el: any) => el.colorNo == i.colorNo)[0]
+                            .name
+                        }`}
+                    </WidthContent>
+                  );
+                })}
+            </InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Design</InfoTitle>
+            <InfoContent>{info && `${info.design.name}`}</InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Project</InfoTitle>
+            <InfoContent>{info && `${info.project?.name}`}</InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Contry of origin</InfoTitle>
+            <InfoContent>{info && `${info.origin.name}`}</InfoContent>
+          </InfoWrapper>
+          <InfoWrapper>
+            <InfoTitle>Descripttion</InfoTitle>
+            <InfoDescription>{info && `${info.description}`}</InfoDescription>
+          </InfoWrapper>
+        </ProductInfoPurchaseContainerMobile>
+
         <DeliveryReturnsInfoTitleWrapper>
           <ShortLine />
           <DeliveryReturnsInfoTitle>
@@ -907,7 +1008,6 @@ const ProductInfoContainer = styled.div`
   }
   @media screen and (max-width: 768px) {
     display: block;
-    margin-bottom: 43px;
   }
 `;
 const ImageVideoWrapper = styled.div`
@@ -1002,8 +1102,20 @@ const ProductInfoPurchaseContainer = styled.div`
   padding-right: 20px;
 
   @media screen and (max-width: 768px) {
+    display: none;
     width: auto;
     padding-top: 20px;
+  }
+`;
+const ProductInfoPurchaseContainerMobile = styled.div`
+  display: none;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    width: auto;
   }
 `;
 const Title = styled.div`
@@ -1013,6 +1125,20 @@ const Title = styled.div`
   line-height: 29px;
   letter-spacing: -0.011em;
   color: #121822;
+`;
+const TitleMobile = styled.div`
+  display: none;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-left: 20px;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 29px;
+  letter-spacing: -0.011em;
+  color: #121822;
+  @media screen and (max-width: 768px) {
+    display: block;
+  }
 `;
 const Line = styled.div`
   margin-bottom: 20px;
@@ -1082,28 +1208,17 @@ const PurchaseBox = styled.div`
 `;
 const ColorWrapper = styled.div`
   display: flex;
+  gap: 16px;
   margin-bottom: 16px;
-  border-bottom: 1px solid #dee8ec;
   box-sizing: border-box;
-  height: 55px;
+  height: 32px;
 `;
 const ColorBox = styled.div<{ isChecked: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 55px;
-  height: 55px;
-  ${(props) => {
-    switch (props.isChecked) {
-      case true:
-        return `border: 1px solid #dee8ec;
-        border-bottom: 1px solid #FFFFFF;`;
-      case false:
-        return `
-          border: none;
-        `;
-    }
-  }};
+  width: 32px;
+  height: 32px;
   box-sizing: border-box;
   cursor: pointer;
 `;
@@ -1187,11 +1302,14 @@ const Product = styled.div<{ isRender: boolean; isActive: boolean }>`
   display: ${(props) => {
     return props.isRender ? "flex" : "none";
   }};
+  margin-bottom: 20px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  box-sizing: border-box;
+  border-top: 1px dashed #dee8ec;
+  border-bottom: 1px dashed #dee8ec;
   align-items: center;
-  padding: 10px;
-  border: ${(props) => {
-    return props.isActive ? "1px solid #536c6d" : "1px solid #DEE8EC";
-  }};
+
   border-radius: 2px;
   font-size: 14px;
   font-weight: 400;
@@ -1210,7 +1328,7 @@ const MiniCircle = styled.div`
 `;
 const LengthText = styled.div``;
 const UnitText = styled.div`
-  color: #536c6d;
+  color: #a4b0b2;
 `;
 const AvailableText = styled.div`
   margin-bottom: 20px;
