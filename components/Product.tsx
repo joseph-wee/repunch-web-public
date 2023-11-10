@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {
   btn_favorite_inact,
   btn_review,
+  cert,
   ic_favorite_wht,
   test_thumbnail,
   test_thumbnail_green,
@@ -118,6 +119,7 @@ const Product = ({ product }: any) => {
           {product.design ? product.design.name : "null"}
         </ProductCategory>
         <RatioWrapper>
+          {product.certificated && <Image src={cert} alt="cert" />}
           {product.materials.map((i: any, j: number) => {
             return (
               <Ratio key={`ratido${j}`}>{`${fabricList[i.name]} ${
