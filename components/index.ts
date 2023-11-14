@@ -1,6 +1,5 @@
 export { default as FooterBar } from "./FooterBar";
 export { default as HeaderBar } from "./HeaderBar";
-export { default as HeaderBarAboutUs } from "./HeaderBarAboutUs";
 export { default as SelectBox } from "./SelectBox";
 export { default as SelectBoxCountryCodeNum } from "./SelectBoxCountryCodeNum";
 export { default as NavTopBar } from "./NavTopBar";

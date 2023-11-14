@@ -16,7 +16,7 @@ import {
 } from "../assets";
 import Image from "next/legacy/image";
 import { useEffect, useRef, useState } from "react";
-import { Filter, HeaderBarAboutUs, ProductList } from "../components";
+import { Filter, ProductList } from "../components";
 
 const useAbout_us = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
