@@ -10,9 +10,11 @@ import { loginCheck } from "../utils/functions";
 const NavMobileBar = ({
   isActive,
   setIsActive,
+  url,
 }: {
   isActive: boolean;
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+  url: string;
 }) => {
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
 
@@ -37,8 +39,12 @@ const NavMobileBar = ({
 
   return (
     <>
-      <Background isActive={isActive} onClick={() => setIsActive(false)} />
-      <Container isActive={isActive}>
+      <Background
+        isActive={isActive}
+        onClick={() => setIsActive(false)}
+        url={url}
+      />
+      <Container isActive={isActive} url={url}>
         <MenuWrapper>
           <Menu>
             <Link
@@ -126,7 +132,7 @@ const NavMobileBar = ({
   );
 };
 
-const Background = styled.div<{ isActive: boolean }>`
+const Background = styled.div<{ isActive: boolean; url: string }>`
   z-index: 1;
   display: none;
   position: fixed;
@@ -138,9 +144,12 @@ const Background = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
     return props.isActive == true ? "block" : "none";
   }};
+  display: ${(props) => {
+    return props.url == "/about_us" && "none";
+  }};
 `;
 
-const Container = styled.nav<{ isActive: boolean }>`
+const Container = styled.nav<{ isActive: boolean; url: string }>`
   display: ${(props) => {
     return props.isActive ? "block" : "none";
   }};
@@ -153,7 +162,9 @@ const Container = styled.nav<{ isActive: boolean }>`
   padding-bottom: 40px;
   box-sizing: border-box;
   width: 100%;
-  background-color: #e1ff20;
+  background-color: ${(props) => {
+    return props.url == "/about_us" ? "" : "#e1ff20";
+  }};
 
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 `;

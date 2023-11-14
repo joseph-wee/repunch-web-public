@@ -85,8 +85,7 @@ const useHeaderBar = () => {
         break;
       case "/shop_supplies":
         break;
-      case "/about_us":
-        break;
+
       default:
         !loginCheck() && router.push("/login");
     }
@@ -135,15 +134,17 @@ const useHeaderBar = () => {
         </Menu>
       </Container>
       {/* <NavTopBar /> */}
-      <NavMobileBar isActive={isActive} setIsActive={setIsActive} />
+      <NavMobileBar
+        isActive={isActive}
+        setIsActive={setIsActive}
+        url={router.pathname}
+      />
     </>
   );
 };
 
 const Container = styled.header<{ isActive: string }>`
-  display: ${(props) => {
-    return props.isActive == "/about_us" ? "none" : "flex";
-  }};
+  display: flex;
   z-index: 3;
   position: fixed;
   padding-left: 17px;
@@ -153,7 +154,9 @@ const Container = styled.header<{ isActive: string }>`
   align-items: center;
   width: 100%;
   height: 64px;
-  background-color: #e1ff20;
+  background-color: ${(props) => {
+    return props.isActive == "/about_us" ? "" : "#e1ff20";
+  }};
 `;
 const Logo = styled.div``;
 const Menu = styled.div`
