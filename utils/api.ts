@@ -823,48 +823,13 @@ export const paymentRequest2 = async (
   try {
     const res = await axios({
       method: "POST",
-      url: `/payment/request`,
+      url: `/payment/capture`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        token: token,
-        PayerID: PayerID,
       },
       data: {
-        orderUnitType: "ROLL",
-        items: [
-          {
-            orderUnitType: "ROLL",
-            productNo: 10000,
-            productOptionNo: 2,
-            amount: 700,
-            count: 1,
-            cartNo: 2,
-            shippingAddress: {
-              addressNo: 1,
-              firstName: "Yosup",
-              lastName: "Wee",
-              postalCode: "12235",
-              countryCode: "KR",
-              state: "Gyonggi-do Namyangju-si",
-              streetAddress1: "Gyeongchun-ro 885beon-gil",
-              streetAddress2: "22-7, 103호",
-              phoneNumber: "01099088763",
-            },
-          },
-        ],
-        deliveryMethod: "AIR",
-        shippingAddress: {
-          addressNo: 1,
-          firstName: "Yosup",
-          lastName: "Wee",
-          postalCode: "12235",
-          countryCode: "KR",
-          state: "Gyonggi-do Namyangju-si",
-          streetAddress1: "Gyeongchun-ro 885beon-gil",
-          streetAddress2: "22-7, 103호",
-          phoneNumber: "01099088763",
-        },
-        totalAmount: 10,
+        token: token,
+        PayerID: PayerID,
       },
     });
     return res;
