@@ -36,6 +36,20 @@ const useOrderInfoBox = ({
 
   const router = useRouter();
 
+  // 주문 상태 데이터 표시용
+  const status = new Map([
+    ["IN_REVIEW", "In Review"],
+    ["ORDER_CONFIRMED", "Order Confirmed"],
+    ["IN_PRODUCTION", "In Production"],
+    ["SHIPPED", "Shipped"],
+    ["PICKED_UP_READY", "Picked Up Ready"],
+    ["PICKED_UP", "Picked Up"],
+    ["DELIVERED", "Delivered"],
+    ["CLOSING_ORDER", "Closing Order"],
+    ["RETURNS", "Returns"],
+    ["CANCEL", "Cancel"],
+  ]);
+
   useEffect(() => {
     if (questionDeliveryIsActive) {
       questionDeliveryRef.current.focus();
@@ -65,11 +79,6 @@ const useOrderInfoBox = ({
     status == data.status ? setRender(true) : setRender(false);
   }, [clicked]);
 
-  useEffect(() => {
-    console.log(data);
-    data.status == "";
-  }, []);
-
   /** 주문취소후 새로고침 */
   const orderCancelHandler = (orderNo: number) => {
     let at;
@@ -92,6 +101,10 @@ const useOrderInfoBox = ({
     });
   };
 
+  useEffect(() => {
+    console.log(data);
+  }, []);
+
   return (
     <Box render={render}>
       <Container>
@@ -109,10 +122,10 @@ const useOrderInfoBox = ({
               <TextWrapper>
                 <ProductTitle>{data.name}</ProductTitle>
                 <OptionWrapper>
-                  <Color />
-                  Red
+                  <Color color={data.items[0].product.option.color.name} />
+                  {data.items[0].product.option.color.name}
                   <VerticalLine />
-                  20m*20m
+                  {data.items[0].product.option.length}m*20m
                 </OptionWrapper>
                 <ProductQty>{el.product.count} Qty</ProductQty>
               </TextWrapper>
@@ -159,7 +172,7 @@ const useOrderInfoBox = ({
             <DashLine1 />
             <TotalPriceWrapper>
               <Total>Total</Total>
-              <Price>$ 62.25</Price>
+              <Price>{`$ ${data.totalAmount}`}</Price>
             </TotalPriceWrapper>
           </>
         )}
@@ -224,7 +237,7 @@ const useOrderInfoBox = ({
                 <ContentTitle>Order Summary</ContentTitle>
                 <FlexWrapper>
                   <SummaryPriceTitle>Item subtotal</SummaryPriceTitle>
-                  <SummaryPrice>$32.25</SummaryPrice>
+                  <SummaryPrice>${data.paymentAmount}</SummaryPrice>
                 </FlexWrapper>
                 <FlexWrapper>
                   <SummaryPriceTitle>
@@ -235,7 +248,7 @@ const useOrderInfoBox = ({
                       ?
                     </QuestionMark>
                   </SummaryPriceTitle>
-                  <SummaryPrice>Free</SummaryPrice>
+                  <SummaryPrice>${data.deliveryFee}</SummaryPrice>
                 </FlexWrapper>
                 <FlexWrapper>
                   <SummaryPriceTitle>
@@ -244,34 +257,49 @@ const useOrderInfoBox = ({
                       ?
                     </QuestionMark>
                   </SummaryPriceTitle>
-                  <SummaryPrice>$32.25</SummaryPrice>
+                  <SummaryPrice>$??.??</SummaryPrice>
                 </FlexWrapper>
                 <SummaryTotalPriceWrapper>
                   <Total>Total</Total>
-                  <Price>$ 62.25</Price>
+                  <Price>${data.totalAmount}</Price>
                 </SummaryTotalPriceWrapper>
                 <Line />
                 <PaymentTitle>Payment</PaymentTitle>
                 <PaymentWrapper>
                   <Image src={payment_express} alt="payment_express" />
-                  <PaymentNumber>**** 9987</PaymentNumber>
+                  <PaymentNumber>PayPal</PaymentNumber>
                 </PaymentWrapper>
               </>
             )}
             <Line />
             <ContentTitle>Delivered to</ContentTitle>
-            <AddressTitle>My1</AddressTitle>
-            <AddressText>#809</AddressText>
-            <AddressText>#809, 8dong ssangyoung</AddressText>
-            <AddressText>daechi dong, gangnamgu</AddressText>
-            <AddressText>korea</AddressText>
-            <AddressText>06285</AddressText>
-            <AddressPhoneNumber>821086281024</AddressPhoneNumber>
+            <AddressTitle>{data.items[0].shippingAddress.title}</AddressTitle>
+            <AddressText>
+              {data.items[0].shippingAddress.firstName},
+              {data.items[0].shippingAddress.lastName}
+            </AddressText>
+            <CompanyName>
+              {data.items[0].shippingAddress.companyName}
+            </CompanyName>
+            <AddressText>
+              {data.items[0].shippingAddress.streetAddress1}
+            </AddressText>
+            <AddressText>
+              {data.items[0].shippingAddress.streetAddress2}
+            </AddressText>
+            <AddressText>{data.items[0].shippingAddress.state}</AddressText>
+            <AddressText>
+              {data.items[0].shippingAddress.country.name}
+            </AddressText>
+            <AddressText>{data.items[0].shippingAddress.postCode}</AddressText>
+            <AddressPhoneNumber>
+              {data.items[0].shippingAddress.phoneNumber}
+            </AddressPhoneNumber>
           </OrderDetailContent>
         </OrderDetailContainer>
       </Container>
 
-      {data.status == "IN_REVIEW" || "ORDER_CONFIRMED" ? (
+      {data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED" ? (
         <>
           <ProgressContainer>
             <ModelWrapper>
@@ -311,15 +339,31 @@ const useOrderInfoBox = ({
       ) : (
         <>
           <DeliveredContainer>
-            <DeliveredTitle>Shipped</DeliveredTitle>
+            <DeliveredTitle>{status.get(data.status)}</DeliveredTitle>
             <DeliveredProgressWrapper>
-              <ProgressLine />
-              <ProgressLineGray />
-              <DeliveredCircle />
-              <DeliveredCircle />
-              <DeliveredCircle />
-              <DeliveredCircleGray />
-              <DeliveredBigCircle4 />
+              <TrackBigCircle status={data.status} num={0}>
+                <TrackCircle status={data.status} num={0} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={0} />
+              <TrackBigCircle status={data.status} num={1}>
+                <TrackCircle status={data.status} num={1} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={1} />
+              <TrackBigCircle status={data.status} num={2}>
+                <TrackCircle status={data.status} num={2} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={2} />
+              <TrackBigCircle status={data.status} num={3}>
+                <TrackCircle status={data.status} num={3} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={3} />
+              <TrackBigCircle status={data.status} num={4}>
+                <TrackCircle status={data.status} num={4} />
+              </TrackBigCircle>
+              {/* <TrackLine status={data.status} num={4} />
+              <TrackBigCircle status={data.status} num={5}>
+                <TrackCircle status={data.status} num={5} />
+              </TrackBigCircle> */}
             </DeliveredProgressWrapper>
           </DeliveredContainer>
           <TrackOrderContainer>
@@ -350,18 +394,20 @@ const useOrderInfoBox = ({
               <TrackOrderContentWrapper>
                 <TrackOrderCircle />
                 <TrackOrderContentTitle>
-                  Shipped (
-                  <ShippingNumber>&nbsp;DHL 102002102&nbsp;</ShippingNumber> )
+                  Shipped&nbsp;
+                  {data.status == "SHIPPED" && (
+                    <ShippingNumber>(&nbsp;DHL 102002102&nbsp;)</ShippingNumber>
+                  )}
                 </TrackOrderContentTitle>
               </TrackOrderContentWrapper>
               <TrackOrderContentWrapper>
                 <TrackorderCircleGray />
                 <TrackOrderContentTitle>Delivered</TrackOrderContentTitle>
               </TrackOrderContentWrapper>
-              <TrackorderProgressLine />
-              <TrackorderProgressLineGray />
+              <TrackorderProgressLine status={data.status} />
+              <TrackorderProgressLineGray status={data.status} />
 
-              <TrackOrderBigCircle4 />
+              <TrackOrderBigCircle status={data.status} />
             </TrackOrderContent>
           </TrackOrderContainer>
         </>
@@ -413,6 +459,8 @@ const useOrderInfoBox = ({
           </OrderButton>
         </Wrapper>
       )}
+
+      {/** in production case: ?? */}
 
       {/** delivered case: 주문 확정 가능 */}
       {data.status == "DELIVERED" && (
@@ -505,12 +553,68 @@ const OptionWrapper = styled.div`
   letter-spacing: -0.011em;
   color: #536c6d;
 `;
-const Color = styled.div`
+const Color = styled.div<{ color: string }>`
   margin-right: 4px;
   width: 12px;
   height: 12px;
-  background-color: #ec3939;
   border-radius: 100%;
+  ${(props) => {
+    switch (props.color) {
+      case "White":
+        return `    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    background-color: #ffffff;`;
+      case "Black":
+        return "background-color: #000000";
+      case "Gray":
+        return "background-color: #C4C4C4";
+      case "Beige":
+        return "background-color: #F1EBD3";
+      case "Brown":
+        return "background-color: #825757";
+      case "Red":
+        return "background-color: #EC3939";
+      case "Orange":
+        return "background-color: #FE7E36";
+      case "Yellow":
+        return "background-color: #F9D142";
+      case "Pink":
+        return "background-color: #FF96FB";
+      case "Purple":
+        return "background-color: #814FEC";
+      case "Blue":
+        return "background-color: #293DF0";
+      case "Green":
+        return "background-color: #46CA43";
+      case "Silver":
+        return `  background: linear-gradient(
+      156.04deg,
+      #a9a9a9 10.26%,
+      #dedede 43.51%,
+      #ffffff 52.57%,
+      #e1e1e1 61.64%,
+      #9a9a9a 93.16%
+    );`;
+      case "Gold":
+        return `    background: linear-gradient(
+      152.18deg,
+      #d3a810 5.76%,
+      #fff8de 44.11%,
+      #ffffff 49.34%,
+      #fff9e4 55.45%,
+      #d3a810 89.44%
+    ); `;
+      case "Multi":
+        return `    background: linear-gradient(
+      154.17deg,
+      #ff1001 17.26%,
+      #fff500 37.73%,
+      #24ff00 57.06%,
+      #00bdf9 72.22%,
+      #0075ff 90.03%
+    );`;
+    }
+  }};
 `;
 const ColorGreen = styled.div`
   margin-right: 4px;
@@ -732,8 +836,8 @@ const ImageBox = styled.div`
   cursor: pointer;
 `;
 const ContentTitle = styled.div`
-  margin-top: 11px;
-  margin-bottom: 16px;
+  margin-top: 16px;
+  margin-bottom: 13px;
   font-weight: 700;
   font-size: 12px;
   line-height: 16px;
@@ -809,8 +913,8 @@ const PaymentNumber = styled.div`
 `;
 const AddressTitle = styled.div`
   margin-bottom: 12px;
-  font-weight: 400;
-  font-size: 12px;
+  font-weight: 700;
+  font-size: 14px;
   line-height: 14px;
   color: #121822;
 `;
@@ -818,15 +922,22 @@ const AddressText = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #536c6d;
+  color: #121822;
+`;
+const CompanyName = styled.div`
+  margin-bottom: 13px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #121822;
 `;
 const AddressPhoneNumber = styled.div`
-  margin-top: 16px;
+  margin-top: 13px;
   margin-bottom: 8px;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #536c6d;
+  color: #121822;
 `;
 const BilledWrapper = styled.div`
   display: flex;
@@ -974,9 +1085,7 @@ const DeliveredContainer = styled.div`
 `;
 
 const DeliveredTitle = styled.div`
-  margin: 0 auto;
   margin-bottom: 5px;
-  width: 54px;
   text-align: center;
   font-weight: 400;
   font-size: 12px;
@@ -986,11 +1095,59 @@ const DeliveredTitle = styled.div`
 const DeliveredProgressWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
-  margin: 0 auto;
-  width: 86px;
-  height: 11px;
+  justify-content: center;
+`;
+const TrackCircle = styled.div<{ status: string; num: number }>`
+  z-index: 1;
+  width: 5px;
+  height: 5px;
+  background-color: #121822;
+  border-radius: 100%;
+
+  ${(props) => {
+    return (
+      props.num > 0 &&
+      props.status == "IN_REVIEW" &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 1 &&
+      props.status == "ORDER_CONFIRMED" &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 2 &&
+      props.status == "IN_PRODUCTION" &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 5 &&
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "background-color: #a4b0b3;"
+    );
+  }};
 `;
 const DeliveredCircle = styled.div`
   z-index: 1;
@@ -1010,6 +1167,89 @@ const DeliveredCircleGray = styled.div`
   background-color: #a4b0b3;
   border-radius: 100%;
 `;
+const TrackLine = styled.div<{ status: string; num: number }>`
+  width: 20.5px;
+  border-bottom: 1px solid #121822;
+
+  ${(props) => {
+    return props.status == "IN_REVIEW" && "border-bottom: 1px solid #a4b0b3;";
+  }};
+  ${(props) => {
+    return props.status == "IN_REVIEW" && props.num == 0 && "width: 18px";
+  }};
+
+  ${(props) => {
+    return (
+      props.num >= 1 &&
+      props.status == "ORDER_CONFIRMED" &&
+      "border-bottom: 1px solid #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return props.num == 0 && props.status == "ORDER_CONFIRMED" && "width: 18px";
+  }};
+  ${(props) => {
+    return props.num == 1 && props.status == "ORDER_CONFIRMED" && "width: 18px";
+  }};
+
+  ${(props) => {
+    return (
+      props.num >= 2 &&
+      props.status == "IN_PRODUCTION" &&
+      "border-bottom: 1px solid #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return props.num == 1 && props.status == "IN_PRODUCTION" && "width: 18px";
+  }};
+  ${(props) => {
+    return props.num == 2 && props.status == "IN_PRODUCTION" && "width: 18px";
+  }};
+
+  ${(props) => {
+    return (
+      props.num >= 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "border-bottom: 1px solid #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 2 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "width: 18px"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "width: 18px"
+    );
+  }};
+
+  ${(props) => {
+    return (
+      props.num >= 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "border-bottom: 1px solid #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 3 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "width: 18px"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "width: 18px"
+    );
+  }};
+`;
 const ProgressLine = styled.div`
   position: absolute;
   margin-left: 3px;
@@ -1022,6 +1262,62 @@ const ProgressLineGray = styled.div`
   width: 22px;
   border-bottom: 1px solid #a4b0b3;
 `;
+const TrackBigCircle = styled.div<{ status: string; num: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5px;
+  height: 5px;
+  box-sizing: border-box;
+  border-radius: 100%;
+  background-color: #e1ff20;
+
+  ${(props) => {
+    return (
+      props.num == 0 &&
+      props.status == "IN_REVIEW" &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 1 &&
+      props.status == "ORDER_CONFIRMED" &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 2 &&
+      props.status == "IN_PRODUCTION" &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 5 &&
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+`;
+
 const DeliveredBigCircle4 = styled.div`
   position: absolute;
   right: 25px;
@@ -1071,7 +1367,7 @@ const TrackOrderContentWrapper = styled.div`
   }
 `;
 const TrackOrderCircle = styled.div`
-  z-index: 1;
+  z-index: 2;
   margin-right: 9px;
   width: 5px;
   height: 5px;
@@ -1091,23 +1387,23 @@ const TrackOrderContentTitle = styled.div`
   line-height: 16px;
   color: #121822;
 `;
-const TrackorderProgressLine = styled.div`
+const TrackorderProgressLine = styled.div<{ status: string }>`
+  z-index: 1;
   position: absolute;
   top: 28px;
   left: 16px;
-  height: 116px;
+  height: 120px;
   border-right: 1px solid #121822;
 `;
-const TrackorderProgressLineGray = styled.div`
+const TrackorderProgressLineGray = styled.div<{ status: string }>`
   position: absolute;
-  top: 154px;
+  top: 28px;
   left: 16px;
-  height: 36px;
+  height: 160px;
   border-right: 1px solid #a4b0b3;
 `;
-const TrackOrderBigCircle4 = styled.div`
+const TrackOrderBigCircle = styled.div<{ status: string }>`
   position: absolute;
-  top: 143.5px;
   left: 11px;
   width: 11px;
   height: 11px;
@@ -1115,6 +1411,36 @@ const TrackOrderBigCircle4 = styled.div`
   box-sizing: border-box;
   border-radius: 100%;
   background-color: #e1ff20;
+
+  ${(props) => {
+    return props.status == "IN_REVIEW" && "top: 23.5px;";
+  }};
+  ${(props) => {
+    return props.status == "ORDER_CONFIRMED" && "top: 63.5px;";
+  }};
+  ${(props) => {
+    return props.status == "IN_PRODUCTION" && "top: 103.5px;";
+  }};
+  ${(props) => {
+    return (
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "top: 143.5px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "top: 183.5px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "top: 223.5px;"
+    );
+  }};
 `;
 const CancelButton = styled.button`
   margin-top: 16px;
