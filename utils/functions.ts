@@ -232,10 +232,12 @@ export const passwordConfirmValidation = (
 
 /** 로그인 유무 판별 */
 export const loginCheck = () => {
-  if (localStorage.getItem("at")) {
+  const keep = document.cookie.match("(^|;) ?" + "keep" + "=([^;]*)(;|$)");
+
+  if (localStorage.getItem("at") && keep) {
     return true;
   }
-  if (sessionStorage.getItem("at")) {
+  if (localStorage.getItem("at") && sessionStorage.getItem("keep")) {
     return true;
   }
   return false;
