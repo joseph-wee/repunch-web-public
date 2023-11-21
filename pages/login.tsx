@@ -73,6 +73,7 @@ const useLogin = () => {
 
           localStorage.setItem("at", res.data.result.access_token);
           localStorage.setItem("rt", res.data.result.refresh_token);
+          sessionStorage.setItem("keep", "true");
 
           router.push("/");
           return;
