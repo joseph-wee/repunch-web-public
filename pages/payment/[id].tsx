@@ -215,19 +215,19 @@ const usePayment = () => {
                 <ProductWrapper key={`${index}33`}>
                   <ImageWrapper>
                     <Image
-                      src={test_thumbnail}
+                      src={el.product.option.thumbnailUrl}
                       alt={"test"}
                       width={80}
                       height={80}
                     />
                   </ImageWrapper>
                   <TextWrapper>
-                    <ProductTitle>no data</ProductTitle>
+                    <ProductTitle>{el.product.title}</ProductTitle>
                     <OptionWrapper>
                       <Color />
-                      Red
+                      {el.product.option.color.name}
                       <VerticalLine />
-                      20m*20m
+                      {el.product.option.length}*{el.product.width}m
                     </OptionWrapper>
                     <ProductQty>{el.product.count} Qty</ProductQty>
                   </TextWrapper>
@@ -256,7 +256,7 @@ const usePayment = () => {
           <AddressText>
             {address.firstName},{address.lastName}
           </AddressText>
-          <ProfileCorperationName>{address.companyName}</ProfileCorperationName>
+          <AddressText>{address.companyName}</AddressText>
           <AddressText>{address.streetAddress2}</AddressText>
           <AddressText>{address.streetAddress1}</AddressText>
           <AddressText>{address.state}</AddressText>
@@ -290,25 +290,40 @@ const usePayment = () => {
         <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
-            <Price>${order.paymentAmount}</Price>
+            <Price>
+              $
+              {Math.floor(order.paymentAmount) / 100
+                ? Math.floor(order.paymentAmount) / 100
+                : "0"}
+            </Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
               Delivery by air
               <QuestionMark>?</QuestionMark>
             </PriceTitle>
-            <Price>${order.deliveryFee}</Price>
+            <Price>
+              $
+              {Math.floor(order.deliveryFee) / 100
+                ? Math.floor(order.deliveryFee) / 100
+                : "0"}
+            </Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
               Tax <QuestionMark>?</QuestionMark>
             </PriceTitle>
-            <Price>$0</Price>
+            <Price>$??</Price>
           </FlexWrapper>
           <Line />
           <FlexWrapper>
             <TotalTitle>Total</TotalTitle>
-            <TotalPrice>${Number(totalPrice)}</TotalPrice>
+            <TotalPrice>
+              $
+              {Math.floor(totalPrice) / 100
+                ? Math.floor(totalPrice) / 100
+                : "0"}
+            </TotalPrice>
           </FlexWrapper>
           <InfoText>
             <Image src={ic_info} alt={"ic_info"} />
@@ -601,6 +616,9 @@ const AddressText = styled.div`
   font-size: 12px;
   line-height: 16px;
   color: #121822;
+  &:nth-of-type(3) {
+    margin-bottom: 13px;
+  }
 `;
 const AddressPhoneNumber = styled.div`
   margin-top: 12px;
