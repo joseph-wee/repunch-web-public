@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -11,9 +11,62 @@ import Link from "next/link";
 import { btn_web_back } from "../assets";
 import Image from "next/image";
 import { goBack } from "../utils/functions";
+import {
+  ordersAllRequest,
+  ordersClosingOrderRequest,
+  ordersDeliveredRequest,
+} from "../utils/api";
 
 const useOrder_history = () => {
   const [orderCategory, setOrderCategory] = useState(0);
+  const [clicked, setClicked] = useState(1); // 클릭 상태
+  const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
+  const [orders, setOrders] = useState<any>([]); // 주문 리스트
+
+  /** 주문 요청 핸들러 - ALL */
+  const ordersAllRequestHandler = () => {
+    let at: string | null;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    let tempOrder: any;
+
+    ordersAllRequest(at, -1).then((res) => {
+      console.log(res);
+      // 성공 case
+      res?.data.result.data && (tempOrder = res?.data.result.data);
+
+      ordersDeliveredRequest(at, -1).then((res) => {
+        res?.data.result.data &&
+          (tempOrder = [...tempOrder, ...res?.data.result.data]);
+        ordersClosingOrderRequest(at, -1).then((res) => {
+          res?.data.result.data &&
+            (tempOrder = [...tempOrder, ...res?.data.result.data]);
+
+          setOrders([...tempOrder]);
+        });
+      });
+
+      // 실패 case: 토큰 만료
+      // 실패 case
+    });
+  };
+
+  /** 처음 렌더링시 주문 목록 세팅 */
+  useEffect(() => {
+    ordersAllRequestHandler();
+  }, []);
+
+  useEffect(() => {
+    console.log(orders);
+  }, [orders]);
 
   return (
     <Container>
@@ -30,7 +83,7 @@ const useOrder_history = () => {
             isActive={orderCategory}
             onClick={() => setOrderCategory(0)}
           >
-            Roll (1)
+            Roll ({orders.length})
           </MeterageButton>
           <SampleButton
             isActive={orderCategory}
@@ -41,6 +94,17 @@ const useOrder_history = () => {
         </AllMeterSampleButtonWrapper>
         <RecentOrders />
         <MeterageOrderWrapper isActive={orderCategory}>
+          {orders.map((el: any, index: number) => {
+            return (
+              <OrderInfoBox
+                data={el}
+                clicked={clicked}
+                accomplish={false}
+                myAccount={false}
+                key={`eas-${index}`}
+              />
+            );
+          })}
           {/* <OrderInfoBox accomplish={true} myAccount={false} /> */}
         </MeterageOrderWrapper>
         <SampleOrderWrapper isActive={orderCategory}>
