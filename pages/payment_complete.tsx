@@ -18,7 +18,7 @@ const usePayment_complete = () => {
         email below
       </InformText>
       <EmailRepunch>support@repunch.co.kr</EmailRepunch>
-      <ButtonHome onClick={() => router.push("./")}>Home</ButtonHome>
+      <ButtonHome onClick={() => router.push("/")}>Home</ButtonHome>
     </Container>
   );
 };
