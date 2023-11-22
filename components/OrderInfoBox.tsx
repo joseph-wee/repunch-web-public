@@ -113,19 +113,20 @@ const useOrderInfoBox = ({
             <ProductWrapper key={`${index}33`}>
               <ImageWrapper>
                 <Image
-                  src={test_thumbnail}
+                  src={el.product.option.files[0].imageUrl}
                   alt={"test"}
                   width={80}
                   height={80}
                 />
               </ImageWrapper>
               <TextWrapper>
+                {/** 이름 추후 수정필요 */}
                 <ProductTitle>{data.name}</ProductTitle>
                 <OptionWrapper>
-                  <Color color={data.items[0].product.option.color.name} />
-                  {data.items[0].product.option.color.name}
+                  <Color color={el.product.option.color.name} />
+                  {el.product.option.color.name}
                   <VerticalLine />
-                  {data.items[0].product.option.length}m*20m
+                  {el.product.option.length}m*20m
                 </OptionWrapper>
                 <ProductQty>{el.product.count} Qty</ProductQty>
               </TextWrapper>
@@ -142,8 +143,9 @@ const useOrderInfoBox = ({
           <OrderInfoWrapper>
             <OrderInfoTitle>Delivery</OrderInfoTitle>
             <OrderInfoContent>
-              {data.deliveryMethod == "AIR" ? "By air" : "By ship"} ($
-              {data.deliveryFee} / {`{{date}}`})
+              {data.deliveryMethod == "AIR" ? "By air" : "By ship"}
+              {data.deliveryFee != 0 && `$(${data.deliveryFee})`}
+              {/* / {`{{date}}`}) */}
             </OrderInfoContent>
           </OrderInfoWrapper>
         ) : (
@@ -360,10 +362,10 @@ const useOrderInfoBox = ({
               <TrackBigCircle status={data.status} num={4}>
                 <TrackCircle status={data.status} num={4} />
               </TrackBigCircle>
-              {/* <TrackLine status={data.status} num={4} />
+              <TrackLine status={data.status} num={4} />
               <TrackBigCircle status={data.status} num={5}>
                 <TrackCircle status={data.status} num={5} />
-              </TrackBigCircle> */}
+              </TrackBigCircle>
             </DeliveredProgressWrapper>
           </DeliveredContainer>
           <TrackOrderContainer>
@@ -380,19 +382,19 @@ const useOrderInfoBox = ({
             </OrderDetailButtonWrapper>
             <TrackOrderContent isActive={trackorderIsActive}>
               <TrackOrderContentWrapper>
-                <TrackOrderCircle />
+                <TrackOrderCircle status={data.status} num={0} />
                 <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
               </TrackOrderContentWrapper>
               <TrackOrderContentWrapper>
-                <TrackOrderCircle />
+                <TrackOrderCircle status={data.status} num={1} />
                 <TrackOrderContentTitle>Order Complete</TrackOrderContentTitle>
               </TrackOrderContentWrapper>
               <TrackOrderContentWrapper>
-                <TrackOrderCircle />
+                <TrackOrderCircle status={data.status} num={2} />
                 <TrackOrderContentTitle>In Production</TrackOrderContentTitle>
               </TrackOrderContentWrapper>
               <TrackOrderContentWrapper>
-                <TrackOrderCircle />
+                <TrackOrderCircle status={data.status} num={3} />
                 <TrackOrderContentTitle>
                   Shipped&nbsp;
                   {data.status == "SHIPPED" && (
@@ -401,8 +403,12 @@ const useOrderInfoBox = ({
                 </TrackOrderContentTitle>
               </TrackOrderContentWrapper>
               <TrackOrderContentWrapper>
-                <TrackorderCircleGray />
+                <TrackOrderCircle status={data.status} num={4} />
                 <TrackOrderContentTitle>Delivered</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper>
+                <TrackOrderCircle status={data.status} num={5} />
+                <TrackOrderContentTitle>Closing order</TrackOrderContentTitle>
               </TrackOrderContentWrapper>
               <TrackorderProgressLine status={data.status} />
               <TrackorderProgressLineGray status={data.status} />
@@ -462,25 +468,26 @@ const useOrderInfoBox = ({
 
       {/** in production case: ?? */}
 
-      {/** delivered case: 주문 확정 가능 */}
-      {data.status == "DELIVERED" && (
-        <>
-          <AccomplishButton>Order accomplish</AccomplishButton>
-          <NoticeText>
-            After 10 days, it will be automatically checked for completion.
-            <br />
-            If you have any problems with delivery, please contact us via&nbsp;
-            <u>support@requnch.io</u> or&nbsp;<u>Contact us</u>
-          </NoticeText>
-        </>
-      )}
+      {/** delivered, pick up case: 주문 확정 가능 */}
+      {data.status == "DELIVERED" ||
+        (data.status == "PICK_UP" && (
+          <>
+            <AccomplishButton>Order accomplish</AccomplishButton>
+            <NoticeText>
+              After 10 days, it will be automatically checked for completion.
+              <br />
+              If you have any problems with delivery, please contact us
+              via&nbsp;
+              <u>support@requnch.io</u> or&nbsp;<u>Contact us</u>
+            </NoticeText>
+          </>
+        ))}
 
       {/** closing order case: 인보이스 다운 */}
       {/** pick up case: 인보이스 다운 */}
-      {data.status == "CLOSING_ORDER" ||
-        (data.status == "PICK_UP" && (
-          <InvoiceButton>Invoice Download</InvoiceButton>
-        ))}
+      {data.status == "CLOSING_ORDER" && (
+        <InvoiceButton>Invoice Download</InvoiceButton>
+      )}
 
       {/* <ButtonWrapper myAccount={myAccount}>
         <AccomplishInvoiceButton isActive={accomplish}>
@@ -1249,6 +1256,16 @@ const TrackLine = styled.div<{ status: string; num: number }>`
       "width: 18px"
     );
   }};
+
+  ${(props) => {
+    return (
+      props.num == 5 &&
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "width: 18px"
+    );
+  }};
 `;
 const ProgressLine = styled.div`
   position: absolute;
@@ -1362,17 +1379,62 @@ const TrackOrderContentWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 24px;
-  &:nth-of-type(5) {
+  &:nth-of-type(6) {
     margin-bottom: 0px;
   }
 `;
-const TrackOrderCircle = styled.div`
+const TrackOrderCircle = styled.div<{ status: string; num: number }>`
   z-index: 2;
   margin-right: 9px;
   width: 5px;
   height: 5px;
-  background-color: #121822;
+  background-color: #a4b0b2;
   border-radius: 100%;
+
+  ${(props) => {
+    return (
+      props.num == 0 &&
+      props.status == "IN_REVIEW" &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 1 &&
+      props.status == "ORDER_CONFIRMED" &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 2 &&
+      props.status == "IN_PRODUCTION" &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 5 &&
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "background-color: #121822;"
+    );
+  }};
 `;
 const TrackorderCircleGray = styled.div`
   margin-right: 9px;
@@ -1392,17 +1454,45 @@ const TrackorderProgressLine = styled.div<{ status: string }>`
   position: absolute;
   top: 28px;
   left: 16px;
-  height: 120px;
+  height: 0px;
   border-right: 1px solid #121822;
+
+  ${(props) => {
+    return props.status == "ORDER_CONFIRMED" && "height: 40px;";
+  }};
+  ${(props) => {
+    return props.status == "IN_PRODUCTION" && "height: 80px;";
+  }};
+  ${(props) => {
+    return (
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "height: 120px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "height: 160px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "height: 200px;"
+    );
+  }};
 `;
 const TrackorderProgressLineGray = styled.div<{ status: string }>`
   position: absolute;
   top: 28px;
   left: 16px;
-  height: 160px;
+  height: 200px;
   border-right: 1px solid #a4b0b3;
 `;
 const TrackOrderBigCircle = styled.div<{ status: string }>`
+  z-index: 1;
   position: absolute;
   left: 11px;
   width: 11px;
