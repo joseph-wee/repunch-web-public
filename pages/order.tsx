@@ -120,13 +120,17 @@ const useOrder = () => {
         <RecentOrders>Recent orders {sum}</RecentOrders>
         {orders.map((el: any, index: number) => {
           return (
-            <OrderInfoBox
-              data={el}
-              clicked={clicked}
-              accomplish={false}
-              myAccount={false}
-              key={`eas-${index}`}
-            />
+            el.status != "CLOSING_ORDER" &&
+            el.status != "RETURNS" &&
+            el.status != "CANCEL" && (
+              <OrderInfoBox
+                data={el}
+                clicked={clicked}
+                accomplish={false}
+                myAccount={false}
+                key={`eas-${index}`}
+              />
+            )
           );
         })}
       </Main>
