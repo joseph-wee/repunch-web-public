@@ -739,6 +739,29 @@ export const ordersDeliveredRequest = async (
   }
 };
 
+/** 주문 목록 - CLOSING_ORDER */
+export const ordersClosingOrderRequest = async (
+  accessToken: string | null,
+  searchAfter: number
+) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url:
+        searchAfter == -1
+          ? `/orders?orderStatus=CLOSING_ORDER&count=50`
+          : `/orders?orderStatus=CLOSING_ORDER&count=50&searchAfter=${searchAfter}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
 /** 주문 목록 - PICK_UP */
 export const ordersPickUpRequest = async (
   accessToken: string | null,
@@ -750,7 +773,7 @@ export const ordersPickUpRequest = async (
       url:
         searchAfter == -1
           ? `/orders?orderStatus=PICKUP&count=50`
-          : `/orders?orderStatus=DELIVERED&count=50&searchAfter=${searchAfter}`,
+          : `/orders?orderStatus=PICKUP&count=50&searchAfter=${searchAfter}`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
