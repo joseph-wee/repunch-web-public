@@ -351,7 +351,9 @@ const useOrder_temp1 = () => {
           <DotLine />
           <PriceWrapper>
             <Exvat>EX VAT</Exvat>
-            <PriceBold>$ {totalPrice}</PriceBold>
+            <PriceBold>
+              $ {tempOrderList && tempOrderList[0].totalPrice}
+            </PriceBold>
           </PriceWrapper>
         </OrderListWrapper>
 
