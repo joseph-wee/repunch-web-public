@@ -75,6 +75,7 @@ const useRegister = () => {
   const [popUpIsActive, setPopUpIsActive] = useState<boolean>(false);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false); // 회원가입 요청 두번 방지를 위한 로딩값
 
   const router = useRouter();
   const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
@@ -303,6 +304,7 @@ const useRegister = () => {
 
   /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
   const validationCheckAndSignupRequest = () => {
+    setLoading(true);
     let validationAllValue = validationAll();
     if (validationAllValue == true) {
       signupRequest(
@@ -337,6 +339,7 @@ const useRegister = () => {
             inline: "start",
           });
         }
+        setLoading(false);
       });
     }
   };
@@ -542,7 +545,7 @@ const useRegister = () => {
               <LinkStyling>Cancel</LinkStyling>
             </Link>
           </Button>
-          <Button onClick={() => validationCheckAndSignupRequest()}>
+          <Button onClick={() => !loading && validationCheckAndSignupRequest()}>
             Confirm
           </Button>
         </Wrapper>
