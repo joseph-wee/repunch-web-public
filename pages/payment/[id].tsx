@@ -290,24 +290,14 @@ const usePayment = () => {
         <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
-            <Price>
-              $
-              {Math.floor(order.paymentAmount) / 100
-                ? Math.floor(order.paymentAmount) / 100
-                : "0"}
-            </Price>
+            <Price>${order.paymentAmount}</Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
               Delivery by air
               <QuestionMark>?</QuestionMark>
             </PriceTitle>
-            <Price>
-              $
-              {Math.floor(order.deliveryFee) / 100
-                ? Math.floor(order.deliveryFee) / 100
-                : "0"}
-            </Price>
+            <Price>${order.deliveryFee}</Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
@@ -318,12 +308,7 @@ const usePayment = () => {
           <Line />
           <FlexWrapper>
             <TotalTitle>Total</TotalTitle>
-            <TotalPrice>
-              $
-              {Math.floor(totalPrice) / 100
-                ? Math.floor(totalPrice) / 100
-                : "0"}
-            </TotalPrice>
+            <TotalPrice>${totalPrice}</TotalPrice>
           </FlexWrapper>
           <InfoText>
             <Image src={ic_info} alt={"ic_info"} />
