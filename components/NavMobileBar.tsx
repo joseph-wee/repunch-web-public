@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,6 +6,7 @@ import { ic_cart_wht, ic_favorite_wht } from "../assets";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { logout, login } from "../features/login/loginSlice";
 import { loginCheck } from "../utils/functions";
+import { userCheck } from "../utils/api";
 
 const NavMobileBar = ({
   isActive,
@@ -16,13 +17,20 @@ const NavMobileBar = ({
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
   url: string;
 }) => {
+  const [name, setName] = useState("");
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
 
   const dispatch = useAppDispatch();
 
   /** 로그인 확인 후 로그인 상태 처리 */
   const loginCheckHandler = () => {
-    loginCheck() && dispatch(login());
+    if (loginCheck()) {
+      let at = localStorage.getItem("at");
+      dispatch(login());
+      userCheck(at).then((res) => {
+        setName(res?.data.result.lastName);
+      });
+    }
   };
 
   const logoutHandler = () => {
@@ -91,6 +99,17 @@ const NavMobileBar = ({
               About us
             </Link>
           </Menu>
+          {isLogin && (
+            <Menu>
+              <Link
+                onClick={() => setIsActive(false)}
+                href="/my_account"
+                style={{ textDecoration: "none", color: "#121822" }}
+              >
+                Profile
+              </Link>
+            </Menu>
+          )}
           <Menu>
             <MenuButton isActive={isLogin}>
               <Link
@@ -101,15 +120,27 @@ const NavMobileBar = ({
                 <LinkBox>Log in</LinkBox>
               </Link>
             </MenuButton>
+            <LogoutButton isActive={isLogin}>
+              <Link
+                onClick={() => {
+                  setIsActive(false);
+                  logoutHandler();
+                }}
+                href="/"
+                style={{ textDecoration: "none", color: "#121822" }}
+              >
+                <LinkBox>{name}</LinkBox>
+              </Link>
+            </LogoutButton>
 
-            <Circle isActive={isLogin}></Circle>
+            <Circle></Circle>
             <MenuButton isActive={isLogin}>
               <Link
                 onClick={() => setIsActive(false)}
                 href="/register"
                 style={{ textDecoration: "none", color: "#121822" }}
               >
-                <LinkBox>Sign in</LinkBox>
+                <LinkBox>Sign up</LinkBox>
               </Link>
             </MenuButton>
             <LogoutButton isActive={isLogin}>
@@ -212,10 +243,7 @@ const LogoutButton = styled.div<{ isActive: boolean }>`
 `;
 
 const LinkBox = styled.div``;
-const Circle = styled.div<{ isActive: boolean }>`
-  display: ${(props) => {
-    return props.isActive ? "none" : "block";
-  }};
+const Circle = styled.div`
   margin-left: 10px;
   margin-right: 10px;
   width: 4px;
