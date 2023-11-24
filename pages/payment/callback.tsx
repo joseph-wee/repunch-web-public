@@ -20,7 +20,7 @@ const useCallback = () => {
   useEffect(() => {
     paymentHandler();
   }, []);
-  return <div>callback</div>;
+  return <div></div>;
 };
 
 export default useCallback;
