@@ -11,9 +11,11 @@ import {
 } from "../assets";
 import Image from "next/legacy/image";
 import Link from "next/link";
+import { keepDeleteReqeust, keepReqeust } from "../utils/api";
+import { useRouter } from "next/router";
 
 const Product = ({ product }: any) => {
-  const [favoriteIsActive, setFavoriteIsActive] = useState(false);
+  const [favoriteIsActive, setFavoriteIsActive] = useState(product.keep);
   const [optionLength, setOptionLength] = useState(
     `${product.options[0].length}m`
   );
@@ -21,6 +23,8 @@ const Product = ({ product }: any) => {
   const [productList, setProductList] = useState([]);
   const [price, setPrice] = useState(product.options[0].price);
   const [colorList, setColorList] = useState<any>([]);
+
+  const router = useRouter();
 
   /** 컬러 중복 제거 */
   const colordupleHandler = () => {
@@ -89,7 +93,33 @@ const Product = ({ product }: any) => {
     setOptionLength(`${product.options[0].length}m`);
     setThumnail(product.options[0].thumbnailUrl);
     setPrice(product.options[0].price);
+    setFavoriteIsActive(product.keep);
   }, [product]);
+
+  const keepHandler = () => {
+    let at = localStorage.getItem("at");
+    // 로그인안한 케이스
+    if (!at) {
+      router.push("/login");
+    }
+
+    // 찜해제 케이스
+    if (favoriteIsActive) {
+      keepDeleteReqeust(at, product.productNo).then(
+        (res) =>
+          res?.data.status == 200 && setFavoriteIsActive(!favoriteIsActive)
+      );
+      return;
+    }
+    // 찜하기 케이스
+    if (!favoriteIsActive) {
+      keepReqeust(at, product.productNo).then(
+        (res) =>
+          res?.data.status == 200 && setFavoriteIsActive(!favoriteIsActive)
+      );
+      return;
+    }
+  };
 
   return (
     <Card>
@@ -108,7 +138,7 @@ const Product = ({ product }: any) => {
           {product.status == "SALE" ? "" : <Soldout>SOLD OUT</Soldout>}
         </Link>
 
-        <LikeButton onClick={() => setFavoriteIsActive(!favoriteIsActive)}>
+        <LikeButton onClick={() => keepHandler()}>
           <Image
             src={favoriteIsActive ? btn_review : btn_favorite_inact}
             alt={"logo_favorite"}
