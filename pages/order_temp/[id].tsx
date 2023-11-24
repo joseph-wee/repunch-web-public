@@ -259,8 +259,13 @@ const useOrder_temp = () => {
 
             {deliveryMethod == "SHIP" && (
               <>
-                <Image src={ic_ship} alt={"air_image"} width={16} height={16} />
-                <DeliveryAirText>By air&nbsp;</DeliveryAirText>
+                <Image
+                  src={ic_ship}
+                  alt={"ship_image"}
+                  width={16}
+                  height={16}
+                />
+                <DeliveryAirText>By Ship&nbsp;</DeliveryAirText>
                 <DeliveryFreeText>(about 5week)</DeliveryFreeText>
               </>
             )}
