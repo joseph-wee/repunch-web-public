@@ -571,7 +571,7 @@ export const cartDelteRequest = async (
 ) => {
   try {
     const res = await axios({
-      method: "DELTE",
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
