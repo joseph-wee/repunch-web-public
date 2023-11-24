@@ -3,7 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { productsRequest } from "../utils/api";
 import Product from "./Product";
 
-const ProductList = ({ sortType }: any) => {
+const ProductList = ({
+  sortType,
+  setResult,
+}: {
+  sortType: any;
+  setResult: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const [productList, setProductList] = useState<any>([]);
 
   const [searchAfter, setSearchAfter] = useState<number | null>(null);
@@ -18,9 +24,11 @@ const ProductList = ({ sortType }: any) => {
 
     productsRequest(at, sortType, 8, null).then((res) => {
       let x = res?.data.result.data;
+      console.log(x);
       setProductList([...x]);
       setSearchAfter(x[x.length - 1].productNo);
       setLoading(false);
+      setResult(res?.data.result.metadata.totalCount);
     });
   };
 
