@@ -100,9 +100,15 @@ const useOrderInfoBox = ({
       }
     });
   };
-
+  // 월, 일, 년, 시간
+  const dateArr = new Date(data.createdAt).toString().split(" ");
+  const month = dateArr[1];
+  const day = dateArr[2];
+  const year = dateArr[3];
+  const time = dateArr[4].substring(0, 5);
+  const orderTime = `${month} ${day}, ${year} / ${time}`;
   useEffect(() => {
-    console.log(data);
+    console.log(orderTime);
   }, []);
 
   return (
@@ -139,16 +145,30 @@ const useOrderInfoBox = ({
           <OrderInfoContent>10 m</OrderInfoContent>
         </OrderInfoWrapper> */}
 
-        {data.status == "IN_REVIEW" ? (
+        {data.status == "IN_REVIEW" && (
           <OrderInfoWrapper>
             <OrderInfoTitle>Delivery</OrderInfoTitle>
             <OrderInfoContent>
               {data.deliveryMethod == "AIR" ? "By air" : "By ship"}
-              {data.deliveryFee != 0 && `$(${data.deliveryFee})`}
+              {/* {data.deliveryFee != 0 && `$(${data.deliveryFee})`} */}
               {/* / {`{{date}}`}) */}
             </OrderInfoContent>
           </OrderInfoWrapper>
-        ) : (
+        )}
+
+        {data.status == "ORDER_CONFIRMED" && (
+          <OrderInfoWrapper>
+            <OrderInfoTitle>Delivery</OrderInfoTitle>
+            <OrderInfoContent>
+              {data.deliveryMethod == "AIR" ? "By air" : "By ship"}&nbsp;
+              {`$(${data.deliveryFee})`}
+              {/* / {`{{date}}`}) */}
+            </OrderInfoContent>
+          </OrderInfoWrapper>
+        )}
+
+        {/** 잠시만
+ * ( 
           <>
             <OrderInfoWrapper>
               <OrderInfoTitle>Order no.</OrderInfoTitle>
@@ -159,7 +179,8 @@ const useOrderInfoBox = ({
               <OrderInfoContent>JUN 10, 2023 / 23:12</OrderInfoContent>
             </OrderInfoWrapper>
           </>
-        )}
+        ) */}
+
         {/* <OrderInfoWrapper>
           <OrderCanceled>Order canceled</OrderCanceled>
           <OrderInfoContent>
@@ -171,6 +192,23 @@ const useOrderInfoBox = ({
           ""
         ) : (
           <>
+            <OrderInfoWrapper>
+              <OrderInfoTitle>Order no.</OrderInfoTitle>
+              <OrderInfoContent>{data.orderNumber}</OrderInfoContent>
+            </OrderInfoWrapper>
+            <OrderInfoWrapper>
+              <OrderInfoTitle>Order time</OrderInfoTitle>
+              <OrderInfoContent>{orderTime}</OrderInfoContent>
+            </OrderInfoWrapper>
+            {/** 배달완료 case */}
+            {/* {
+              data.status == "DELIVERED" && (
+                <OrderInfoWrapper>
+              <OrderInfoTitle>Delivered</OrderInfoTitle>
+              <OrderInfoContent>{orderTime}</OrderInfoContent>
+            </OrderInfoWrapper>
+              )
+            } */}
             <DashLine1 />
             <TotalPriceWrapper>
               <Total>Total</Total>
@@ -362,10 +400,10 @@ const useOrderInfoBox = ({
               <TrackBigCircle status={data.status} num={4}>
                 <TrackCircle status={data.status} num={4} />
               </TrackBigCircle>
-              <TrackLine status={data.status} num={4} />
+              {/* <TrackLine status={data.status} num={4} />
               <TrackBigCircle status={data.status} num={5}>
                 <TrackCircle status={data.status} num={5} />
-              </TrackBigCircle>
+              </TrackBigCircle> */}
             </DeliveredProgressWrapper>
           </DeliveredContainer>
           <TrackOrderContainer>
@@ -397,19 +435,26 @@ const useOrderInfoBox = ({
                 <TrackOrderCircle status={data.status} num={3} />
                 <TrackOrderContentTitle>
                   Shipped&nbsp;
-                  {data.status == "SHIPPED" && (
-                    <ShippingNumber>(&nbsp;DHL 102002102&nbsp;)</ShippingNumber>
-                  )}
+                  {data.status == "SHIPPED" &&
+                    data.items[0].shippingAddress.trackingNumber && (
+                      <>
+                        <ShippingBracket>(&nbsp;</ShippingBracket>
+                        <ShippingNumber>
+                          {data.items[0].shippingAddress.trackingNumber}
+                        </ShippingNumber>
+                        <ShippingBracket>&nbsp;)</ShippingBracket>
+                      </>
+                    )}
                 </TrackOrderContentTitle>
               </TrackOrderContentWrapper>
               <TrackOrderContentWrapper>
                 <TrackOrderCircle status={data.status} num={4} />
                 <TrackOrderContentTitle>Delivered</TrackOrderContentTitle>
               </TrackOrderContentWrapper>
-              <TrackOrderContentWrapper>
+              {/* <TrackOrderContentWrapper>
                 <TrackOrderCircle status={data.status} num={5} />
                 <TrackOrderContentTitle>Closing order</TrackOrderContentTitle>
-              </TrackOrderContentWrapper>
+              </TrackOrderContentWrapper> */}
               <TrackorderProgressLine status={data.status} />
               <TrackorderProgressLineGray status={data.status} />
 
@@ -469,19 +514,17 @@ const useOrderInfoBox = ({
       {/** in production case: ?? */}
 
       {/** delivered, pick up case: 주문 확정 가능 */}
-      {data.status == "DELIVERED" ||
-        (data.status == "PICK_UP" && (
-          <>
-            <AccomplishButton>Order accomplish</AccomplishButton>
-            <NoticeText>
-              After 10 days, it will be automatically checked for completion.
-              <br />
-              If you have any problems with delivery, please contact us
-              via&nbsp;
-              <u>support@requnch.io</u> or&nbsp;<u>Contact us</u>
-            </NoticeText>
-          </>
-        ))}
+      {(data.status == "DELIVERED" || data.status == "PICK_UP") && (
+        <>
+          <AccomplishButton>Order accomplish</AccomplishButton>
+          <NoticeText>
+            After 10 days, it will be automatically checked for completion.
+            <br />
+            If you have any problems with delivery, please contact us via&nbsp;
+            <u>support@requnch.io</u> or&nbsp;<u>Contact us</u>
+          </NoticeText>
+        </>
+      )}
 
       {/** closing order case: 인보이스 다운 */}
       {/** pick up case: 인보이스 다운 */}
@@ -1360,9 +1403,9 @@ const TrackOrderContent = styled.div<{ isActive: boolean }>`
     return props.isActive == true ? "block" : "none";
   }};
   position: relative;
-  margin-top: 9px;
-  padding-top: 21px;
-  padding-left: 14px;
+  margin-top: 10px;
+  padding-top: 20px;
+  padding-left: 15px;
   padding-bottom: 20px;
   background-color: #f2f6f8;
   border-radius: 2px;
@@ -1375,11 +1418,16 @@ const ShippingNumber = styled.span`
   color: #ff5c01;
   cursor: pointer;
 `;
+const ShippingBracket = styled.span`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+`;
 const TrackOrderContentWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 24px;
-  &:nth-of-type(6) {
+  &:nth-of-type(5) {
     margin-bottom: 0px;
   }
 `;
@@ -1453,7 +1501,7 @@ const TrackorderProgressLine = styled.div<{ status: string }>`
   z-index: 1;
   position: absolute;
   top: 28px;
-  left: 16px;
+  left: 17px;
   height: 0px;
   border-right: 1px solid #121822;
 
@@ -1487,14 +1535,14 @@ const TrackorderProgressLine = styled.div<{ status: string }>`
 const TrackorderProgressLineGray = styled.div<{ status: string }>`
   position: absolute;
   top: 28px;
-  left: 16px;
-  height: 200px;
+  left: 17px;
+  height: 160px;
   border-right: 1px solid #a4b0b3;
 `;
 const TrackOrderBigCircle = styled.div<{ status: string }>`
   z-index: 1;
   position: absolute;
-  left: 11px;
+  left: 12px;
   width: 11px;
   height: 11px;
   border: 1px solid #121822;
@@ -1503,24 +1551,24 @@ const TrackOrderBigCircle = styled.div<{ status: string }>`
   background-color: #e1ff20;
 
   ${(props) => {
-    return props.status == "IN_REVIEW" && "top: 23.5px;";
+    return props.status == "IN_REVIEW" && "top: 22.5px;";
   }};
   ${(props) => {
-    return props.status == "ORDER_CONFIRMED" && "top: 63.5px;";
+    return props.status == "ORDER_CONFIRMED" && "top: 62.5px;";
   }};
   ${(props) => {
-    return props.status == "IN_PRODUCTION" && "top: 103.5px;";
+    return props.status == "IN_PRODUCTION" && "top: 102.5px;";
   }};
   ${(props) => {
     return (
       (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
-      "top: 143.5px;"
+      "top: 142.5px;"
     );
   }};
   ${(props) => {
     return (
       (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
-      "top: 183.5px;"
+      "top: 182.5px;"
     );
   }};
   ${(props) => {
