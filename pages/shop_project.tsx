@@ -99,7 +99,7 @@ const useShop_supplies = () => {
             </SortMenuWrapper>
           </ButtonFlexWrapper>
           <ProductListGridWrapper>
-            <ProductList />
+            {/* <ProductList /> */}
           </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>

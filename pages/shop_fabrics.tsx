@@ -98,7 +98,7 @@ const useShop_fabrics = () => {
             </SortMenuWrapper>
           </ButtonFlexWrapper>
           <ProductListGridWrapper>
-            <ProductList />
+            {/* <ProductList /> */}
           </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>

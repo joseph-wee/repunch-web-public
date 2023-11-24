@@ -99,7 +99,7 @@ const useNew_arrivals = () => {
             </SortMenuWrapper>
           </ButtonFlexWrapper>
           <ProductListGridWrapper>
-            <ProductList />
+            {/* <ProductList /> */}
           </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>
