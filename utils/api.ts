@@ -886,3 +886,41 @@ export const paymentRequest2 = async (
     console.log(error);
   }
 };
+
+/** 상품(원단) 찜하기 */
+export const keepReqeust = async (
+  accessToken: string | null,
+  productNo: number
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/products/${productNo}/keep`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 상품(원단) 찜해제 */
+export const keepDeleteReqeust = async (
+  accessToken: string | null,
+  productNo: number
+) => {
+  try {
+    const res = await axios({
+      method: "DELETE",
+      url: `/products/${productNo}/keep`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
