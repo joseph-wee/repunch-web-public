@@ -24,14 +24,15 @@ const useCart = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [rollTotalCount, setRollTotalCount] = useState(3);
-  const [sampleTotalCount, setSampleTotalCount] = useState(3);
+  const [rollTotalCount, setRollTotalCount] = useState(0);
+  const [sampleTotalCount, setSampleTotalCount] = useState(0);
 
   const [rollSelectCount, setRollSelectCount] = useState(0);
   const [sampleSelectCount, setSampleSelectCount] = useState(0);
 
   const [rollList, setRollList] = useState<any>([]); // 카트 목록 담길 state
   const [sampleList, setSampleList] = useState<any>([]); // 샘플 목록 담길 state
+
   const { value: tempOrderList } = useAppSelector(
     (state) => state.tempOrderList
   );
@@ -198,6 +199,7 @@ const useCart = () => {
           }
         });
         setRollList([...tempList]);
+        setRollTotalCount(tempList.length);
         return;
       }
 
@@ -230,6 +232,7 @@ const useCart = () => {
         });
         console.log(tempList);
         setRollList([...tempList]);
+        setRollTotalCount(tempList.length);
         return tempNextSearchAfter;
       }
 
@@ -318,6 +321,7 @@ const useCart = () => {
           }
         });
         setSampleList([...tempList]);
+        setSampleTotalCount(tempList.length);
         return;
       }
 
@@ -350,6 +354,7 @@ const useCart = () => {
         });
 
         setSampleList([...tempList]);
+        setSampleTotalCount(tempList.length);
         return tempNextSearchAfter;
       }
 
@@ -438,32 +443,35 @@ const useCart = () => {
               isActive={cartValue}
               onClick={() => dispatch(setMeterage())}
             >
-              Roll ({rollList.length})
+              Roll ({rollTotalCount})
             </MeterageButton>
             <SampleButton
               isActive={cartValue}
               onClick={() => dispatch(setSample())}
             >
-              Sample ({sampleList.length})
+              Sample ({sampleTotalCount})
             </SampleButton>
           </AllMeterSampleButtonWrapper>
 
           {cartValue == 0 ? (
             <>
-              <SelectAllBoxWrapper>
-                <Checkbox
-                  type="checkbox"
-                  id="roll_all"
-                  onChange={() => setRollAllCheck(!rollAllCheck)}
-                />
-                <Label
-                  htmlFor="roll_all"
-                  isChecked={rollAllCheck}
-                  img={ic_check_wht.src}
-                  onClick={() => rollCheckAll()}
-                />
-                Select all
-              </SelectAllBoxWrapper>
+              {rollList.length > 0 && (
+                <SelectAllBoxWrapper>
+                  <Checkbox
+                    type="checkbox"
+                    id="roll_all"
+                    onChange={() => setRollAllCheck(!rollAllCheck)}
+                  />
+                  <Label
+                    htmlFor="roll_all"
+                    isChecked={rollAllCheck}
+                    img={ic_check_wht.src}
+                    onClick={() => rollCheckAll()}
+                  />
+                  Select all
+                </SelectAllBoxWrapper>
+              )}
+
               {rollList.map((el: any, index: number) => {
                 return (
                   <MeterageProductWrapper key={`meter-${index}`}>
@@ -474,6 +482,7 @@ const useCart = () => {
                       rollCheckArr={rollCheckArr}
                       setRollCheckArr={setRollCheckArr}
                       index={index}
+                      setRollTotalCount={setRollTotalCount}
                     />
                   </MeterageProductWrapper>
                 );
@@ -513,20 +522,22 @@ const useCart = () => {
                 <Image src={ic_info} alt={"ic_info"} />
                 Samples can be ordered from 10-20 pieces.
               </SampleInfoMessage>
-              <SelectAllBoxWrapper>
-                <Checkbox
-                  type="checkbox"
-                  id="sample_all"
-                  onChange={() => setSampleAllCheck(!sampleAllCheck)}
-                />
-                <Label
-                  htmlFor="sample_all"
-                  isChecked={sampleAllCheck}
-                  img={ic_check_wht.src}
-                  onClick={() => sampleCheckAll()}
-                />
-                Select all
-              </SelectAllBoxWrapper>
+              {sampleList.length > 0 && (
+                <SelectAllBoxWrapper>
+                  <Checkbox
+                    type="checkbox"
+                    id="sample_all"
+                    onChange={() => setSampleAllCheck(!sampleAllCheck)}
+                  />
+                  <Label
+                    htmlFor="sample_all"
+                    isChecked={sampleAllCheck}
+                    img={ic_check_wht.src}
+                    onClick={() => sampleCheckAll()}
+                  />
+                  Select all
+                </SelectAllBoxWrapper>
+              )}
 
               {sampleList.map((el: any, index: number) => {
                 return (
@@ -536,6 +547,7 @@ const useCart = () => {
                       sampleCheckArr={sampleCheckArr}
                       setSampleCheckArr={setSampleCheckArr}
                       index={index}
+                      setSampleTotalCount={setSampleTotalCount}
                     />
                   </SampleProudctWrapper>
                 );

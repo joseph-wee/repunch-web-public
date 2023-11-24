@@ -8,20 +8,24 @@ import {
   test_thumbnail,
 } from "../assets";
 import Image from "next/image";
+import { cartDelteRequest } from "../utils/api";
 
 const useCartSampleProduct = ({
   el,
   sampleCheckArr, // 롤 체크 유무 배열
   setSampleCheckArr,
   index,
+  setSampleTotalCount,
 }: {
   el: any;
   sampleCheckArr: Array<boolean>;
   setSampleCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
   index: number;
+  setSampleTotalCount: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [length, setLength] = useState<string>("1.0");
+  const [exist, setExist] = useState(true);
 
   const checkHandler = () => {
     let temp = sampleCheckArr;
@@ -29,8 +33,26 @@ const useCartSampleProduct = ({
     setSampleCheckArr([...temp]);
   };
 
+  /** 장바구니 삭제 핸들러 */
+  const cartDeleteRequestHandler = (cartNo: number) => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    cartDelteRequest(at, cartNo);
+    setExist(false);
+    setSampleTotalCount((prev) => prev - 1);
+  };
+
   return (
-    <Container>
+    <Container exist={exist}>
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
@@ -43,7 +65,7 @@ const useCartSampleProduct = ({
           img={ic_check_wht.src}
         />
         Check to purchase
-        <CloseButton>
+        <CloseButton onClick={() => cartDeleteRequestHandler(el.cartNo)}>
           <Image src={ic_close} alt={"close_button"} width={18} height={18} />
         </CloseButton>
       </CheckCancelWrapper>
@@ -71,7 +93,10 @@ const useCartSampleProduct = ({
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ exist: boolean }>`
+  display: ${(props) => {
+    return props.exist ? "block" : "none";
+  }};
   margin-bottom: 10px;
   border: 1px solid #dee8ec;
   border-radius: 2px;

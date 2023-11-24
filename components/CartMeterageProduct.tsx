@@ -18,6 +18,7 @@ const useCartMeterageProduct = ({
   rollCheckArr, // 롤 체크 유무 배열
   setRollCheckArr,
   index,
+  setRollTotalCount,
 }: {
   el: any;
   rollList: any;
@@ -25,6 +26,7 @@ const useCartMeterageProduct = ({
   rollCheckArr: Array<boolean>;
   setRollCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
   index: number;
+  setRollTotalCount: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [exist, setExist] = useState(true);
 
@@ -96,6 +98,7 @@ const useCartMeterageProduct = ({
 
     cartDelteRequest(at, cartNo);
     setExist(false);
+    setRollTotalCount((prev) => prev - 1);
   };
 
   useEffect(() => {
