@@ -20,6 +20,7 @@ export default function Home() {
   const [filterIsActive, setFilterIsActive] = useState(false);
   const [sortFilterIsActive, setSortFilterIsActive] = useState(false);
   const [sortType, setSortType] = useState("LATEST");
+  const [result, setResult] = useState(0);
 
   return (
     <Container>
@@ -91,7 +92,7 @@ export default function Home() {
                 <FilterAlarmCircle />
               </FilterAlarmBackground>
             </FilterButton>
-            <Result>1900&nbsp;</Result>
+            <Result>{result}&nbsp;</Result>
             <ButtonWrapper>
               {/* <ClearButton
                 isActive={sortFilterIsActive}
@@ -139,7 +140,7 @@ export default function Home() {
             </SortMenuWrapper>
           </ButtonFlexWrapper>
           <ProductListGridWrapper>
-            <ProductList sortType={sortType} />
+            <ProductList sortType={sortType} setResult={setResult} />
           </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>
