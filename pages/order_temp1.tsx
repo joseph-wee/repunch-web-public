@@ -90,23 +90,10 @@ const useOrder_temp1 = () => {
     tempOrderList.length == 0 && router.push("/cart");
   };
 
-  /** total price 계산 및 저장*/
-  const totalPriceHandler = async () => {
-    let sum = 0;
-    // 주문 리스트가 있을경우에만 실행
-    if (tempOrderList.length > 0) {
-      for (const el of tempOrderList) {
-        sum += el.price;
-      }
-    }
-    setTotalPrice(sum);
-  };
-
   useEffect(() => {
-    // tempOrderListChekck();
-    totalPriceHandler();
+    tempOrderList.length > 0 && setTotalPrice(tempOrderList[0].totalPrice);
     console.log(tempOrderList);
-  }, [tempOrderList]);
+  }, []);
 
   useEffect(() => {
     if (popUpIsActive == 1) {
@@ -351,9 +338,8 @@ const useOrder_temp1 = () => {
           <DotLine />
           <PriceWrapper>
             <Exvat>EX VAT</Exvat>
-            <PriceBold>
-              $ {tempOrderList && tempOrderList[0].totalPrice}
-            </PriceBold>
+
+            <PriceBold>$ {totalPrice}</PriceBold>
           </PriceWrapper>
         </OrderListWrapper>
 
@@ -541,12 +527,12 @@ const useOrder_temp1 = () => {
             <PriceTitle>
               Tax <QuestionMark>?</QuestionMark>
             </PriceTitle>
-            <Price>$7.25</Price>
+            <Price>$???</Price>
           </FlexWrapper>
           <Line />
           <FlexWrapper>
             <TotalTitle>Total</TotalTitle>
-            <TotalPrice>${Number(totalPrice + 7.25)}</TotalPrice>
+            <TotalPrice>${Number(totalPrice)}</TotalPrice>
           </FlexWrapper>
         </TotalPriceWrapper>
       </Container>
