@@ -400,10 +400,10 @@ const useOrderInfoBox = ({
               <TrackBigCircle status={data.status} num={4}>
                 <TrackCircle status={data.status} num={4} />
               </TrackBigCircle>
-              {/* <TrackLine status={data.status} num={4} />
+              <TrackLine status={data.status} num={4} />
               <TrackBigCircle status={data.status} num={5}>
                 <TrackCircle status={data.status} num={5} />
-              </TrackBigCircle> */}
+              </TrackBigCircle>
             </DeliveredProgressWrapper>
           </DeliveredContainer>
           <TrackOrderContainer>
@@ -451,10 +451,10 @@ const useOrderInfoBox = ({
                 <TrackOrderCircle status={data.status} num={4} />
                 <TrackOrderContentTitle>Delivered</TrackOrderContentTitle>
               </TrackOrderContentWrapper>
-              {/* <TrackOrderContentWrapper>
+              <TrackOrderContentWrapper>
                 <TrackOrderCircle status={data.status} num={5} />
                 <TrackOrderContentTitle>Closing order</TrackOrderContentTitle>
-              </TrackOrderContentWrapper> */}
+              </TrackOrderContentWrapper>
               <TrackorderProgressLine status={data.status} />
               <TrackorderProgressLineGray status={data.status} />
 
@@ -1427,7 +1427,7 @@ const TrackOrderContentWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 24px;
-  &:nth-of-type(5) {
+  &:nth-of-type(6) {
     margin-bottom: 0px;
   }
 `;
@@ -1536,7 +1536,7 @@ const TrackorderProgressLineGray = styled.div<{ status: string }>`
   position: absolute;
   top: 28px;
   left: 17px;
-  height: 160px;
+  height: 200px;
   border-right: 1px solid #a4b0b3;
 `;
 const TrackOrderBigCircle = styled.div<{ status: string }>`
