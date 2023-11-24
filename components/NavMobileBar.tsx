@@ -121,16 +121,7 @@ const NavMobileBar = ({
               </Link>
             </MenuButton>
             <LogoutButton isActive={isLogin}>
-              <Link
-                onClick={() => {
-                  setIsActive(false);
-                  logoutHandler();
-                }}
-                href="/"
-                style={{ textDecoration: "none", color: "#121822" }}
-              >
-                <LinkBox>{name}</LinkBox>
-              </Link>
+              <LinkBox>{name}</LinkBox>
             </LogoutButton>
 
             <Circle></Circle>
