@@ -44,16 +44,7 @@ const useOrder_temp = () => {
     phoneNumber: "",
   });
 
-  const [product, setProduct] = useState([
-    {
-      thumbnail: "",
-      title: "",
-      color: "",
-      width: "",
-      length: "",
-      count: "",
-    },
-  ]);
+  const [product, setProduct] = useState<any>([]);
 
   const [deliveryMethod, setDeliveryMethod] = useState("");
 
@@ -146,7 +137,7 @@ const useOrder_temp = () => {
       // 성공 case
       if (res?.data.status == 200) {
         const data = res?.data.result.shippingAddress;
-
+        setProduct({ ...res?.data.result });
         setAddress({
           ...{
             title: data.title,
@@ -227,7 +218,7 @@ const useOrder_temp = () => {
           <DotLine />
           <PriceWrapper1>
             <Exvat>EX VAT</Exvat>
-            <Price1>$ {totalPrice}</Price1>
+            <Price1>$ {product && product.totalAmount}</Price1>
           </PriceWrapper1>
         </OrderListWrapper>
         <ContentTitle>Shipping Address</ContentTitle>
