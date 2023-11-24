@@ -1,20 +1,93 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import {
-  MobileSideBar,
-  OrderInfoBox,
-  RecentOrders,
-  SideBar,
-} from "../components";
+import { MobileSideBar, OrderInfoBox, SideBar } from "../components";
 import Link from "next/link";
-import { userInfoRequest } from "../utils/api";
+import { ordersAllRequest, userInfoRequest } from "../utils/api";
 
 const useMy_account = () => {
+  const [data, setData] = useState<any>({});
   useEffect(() => {
-    userInfoRequest(sessionStorage.getItem("at")).then((res) => {
-      console.log(res);
+    userInfoRequest(localStorage.getItem("at")).then((res) => {
+      setData({ ...res?.data.result });
+      console.log(res?.data.result);
     });
   }, []);
+
+  const [clicked, setClicked] = useState(1); // 클릭 상태
+  const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
+  const [orders, setOrders] = useState<any>([]); // 주문 리스트
+
+  const [countInReview, setCountInReview] = useState(0);
+  const [countOrderConfirmed, setCountOrderConfiremd] = useState(0);
+  const [countInProduction, setCountInProduction] = useState(0);
+  const [countShipped, setCountShipped] = useState(0);
+  const [countDelivered, setCountDelivered] = useState(0);
+  const [countPickUp, setCountPickUp] = useState(0);
+
+  /** 주문 요청 핸들러 - ALL */
+  const ordersAllRequestHandler = () => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    ordersAllRequest(at, -1).then((res) => {
+      let sumInReview = countInReview;
+      let sumOrderConfirmed = countOrderConfirmed;
+      let sumInProduction = countInProduction;
+      let sumShipped = countShipped;
+      let sumDelivered = countDelivered;
+      let sumPickUp = countPickUp;
+
+      console.log(res);
+      // 성공 case
+      setOrders([...res?.data.result.data]);
+      for (const el of res?.data.result.data) {
+        el.status == "IN_REVIEW" && (sumInReview += 1);
+        el.status == "ORDER_CONFIRMED" && (sumOrderConfirmed += 1);
+        el.status == "IN_PRODUCTION" && (sumInProduction += 1);
+        el.status == "SHIPPED" && (sumShipped += 1);
+        el.status == "DELIVERED" && (sumDelivered += 1);
+        el.status == "PICK_UP" && (sumPickUp += 1);
+      }
+      setCountInReview(sumInReview);
+      setCountOrderConfiremd(sumOrderConfirmed);
+      setCountInProduction(sumInProduction);
+      setCountShipped(sumShipped);
+      setCountDelivered(sumDelivered);
+      setCountPickUp(sumPickUp);
+
+      // 실패 case: 토큰 만료
+      // 실패 case
+    });
+  };
+
+  /** recent orders, All, in review... 개수 계산 */
+  const calculator = (clicked: number) => {
+    clicked == 1 && setSum(orders.length);
+    clicked == 2 && setSum(countInReview);
+    clicked == 3 && setSum(countOrderConfirmed);
+    clicked == 4 && setSum(countInProduction);
+    clicked == 5 && setSum(countShipped);
+    clicked == 6 && setSum(countDelivered);
+    clicked == 7 && setSum(countPickUp);
+  };
+
+  /** 처음 렌더링시 주문 목록 세팅 */
+  useEffect(() => {
+    ordersAllRequestHandler();
+  }, []);
+
+  /** recent orders 개수 계산 - clickd, orders 변경감지 */
+  useEffect(() => {
+    orders.length > 0 && calculator(clicked);
+  }, [clicked, orders]);
 
   return (
     <Container>
@@ -42,20 +115,34 @@ const useMy_account = () => {
             </Box>
           </Link>
         </FavoriteCartOrderCountWrapper>
-        <RecentOrders />
-        {/* <OrderInfoBox accomplish={true} myAccount={true} /> */}
+        <RecentOrders>Recent orders {sum}</RecentOrders>
+        {orders.map((el: any, index: number) => {
+          return (
+            el.status != "CLOSING_ORDER" &&
+            el.status != "RETURNS" &&
+            el.status != "CANCEL" && (
+              <OrderInfoBox
+                data={el}
+                clicked={clicked}
+                accomplish={false}
+                myAccount={false}
+                key={`eas-${index}`}
+              />
+            )
+          );
+        })}
         <InfoContainer>
           <InfoWrapper>
             <InfoTitle>Mail Address</InfoTitle>
-            <InfoContent>jdworks@naver.com</InfoContent>
+            <InfoContent>{data.userId}</InfoContent>
           </InfoWrapper>
           <InfoWrapper>
             <InfoTitle>Name</InfoTitle>
-            <InfoContent>Kim Jae Hyeun</InfoContent>
+            <InfoContent>{`${data.lastName} ${data.firstName}`}</InfoContent>
           </InfoWrapper>
           <InfoWrapper>
-            <InfoTitle>Company nam</InfoTitle>
-            <InfoContent>Repp.</InfoContent>
+            <InfoTitle>Company name</InfoTitle>
+            <InfoContent>Repunch</InfoContent>
           </InfoWrapper>
           <InfoWrapper>
             <InfoTitle>Country</InfoTitle>
@@ -63,7 +150,7 @@ const useMy_account = () => {
           </InfoWrapper>
           <InfoWrapper>
             <InfoTitle>Phone Number</InfoTitle>
-            <InfoContent>+82(0)10-1234-5678</InfoContent>
+            <InfoContent>+82(0)10-9908-8763</InfoContent>
           </InfoWrapper>
         </InfoContainer>
       </Main>
@@ -163,6 +250,21 @@ const CountTitle = styled.div`
   line-height: 12px;
   text-align: center;
   color: #536c6d;
+`;
+
+const RecentOrders = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-left: 16px;
+  height: 30px;
+  background: #f2f6f8;
+  border: 0.79402px solid #dee8ec;
+  border-radius: 2px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+  color: #121822;
 `;
 const InfoContainer = styled.div`
   margin-top: 10px;
