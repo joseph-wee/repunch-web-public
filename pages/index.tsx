@@ -12,13 +12,14 @@ import {
   ic_up_bk_filter,
 } from "../assets";
 import Image from "next/legacy/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Filter, ProductList } from "../components";
 
 export default function Home() {
   const [sortIsActive, setSortIsActive] = useState(true);
   const [filterIsActive, setFilterIsActive] = useState(false);
   const [sortFilterIsActive, setSortFilterIsActive] = useState(false);
+  const [sortType, setSortType] = useState("LATEST");
 
   return (
     <Container>
@@ -85,18 +86,19 @@ export default function Home() {
             <FilterButton onClick={() => setFilterIsActive(!filterIsActive)}>
               <Image src={ic_filter} alt={"filter_button"} />
               <ButtonTextFilter>Filter</ButtonTextFilter>
+              {/** 필터관련 이슈 해결 되면 display 수정 */}
               <FilterAlarmBackground>
                 <FilterAlarmCircle />
               </FilterAlarmBackground>
             </FilterButton>
             <Result>1900&nbsp;</Result>
             <ButtonWrapper>
-              <ClearButton
+              {/* <ClearButton
                 isActive={sortFilterIsActive}
                 onClick={() => setSortFilterIsActive(false)}
               >
                 Clear Filter
-              </ClearButton>
+              </ClearButton> */}
               <SortButton onClick={() => setSortIsActive(!sortIsActive)}>
                 <ButtonTextSort>Sort By</ButtonTextSort>
 
@@ -111,6 +113,7 @@ export default function Home() {
                 onClick={() => {
                   setSortIsActive(!sortIsActive);
                   setSortFilterIsActive(true);
+                  setSortType("LATEST");
                 }}
               >
                 Latest
@@ -119,14 +122,24 @@ export default function Home() {
                 onClick={() => {
                   setSortIsActive(!sortIsActive);
                   setSortFilterIsActive(true);
+                  setSortType("LOW_PRICE");
                 }}
               >
-                Popular
+                Low Price
+              </SortMenu>
+              <SortMenu
+                onClick={() => {
+                  setSortIsActive(!sortIsActive);
+                  setSortFilterIsActive(true);
+                  setSortType("HIGH_PRICE");
+                }}
+              >
+                High Price
               </SortMenu>
             </SortMenuWrapper>
           </ButtonFlexWrapper>
           <ProductListGridWrapper>
-            <ProductList />
+            <ProductList sortType={sortType} />
           </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>
@@ -295,7 +308,7 @@ const Main = styled.div`
   padding-bottom: 20px;
 
   max-width: 1030px;
-  height: 2843.35px;
+  min-height: 2843.35px;
   box-sizing: border-box;
   @media screen and (max-width: 1279px) {
     padding-top: 20px;
@@ -356,7 +369,7 @@ const ButtonTextFilter = styled.div`
   color: #121822;
 `;
 const FilterAlarmBackground = styled.div`
-  display: flex;
+  display: none;
   position: absolute;
   top: 6px;
   left: 22px;
