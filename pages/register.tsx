@@ -294,6 +294,7 @@ const useRegister = () => {
           block: "center",
           inline: "start",
         });
+        setLoading(false);
         break;
       }
       if (i == 9) {
@@ -343,6 +344,10 @@ const useRegister = () => {
       });
     }
   };
+
+  useEffect(() => {
+    console.log(loading);
+  }, [loading]);
 
   /** 특수문자, 숫자, 공백 차단 */
   const charBlocker = (e: React.ChangeEvent<HTMLInputElement>) => {
