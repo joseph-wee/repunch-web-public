@@ -100,6 +100,32 @@ export const productsRequestNext = async (count: number, searchAfter: any) => {
   }
 };
 
+/** 로그인 했을경우 상품(원단) 목록 조회 api */
+export const productsRequest = async (
+  at: string | null,
+  sortType: string,
+  count: number,
+  searchAfter: number | null
+) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: searchAfter
+        ? `/products?sortType=${sortType}&count=${count}&searchAfter=${searchAfter}`
+        : `/products?sortType=${sortType}&count=${count}`,
+      headers: at
+        ? {
+            Authorization: `Bearer ${at}`,
+          }
+        : {},
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
 /** 유저 패스워드 초기화 */
 export const pwMailingRequest = async (userId: string) => {
   try {
