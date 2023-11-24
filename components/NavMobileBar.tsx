@@ -43,7 +43,7 @@ const NavMobileBar = ({
   /** 로컬에 저장된 후에 홈페이지 재접속 했을 때 로그인 되게 */
   useEffect(() => {
     loginCheckHandler();
-  }, []);
+  }, [isLogin]);
 
   return (
     <>
