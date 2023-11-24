@@ -53,6 +53,7 @@ const useId = () => {
 
   const [colorList, setColorList] = useState<any>([]);
   const [optionList, setOptionList] = useState<any>([]);
+  const [productColors, setProductColors] = useState([]);
 
   const [price, setPrice] = useState(10);
   const [count, setCount] = useState(1);
@@ -71,7 +72,11 @@ const useId = () => {
   }, [count]);
 
   /** 옵션에서 컬러 선택시 액션, 컬러 선택 바뀔 때마다 해당 첫번째 옵션 포커스 효과 핸들러 */
-  const colorCheckhandler = (index: number, color: string, value: boolean) => {
+  const colorCheckhandler = (
+    index: number,
+    productOptionNo: number,
+    value: boolean
+  ) => {
     let tempColorList = colorList;
     tempColorList.forEach((el: any, index: number) => {
       tempColorList[index].checked = false;
@@ -97,7 +102,9 @@ const useId = () => {
 
     value &&
       thumbnailClickHandler(
-        thumbnailVideoList.findIndex((el: any) => el.color == color),
+        thumbnailVideoList.findIndex(
+          (el: any) => el.productOptionNo == productOptionNo
+        ),
         !value
       );
   };
@@ -114,11 +121,6 @@ const useId = () => {
 
     setSelectedOption({ ...tempOptionList[index] });
   };
-
-  ////////
-  useEffect(() => {
-    console.log(select);
-  }, [select]);
 
   const dispatch = useAppDispatch();
 
@@ -155,17 +157,24 @@ const useId = () => {
     productDetailRequest(window.location.pathname.slice(16)).then(
       async (res) => {
         setInfo(res.data.result);
-
+        console.log(res.data.result);
         // 임시로 옵션들 소팅 후 할당
         let tempOptions = res.data.result.options.sort(
           (a: any, b: any) =>
             Number(a.productOptionNo) - Number(b.productOptionNo)
         );
 
-        // 임시 컬러 배열 할당
+        // 임시 컬러 배열 할당, 중복 없는 상품 칼라 할당
         let tempColorArr: any = [];
+        let tempProductColors: any = [];
         tempOptions.forEach((el: any, index: number) => {
-          tempColorArr.push(el.color.name);
+          tempColorArr.push({
+            productOptionNo: el.productOptionNo,
+            color: el.color.name,
+          });
+          if (!tempProductColors.find((x: any) => x == el.color.name)) {
+            tempProductColors.push(el.color.name);
+          }
         });
 
         // 임시 컬러 배열에서 중복 제거
@@ -176,7 +185,8 @@ const useId = () => {
         let tempColorIndex = 0;
         tempColorArr.forEach((el: any, index: number) => {
           tempColorList.push({
-            color: el,
+            productOptionNo: el.productOptionNo,
+            color: el.color,
             checked: false,
           });
           if (el == router.query.color) {
@@ -237,6 +247,7 @@ const useId = () => {
             // 썸네일 이미지 세팅
             if (sl.type == "IMAGE") {
               tempThumbnailVideoList.push({
+                productOptionNo: el.productOptionNo,
                 color: el.color.name,
                 type: "thumbnail",
                 imageUrl: sl.resourceUrl,
@@ -247,6 +258,7 @@ const useId = () => {
             // 비디오 세팅
             if (sl.type == "VIDEO") {
               tempThumbnailVideoList.push({
+                productOptionNo: el.productOptionNo,
                 color: el.color.name,
                 type: "video",
                 imageUrl: sl.imageUrl,
@@ -294,21 +306,13 @@ const useId = () => {
           tempThumbnailVideoList[0].clicked = true;
           setSelect({ ...tempThumbnailVideoList[0] });
         }
-        console.log("test");
-        console.log(thumbnailVideoList);
 
         setThumbnailVideoList([...tempThumbnailVideoList]);
-
+        setProductColors(tempProductColors);
         // setVideoUrl(res.data.result.files[1].resourceUrl);
       }
     );
   };
-
-  // code test
-
-  useEffect(() => {
-    console.log(optionList);
-  }, [optionList]);
 
   // 컬러, 가격, 미터, 양
 
@@ -323,10 +327,6 @@ const useId = () => {
     setSamplePopUp(0);
     setCount(1);
   };
-
-  useEffect(() => {
-    console.log(router);
-  }, []);
 
   // useEffect(() => {
   //   console.log(videoUrl);
@@ -350,7 +350,7 @@ const useId = () => {
 
     // 하단 컬러 포커스
     const colorIndex = optionList.findIndex(
-      (x: any) => x.color == temp[index].color
+      (x: any) => x.productOptionNo == temp[index].productOptionNo
     );
     value && colorCheckhandler(colorIndex, temp[index].color, !value);
 
@@ -429,8 +429,6 @@ const useId = () => {
 
     addCartRequest(at, seletedOption.productOptionNo, "ROLL", count).then(
       (res) => {
-        console.log(res);
-
         // 성공 case: 장바구니 추가
         if (res?.data.status == 200) {
           setPopUpIsActive(1);
@@ -467,7 +465,6 @@ const useId = () => {
             }
 
             // 실패 case: 토큰만료 or 비로그인
-            console.log(res);
             if (res?.data.code == 9999) {
               router.push("/login");
               return;
@@ -494,8 +491,6 @@ const useId = () => {
 
     addCartRequest(at, seletedOption.productOptionNo, "SAMPLE", 1).then(
       (res) => {
-        console.log(res);
-
         // 성공 case: 장바구니 추가
         if (res?.data.status == 200) {
           setPopUpIsActive(2);
@@ -536,7 +531,6 @@ const useId = () => {
             }
 
             // 실패 case: 토큰만료 or 비로그인
-            console.log(res);
             if (res?.data.code == 9999) {
               router.push("/login");
               return;
@@ -582,12 +576,8 @@ const useId = () => {
   };
 
   useEffect(() => {
-    console.log(seletedOption);
-  }, [seletedOption]);
-
-  useEffect(() => {
-    console.log(info);
-  }, [info]);
+    console.log(colors);
+  }, [colors]);
 
   return (
     <>
@@ -695,17 +685,8 @@ const useId = () => {
               <InfoTitle>Color</InfoTitle>
               <InfoContent>
                 {info &&
-                  info.options.map((i: any, j: number) => {
-                    return (
-                      <WidthContent key={`color-${j}`}>
-                        {info &&
-                          `${
-                            colors.filter(
-                              (el: any) => el.colorNo == i.colorNo
-                            )[0].name
-                          }`}
-                      </WidthContent>
-                    );
+                  productColors.map((i: any, j: number) => {
+                    return <WidthContent key={`color-${j}`}>{i}</WidthContent>;
                   })}
               </InfoContent>
             </InfoWrapper>
@@ -734,7 +715,9 @@ const useId = () => {
                 return (
                   <ColorBox
                     isChecked={i.checked}
-                    onClick={() => colorCheckhandler(j, i.color, true)}
+                    onClick={() =>
+                      colorCheckhandler(j, i.productOptionNo, true)
+                    }
                     key={`asdf${j}`}
                   >
                     <ColorCircle color={i.color}>
@@ -755,8 +738,9 @@ const useId = () => {
                 return (
                   <Product
                     isRender={
-                      el.color ==
-                      colorList.filter((el: any) => el.checked == true)[0].color
+                      el.productOptionNo ==
+                      colorList.filter((el: any) => el.checked == true)[0]
+                        .productOptionNo
                     }
                     isActive={el.clicked}
                     onClick={() => clickHandler(index)}
@@ -1112,6 +1096,7 @@ const ProductInfoPurchaseContainerMobile = styled.div`
   width: 100%;
   padding-left: 20px;
   padding-right: 20px;
+  padding-bottom: 30px;
 
   @media screen and (max-width: 768px) {
     display: block;
@@ -1398,8 +1383,9 @@ const MinusButton = styled.button`
   justify-content: center;
   width: 24px;
   height: 24px;
-  border: none;
+  box-sizing: border-box;
   border-radius: 100%;
+  border: 0.8px solid #dee8ec;
   background-color: #f2f6f8;
 
   cursor: pointer;
@@ -1431,8 +1417,9 @@ const PlusButton = styled.button`
   justify-content: center;
   width: 24px;
   height: 24px;
-  border: none;
+  box-sizing: border-box;
   border-radius: 100%;
+  border: 0.8px solid #dee8ec;
   background-color: #f2f6f8;
 
   cursor: pointer;
