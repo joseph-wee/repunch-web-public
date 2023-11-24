@@ -15,6 +15,7 @@ import { goBack } from "../utils/functions";
 
 const useFavorite = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
+  const [result, setResult] = useState(0);
 
   return (
     <Container>
@@ -49,7 +50,7 @@ const useFavorite = () => {
           </SortMenuWrapper>
         </ItemSortBar>
         <ProductListGridWrapper>
-          <ProductList />
+          <ProductList sortType={"LATEST"} setResult={setResult} />
         </ProductListGridWrapper>
       </Main>
       <MobileSideBar />
