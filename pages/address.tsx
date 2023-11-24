@@ -248,8 +248,7 @@ const useAddress = () => {
               {/** 임시 코드 팝업으로 해야함 */}
               <DeleteButton
                 onClick={() => {
-                  confirm("삭제하시겠습니까?") &&
-                    deleteAddressHandler(el.addressNo);
+                  deleteAddressHandler(el.addressNo);
                 }}
               >
                 <Image src={garbage} alt={"garbage_icon"} />
