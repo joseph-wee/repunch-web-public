@@ -84,9 +84,12 @@ const Product = ({ product }: any) => {
     Polyester: "PL",
     Nylon: "NY",
   };
+
   useEffect(() => {
-    console.log(colorList);
-  }, []);
+    setOptionLength(`${product.options[0].length}m`);
+    setThumnail(product.options[0].thumbnailUrl);
+    setPrice(product.options[0].price);
+  }, [product]);
 
   return (
     <Card>
@@ -96,7 +99,7 @@ const Product = ({ product }: any) => {
           style={{ textDecoration: "none" }}
         >
           <Image
-            src={thumbnail}
+            src={`${thumbnail}?&w=375&q=75`}
             alt={"thumbnail"}
             layout="fill"
             objectFit="cover"
@@ -218,6 +221,9 @@ const InfoWrapper = styled.div`
   background-color: #ffffff;
 `;
 const ProductTitle = styled.div`
+  height: 36px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
