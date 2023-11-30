@@ -159,6 +159,7 @@ const OptionWrapper = styled.div<{ isActive: boolean }>`
   box-sizing: border-box;
   border: 1px solid #dee8ec;
   border-radius: 2px;
+  cursor: default;
 `;
 
 const Option = styled.div`
