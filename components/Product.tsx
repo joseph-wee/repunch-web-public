@@ -121,6 +121,10 @@ const Product = ({ product }: any) => {
     }
   };
 
+  useEffect(() => {
+    console.log(product.options);
+  }, [thumbnail]);
+
   return (
     <Card>
       <ThumbnailWrapper>
@@ -135,14 +139,14 @@ const Product = ({ product }: any) => {
                 key={`${j}asdklcnsdac`}
               >
                 <Image
-                  src={`${thumbnail}?&w=375&q=75`}
+                  src={`${i.thumbnailUrl}?&w=375&q=75`}
                   alt={"thumbnail"}
                   layout="fill"
                   objectFit="cover"
                   objectPosition="center"
                   priority
                 />
-                {product.status == "SALE" ? "" : <Soldout>SOLD OUT</Soldout>}
+                {i.quantity == 0 ? <Soldout>SOLD OUT</Soldout> : ""}
               </Thumbnail>
             );
           })}
@@ -222,8 +226,9 @@ const ThumbnailWrapper = styled.div`
   }
 `;
 const Thumbnail = styled.div<{ isActive: boolean }>`
+  display: none;
   ${(props) => {
-    return !props.isActive && "z-index: 1";
+    return props.isActive && "display: block";
   }};
 `;
 const Soldout = styled.div`
