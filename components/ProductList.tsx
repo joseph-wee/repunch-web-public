@@ -1,6 +1,6 @@
 import { is } from "immer/dist/internal";
 import React, { useEffect, useRef, useState } from "react";
-import { productsRequest } from "../utils/api";
+import { loginRefreshRequest, productsRequest } from "../utils/api";
 import Product from "./Product";
 
 const ProductList = ({
@@ -19,10 +19,36 @@ const ProductList = ({
 
   /** 상품 리스트 초기화 후 호출 함수 */
   const productListRequestInitHandler = () => {
-    let at = localStorage.getItem("at");
+    let at: any = localStorage.getItem("at");
     let rt = localStorage.getItem("rt");
-
-    productsRequest(at, sortType, 8, null).then((res) => {
+    // 로그인 상태
+    if (at) {
+      loginRefreshRequest(rt).then((res) => {
+        console.log(1);
+        // 토큰 재발급 성공 case
+        // 엑세스 토큰, 리프레쉬 토큰 세팅 후 카트목록 재요청
+        if (res?.data.status == 200) {
+          at = res.data.result.access_token;
+          rt = res.data.result.refresh_token;
+          localStorage.setItem("at", at);
+          localStorage.setItem("rt", `${rt}`);
+          console.log(2);
+          productsRequest(at, sortType, 8, null).then((res) => {
+            console.log(3);
+            let x = res?.data.result.data;
+            console.log(x);
+            setProductList([...x]);
+            setSearchAfter(x[x.length - 1].productNo);
+            setLoading(false);
+            setResult(res?.data.result.metadata.totalCount);
+          });
+        }
+      });
+      return;
+    }
+    // 비로그인 상태
+    productsRequest(null, sortType, 8, null).then((res) => {
+      console.log(3);
       let x = res?.data.result.data;
       console.log(x);
       setProductList([...x]);
@@ -34,6 +60,21 @@ const ProductList = ({
 
   /** 상품 리스트 호출 함수 */
   const productListRequestAdditionalHandler = () => {
+    let at: any = localStorage.getItem("at");
+    let rt = localStorage.getItem("rt");
+    if (at) {
+      productsRequest(at, sortType, 8, searchAfter).then((res) => {
+        if (res?.data.result.data) {
+          let x = res?.data.result.data;
+          setProductList([...productList, ...x]);
+          setSearchAfter(x[x.length - 1].productNo);
+          console.log(x[x.length - 1].productNo);
+          setLoading(false);
+          return;
+        }
+      });
+      return;
+    }
     productsRequest(null, sortType, 8, searchAfter).then((res) => {
       if (res?.data.result.data) {
         let x = res?.data.result.data;
