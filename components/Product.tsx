@@ -121,21 +121,32 @@ const Product = ({ product }: any) => {
     }
   };
 
+  useEffect(() => {
+    console.log(thumbnail);
+  }, [thumbnail]);
+
   return (
     <Card>
-      <Thumbnail>
+      <ThumbnailWrapper>
         <Link
           href={`/product_detail/${product.productNo}`}
           style={{ textDecoration: "none" }}
         >
-          <Image
-            src={`${thumbnail}?&w=375&q=75`}
-            alt={"thumbnail"}
-            layout="fill"
-            objectFit="cover"
-            objectPosition="center"
-          />
-          {product.status == "SALE" ? "" : <Soldout>SOLD OUT</Soldout>}
+          {product.options.map((i: any, j: number) => {
+            return (
+              <Thumbnail isActive={i.thumbnailUrl == thumbnail}>
+                <Image
+                  src={`${thumbnail}?&w=375&q=75`}
+                  alt={"thumbnail"}
+                  layout="fill"
+                  objectFit="cover"
+                  objectPosition="center"
+                  priority
+                />
+                {product.status == "SALE" ? "" : <Soldout>SOLD OUT</Soldout>}
+              </Thumbnail>
+            );
+          })}
         </Link>
 
         <LikeButton onClick={() => keepHandler()}>
@@ -144,7 +155,7 @@ const Product = ({ product }: any) => {
             alt={"logo_favorite"}
           />
         </LikeButton>
-      </Thumbnail>
+      </ThumbnailWrapper>
 
       <InfoWrapper>
         <ProductTitle>{product.title}</ProductTitle>
@@ -203,13 +214,18 @@ const Card = styled.div`
   border-radius: 4px;
   filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.15));
 `;
-const Thumbnail = styled.div`
+const ThumbnailWrapper = styled.div`
   position: relative;
   &::after {
     display: block;
     content: "";
     padding-bottom: 100%;
   }
+`;
+const Thumbnail = styled.div<{ isActive: boolean }>`
+  ${(props) => {
+    return !props.isActive && "z-index: 1";
+  }};
 `;
 const Soldout = styled.div`
   display: flex;
