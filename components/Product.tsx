@@ -121,10 +121,6 @@ const Product = ({ product }: any) => {
     }
   };
 
-  useEffect(() => {
-    console.log(thumbnail);
-  }, [thumbnail]);
-
   return (
     <Card>
       <ThumbnailWrapper>
@@ -134,7 +130,10 @@ const Product = ({ product }: any) => {
         >
           {product.options.map((i: any, j: number) => {
             return (
-              <Thumbnail isActive={i.thumbnailUrl == thumbnail}>
+              <Thumbnail
+                isActive={i.thumbnailUrl == thumbnail}
+                key={`${j}asdklcnsdac`}
+              >
                 <Image
                   src={`${thumbnail}?&w=375&q=75`}
                   alt={"thumbnail"}
