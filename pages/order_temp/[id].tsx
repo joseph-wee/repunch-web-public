@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { ic_air } from "../../assets";
 import { useAppSelector } from "../../redux/hooks";
 import { orderDetailRequest } from "../../utils/api";
+import { priceToDollar } from "../../utils/functions";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -132,7 +133,8 @@ const useOrder_temp = () => {
   /** 주문 상세 요청 */
   const orderDetailRequestHandelr = () => {
     const orderNo = window.location.pathname.split("/")[2];
-    orderDetailRequest(orderNo).then((res) => {
+    const at = localStorage.getItem("at");
+    orderDetailRequest(at, orderNo).then((res) => {
       console.log(res);
       // 성공 case
       if (res?.data.status == 200) {
@@ -218,7 +220,7 @@ const useOrder_temp = () => {
           <DotLine />
           <PriceWrapper1>
             <Exvat>EX VAT</Exvat>
-            <Price1>$ {product && product.totalAmount}</Price1>
+            <Price1>$ {product && priceToDollar(product.totalAmount)}</Price1>
           </PriceWrapper1>
         </OrderListWrapper>
         <ContentTitle>Shipping Address</ContentTitle>
