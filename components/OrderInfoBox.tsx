@@ -13,6 +13,7 @@ import Image from "next/image";
 import { orderCancelRequest, orderConfirmRequest } from "../utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { priceToDollar } from "../utils/functions";
 
 const useOrderInfoBox = ({
   data,
@@ -241,7 +242,7 @@ const useOrderInfoBox = ({
             <DashLine1 />
             <TotalPriceWrapper>
               <Total>Total</Total>
-              <Price>{`$ ${data.totalAmount}`}</Price>
+              <Price>{`$ ${priceToDollar(data.totalAmount)}`}</Price>
             </TotalPriceWrapper>
           </>
         )}
@@ -306,7 +307,9 @@ const useOrderInfoBox = ({
                 <ContentTitle>Order Summary</ContentTitle>
                 <FlexWrapper>
                   <SummaryPriceTitle>Item subtotal</SummaryPriceTitle>
-                  <SummaryPrice>${data.paymentAmount}</SummaryPrice>
+                  <SummaryPrice>
+                    ${priceToDollar(data.paymentAmount)}
+                  </SummaryPrice>
                 </FlexWrapper>
                 <FlexWrapper>
                   <SummaryPriceTitle>
@@ -317,7 +320,9 @@ const useOrderInfoBox = ({
                       ?
                     </QuestionMark>
                   </SummaryPriceTitle>
-                  <SummaryPrice>${data.deliveryFee}</SummaryPrice>
+                  <SummaryPrice>
+                    ${priceToDollar(data.deliveryFee)}
+                  </SummaryPrice>
                 </FlexWrapper>
                 <FlexWrapper>
                   <SummaryPriceTitle>
@@ -330,7 +335,7 @@ const useOrderInfoBox = ({
                 </FlexWrapper>
                 <SummaryTotalPriceWrapper>
                   <Total>Total</Total>
-                  <Price>${data.totalAmount}</Price>
+                  <Price>${priceToDollar(data.totalAmount)}</Price>
                 </SummaryTotalPriceWrapper>
                 <Line />
                 <PaymentTitle>Payment</PaymentTitle>

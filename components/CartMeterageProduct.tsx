@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { cartDelteRequest } from "../utils/api";
+import { priceToDollar } from "../utils/functions";
 
 const useCartMeterageProduct = ({
   el,
@@ -175,7 +176,7 @@ const useCartMeterageProduct = ({
       <Line />
       <PriceWrapper>
         <Exvat>EX VAT</Exvat>
-        <Price>{`$ ${el.totalPrice}`}</Price>
+        <Price>{`$ ${priceToDollar(el.totalPrice)}`}</Price>
       </PriceWrapper>
     </Container>
   );
