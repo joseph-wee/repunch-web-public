@@ -13,6 +13,7 @@ import {
   paymentRequest1,
 } from "../utils/api";
 import { useAppSelector } from "../redux/hooks";
+import { priceToDollar } from "../utils/functions";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -415,7 +416,7 @@ const useCheck_out_sample = () => {
           <DottedLine />
           <SamplePriceWrapper>
             <Exvat>EX VAT</Exvat>
-            <SamplePrice>$ {totalPrice}</SamplePrice>
+            <SamplePrice>$ {priceToDollar(totalPrice)}</SamplePrice>
           </SamplePriceWrapper>
         </SampleContainer>
         {/* <ContentTitle>Order Profile</ContentTitle>
@@ -595,7 +596,7 @@ const useCheck_out_sample = () => {
         <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
-            <Price>${totalPrice}</Price>
+            <Price>${priceToDollar(totalPrice)}</Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
@@ -608,12 +609,12 @@ const useCheck_out_sample = () => {
             <PriceTitle>
               Tax <QuestionMark>?</QuestionMark>
             </PriceTitle>
-            <Price>$0</Price>
+            <Price>$??</Price>
           </FlexWrapper>
           <Line />
           <FlexWrapper>
             <TotalTitle>Total</TotalTitle>
-            <TotalPrice>${Number(totalPrice)}</TotalPrice>
+            <TotalPrice>${priceToDollar(totalPrice)}</TotalPrice>
           </FlexWrapper>
           <InfoText>
             <Image src={ic_info} alt={"ic_info"} />
@@ -631,6 +632,7 @@ const useCheck_out_sample = () => {
           Checkout
         </CheckoutButton>
       </ButtonWrapper>
+      {/** 주소 셀렉트 박스 */}
       <PopUpBox isActive={popUpIsActive}>
         <ContentBox tabIndex={0} onBlur={() => setPopUpIsActive(0)} ref={ref}>
           {addressList.map((el: any, index: number) => {

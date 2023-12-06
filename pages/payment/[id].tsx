@@ -17,6 +17,7 @@ import {
   orderDetailRequest,
   paymentRequest1,
 } from "../../utils/api";
+import { priceToDollar } from "../../utils/functions";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -225,7 +226,7 @@ const usePayment = () => {
                   <TextWrapper>
                     <ProductTitle>{el.product.title}</ProductTitle>
                     <OptionWrapper>
-                      <Color />
+                      <Color color={el.product.option.color.name} />
                       {el.product.option.color.name}
                       <VerticalLine />
                       {el.product.option.length}*{el.product.width}m
@@ -239,7 +240,7 @@ const usePayment = () => {
           {order.length != 0 && (
             <PriceWrapper2>
               <Exvat2>EX VAT</Exvat2>
-              <Price2>{`$ ${order.totalAmount}`}</Price2>
+              <Price2>{`$ ${priceToDollar(order.totalAmount)}`}</Price2>
             </PriceWrapper2>
           )}
         </ContentWrapper>
@@ -281,7 +282,7 @@ const usePayment = () => {
             {deliveryMethod == "SHIP" && (
               <>
                 <Image src={ic_ship} alt={"air_image"} width={16} height={16} />
-                <DeliveryAirText>By air&nbsp;</DeliveryAirText>
+                <DeliveryAirText>By ship&nbsp;</DeliveryAirText>
                 <DeliveryFreeText>(about 5week)</DeliveryFreeText>
               </>
             )}
@@ -291,14 +292,14 @@ const usePayment = () => {
         <PriceWrapper>
           <FlexWrapper>
             <PriceTitle>Item subtotal</PriceTitle>
-            <Price>${order.paymentAmount}</Price>
+            <Price>${priceToDollar(order.paymentAmount)}</Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
               Delivery by air
               <QuestionMark>?</QuestionMark>
             </PriceTitle>
-            <Price>${order.deliveryFee}</Price>
+            <Price>${priceToDollar(order.deliveryFee)}</Price>
           </FlexWrapper>
           <FlexWrapper>
             <PriceTitle>
@@ -309,7 +310,7 @@ const usePayment = () => {
           <Line />
           <FlexWrapper>
             <TotalTitle>Total</TotalTitle>
-            <TotalPrice>${totalPrice}</TotalPrice>
+            <TotalPrice>${priceToDollar(totalPrice)}</TotalPrice>
           </FlexWrapper>
           <InfoText>
             <Image src={ic_info} alt={"ic_info"} />
@@ -498,12 +499,68 @@ const OptionWrapper = styled.div`
   letter-spacing: -0.011em;
   color: #536c6d;
 `;
-const Color = styled.div`
+const Color = styled.div<{ color: string }>`
   margin-right: 4px;
   width: 12px;
   height: 12px;
-  background-color: #ec3939;
   border-radius: 100%;
+  ${(props) => {
+    switch (props.color) {
+      case "White":
+        return `    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    background-color: #ffffff;`;
+      case "Black":
+        return "background-color: #000000";
+      case "Gray":
+        return "background-color: #C4C4C4";
+      case "Beige":
+        return "background-color: #F1EBD3";
+      case "Brown":
+        return "background-color: #825757";
+      case "Red":
+        return "background-color: #EC3939";
+      case "Orange":
+        return "background-color: #FE7E36";
+      case "Yellow":
+        return "background-color: #F9D142";
+      case "Pink":
+        return "background-color: #FF96FB";
+      case "Purple":
+        return "background-color: #814FEC";
+      case "Blue":
+        return "background-color: #293DF0";
+      case "Green":
+        return "background-color: #46CA43";
+      case "Silver":
+        return `  background: linear-gradient(
+      156.04deg,
+      #a9a9a9 10.26%,
+      #dedede 43.51%,
+      #ffffff 52.57%,
+      #e1e1e1 61.64%,
+      #9a9a9a 93.16%
+    );`;
+      case "Gold":
+        return `    background: linear-gradient(
+      152.18deg,
+      #d3a810 5.76%,
+      #fff8de 44.11%,
+      #ffffff 49.34%,
+      #fff9e4 55.45%,
+      #d3a810 89.44%
+    ); `;
+      case "Multi":
+        return `    background: linear-gradient(
+      154.17deg,
+      #ff1001 17.26%,
+      #fff500 37.73%,
+      #24ff00 57.06%,
+      #00bdf9 72.22%,
+      #0075ff 90.03%
+    );`;
+    }
+  }};
 `;
 const ColorGreen = styled.div`
   margin-right: 4px;
