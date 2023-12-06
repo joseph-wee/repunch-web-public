@@ -67,6 +67,8 @@ const useId = () => {
 
   const { value: colors } = useAppSelector((state) => state.colors);
 
+  const [v, setV] = useState(false);
+
   useEffect(() => {
     setPrice(Number(count) * 10);
   }, [count]);
@@ -189,7 +191,7 @@ const useId = () => {
             color: el.color,
             checked: false,
           });
-          if (el == router.query.color) {
+          if (el.productOptionNo == router.query.selectNo) {
             tempColorIndex = index;
           }
         });
@@ -223,7 +225,10 @@ const useId = () => {
           });
 
           // 쿼리 옵션 바로 표시하기 위해 index찾기
-          if (tempOptionListIndex == 0 && el.color.name == router.query.color) {
+          if (
+            tempOptionListIndex == 0 &&
+            el.color.productOptionNo == router.query.selectNo
+          ) {
             tempOptionListIndex = index;
           }
         });
@@ -291,14 +296,14 @@ const useId = () => {
         //   }
         // });
 
-        if (router.query.color) {
+        if (router.query.selectNo) {
           tempThumbnailVideoList.find(
-            (el: any) => el.color == router.query.color
+            (el: any) => el.productOptionNo == router.query.selectNo
           ).clicked = true;
           setSelect({
             ...tempThumbnailVideoList[
               tempThumbnailVideoList.findIndex(
-                (el: any) => el.color == router.query.color
+                (el: any) => el.productOptionNo == router.query.selectNo
               )
             ],
           });
@@ -319,6 +324,7 @@ const useId = () => {
   /** productDetailRequestHandler 호출 */
   useEffect(() => {
     productDetailRequestHandler();
+    console.log(router.query);
   }, []);
 
   /** continueShopping버튼 클릭시 초기화 */
@@ -576,8 +582,16 @@ const useId = () => {
   };
 
   useEffect(() => {
-    console.log(colors);
-  }, [colors]);
+    if (thumbnailVideoList.length > 0 && !v && router.query.selectNo) {
+      setV(true);
+      thumbnailClickHandler(
+        thumbnailVideoList.findIndex(
+          (el: any) => el.productOptionNo == router.query.selectNo
+        ),
+        false
+      );
+    }
+  }, [thumbnailVideoList]);
 
   return (
     <>
