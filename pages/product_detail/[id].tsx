@@ -432,6 +432,16 @@ const useId = () => {
       at = localStorage.getItem("at");
       rt = localStorage.getItem("rt");
     }
+    /** 솔드아웃이면 주문 안되게 */
+    if (seletedOption.quantity == 0) {
+      return;
+    }
+
+    /** 비로그인이면 로그인페이지로 이동 */
+    if (at == null) {
+      router.push("/login");
+      return;
+    }
 
     addCartRequest(at, seletedOption.productOptionNo, "ROLL", count).then(
       (res) => {
@@ -592,6 +602,17 @@ const useId = () => {
       );
     }
   }, [thumbnailVideoList]);
+
+  /** 가격 -> 달러 표시 */
+  const priceToDollar = (pirce: number) => {
+    let USDollar = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
+    let dollar = USDollar.format(price).substr(1);
+
+    return dollar;
+  };
 
   return (
     <>
@@ -792,10 +813,7 @@ const useId = () => {
                   seletedOption.length * count
                 } m`}</ProductUnit>
                 <ProductPrice>
-                  ${" "}
-                  {Math.floor(seletedOption.price * count * 100) / 100
-                    ? Math.floor(seletedOption.price * count * 100) / 100
-                    : "0"}
+                  $ {seletedOption.price && priceToDollar(seletedOption.price)}
                 </ProductPrice>
               </ProductPriceWrapper>
             </LengthWrapper>
