@@ -147,7 +147,7 @@ const useOrderInfoBoxSample = ({
         <ImageGridWrapper>
           {data.items.map((el: any, index: number) => {
             return (
-              <ImageWrapper>
+              <ImageWrapper key={`${index}1kspn`}>
                 <Image
                   src={el.product.option.thumbnailUrl}
                   alt={"sampleImage"}
