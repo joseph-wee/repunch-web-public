@@ -706,11 +706,17 @@ export const createOrder = async (
 };
 
 /** 주문 상세 */
-export const orderDetailRequest = async (orderNo: string) => {
+export const orderDetailRequest = async (
+  accessToken: string | null,
+  orderNo: string
+) => {
   try {
     const res = await axios({
       method: "GET",
       url: `/orders/${orderNo}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
     return res;
   } catch (error: any) {
