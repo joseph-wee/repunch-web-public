@@ -9,6 +9,7 @@ import {
   addressListRequest,
   createOrder,
   loginRefreshRequest,
+  orderDetailRequest,
   paymentRequest1,
 } from "../utils/api";
 import { useAppSelector } from "../redux/hooks";
@@ -32,6 +33,23 @@ const useCheck_out_sample = () => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [addressList, setAddressList] = useState<any>([]);
   const [selectAdress, setSelectAddress] = useState<any>();
+
+  const [address, setAddress] = useState({
+    title: "",
+    firstName: "",
+    lastName: "",
+    companyName: "",
+    countryCode: "",
+    postCode: "",
+    state: "",
+    streetAddress1: "",
+    streetAddress2: "",
+    phoneNumber: "",
+  });
+
+  const [product, setProduct] = useState<any>([]);
+
+  const [deliveryMethod, setDeliveryMethod] = useState("");
 
   const { value: tempOrderList } = useAppSelector(
     (state) => state.tempOrderList
@@ -197,7 +215,7 @@ const useCheck_out_sample = () => {
 
   /** 주문 생성 요청 */
   const createOrderRequestHandler = (deliveryMethod: string) => {
-    let at;
+    let at: any;
     let rt: string | null;
 
     if (sessionStorage.getItem("at")) {
@@ -250,7 +268,40 @@ const useCheck_out_sample = () => {
       // 성공 case
       if (res?.data.status == 200) {
         const orderNo = res?.data.result.orderNo;
-        router.push(`order_temp/${orderNo}`);
+        orderDetailRequest(at, orderNo).then((res) => {
+          // 성공 케이스
+          if (res?.data.status == 200) {
+            // 결제 요청
+            console.log(res);
+            const orderNo = res.data.result.orderNo;
+            const orderNumber = res.data.result.orderNumber;
+            const paymentMethod = "PAYPAL";
+            const paymentAmount = res.data.result.paymentAmount;
+            const pointAmount = res.data.result.pointAmount;
+            const totalAmount = res.data.result.totalAmount;
+
+            paymentRequest1(
+              at,
+              orderNo,
+              orderNumber,
+              paymentMethod,
+              paymentAmount,
+              pointAmount,
+              totalAmount
+            ).then((res) => {
+              // 성공 case
+              if (res?.data.status == 200) {
+                location.href = res?.data.result.paymentUrl;
+              }
+            });
+
+            // 에러 케이스
+          } else {
+            console.log("주문 생성은 되었으나 주문 상세에서 에러");
+            console.log(res);
+          }
+        });
+
         return;
       }
 
@@ -295,11 +346,6 @@ const useCheck_out_sample = () => {
               totalAmount
             ).then((res) => {
               // 성공 case
-              if (res?.data.status == 200) {
-                const orderNo = res?.data.result.orderNo;
-                router.push(`order_temp/${orderNo}`);
-                return;
-              }
               // 실패 case
             });
             return;
@@ -311,6 +357,44 @@ const useCheck_out_sample = () => {
       // 실패 case
     });
   };
+
+  /** 주문 상세 요청 */
+  // const orderDetailRequestHandelr = () => {
+  //   const orderNo = window.location.pathname.split("/")[2];
+  //   orderDetailRequest(at, orderNo).then((res) => {
+  //     console.log(res);
+  //     // 성공 case
+  //     if (res?.data.status == 200) {
+  //       const data = res?.data.result.shippingAddress;
+  //       setProduct({ ...res?.data.result });
+  //       setAddress({
+  //         ...{
+  //           title: data.title,
+  //           firstName: data.firstName,
+  //           lastName: data.lastName,
+  //           companyName: data.companyName,
+  //           countryCode: data.countryCode,
+  //           postCode: data.postCode,
+  //           state: data.state,
+  //           streetAddress1: data.streetAddress1,
+  //           streetAddress2: data.streetAddress2,
+  //           phoneNumber: data.phoneNumber,
+  //         },
+  //       });
+
+  //       setDeliveryMethod(res?.data.result.deliveryMethod);
+  //       return;
+  //     }
+
+  //     // 실패 case : 토큰 만료
+
+  //     // 실패 case
+  //     if (res?.data.code == 9999) {
+  //       console.log("주문 없음");
+  //       return;
+  //     }
+  //   });
+  // };
 
   return (
     <>
