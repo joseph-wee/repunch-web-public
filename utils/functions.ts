@@ -242,3 +242,14 @@ export const loginCheck = () => {
   }
   return false;
 };
+
+/** 가격 -> 달러 표시 */
+export const priceToDollar = (price: number) => {
+  let USDollar = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+  let dollar = USDollar.format(price).substr(1);
+
+  return dollar;
+};
