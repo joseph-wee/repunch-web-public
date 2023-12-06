@@ -12,6 +12,7 @@ import {
   loginRefreshRequest,
 } from "../utils/api";
 import { useAppSelector } from "../redux/hooks";
+import { priceToDollar } from "../utils/functions";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -91,8 +92,13 @@ const useOrder_temp1 = () => {
   };
 
   useEffect(() => {
-    tempOrderList.length > 0 && setTotalPrice(tempOrderList[0].totalPrice);
-    console.log(tempOrderList);
+    let sum = 0;
+    if (tempOrderList.length > 0) {
+      tempOrderList.forEach((i: any) => {
+        sum += i.totalPrice;
+      });
+    }
+    setTotalPrice(sum);
   }, []);
 
   useEffect(() => {
@@ -320,7 +326,7 @@ const useOrder_temp1 = () => {
     }
     // PICK UP Case
     if (deliveryIsChecked == 2) {
-      // 결제 api 코드 입력
+      createOrderRequestHandler("PICKUP");
       return;
     }
   };
@@ -339,7 +345,7 @@ const useOrder_temp1 = () => {
           <PriceWrapper>
             <Exvat>EX VAT</Exvat>
 
-            <PriceBold>$ {totalPrice}</PriceBold>
+            <PriceBold>$ {priceToDollar(totalPrice)}</PriceBold>
           </PriceWrapper>
         </OrderListWrapper>
 
