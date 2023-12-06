@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { MobileSideBar, OrderInfoBox, SideBar } from "../components";
+import {
+  MobileSideBar,
+  OrderInfoBox,
+  OrderInfoBoxSample,
+  SideBar,
+} from "../components";
 import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back } from "../assets";
@@ -11,6 +16,7 @@ const useOrder = () => {
   const [clicked, setClicked] = useState(1); // 클릭 상태
   const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
   const [orders, setOrders] = useState<any>([]); // 주문 리스트
+  const [ordersSample, setOrdersSample] = useState<any>([]);
 
   const [countInReview, setCountInReview] = useState(0);
   const [countOrderConfirmed, setCountOrderConfiremd] = useState(0);
@@ -19,9 +25,9 @@ const useOrder = () => {
   const [countDelivered, setCountDelivered] = useState(0);
   const [countPickUp, setCountPickUp] = useState(0);
 
-  /** 주문 요청 핸들러 - ALL */
-  const ordersAllRequestHandler = () => {
-    let at;
+  /** 주문 요청 핸들러 - ROLL, ALL */
+  const ordersRollRequestHandler = () => {
+    let at: string | null;
     let rt: string | null;
 
     if (sessionStorage.getItem("at")) {
@@ -51,12 +57,29 @@ const useOrder = () => {
         el.status == "DELIVERED" && (sumDelivered += 1);
         el.status == "PICK_UP" && (sumPickUp += 1);
       }
-      setCountInReview(sumInReview);
-      setCountOrderConfiremd(sumOrderConfirmed);
-      setCountInProduction(sumInProduction);
-      setCountShipped(sumShipped);
-      setCountDelivered(sumDelivered);
-      setCountPickUp(sumPickUp);
+
+      ordersRequest(at, "SAMPLE", null, false, 20, null).then((res) => {
+        console.log(res);
+        // 성공 case
+        setOrdersSample([...res?.data.result.data]);
+        for (const el of res?.data.result.data) {
+          el.status == "IN_REVIEW" && (sumInReview += 1);
+          el.status == "ORDER_CONFIRMED" && (sumOrderConfirmed += 1);
+          el.status == "IN_PRODUCTION" && (sumInProduction += 1);
+          el.status == "SHIPPED" && (sumShipped += 1);
+          el.status == "DELIVERED" && (sumDelivered += 1);
+          el.status == "PICK_UP" && (sumPickUp += 1);
+        }
+        setCountInReview(sumInReview);
+        setCountOrderConfiremd(sumOrderConfirmed);
+        setCountInProduction(sumInProduction);
+        setCountShipped(sumShipped);
+        setCountDelivered(sumDelivered);
+        setCountPickUp(sumPickUp);
+
+        // 실패 case: 토큰 만료
+        // 실패 case
+      });
 
       // 실패 case: 토큰 만료
       // 실패 case
@@ -76,7 +99,7 @@ const useOrder = () => {
 
   /** 처음 렌더링시 주문 목록 세팅 */
   useEffect(() => {
-    ordersAllRequestHandler();
+    ordersRollRequestHandler();
   }, []);
 
   /** recent orders 개수 계산 - clickd, orders 변경감지 */
@@ -124,6 +147,21 @@ const useOrder = () => {
             el.status != "RETURNS" &&
             el.status != "CANCEL" && (
               <OrderInfoBox
+                data={el}
+                clicked={clicked}
+                accomplish={false}
+                myAccount={false}
+                key={`eas-${index}`}
+              />
+            )
+          );
+        })}
+        {ordersSample.map((el: any, index: number) => {
+          return (
+            el.status != "CLOSING_ORDER" &&
+            el.status != "RETURNS" &&
+            el.status != "CANCEL" && (
+              <OrderInfoBoxSample
                 data={el}
                 clicked={clicked}
                 accomplish={false}
