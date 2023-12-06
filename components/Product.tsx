@@ -23,6 +23,7 @@ const Product = ({ product }: any) => {
   const [productList, setProductList] = useState([]);
   const [price, setPrice] = useState(product.options[0].price);
   const [colorList, setColorList] = useState<any>([]);
+  const [selectNo, setSelectNo] = useState<number | undefined>();
 
   const router = useRouter();
 
@@ -128,8 +129,24 @@ const Product = ({ product }: any) => {
   return (
     <Card>
       <ThumbnailWrapper>
+        {/* <Link
+                    href={{
+                      pathname: `/product_detail/${product.productNo}`,
+                      query: {
+                        color: i.color.name,
+                      },
+                    }}
+                    as={`/product_detail/${product.productNo}`}
+                    style={{ textDecoration: "none" }}
+                  > */}
         <Link
-          href={`/product_detail/${product.productNo}`}
+          href={{
+            pathname: `/product_detail/${product.productNo}`,
+            query: {
+              selectNo: selectNo,
+            },
+          }}
+          as={`/product_detail/${product.productNo}`}
           style={{ textDecoration: "none" }}
         >
           {product.options.map((i: any, j: number) => {
@@ -183,17 +200,7 @@ const Product = ({ product }: any) => {
         <ColorCircleWrapper>
           {product.options.map((i: any, j: number) => {
             return (
-              <Link
-                href={{
-                  pathname: `/product_detail/${product.productNo}`,
-                  query: {
-                    color: i.color.name,
-                  },
-                }}
-                as={`/product_detail/${product.productNo}`}
-                style={{ textDecoration: "none" }}
-                key={`link${j}`}
-              >
+              <Wrapper>
                 <Image
                   src={i.color.imagePath}
                   alt="colorCircle"
@@ -202,9 +209,15 @@ const Product = ({ product }: any) => {
                   onMouseOver={() => {
                     setOptionLength(`${i.length}m`);
                     setThumnail(i.thumbnailUrl);
+                    setSelectNo(i.productOptionNo);
+                  }}
+                  onTouchEnd={() => {
+                    setOptionLength(`${i.length}m`);
+                    setThumnail(i.thumbnailUrl);
+                    setSelectNo(i.productOptionNo);
                   }}
                 />
-              </Link>
+              </Wrapper>
             );
           })}
         </ColorCircleWrapper>
@@ -343,5 +356,16 @@ const ColorCircleWrapper = styled.div`
   display: flex;
   gap: 6px;
 `;
-
+const Wrapper = styled.div``;
+const DeskTopWrapper = styled.div`
+  @media screen and (max-width: 1280px) {
+    display: none;
+  }
+`;
+const MobileWrapper = styled.div`
+  display: none;
+  @media screen and (max-width: 1280px) {
+    display: block;
+  }
+`;
 export default Product;
