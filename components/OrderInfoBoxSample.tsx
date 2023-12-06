@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
+  ic_check_web_status_check,
+  ic_check_web_status_dot,
   ic_close_wht,
   ic_down_bk,
   ic_up_bk,
@@ -8,12 +10,20 @@ import {
   test_thumbnail,
 } from "../assets";
 import Image from "next/image";
+import { orderCancelRequest, orderConfirmRequest } from "../utils/api";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import Sample from "./Sample";
+import { priceToDollar } from "../utils/functions";
 
 const useOrderInfoBoxSample = ({
+  data,
+  clicked,
   accomplish,
   myAccount,
 }: {
+  data: any;
+  clicked: number;
   accomplish: boolean;
   myAccount: boolean;
 }) => {
@@ -22,8 +32,28 @@ const useOrderInfoBoxSample = ({
   const [questionDeliveryIsActive, setQuestionDeliveryIsActive] =
     useState(false);
   const [questionTaxIsActive, setQuestionTaxIsActive] = useState(false);
+  const [render, setRender] = useState(true); // 렌더링 유무
   const questionDeliveryRef = useRef<any>();
   const questionTaxRef = useRef<any>();
+
+  const router = useRouter();
+
+  // 주문 상태 데이터 표시용
+  const status = new Map([
+    ["IN_REVIEW", "In Review"],
+    ["DENIED", "Cancel"],
+    ["IN_REVIEW_CANCELED", "Cancel"],
+    ["ORDER_CONFIRMED", "Order Confirmed"],
+    ["ORDER_CONFIRMED_CANCELED", "Cancel"],
+    ["IN_PRODUCTION", "In Production"],
+    ["SHIPPED", "Shipped"],
+    ["PICKED_UP_READY", "Picked Up Ready"],
+    ["PICKED_UP", "Picked Up"],
+    ["DELIVERED", "Delivered"],
+    ["CLOSING_ORDER", "Closing Order"],
+    ["RETURNS", "Returns"],
+    ["CANCEL", "Cancel"],
+  ]);
 
   useEffect(() => {
     if (questionDeliveryIsActive) {
@@ -37,54 +67,177 @@ const useOrderInfoBoxSample = ({
     }
   }, [questionTaxIsActive]);
 
+  useEffect(() => {
+    if (clicked == 1) {
+      setRender(true);
+      return;
+    }
+    let status = "";
+
+    clicked == 2 && (status = "IN_REVIEW");
+    clicked == 3 && (status = "ORDER_CONFIRMED");
+    clicked == 4 && (status = "IN_PRODUCTION");
+    clicked == 5 && (status = "SHIPPED");
+    clicked == 6 && (status = "DELIVERED");
+    clicked == 7 && (status = "PICK_UP");
+
+    status == data.status ? setRender(true) : setRender(false);
+  }, [clicked]);
+
+  /** 주문취소후 새로고침 */
+  const orderCancelHandler = (orderNo: number) => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    orderCancelRequest(at, orderNo).then((res) => {
+      console.log(res);
+      if (res?.data.status == 200) {
+        location.reload();
+        return;
+      }
+    });
+  };
+
+  /** 주문확정후 주문내역으로 */
+  const orderConfirmHandler = (orderNo: number) => {
+    let at;
+    let rt: string | null;
+
+    console.log(orderNo);
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    orderConfirmRequest(at, orderNo).then((res) => {
+      console.log(res);
+      if (res?.data.status == 200) {
+        router.push("/order_history");
+        return;
+      }
+    });
+  };
+  // 월, 일, 년, 시간
+  const dateArr = new Date(data.createdAt).toString().split(" ");
+  const month = dateArr[1];
+  const day = dateArr[2];
+  const year = dateArr[3];
+  const time = dateArr[4].substring(0, 5);
+  const orderTime = `${month} ${day}, ${year} / ${time}`;
+
+  useEffect(() => {
+    console.log(data.status);
+  }, []);
+
   return (
-    <>
+    <Box render={render}>
       <Container>
-        <ProductWrapper>
-          <SampleWrapper>
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-            <Sample />
-          </SampleWrapper>
-        </ProductWrapper>
-        <DashLine1 />
-        <OrderInfoWrapper>
-          <OrderInfoTitle>Order no.</OrderInfoTitle>
-          <OrderInfoContent>0906ZG5D72045J</OrderInfoContent>
-        </OrderInfoWrapper>
-        <OrderInfoWrapper>
-          <OrderInfoTitle>Order time</OrderInfoTitle>
-          <OrderInfoContent>JUN 10, 2023 / 23:12</OrderInfoContent>
-        </OrderInfoWrapper>
-        <OrderInfoWrapper>
+        <ImageGridWrapper>
+          {data.items.map((el: any, index: number) => {
+            return (
+              <ImageWrapper>
+                <Image
+                  src={el.product.option.thumbnailUrl}
+                  alt={"sampleImage"}
+                  width={48}
+                  height={48}
+                />
+              </ImageWrapper>
+            );
+          })}
+        </ImageGridWrapper>
+
+        {data.status == "IN_REVIEW" && (
+          <OrderInfoWrapper>
+            <OrderInfoTitle>Delivery</OrderInfoTitle>
+            <OrderInfoContent>
+              {data.deliveryMethod == "AIR" ? "By air" : "By ship"}
+              {/* {data.deliveryFee != 0 && `$(${data.deliveryFee})`} */}
+              {/* / {`{{date}}`}) */}
+            </OrderInfoContent>
+          </OrderInfoWrapper>
+        )}
+
+        {data.status == "ORDER_CONFIRMED" && (
+          <OrderInfoWrapper>
+            <OrderInfoTitle>Delivery</OrderInfoTitle>
+            <OrderInfoContent>
+              {data.deliveryMethod == "AIR" ? "By air" : "By ship"}&nbsp;
+              {`$(${data.deliveryFee})`}
+              {/* / {`{{date}}`}) */}
+            </OrderInfoContent>
+          </OrderInfoWrapper>
+        )}
+
+        {/** 잠시만
+ * ( 
+          <>
+            <OrderInfoWrapper>
+              <OrderInfoTitle>Order no.</OrderInfoTitle>
+              <OrderInfoContent>{data.orderNumber}</OrderInfoContent>
+            </OrderInfoWrapper>
+            <OrderInfoWrapper>
+              <OrderInfoTitle>Order time</OrderInfoTitle>
+              <OrderInfoContent>JUN 10, 2023 / 23:12</OrderInfoContent>
+            </OrderInfoWrapper>
+          </>
+        ) */}
+
+        {/* <OrderInfoWrapper>
           <OrderCanceled>Order canceled</OrderCanceled>
           <OrderInfoContent>
             Currently out of stock.
             <br /> Please adjust the quantity and order again.
           </OrderInfoContent>
-        </OrderInfoWrapper>
-        <DashLine1 />
-        <TotalPriceWrapper>
-          <Total>Total</Total>
-          <Price>$ 62.25</Price>
-        </TotalPriceWrapper>
+        </OrderInfoWrapper> 여기 남겨두고 나중에 지우기*/}
+        {data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED" ? (
+          ""
+        ) : (
+          <>
+            <OrderInfoWrapper>
+              <OrderInfoTitle>Order no.</OrderInfoTitle>
+              <OrderInfoContent>{data.orderNumber}</OrderInfoContent>
+            </OrderInfoWrapper>
+            <OrderInfoWrapper>
+              <OrderInfoTitle>Order time</OrderInfoTitle>
+              <OrderInfoContent>{orderTime}</OrderInfoContent>
+            </OrderInfoWrapper>
+            {/** 배달완료 case */}
+            {/* {
+              data.status == "DELIVERED" && (
+                <OrderInfoWrapper>
+              <OrderInfoTitle>Delivered</OrderInfoTitle>
+              <OrderInfoContent>{orderTime}</OrderInfoContent>
+            </OrderInfoWrapper>
+              )
+            } */}
+            <DashLine1 />
+            <TotalPriceWrapper>
+              <Total>Total</Total>
+              <Price>{`$ ${data.totalAmount}`}</Price>
+            </TotalPriceWrapper>
+          </>
+        )}
+
         <Line />
         <OrderDetailContainer>
           <OrderDetailButtonWrapper>
             <OrderDetailButtonBox
               onClick={() => setOrderDetailIsActive(!orderDetailIsActive)}
             >
-              <OrderDetailButton>Order detail</OrderDetailButton>
+              <OrderDetailButton>Order Summary</OrderDetailButton>
               <Image
                 src={orderDetailIsActive ? ic_up_bk : ic_down_bk}
                 alt={"sort_arrow_button"}
@@ -128,100 +281,318 @@ const useOrderInfoBoxSample = ({
                 />
               </ImageBox>
             </TaxQuestionInfoBox>
-            <ContentTitle>Order Summary</ContentTitle>
-            <FlexWrapper>
-              <SummaryPriceTitle>Item subtotal</SummaryPriceTitle>
-              <SummaryPrice>$32.25</SummaryPrice>
-            </FlexWrapper>
-            <FlexWrapper>
-              <SummaryPriceTitle>
-                Delivery by ship
-                <QuestionMark onClick={() => setQuestionDeliveryIsActive(true)}>
-                  ?
-                </QuestionMark>
-              </SummaryPriceTitle>
-              <SummaryPrice>Free</SummaryPrice>
-            </FlexWrapper>
-            <FlexWrapper>
-              <SummaryPriceTitle>
-                Tax{" "}
-                <QuestionMark onClick={() => setQuestionTaxIsActive(true)}>
-                  ?
-                </QuestionMark>
-              </SummaryPriceTitle>
-              <SummaryPrice>$32.25</SummaryPrice>
-            </FlexWrapper>
-            <SummaryTotalPriceWrapper>
-              <Total>Total</Total>
-              <Price>$ 62.25</Price>
-            </SummaryTotalPriceWrapper>
-            <Line />
-            <PaymentTitle>Payment</PaymentTitle>
-            <PaymentWrapper>
-              <Image src={payment_express} alt="payment_express" />
-              <PaymentNumber>**** 9987</PaymentNumber>
-            </PaymentWrapper>
+
+            {/** 결제전에는 order summary 노출 안함 */}
+            {(data.status == "IN_PRODUCTION" ||
+              data.status == "SHIPPED" ||
+              data.status == "DELIVERED" ||
+              data.status == "PICK_UP") && (
+              <>
+                <ContentTitle>Order Summary</ContentTitle>
+                <FlexWrapper>
+                  <SummaryPriceTitle>Item subtotal</SummaryPriceTitle>
+                  <SummaryPrice>
+                    ${priceToDollar(data.paymentAmount)}
+                  </SummaryPrice>
+                </FlexWrapper>
+                <FlexWrapper>
+                  <SummaryPriceTitle>
+                    Delivery by ship
+                    <QuestionMark
+                      onClick={() => setQuestionDeliveryIsActive(true)}
+                    >
+                      ?
+                    </QuestionMark>
+                  </SummaryPriceTitle>
+                  <SummaryPrice>
+                    ${priceToDollar(data.deliveryFee)}
+                  </SummaryPrice>
+                </FlexWrapper>
+                <FlexWrapper>
+                  <SummaryPriceTitle>
+                    Tax{" "}
+                    <QuestionMark onClick={() => setQuestionTaxIsActive(true)}>
+                      ?
+                    </QuestionMark>
+                  </SummaryPriceTitle>
+                  <SummaryPrice>$??.??</SummaryPrice>
+                </FlexWrapper>
+                <SummaryTotalPriceWrapper>
+                  <Total>Total</Total>
+                  <Price>${priceToDollar(data.totalAmount)}</Price>
+                </SummaryTotalPriceWrapper>
+                <Line />
+                <PaymentTitle>Payment</PaymentTitle>
+                <PaymentWrapper>
+                  <Image src={payment_express} alt="payment_express" />
+                  <PaymentNumber>PayPal</PaymentNumber>
+                </PaymentWrapper>
+              </>
+            )}
             <Line />
             <ContentTitle>Delivered to</ContentTitle>
-            <AddressTitle>My1</AddressTitle>
-            <AddressText>#809</AddressText>
-            <AddressText>#809, 8dong ssangyoung</AddressText>
-            <AddressText>daechi dong, gangnamgu</AddressText>
-            <AddressText>korea</AddressText>
-            <AddressText>06285</AddressText>
-            <AddressPhoneNumber>821086281024</AddressPhoneNumber>
+            <AddressTitle>{data.items[0].shippingAddress.title}</AddressTitle>
+            <AddressText>
+              {data.items[0].shippingAddress.firstName},
+              {data.items[0].shippingAddress.lastName}
+            </AddressText>
+            <CompanyName>
+              {data.items[0].shippingAddress.companyName}
+            </CompanyName>
+            <AddressText>
+              {data.items[0].shippingAddress.streetAddress1}
+            </AddressText>
+            <AddressText>
+              {data.items[0].shippingAddress.streetAddress2}
+            </AddressText>
+            <AddressText>{data.items[0].shippingAddress.state}</AddressText>
+            <AddressText>
+              {data.items[0].shippingAddress.country.name}
+            </AddressText>
+            <AddressText>{data.items[0].shippingAddress.postCode}</AddressText>
+            <AddressPhoneNumber>
+              {data.items[0].shippingAddress.phoneNumber}
+            </AddressPhoneNumber>
           </OrderDetailContent>
         </OrderDetailContainer>
       </Container>
-      <DeliveredContainer>
-        <DeliveredTitle>Shipped</DeliveredTitle>
-        <DeliveredProgressWrapper>
-          <ProgressLine />
-          <ProgressLineGray />
-          <DeliveredCircle />
-          <DeliveredCircle />
-          <DeliveredCircle />
-          <DeliveredCircleGray />
-          <DeliveredBigCircle4 />
-        </DeliveredProgressWrapper>
-      </DeliveredContainer>
-      <TrackOrderContainer>
-        <OrderDetailButtonWrapper>
-          <OrderDetailButtonBox
-            onClick={() => setTrackorderIsActive(!trackorderIsActive)}
-          >
-            <OrderDetailButton>Trackorder</OrderDetailButton>
-            <Image
-              src={trackorderIsActive ? ic_up_bk : ic_down_bk}
-              alt={"sort_arrow_button"}
-            />
-          </OrderDetailButtonBox>
-        </OrderDetailButtonWrapper>
-        <TrackOrderContent isActive={trackorderIsActive}>
-          <TrackOrderContentWrapper>
-            <TrackOrderCircle />
-            <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          <TrackOrderContentWrapper>
-            <TrackOrderCircle />
-            <TrackOrderContentTitle>Order Complete</TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          <TrackOrderContentWrapper>
-            <TrackOrderCircle />
-            <TrackOrderContentTitle>In Production</TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          <TrackOrderContentWrapper>
-            <TrackOrderCircle />
-            <TrackOrderContentTitle>
-              Shipped (
-              <ShippingNumber>&nbsp;DHL 102002102&nbsp;</ShippingNumber> )
-            </TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          <TrackOrderContentWrapper>
-            <TrackorderCircleGray />
-            <TrackOrderContentTitle>Delivered</TrackOrderContentTitle>
-          </TrackOrderContentWrapper>
-          {/* 
+
+      {/** 인리뷰, 오더 컨펌 케이스 */}
+      {(data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED") && (
+        <>
+          <ProgressContainer>
+            <ModelWrapper>
+              <Circle1 status={data.status} />
+              <LinkLine status={data.status} />
+              <Circle2 status={data.status} />
+            </ModelWrapper>
+            <ModelTitleWrapper>
+              <ModelTitle1>
+                <TempBox1>
+                  Prepare fabric and
+                  <br />
+                  caculating
+                </TempBox1>
+              </ModelTitle1>
+              <ModelTitle2>
+                <TempBox2>
+                  Proceed to
+                  <br />
+                  purchase
+                </TempBox2>
+              </ModelTitle2>
+            </ModelTitleWrapper>
+          </ProgressContainer>
+          {data.status == "IN_REVIEW" ? (
+            <Notice status={data.status}>
+              We will prepare the products you ordered as quickly as possible.
+              It may take up to 2 business days to get to the payment stage.
+            </Notice>
+          ) : (
+            <Notice status={data.status}>
+              Awaiting proceed to purchase. If payment is not made within 48
+              hours, the payment will be automatically canceled.
+            </Notice>
+          )}
+        </>
+      )}
+
+      {/** 거절, 인리뷰 캔슬 케이스 */}
+      {(data.status == "DENIED" || data.status == "IN_REVIEW_CANCELED") && (
+        <>
+          <DeliveredContainer>
+            <DeliveredTitle>{status.get(data.status)}</DeliveredTitle>
+            <DeliveredProgressWrapper>
+              <TrackBigCircle status={data.status} num={0}>
+                <TrackCircle status={data.status} num={0} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={0} />
+              <TrackBigCircle status={data.status} num={1}>
+                <TrackCircle status={data.status} num={1} />
+              </TrackBigCircle>
+            </DeliveredProgressWrapper>
+          </DeliveredContainer>
+          <TrackOrderContainer>
+            <OrderDetailButtonWrapper>
+              <OrderDetailButtonBox
+                onClick={() => setTrackorderIsActive(!trackorderIsActive)}
+              >
+                <OrderDetailButton>Trackorder</OrderDetailButton>
+                <Image
+                  src={trackorderIsActive ? ic_up_bk : ic_down_bk}
+                  alt={"sort_arrow_button"}
+                />
+              </OrderDetailButtonBox>
+            </OrderDetailButtonWrapper>
+            <TrackOrderContent isActive={trackorderIsActive}>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={0} />
+                <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={1} />
+                <TrackOrderContentTitle>
+                  {data.status == "DENIED" ? "Denied" : "Cancel"}
+                </TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+
+              <TrackorderProgressLine status={data.status} />
+              <TrackorderProgressLineGray status={data.status} />
+
+              <TrackOrderBigCircle status={data.status} />
+            </TrackOrderContent>
+          </TrackOrderContainer>
+        </>
+      )}
+
+      {/** order confirm 후 결제안하고 캔슬 케이스 */}
+      {data.status == "ORDER_CONFIRMED_CANCELED" && (
+        <>
+          <DeliveredContainer>
+            <DeliveredTitle>{status.get(data.status)}</DeliveredTitle>
+            <DeliveredProgressWrapper>
+              <TrackBigCircle status={data.status} num={0}>
+                <TrackCircle status={data.status} num={0} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={0} />
+              <TrackBigCircle status={data.status} num={1}>
+                <TrackCircle status={data.status} num={1} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={1} />
+              <TrackBigCircle status={data.status} num={2}>
+                <TrackCircle status={data.status} num={2} />
+              </TrackBigCircle>
+            </DeliveredProgressWrapper>
+          </DeliveredContainer>
+          <TrackOrderContainer>
+            <OrderDetailButtonWrapper>
+              <OrderDetailButtonBox
+                onClick={() => setTrackorderIsActive(!trackorderIsActive)}
+              >
+                <OrderDetailButton>Trackorder</OrderDetailButton>
+                <Image
+                  src={trackorderIsActive ? ic_up_bk : ic_down_bk}
+                  alt={"sort_arrow_button"}
+                />
+              </OrderDetailButtonBox>
+            </OrderDetailButtonWrapper>
+            <TrackOrderContent isActive={trackorderIsActive}>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={0} />
+                <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={1} />
+                <TrackOrderContentTitle>Order Confirm</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={2} />
+                <TrackOrderContentTitle>Cacncel</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+
+              <TrackorderProgressLine status={data.status} />
+              <TrackorderProgressLineGray status={data.status} />
+
+              <TrackOrderBigCircle status={data.status} />
+            </TrackOrderContent>
+          </TrackOrderContainer>
+        </>
+      )}
+
+      {/** 나머지 케이스 */}
+      {(data.status == "IN_PRODUCTION" ||
+        data.status == "SHIPPED" ||
+        data.status == "DELIVERED" ||
+        data.status == "CLOSING_ORDER" ||
+        data.status == "RETURNS") && (
+        <>
+          <DeliveredContainer>
+            <DeliveredTitle>{status.get(data.status)}</DeliveredTitle>
+            <DeliveredProgressWrapper>
+              <TrackBigCircle status={data.status} num={0}>
+                <TrackCircle status={data.status} num={0} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={0} />
+              <TrackBigCircle status={data.status} num={1}>
+                <TrackCircle status={data.status} num={1} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={1} />
+              <TrackBigCircle status={data.status} num={2}>
+                <TrackCircle status={data.status} num={2} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={2} />
+              <TrackBigCircle status={data.status} num={3}>
+                <TrackCircle status={data.status} num={3} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={3} />
+              <TrackBigCircle status={data.status} num={4}>
+                <TrackCircle status={data.status} num={4} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={4} />
+              <TrackBigCircle status={data.status} num={5}>
+                <TrackCircle status={data.status} num={5} />
+              </TrackBigCircle>
+            </DeliveredProgressWrapper>
+          </DeliveredContainer>
+          <TrackOrderContainer>
+            <OrderDetailButtonWrapper>
+              <OrderDetailButtonBox
+                onClick={() => setTrackorderIsActive(!trackorderIsActive)}
+              >
+                <OrderDetailButton>Trackorder</OrderDetailButton>
+                <Image
+                  src={trackorderIsActive ? ic_up_bk : ic_down_bk}
+                  alt={"sort_arrow_button"}
+                />
+              </OrderDetailButtonBox>
+            </OrderDetailButtonWrapper>
+            <TrackOrderContent isActive={trackorderIsActive}>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={0} />
+                <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={1} />
+                <TrackOrderContentTitle>Order Complete</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={2} />
+                <TrackOrderContentTitle>In Production</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={3} />
+                <TrackOrderContentTitle>
+                  Shipped&nbsp;
+                  {data.status == "SHIPPED" &&
+                    data.items[0].shippingAddress.trackingNumber && (
+                      <>
+                        <ShippingBracket>(&nbsp;</ShippingBracket>
+                        <ShippingNumber>
+                          {data.items[0].shippingAddress.trackingNumber}
+                        </ShippingNumber>
+                        <ShippingBracket>&nbsp;)</ShippingBracket>
+                      </>
+                    )}
+                </TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={4} />
+                <TrackOrderContentTitle>Delivered</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper status={data.status}>
+                <TrackOrderCircle status={data.status} num={5} />
+                <TrackOrderContentTitle>Closing order</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackorderProgressLine status={data.status} />
+              <TrackorderProgressLineGray status={data.status} />
+
+              <TrackOrderBigCircle status={data.status} />
+            </TrackOrderContent>
+          </TrackOrderContainer>
+        </>
+      )}
+
+      {/* 
           <TrackorderProgressLine />
           <TrackOrderContentWrapper>
             <TrackorderCircleGray />
@@ -246,26 +617,78 @@ const useOrderInfoBoxSample = ({
             <TrackOrderContentTitle>Returns</TrackOrderContentTitle>
           </TrackOrderContentWrapper> */}
 
-          <TrackorderProgressLine />
-          <TrackorderProgressLineGray />
+      {/** 상태에따라 버튼 노출 */}
 
-          <TrackOrderBigCircle4 />
-        </TrackOrderContent>
-      </TrackOrderContainer>
-      <ButtonWrapper myAccount={myAccount}>
+      {/** in review case: 취소 가능 */}
+      {data.status == "IN_REVIEW" && (
+        <CancelButton onClick={() => orderCancelHandler(data.orderNo)}>
+          Cancel order
+        </CancelButton>
+      )}
+
+      {/** order confirmed case: 취소, 주문 가능 */}
+      {data.status == "ORDER_CONFIRMED" && (
+        <Wrapper>
+          <CancelButton onClick={() => orderCancelHandler(data.orderNo)}>
+            Cancel order
+          </CancelButton>
+
+          <OrderButton onClick={() => router.push(`/payment/${data.orderNo}`)}>
+            Order
+          </OrderButton>
+        </Wrapper>
+      )}
+
+      {/** in production case: ?? */}
+
+      {/** delivered, pick up case: 주문 확정 가능 */}
+      {(data.status == "DELIVERED" || data.status == "PICK_UP") && (
+        <>
+          <AccomplishButton onClick={() => orderConfirmHandler(data.orderNo)}>
+            Order accomplish
+          </AccomplishButton>
+          <NoticeText>
+            After 10 days, it will be automatically checked for completion.
+            <br />
+            If you have any problems with delivery, please contact us via&nbsp;
+            <u>support@requnch.io</u> or <u>Contact us</u>
+          </NoticeText>
+        </>
+      )}
+
+      {/** closing order case: 인보이스 다운 */}
+      {/** pick up case: 인보이스 다운 */}
+      {data.status == "CLOSING_ORDER" && (
+        <InvoiceButton>Invoice Download</InvoiceButton>
+      )}
+
+      {/* <ButtonWrapper myAccount={myAccount}>
         <AccomplishInvoiceButton isActive={accomplish}>
           Order accomplish
         </AccomplishInvoiceButton>
-        <AccomplishInvoiceButton isActive={accomplish}>
+        <NoticeText isActive={accomplish}>
+          After 10 days, it will be automatically checked for completion.
+          <br />
+          If you have any problems with delivery, please contact us via&nbsp;
+          <u>support@requnch.io</u> or&nbsp;<u>Contact us</u>
+        </NoticeText>
+        <AccomplishInvoiceButton isActive={!accomplish}>
+          Re-order
+        </AccomplishInvoiceButton>
+        <AccomplishInvoiceButton isActive={!accomplish}>
           Invoice Download
         </AccomplishInvoiceButton>
-        {/* <AccomplishInvoiceButton isActive={!accomplish}>
-          Re-order
-        </AccomplishInvoiceButton> */}
-      </ButtonWrapper>
-    </>
+      </ButtonWrapper> */}
+    </Box>
   );
 };
+
+const Box = styled.div<{ render: boolean }>`
+  display: ${(props) => {
+    return props.render == true ? "block" : "none";
+  }};
+  margin-bottom: 20px;
+`;
 
 const Container = styled.div`
   border: 1px solid #dee8ec;
@@ -281,11 +704,41 @@ const ProductWrapper = styled.div`
   margin-left: 16px;
   margin-right: 16px;
   margin-bottom: 16px;
+  height: 80.31px;
+`;
+const SampleWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  row-gap: 9px;
+  column-gap: 9.5px;
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    row-gap: 2px;
+    column-gap: 2px;
+  }
 `;
 const ImageWrapper = styled.div`
-  overflow: hidden;
-  flex-shrink: 0;
   border-radius: 2px;
+  overflow: hidden;
+  width: 48px;
+  height: 48px;
+`;
+const ImageGridWrapper = styled.div`
+  margin-top: 16px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  row-gap: 9px;
+  column-gap: 9.5px;
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    row-gap: 2px;
+    column-gap: 2px;
+  }
 `;
 const TextWrapper = styled.div`
   position: relative;
@@ -300,6 +753,104 @@ const ProductTitle = styled.div`
   letter-spacing: -0.011em;
 
   color: #121822;
+`;
+const OptionWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+  color: #536c6d;
+`;
+const Color = styled.div<{ color: string }>`
+  margin-right: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 100%;
+  ${(props) => {
+    switch (props.color) {
+      case "White":
+        return `    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    background-color: #ffffff;`;
+      case "Black":
+        return "background-color: #000000";
+      case "Gray":
+        return "background-color: #C4C4C4";
+      case "Beige":
+        return "background-color: #F1EBD3";
+      case "Brown":
+        return "background-color: #825757";
+      case "Red":
+        return "background-color: #EC3939";
+      case "Orange":
+        return "background-color: #FE7E36";
+      case "Yellow":
+        return "background-color: #F9D142";
+      case "Pink":
+        return "background-color: #FF96FB";
+      case "Purple":
+        return "background-color: #814FEC";
+      case "Blue":
+        return "background-color: #293DF0";
+      case "Green":
+        return "background-color: #46CA43";
+      case "Silver":
+        return `  background: linear-gradient(
+      156.04deg,
+      #a9a9a9 10.26%,
+      #dedede 43.51%,
+      #ffffff 52.57%,
+      #e1e1e1 61.64%,
+      #9a9a9a 93.16%
+    );`;
+      case "Gold":
+        return `    background: linear-gradient(
+      152.18deg,
+      #d3a810 5.76%,
+      #fff8de 44.11%,
+      #ffffff 49.34%,
+      #fff9e4 55.45%,
+      #d3a810 89.44%
+    ); `;
+      case "Multi":
+        return `    background: linear-gradient(
+      154.17deg,
+      #ff1001 17.26%,
+      #fff500 37.73%,
+      #24ff00 57.06%,
+      #00bdf9 72.22%,
+      #0075ff 90.03%
+    );`;
+    }
+  }};
+`;
+const ColorGreen = styled.div`
+  margin-right: 4px;
+  width: 12px;
+  height: 12px;
+  background-color: #46ca43;
+  border-radius: 100%;
+`;
+const VerticalLine = styled.div`
+  width: 1px;
+  height: 9px;
+  background-color: #dee8ec;
+  margin: 0 6px;
+`;
+const ProductQty = styled.div`
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  color: #121822;
+  text-align: right;
+  font-family: Roboto;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14.3px;
+  letter-spacing: -0.121px;
 `;
 const MeterageOrSample = styled.div`
   font-weight: 400;
@@ -355,7 +906,7 @@ const OrderInfoWrapper = styled.div`
   margin-top: 6px;
   margin-left: 16px;
   margin-right: 16px;
-  margin-bottom: 6px;
+
   justify-content: space-between;
   align-items: center;
 `;
@@ -406,6 +957,7 @@ const Price = styled.div`
   color: #ff5c01;
 `;
 const Line = styled.div`
+  margin-top: 9.7px;
   border-bottom: 1px solid #dee8ec;
 `;
 const OrderDetailContainer = styled.div`
@@ -494,8 +1046,8 @@ const ImageBox = styled.div`
   cursor: pointer;
 `;
 const ContentTitle = styled.div`
-  margin-top: 11px;
-  margin-bottom: 16px;
+  margin-top: 16px;
+  margin-bottom: 13px;
   font-weight: 700;
   font-size: 12px;
   line-height: 16px;
@@ -504,7 +1056,7 @@ const ContentTitle = styled.div`
 const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-itmes: center;
+  align-items: center;
   margin-top: 2px;
 `;
 const SummaryPriceTitle = styled.div`
@@ -571,8 +1123,8 @@ const PaymentNumber = styled.div`
 `;
 const AddressTitle = styled.div`
   margin-bottom: 12px;
-  font-weight: 400;
-  font-size: 12px;
+  font-weight: 700;
+  font-size: 14px;
   line-height: 14px;
   color: #121822;
 `;
@@ -580,15 +1132,22 @@ const AddressText = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #536c6d;
+  color: #121822;
+`;
+const CompanyName = styled.div`
+  margin-bottom: 13px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #121822;
 `;
 const AddressPhoneNumber = styled.div`
-  margin-top: 16px;
+  margin-top: 13px;
   margin-bottom: 8px;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #536c6d;
+  color: #121822;
 `;
 const BilledWrapper = styled.div`
   display: flex;
@@ -619,6 +1178,115 @@ const BilledPrice = styled.div`
   line-height: 18px;
   color: #121822;
 `;
+
+const ProgressContainer = styled.div`
+  margin-bottom: 10px;
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+  padding-top: 33px;
+  padding-bottom: 38px;
+`;
+const ModelWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 11px;
+`;
+const Circle1 = styled.div<{ status: string }>`
+  width: 26px;
+  height: 26px;
+  border: 1px solid #121822;
+  border-radius: 100%;
+  ${(props) => {
+    switch (props.status) {
+      case "ORDER_CONFIRMED":
+        return `
+        background-image: url(${ic_check_web_status_dot.src});
+        `;
+      case "IN_REVIEW":
+        return `
+          background-image: url(${ic_check_web_status_check.src});
+          `;
+    }
+  }};
+  background-color: #e1ff20;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+`;
+const Circle2 = styled.div<{ status: string }>`
+  width: 26px;
+  height: 26px;
+  ${(props) => {
+    switch (props.status) {
+      case "ORDER_CONFIRMED":
+        return `
+        border: 1px solid #121822;
+        background-image: url(${ic_check_web_status_check.src});
+        background-color: #E1FF20;
+        background-position: center;
+        background-repeat: no-repeat;
+        `;
+      case "IN_REVIEW":
+        return `
+          border: 1px solid #DEE8EC;
+          `;
+    }
+  }};
+  border-radius: 100%;
+  box-sizing: border-box;
+`;
+const LinkLine = styled.div<{ status: string }>`
+  width: 100px;
+  border-top: ${(props) => {
+    return props.status == "ORDER_CONFIRMED"
+      ? `1px solid #536C6D`
+      : `1px solid #DEE8EC`;
+  }};
+`;
+const ModelTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  color: #121822;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 11px;
+`;
+const ModelTitle1 = styled.div`
+  position: relative;
+  width: 26px;
+  margin-right: 100px;
+`;
+const ModelTitle2 = styled.div`
+  position: relative;
+  width: 26px;
+`;
+const TempBox1 = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95px;
+  margin: 0 auto;
+`;
+const TempBox2 = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 53px;
+  margin: 0 auto;
+`;
+const Notice = styled.div<{ status: string }>`
+  color: ${(props) => {
+    return props.status == "ORDER_CONFIRMED" ? `#FF2F01` : `#536C6D`;
+  }};
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14.3px;
+`;
+
 const DeliveredContainer = styled.div`
   padding-top: 16px;
   padding-bottom: 16px;
@@ -627,9 +1295,7 @@ const DeliveredContainer = styled.div`
 `;
 
 const DeliveredTitle = styled.div`
-  margin: 0 auto;
   margin-bottom: 5px;
-  width: 54px;
   text-align: center;
   font-weight: 400;
   font-size: 12px;
@@ -639,11 +1305,59 @@ const DeliveredTitle = styled.div`
 const DeliveredProgressWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
-  margin: 0 auto;
-  width: 86px;
-  height: 11px;
+  justify-content: center;
+`;
+const TrackCircle = styled.div<{ status: string; num: number }>`
+  z-index: 1;
+  width: 5px;
+  height: 5px;
+  background-color: #121822;
+  border-radius: 100%;
+
+  ${(props) => {
+    return (
+      props.num > 0 &&
+      props.status == "IN_REVIEW" &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 1 &&
+      props.status == "ORDER_CONFIRMED" &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 2 &&
+      props.status == "IN_PRODUCTION" &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "background-color: #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num > 5 &&
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "background-color: #a4b0b3;"
+    );
+  }};
 `;
 const DeliveredCircle = styled.div`
   z-index: 1;
@@ -663,6 +1377,99 @@ const DeliveredCircleGray = styled.div`
   background-color: #a4b0b3;
   border-radius: 100%;
 `;
+const TrackLine = styled.div<{ status: string; num: number }>`
+  width: 20.5px;
+  border-bottom: 1px solid #121822;
+
+  ${(props) => {
+    return props.status == "IN_REVIEW" && "border-bottom: 1px solid #a4b0b3;";
+  }};
+  ${(props) => {
+    return props.status == "IN_REVIEW" && props.num == 0 && "width: 18px";
+  }};
+
+  ${(props) => {
+    return (
+      props.num >= 1 &&
+      props.status == "ORDER_CONFIRMED" &&
+      "border-bottom: 1px solid #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return props.num == 0 && props.status == "ORDER_CONFIRMED" && "width: 18px";
+  }};
+  ${(props) => {
+    return props.num == 1 && props.status == "ORDER_CONFIRMED" && "width: 18px";
+  }};
+
+  ${(props) => {
+    return (
+      props.num >= 2 &&
+      props.status == "IN_PRODUCTION" &&
+      "border-bottom: 1px solid #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return props.num == 1 && props.status == "IN_PRODUCTION" && "width: 18px";
+  }};
+  ${(props) => {
+    return props.num == 2 && props.status == "IN_PRODUCTION" && "width: 18px";
+  }};
+
+  ${(props) => {
+    return (
+      props.num >= 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "border-bottom: 1px solid #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 2 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "width: 18px"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "width: 18px"
+    );
+  }};
+
+  ${(props) => {
+    return (
+      props.num >= 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "border-bottom: 1px solid #a4b0b3;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 3 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "width: 18px"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "width: 18px"
+    );
+  }};
+
+  ${(props) => {
+    return (
+      props.num == 5 &&
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "width: 18px"
+    );
+  }};
+`;
 const ProgressLine = styled.div`
   position: absolute;
   margin-left: 3px;
@@ -675,6 +1482,68 @@ const ProgressLineGray = styled.div`
   width: 22px;
   border-bottom: 1px solid #a4b0b3;
 `;
+const TrackBigCircle = styled.div<{ status: string; num: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5px;
+  height: 5px;
+  box-sizing: border-box;
+  border-radius: 100%;
+  background-color: #e1ff20;
+
+  ${(props) => {
+    return (
+      props.num == 0 &&
+      props.status == "IN_REVIEW" &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 1 &&
+      props.status == "ORDER_CONFIRMED" &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 1 &&
+      (props.status == "DENIED" || props.status == "IN_REVIEW_CANCELED") &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 2 &&
+      (props.status == "IN_PRODUCTION" ||
+        props.status == "ORDER_CONFIRMED_CANCELED") &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num == 5 &&
+      (props.status == "CLOSING_ORDER" || props.status == "RETURNS") &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+`;
+
 const DeliveredBigCircle4 = styled.div`
   position: absolute;
   right: 25px;
@@ -700,9 +1569,9 @@ const TrackOrderContent = styled.div<{ isActive: boolean }>`
     return props.isActive == true ? "block" : "none";
   }};
   position: relative;
-  margin-top: 9px;
-  padding-top: 21px;
-  padding-left: 14px;
+  margin-top: 10px;
+  padding-top: 20px;
+  padding-left: 15px;
   padding-bottom: 20px;
   background-color: #f2f6f8;
   border-radius: 2px;
@@ -715,21 +1584,86 @@ const ShippingNumber = styled.span`
   color: #ff5c01;
   cursor: pointer;
 `;
-const TrackOrderContentWrapper = styled.div`
+const ShippingBracket = styled.span`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+`;
+const TrackOrderContentWrapper = styled.div<{ status: string }>`
   display: flex;
   align-items: center;
   margin-bottom: 24px;
-  &:nth-of-type(5) {
+  &:nth-of-type(6) {
     margin-bottom: 0px;
   }
+  ${(props) => {
+    return (
+      (props.status == "DENIED" || props.status == "IN_REVIEW_CANCELED") &&
+      "&:nth-of-type(2) { margin-bottom: 0px;}"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.status == "ORDER_CONFIRMED_CANCELED" &&
+      "&:nth-of-type(3) { margin-bottom: 0px;}"
+    );
+  }};
 `;
-const TrackOrderCircle = styled.div`
-  z-index: 1;
+const TrackOrderCircle = styled.div<{ status: string; num: number }>`
+  z-index: 2;
   margin-right: 9px;
   width: 5px;
   height: 5px;
-  background-color: #121822;
+  background-color: #a4b0b2;
   border-radius: 100%;
+
+  ${(props) => {
+    return (
+      props.num == 0 &&
+      props.status == "IN_REVIEW" &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 1 &&
+      (props.status == "ORDER_CONFIRMED" ||
+        props.status == "DENIED" ||
+        props.status == "IN_REVIEW_CANCELED") &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 2 &&
+      (props.status == "IN_PRODUCTION" ||
+        props.status == "ORDER_CONFIRMED_CANCELED") &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 3 &&
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 4 &&
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "background-color: #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
+      props.num <= 5 &&
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "background-color: #121822;"
+    );
+  }};
 `;
 const TrackorderCircleGray = styled.div`
   margin-right: 9px;
@@ -744,40 +1678,163 @@ const TrackOrderContentTitle = styled.div`
   line-height: 16px;
   color: #121822;
 `;
-const TrackorderProgressLine = styled.div`
+const TrackorderProgressLine = styled.div<{ status: string }>`
+  z-index: 1;
   position: absolute;
   top: 28px;
-  left: 16px;
-  height: 116px;
+  left: 17px;
+  height: 0px;
   border-right: 1px solid #121822;
+
+  ${(props) => {
+    return (
+      (props.status == "ORDER_CONFIRMED" ||
+        props.status == "DENIED" ||
+        props.status == "IN_REVIEW_CANCELED") &&
+      "height: 40px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "IN_PRODUCTION" ||
+        props.status == "ORDER_CONFIRMED_CANCELED") &&
+      "height: 80px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "height: 120px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "height: 160px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "height: 200px;"
+    );
+  }};
 `;
-const TrackorderProgressLineGray = styled.div`
+const TrackorderProgressLineGray = styled.div<{ status: string }>`
   position: absolute;
-  top: 154px;
-  left: 16px;
-  height: 36px;
+  top: 28px;
+  left: 17px;
+  height: 200px;
   border-right: 1px solid #a4b0b3;
+
+  ${(props) => {
+    return (
+      (props.status == "DENIED" || props.status == "IN_REVIEW_CANCELED") &&
+      "height: 40px;"
+    );
+  }};
+
+  ${(props) => {
+    return props.status == "ORDER_CONFIRMED_CANCELED" && "height: 80px;";
+  }};
 `;
-const TrackOrderBigCircle4 = styled.div`
+const TrackOrderBigCircle = styled.div<{ status: string }>`
+  z-index: 1;
   position: absolute;
-  top: 143.5px;
-  left: 11px;
+  left: 12px;
   width: 11px;
   height: 11px;
   border: 1px solid #121822;
   box-sizing: border-box;
   border-radius: 100%;
   background-color: #e1ff20;
+
+  ${(props) => {
+    return props.status == "IN_REVIEW" && "top: 22.5px;";
+  }};
+  ${(props) => {
+    return (
+      (props.status == "ORDER_CONFIRMED" ||
+        props.status == "DENIED" ||
+        props.status == "IN_REVIEW_CANCELED") &&
+      "top: 62.5px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "IN_PRODUCTION" ||
+        props.status == "ORDER_CONFIRMED_CANCELED") &&
+      "top: 102.5px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "SHIPPED" || props.status == "PICKED_UP_READY") &&
+      "top: 142.5px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "DELIVERED" || props.status == "PICKED_UP") &&
+      "top: 182.5px;"
+    );
+  }};
+  ${(props) => {
+    return (
+      (props.status == "CLOSING_ORDER" ||
+        props.status == "RETURNS" ||
+        props.status == "CANCEL") &&
+      "top: 222.5px;"
+    );
+  }};
 `;
+const CancelButton = styled.button`
+  margin-top: 16px;
+
+  width: 100%;
+  height: 40px;
+  color: #121822;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.2px;
+  background-color: #ffffff;
+
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+
+  cursor: pointer;
+`;
+const Wrapper = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+const OrderButton = styled.button`
+  margin-top: 16px;
+
+  width: 100%;
+  height: 40px;
+  color: #121822;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18.2px;
+  background-color: #e1ff20;
+
+  border: 1px solid #d4f01e;
+  border-radius: 2px;
+
+  cursor: pointer;
+`;
+
 const ButtonWrapper = styled.div<{ myAccount: boolean }>`
   display: ${(props) => {
     return props.myAccount == true ? "none" : "block";
   }};
 `;
-const AccomplishInvoiceButton = styled.button<{ isActive: boolean }>`
-  display: ${(props) => {
-    return props.isActive == true ? "none" : "block";
-  }};
+const AccomplishButton = styled.button`
   margin-bottom: 8px;
   width: 100%;
   height: 40px;
@@ -789,20 +1846,24 @@ const AccomplishInvoiceButton = styled.button<{ isActive: boolean }>`
   line-height: 14px;
   color: #121822;
   cursor: pointer;
-  &:nth-of-type(2) {
-    margin-bottom: 0px;
-  }
 `;
-const SampleWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  row-gap: 9px;
-  column-gap: 9.5px;
-
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    row-gap: 2px;
-    column-gap: 2px;
-  }
+const InvoiceButton = styled.button`
+  width: 100%;
+  height: 40px;
+  background-color: #ffffff;
+  border: 1px solid #121822;
+  border-radius: 2px;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 14px;
+  color: #121822;
+  cursor: pointer;
+`;
+const NoticeText = styled.p`
+  margin-bottom: 16px;
+  color: #536c6d;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 12.65px;
 `;
 export default useOrderInfoBoxSample;
