@@ -22,6 +22,7 @@ const useOrder_history = () => {
   const [clicked, setClicked] = useState(1); // 클릭 상태
   const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
   const [orders, setOrders] = useState<any>([]); // 주문 리스트
+  const [ordersSample, setOrdersSample] = useState<any>([]);
 
   /** 주문 요청 핸들러 - ALL */
   const ordersAllRequestHandler = () => {
@@ -42,20 +43,17 @@ const useOrder_history = () => {
       console.log(res);
       // 성공 case
       res?.data.result.data && (tempOrder = res?.data.result.data);
+      setOrders([...tempOrder]);
 
-      ordersDeliveredRequest(at, -1).then((res) => {
-        res?.data.result.data &&
-          (tempOrder = [...tempOrder, ...res?.data.result.data]);
-        ordersClosingOrderRequest(at, -1).then((res) => {
-          res?.data.result.data &&
-            (tempOrder = [...tempOrder, ...res?.data.result.data]);
+      ordersRequest(at, "SAMPLE", null, true, 20, null).then((res) => {
+        console.log(res);
+        // 성공 case
+        res?.data.result.data && (tempOrder = res?.data.result.data);
+        setOrdersSample([...tempOrder]);
 
-          setOrders([...tempOrder]);
-        });
+        // 실패 case: 토큰 만료
+        // 실패 case
       });
-
-      // 실패 case: 토큰 만료
-      // 실패 case
     });
   };
 
@@ -89,7 +87,7 @@ const useOrder_history = () => {
             isActive={orderCategory}
             onClick={() => setOrderCategory(1)}
           >
-            Sample (1)
+            Sample ({ordersSample.length})
           </SampleButton>
         </AllMeterSampleButtonWrapper>
         <RecentOrders />
@@ -105,11 +103,25 @@ const useOrder_history = () => {
               />
             );
           })}
-          {/* <OrderInfoBox accomplish={true} myAccount={false} /> */}
         </MeterageOrderWrapper>
         <SampleOrderWrapper isActive={orderCategory}>
-          <OrderInfoBoxSample accomplish={true} myAccount={false} />
+          {ordersSample.map((el: any, index: number) => {
+            return (
+              el.status != "CLOSING_ORDER" &&
+              el.status != "RETURNS" &&
+              el.status != "CANCEL" && (
+                <OrderInfoBoxSample
+                  data={el}
+                  clicked={clicked}
+                  accomplish={false}
+                  myAccount={false}
+                  key={`eas-${index}`}
+                />
+              )
+            );
+          })}
         </SampleOrderWrapper>
+        {/* <OrderInfoBox accomplish={true} myAccount={false} /> */}
       </Main>
       <MobileSideBar />
     </Container>
