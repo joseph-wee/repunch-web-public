@@ -719,18 +719,34 @@ export const orderDetailRequest = async (orderNo: string) => {
   }
 };
 
-/** 주문 목록 - ALL */
-export const ordersAllRequest = async (
+/** 주문 목록 */
+export const ordersRequest = async (
   accessToken: string | null,
-  searchAfter: number
+  orderUnitType: string,
+  orderStatus: string | null,
+  allStatus: boolean,
+  count: number,
+  searchAfter: number | null
 ) => {
   try {
+    // orderStatus 값이 false이고 상태값이 있는 경우
+    if (orderStatus && allStatus && searchAfter) {
+      const res = await axios({
+        method: "GET",
+        url: `/orders?orderUnitType=${orderUnitType}&orderStatus=${orderStatus}&allStatus=${allStatus}&count=${count}&searchAfter=${searchAfter}`,
+
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return res;
+    }
+
+    // 기본
     const res = await axios({
       method: "GET",
-      url:
-        searchAfter == -1
-          ? `/orders?count=50`
-          : `/orders?count=50&searchAfter=${searchAfter}`,
+      url: `/orders?orderUnitType=${orderUnitType}&allStatus=${allStatus}&count=${count}`,
+
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -820,6 +836,26 @@ export const orderCancelRequest = async (
     const res = await axios({
       method: "PUT",
       url: `/orders/${orderNo}/cancel`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 주문 확정 */
+export const orderConfirmRequest = async (
+  accessToken: string | null,
+  orderNo: number
+) => {
+  try {
+    const res = await axios({
+      method: "PUT",
+      url: `/orders/${orderNo}/confirm-purchase`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
