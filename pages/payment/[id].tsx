@@ -124,7 +124,8 @@ const usePayment = () => {
   /** 주문 상세 요청 */
   const orderDetailRequestHandelr = () => {
     const orderNo = window.location.pathname.split("/")[2];
-    orderDetailRequest(orderNo).then((res) => {
+    const at = localStorage.getItem("at");
+    orderDetailRequest(at, orderNo).then((res) => {
       console.log(res);
       // 성공 case
       if (res?.data.status == 200) {
