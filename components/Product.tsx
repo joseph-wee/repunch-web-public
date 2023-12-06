@@ -94,7 +94,7 @@ const Product = ({ product }: any) => {
     setOptionLength(`${product.options[0].length}m`);
     setThumnail(product.options[0].thumbnailUrl);
     setPrice(product.options[0].price);
-    setFavoriteIsActive(product.keep);
+    setFavoriteIsActive(product.like);
   }, [product]);
 
   const keepHandler = () => {
@@ -200,7 +200,7 @@ const Product = ({ product }: any) => {
         <ColorCircleWrapper>
           {product.options.map((i: any, j: number) => {
             return (
-              <Wrapper>
+              <Wrapper key={`${j}asbbhyyyy`}>
                 <Image
                   src={i.color.imagePath}
                   alt="colorCircle"
