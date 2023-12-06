@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -12,10 +12,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back } from "../assets";
 import { goBack } from "../utils/functions";
+import { likeListRequest } from "../utils/api";
+import ProductLikeList from "../components/ProductLikeList";
 
 const useFavorite = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
   const [result, setResult] = useState(0);
+
+  useEffect(() => {
+    const at = localStorage.getItem("at");
+    likeListRequest(at).then((res) => {
+      console.log(res);
+    });
+  }, []);
 
   return (
     <Container>
@@ -50,7 +59,7 @@ const useFavorite = () => {
           </SortMenuWrapper>
         </ItemSortBar>
         <ProductListGridWrapper>
-          <ProductList sortType={"LATEST"} setResult={setResult} />
+          <ProductLikeList sortType={"LATEST"} setResult={setResult} />
         </ProductListGridWrapper>
       </Main>
       <MobileSideBar />
