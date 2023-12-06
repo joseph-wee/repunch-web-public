@@ -123,8 +123,9 @@ const useCheck_out = () => {
 
   /** 주문 상세 요청 */
   const orderDetailRequestHandelr = () => {
+    const at = localStorage.getItem("at");
     const orderNo = window.location.pathname.split("/")[2];
-    orderDetailRequest(orderNo).then((res) => {
+    orderDetailRequest(at, orderNo).then((res) => {
       console.log(res);
       // 성공 case
       if (res?.data.status == 200) {
