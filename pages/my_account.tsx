@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { MobileSideBar, OrderInfoBox, SideBar } from "../components";
 import Link from "next/link";
-import { ordersAllRequest, userInfoRequest } from "../utils/api";
+import { ordersRequest, userInfoRequest } from "../utils/api";
 
 const useMy_account = () => {
   const [data, setData] = useState<any>({});
@@ -23,7 +23,6 @@ const useMy_account = () => {
   const [countShipped, setCountShipped] = useState(0);
   const [countDelivered, setCountDelivered] = useState(0);
   const [countPickUp, setCountPickUp] = useState(0);
-
   /** 주문 요청 핸들러 - ALL */
   const ordersAllRequestHandler = () => {
     let at;
@@ -37,7 +36,7 @@ const useMy_account = () => {
       rt = localStorage.getItem("rt");
     }
 
-    ordersAllRequest(at, -1).then((res) => {
+    ordersRequest(at, "ROLL", null, false, 20, null).then((res) => {
       let sumInReview = countInReview;
       let sumOrderConfirmed = countOrderConfirmed;
       let sumInProduction = countInProduction;
