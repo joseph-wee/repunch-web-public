@@ -10,7 +10,7 @@ import {
   test_thumbnail,
 } from "../assets";
 import Image from "next/image";
-import { orderCancelRequest } from "../utils/api";
+import { orderCancelRequest, orderConfirmRequest } from "../utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -96,6 +96,30 @@ const useOrderInfoBox = ({
       console.log(res);
       if (res?.data.status == 200) {
         location.reload();
+        return;
+      }
+    });
+  };
+
+  /** 주문확정후 주문내역으로 */
+  const orderConfirmHandler = (orderNo: number) => {
+    let at;
+    let rt: string | null;
+
+    console.log(orderNo);
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    orderConfirmRequest(at, orderNo).then((res) => {
+      console.log(res);
+      if (res?.data.status == 200) {
+        router.push("/order_history");
         return;
       }
     });
@@ -339,7 +363,8 @@ const useOrderInfoBox = ({
         </OrderDetailContainer>
       </Container>
 
-      {data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED" ? (
+      {/** 인리뷰, 오더 컨펌 케이스 */}
+      {(data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED") && (
         <>
           <ProgressContainer>
             <ModelWrapper>
@@ -366,17 +391,73 @@ const useOrderInfoBox = ({
           </ProgressContainer>
           {data.status == "IN_REVIEW" ? (
             <Notice status={data.status}>
-              Awaiting proceed to purchase. If payment is not made within 48
-              hours, the payment will be automatically canceled.
-            </Notice>
-          ) : (
-            <Notice status={data.status}>
               We will prepare the products you ordered as quickly as possible.
               It may take up to 2 business days to get to the payment stage.
             </Notice>
+          ) : (
+            <Notice status={data.status}>
+              Awaiting proceed to purchase. If payment is not made within 48
+              hours, the payment will be automatically canceled.
+            </Notice>
           )}
         </>
-      ) : (
+      )}
+
+      {/** 거절, 인리뷰 캔슬 케이스 */}
+      {(data.status == "DENIED" || data.status == "IN_REVIEW_CANCELED") && (
+        <>
+          <DeliveredContainer>
+            <DeliveredTitle>{status.get(data.status)}</DeliveredTitle>
+            <DeliveredProgressWrapper>
+              <TrackBigCircle status={data.status} num={0}>
+                <TrackCircle status={data.status} num={0} />
+              </TrackBigCircle>
+              <TrackLine status={data.status} num={0} />
+              <TrackBigCircle status={data.status} num={1}>
+                <TrackCircle status={data.status} num={1} />
+              </TrackBigCircle>
+            </DeliveredProgressWrapper>
+          </DeliveredContainer>
+          <TrackOrderContainer>
+            <OrderDetailButtonWrapper>
+              <OrderDetailButtonBox
+                onClick={() => setTrackorderIsActive(!trackorderIsActive)}
+              >
+                <OrderDetailButton>Trackorder</OrderDetailButton>
+                <Image
+                  src={trackorderIsActive ? ic_up_bk : ic_down_bk}
+                  alt={"sort_arrow_button"}
+                />
+              </OrderDetailButtonBox>
+            </OrderDetailButtonWrapper>
+            <TrackOrderContent isActive={trackorderIsActive}>
+              <TrackOrderContentWrapper>
+                <TrackOrderCircle status={data.status} num={0} />
+                <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+              <TrackOrderContentWrapper>
+                <TrackOrderCircle status={data.status} num={1} />
+                <TrackOrderContentTitle>{data.status}</TrackOrderContentTitle>
+              </TrackOrderContentWrapper>
+
+              <TrackorderProgressLine status={data.status} />
+              <TrackorderProgressLineGray status={data.status} />
+
+              <TrackOrderBigCircle status={data.status} />
+            </TrackOrderContent>
+          </TrackOrderContainer>
+        </>
+      )}
+
+      {/** order confirm 후 결제안하고 캔슬 케이스 */}
+      {data.status == "ORDER_CONFIRMED_CANCELED" && <></>}
+
+      {/** 나머지 케이스 */}
+      {(data.status == "IN_PRODUCTION" ||
+        data.status == "SHIPPED" ||
+        data.status == "DELIVERED" ||
+        data.status == "CLOSING_ORDER" ||
+        data.status == "RETURNS") && (
         <>
           <DeliveredContainer>
             <DeliveredTitle>{status.get(data.status)}</DeliveredTitle>
@@ -516,12 +597,14 @@ const useOrderInfoBox = ({
       {/** delivered, pick up case: 주문 확정 가능 */}
       {(data.status == "DELIVERED" || data.status == "PICK_UP") && (
         <>
-          <AccomplishButton>Order accomplish</AccomplishButton>
+          <AccomplishButton onClick={() => orderConfirmHandler(data.orderNo)}>
+            Order accomplish
+          </AccomplishButton>
           <NoticeText>
             After 10 days, it will be automatically checked for completion.
             <br />
             If you have any problems with delivery, please contact us via&nbsp;
-            <u>support@requnch.io</u> or&nbsp;<u>Contact us</u>
+            <u>support@requnch.io</u> or <u>Contact us</u>
           </NoticeText>
         </>
       )}
@@ -557,6 +640,7 @@ const Box = styled.div<{ render: boolean }>`
   display: ${(props) => {
     return props.render == true ? "block" : "none";
   }};
+  margin-bottom: 20px;
 `;
 
 const Container = styled.div`
@@ -1348,6 +1432,13 @@ const TrackBigCircle = styled.div<{ status: string; num: number }>`
   }};
   ${(props) => {
     return (
+      props.num == 1 &&
+      props.status == "DENIED" &&
+      "width: 11px; height: 11px; border: 1px solid #121822;"
+    );
+  }};
+  ${(props) => {
+    return (
       props.num == 2 &&
       props.status == "IN_PRODUCTION" &&
       "width: 11px; height: 11px; border: 1px solid #121822;"
@@ -1370,9 +1461,7 @@ const TrackBigCircle = styled.div<{ status: string; num: number }>`
   ${(props) => {
     return (
       props.num == 5 &&
-      (props.status == "CLOSING_ORDER" ||
-        props.status == "RETURNS" ||
-        props.status == "CANCEL") &&
+      (props.status == "CLOSING_ORDER" || props.status == "RETURNS") &&
       "width: 11px; height: 11px; border: 1px solid #121822;"
     );
   }};
@@ -1576,13 +1665,12 @@ const TrackOrderBigCircle = styled.div<{ status: string }>`
       (props.status == "CLOSING_ORDER" ||
         props.status == "RETURNS" ||
         props.status == "CANCEL") &&
-      "top: 223.5px;"
+      "top: 222.5px;"
     );
   }};
 `;
 const CancelButton = styled.button`
   margin-top: 16px;
-  margin-bottom: 16px;
 
   width: 100%;
   height: 40px;
@@ -1604,7 +1692,6 @@ const Wrapper = styled.div`
 `;
 const OrderButton = styled.button`
   margin-top: 16px;
-  margin-bottom: 16px;
 
   width: 100%;
   height: 40px;
@@ -1651,7 +1738,8 @@ const InvoiceButton = styled.button`
   color: #121822;
   cursor: pointer;
 `;
-const NoticeText = styled.div`
+const NoticeText = styled.p`
+  margin-bottom: 16px;
   color: #536c6d;
   font-size: 11px;
   font-weight: 400;
