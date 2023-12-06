@@ -12,7 +12,7 @@ import { btn_web_back } from "../assets";
 import Image from "next/image";
 import { goBack } from "../utils/functions";
 import {
-  ordersAllRequest,
+  ordersRequest,
   ordersClosingOrderRequest,
   ordersDeliveredRequest,
 } from "../utils/api";
@@ -38,7 +38,7 @@ const useOrder_history = () => {
 
     let tempOrder: any;
 
-    ordersAllRequest(at, -1).then((res) => {
+    ordersRequest(at, "ROLL", null, true, 20, null).then((res) => {
       console.log(res);
       // 성공 case
       res?.data.result.data && (tempOrder = res?.data.result.data);

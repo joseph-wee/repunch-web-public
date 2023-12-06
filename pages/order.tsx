@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back } from "../assets";
 import { goBack } from "../utils/functions";
-import { ordersAllRequest } from "../utils/api";
+import { ordersRequest } from "../utils/api";
 
 const useOrder = () => {
   const [clicked, setClicked] = useState(1); // 클릭 상태
@@ -32,7 +32,7 @@ const useOrder = () => {
       rt = localStorage.getItem("rt");
     }
 
-    ordersAllRequest(at, -1).then((res) => {
+    ordersRequest(at, "ROLL", null, false, 20, null).then((res) => {
       let sumInReview = countInReview;
       let sumOrderConfirmed = countOrderConfirmed;
       let sumInProduction = countInProduction;
