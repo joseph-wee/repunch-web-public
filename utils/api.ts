@@ -937,7 +937,7 @@ export const keepReqeust = async (
   try {
     const res = await axios({
       method: "POST",
-      url: `/products/${productNo}/keep`,
+      url: `/products/${productNo}/like`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -964,5 +964,22 @@ export const keepDeleteReqeust = async (
     return res;
   } catch (error) {
     console.log(error);
+  }
+};
+
+/** 상품(원단) 찜한 목록 */
+export const likeListRequest = async (accessToken: string | null) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/user/liked-products?count=20`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
   }
 };
