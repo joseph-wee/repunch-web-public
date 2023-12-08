@@ -234,6 +234,7 @@ const useAddress = () => {
                     companyName: el.companyName,
                     countryCode: el.countryCode,
                     state: el.state,
+                    city: el.city,
                     streetAddress2: el.streetAddress2,
                     streetAddress1: el.streetAddress1,
                     postCode: el.postCode,
