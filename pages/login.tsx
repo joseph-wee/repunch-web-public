@@ -62,6 +62,22 @@ const useLogin = () => {
     document.cookie = `keep=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   };
 
+  /** 로그인 후 이전 페이지로 이동 */
+  const sendToLandingPage = () => {
+    const landingPage = router.asPath.split("?")[1];
+    // 랜딩 페이지 없을 경우
+    if (landingPage == undefined) {
+      router.push("/");
+      return;
+    }
+    // 랜딩 페이지있으면 랜딩 페이지로 이동
+    router.push(landingPage);
+  };
+
+  useEffect(() => {
+    console.log(router.asPath.split("?")[1]);
+  }, []);
+
   /** 로그인 api 요청후 결과에 따라 액션 */
   const loginRequestHandler = (userId: string, password: string) => {
     let idValidationValue = idValidationCheck();
@@ -75,7 +91,7 @@ const useLogin = () => {
           localStorage.setItem("rt", res.data.result.refresh_token);
           sessionStorage.setItem("keep", "true");
 
-          router.push("/");
+          sendToLandingPage();
           return;
         }
 
