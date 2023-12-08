@@ -488,7 +488,7 @@ const UseFilter = ({
             src={projectIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
-          <CategoryTitle>Proejct</CategoryTitle>
+          <CategoryTitle>Project</CategoryTitle>
         </CategoryTitleWrapper>
         {projectList.map((i, j) => {
           return (
