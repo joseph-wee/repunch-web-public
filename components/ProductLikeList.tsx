@@ -110,7 +110,19 @@ const ProductLikeList = ({
     <>
       {productList &&
         productList.map((i: any, j: number) => {
-          return <Product product={i} key={`product${j}`} />;
+          return (
+            <>
+              {i.like && (
+                <Product
+                  product={i}
+                  key={`product${j}`}
+                  index={j}
+                  productList={productList}
+                  setProductList={setProductList}
+                />
+              )}
+            </>
+          );
         })}
       {productList && <div ref={ref}></div>}
     </>
