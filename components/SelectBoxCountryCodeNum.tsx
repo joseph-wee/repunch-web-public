@@ -13,12 +13,16 @@ const SelectBoxCountryCodeNum = ({
   setValue, // 국가전화코드 세팅
   validationStart,
   setValidationResult,
+  countryCode,
+  setCountryCode,
 }: {
   list: ListCountryArray;
   value: string | undefined;
   setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
   validationStart: boolean;
   setValidationResult: React.Dispatch<React.SetStateAction<number>>;
+  countryCode: any;
+  setCountryCode: any;
 }) => {
   const [isActive, setIsActive] = useState<boolean>(false); // 옵션 활성 유무
 
@@ -31,7 +35,8 @@ const SelectBoxCountryCodeNum = ({
         onBlur={() => setIsActive(false)}
       >
         <Select>
-          {value}
+          {`${value} `}
+          {countryCode ? `(${countryCode})` : ""}
           <ImageWrapper>
             <Image src={isActive ? arrow_up : arrow_down} alt="arrow" />
           </ImageWrapper>
@@ -48,6 +53,7 @@ const SelectBoxCountryCodeNum = ({
                     validationStart,
                     setValidationResult
                   );
+                  setCountryCode("");
                 }}
               >
                 {i.code_num}
@@ -69,6 +75,7 @@ const Container = styled.div<{ isActive: boolean }>`
   width: 120px;
   flex: 0 0 120px;
   height: 40px;
+  cursor: default;
   @media screen and (max-width: 768px) {
     margin-right: 8.5px;
     width: 77px;
