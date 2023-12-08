@@ -7,6 +7,7 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { logout, login } from "../features/login/loginSlice";
 import { loginCheck } from "../utils/functions";
 import { userCheck } from "../utils/api";
+import { useRouter } from "next/router";
 
 const NavMobileBar = ({
   isActive,
@@ -19,6 +20,7 @@ const NavMobileBar = ({
 }) => {
   const [name, setName] = useState("");
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
+  const router = useRouter();
 
   const dispatch = useAppDispatch();
 
@@ -34,10 +36,10 @@ const NavMobileBar = ({
   };
 
   const logoutHandler = () => {
-    location.reload();
     localStorage.clear();
     sessionStorage.clear();
     dispatch(logout);
+    router.push("/");
   };
 
   /** 로컬에 저장된 후에 홈페이지 재접속 했을 때 로그인 되게 */
