@@ -262,6 +262,7 @@ const useAddress = () => {
 
               <AddressText>{el.streetAddress1}</AddressText>
               <AddressText>{el.state}</AddressText>
+              <AddressText>{el.city && `${el.city}`}</AddressText>
               <AddressText>
                 {countryList.filter((x: any) => x.code == "KR")[0].name}
               </AddressText>
