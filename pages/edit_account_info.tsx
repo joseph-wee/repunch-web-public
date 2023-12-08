@@ -488,6 +488,8 @@ const useEdit_account_info = () => {
                 setValue={setCountryPhoneNumber}
                 validationStart={validationStart}
                 setValidationResult={setCounryCodeValidationResult}
+                countryCode={countryCode}
+                setCountryCode={setCounryCode}
               />
               <ErrorCase isActive={countryPhoneNumberValidationResult}>
                 ErrorCase
