@@ -473,6 +473,8 @@ const useRegister = () => {
                 setValue={setCountryPhoneNumber}
                 validationStart={validationStart}
                 setValidationResult={setCounryCodeValidationResult}
+                countryCode={countryCode}
+                setCountryCode={setCounryCode}
               />
               <ErrorCase isActive={countryPhoneNumberValidationResult}>
                 Please select your country number.
