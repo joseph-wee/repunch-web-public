@@ -34,6 +34,7 @@ const useAdd_shiping_address = () => {
   const [companyName, setCompanyName] = useState("");
   const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
   const [state, setState] = useState("");
+  const [city, setCity] = useState("");
   const [streetAddress1, setStreetAddress1] = useState("");
   const [streetAddress2, setStreetAddress2] = useState("");
   const [postCode, setPostCode] = useState("");
@@ -99,6 +100,7 @@ const useAdd_shiping_address = () => {
     useState<number>(0); // 국가코드 유효성 체크
 
   const [stateValidationResult, setStateValidationResult] = useState<number>(0);
+  const [cityValidationResult, setCityValidationResult] = useState<number>(0);
 
   const [streetAddress1ValidationResult, setStreetAddress1ValidationResult] =
     useState<number>(0);
@@ -171,6 +173,16 @@ const useAdd_shiping_address = () => {
     return false;
   };
 
+  /** city 유효성 검사 */
+  const validationCity = () => {
+    if (Boolean(city)) {
+      setCityValidationResult(1);
+      return true;
+    }
+    setCityValidationResult(2);
+    return false;
+  };
+
   /** postcode 유효성 검사 */
   const validationPostCode = () => {
     if (postCode.length >= 5) {
@@ -220,13 +232,14 @@ const useAdd_shiping_address = () => {
     validationResult[3] = validationCompanyName();
     validationResult[4] = validationCountry();
     validationResult[5] = validationState();
-    validationResult[6] = validationStreetAddress1();
-    validationResult[7] = validationStreetAddress2();
-    validationResult[8] = validationPostCode();
-    validationResult[9] = validationPhoneNumber();
+    validationResult[6] = validationCity();
+    validationResult[7] = validationStreetAddress1();
+    validationResult[8] = validationStreetAddress2();
+    validationResult[9] = validationPostCode();
+    validationResult[10] = validationPhoneNumber();
 
     //유효성 결과 false값있으면 그 input으로 포커스, 모두 true면 return true
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 11; i++) {
       if (validationResult[i] == false) {
         console.log(ref.current[i]);
         ref.current[i]?.focus();
@@ -265,6 +278,7 @@ const useAdd_shiping_address = () => {
         companyName,
         countryCode,
         state,
+        city,
         streetAddress1,
         streetAddress2,
         postCode,
@@ -302,6 +316,7 @@ const useAdd_shiping_address = () => {
                 companyName,
                 countryCode,
                 state,
+                city,
                 streetAddress1,
                 streetAddress2,
                 postCode,
@@ -424,12 +439,25 @@ const useAdd_shiping_address = () => {
             </ErrorCase>
           </InputContainer>
           <InputContainer>
+            <InputTitle>City</InputTitle>
+            <Input
+              type="text"
+              onChange={(e) => setCity(e.target.value)}
+              ref={(element) => {
+                ref.current[6] = element;
+              }}
+            />{" "}
+            <ErrorCase isActive={cityValidationResult}>
+              Please enter your city.
+            </ErrorCase>
+          </InputContainer>
+          <InputContainer>
             <InputTitle>Street address</InputTitle>
             <Input
               type="text"
               onChange={(e) => setStreetAddress1(e.target.value)}
               ref={(element) => {
-                ref.current[6] = element;
+                ref.current[7] = element;
               }}
             />{" "}
             <ErrorCase isActive={streetAddress1ValidationResult}>
@@ -439,7 +467,7 @@ const useAdd_shiping_address = () => {
               type="text"
               onChange={(e) => setStreetAddress2(e.target.value)}
               ref={(element) => {
-                ref.current[7] = element;
+                ref.current[8] = element;
               }}
             />
             <ErrorCase isActive={streetAddress2ValidationResult}>
@@ -452,7 +480,7 @@ const useAdd_shiping_address = () => {
               type="text"
               onChange={(e) => setPostCode(e.target.value)}
               ref={(element) => {
-                ref.current[8] = element;
+                ref.current[9] = element;
               }}
             />{" "}
             <ErrorCase isActive={postCodeValidationResult}>
@@ -465,7 +493,7 @@ const useAdd_shiping_address = () => {
               type="text"
               onChange={(e) => setPhoneNumber(e.target.value)}
               ref={(element) => {
-                ref.current[9] = element;
+                ref.current[10] = element;
               }}
             />{" "}
             <ErrorCase isActive={phoneNumberValidationResult}>
