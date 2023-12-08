@@ -10,6 +10,8 @@ import {
   addressListRequest,
   createOrder,
   loginRefreshRequest,
+  orderDetailRequest,
+  paymentRequest1,
 } from "../utils/api";
 import { useAppSelector } from "../redux/hooks";
 import { priceToDollar } from "../utils/functions";
@@ -326,9 +328,154 @@ const useOrder_temp1 = () => {
     }
     // PICK UP Case
     if (deliveryIsChecked == 2) {
-      createOrderRequestHandler("PICKUP");
+      payPickUp("PICKUP");
       return;
     }
+  };
+
+  /** 주문 생성 요청 */
+  const payPickUp = (deliveryMethod: string) => {
+    let at: any;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    const items = tempOrderList.map((el: any, index: number) => {
+      return {
+        orderUnitType: "ROLL",
+        productNo: el.productNo,
+        productOptionNo: el.productOptionNo,
+        amount: el.price,
+        count: el.count,
+        cartNo: el.cartNo,
+      };
+    });
+
+    /** 총 가격 계산 */
+    const totalAmountHandler = () => {
+      let sum = 0;
+      for (const el of tempOrderList) {
+        sum += el.totalPrice;
+      }
+      return sum;
+    };
+
+    const totalAmount = totalAmountHandler();
+
+    createOrder(
+      at,
+      "ROLL",
+      items,
+      deliveryMethod,
+      selectAdress.addressNo,
+      selectAdress.firstName,
+      selectAdress.lastName,
+      selectAdress.postCode,
+      selectAdress.countryCode,
+      selectAdress.state,
+      selectAdress.streetAddress1,
+      selectAdress.streetAddress2,
+      selectAdress.phoneNumber,
+      totalAmount
+    ).then((res) => {
+      console.log(res);
+      // 성공 case
+      if (res?.data.status == 200) {
+        const orderNo = res?.data.result.orderNo;
+        orderDetailRequest(at, orderNo).then((res) => {
+          // 성공 케이스
+          if (res?.data.status == 200) {
+            // 결제 요청
+            console.log(res);
+            const orderNo = res.data.result.orderNo;
+            const orderNumber = res.data.result.orderNumber;
+            const paymentMethod = "PAYPAL";
+            const paymentAmount = res.data.result.paymentAmount;
+            const pointAmount = res.data.result.pointAmount;
+            const totalAmount = res.data.result.totalAmount;
+
+            paymentRequest1(
+              at,
+              orderNo,
+              orderNumber,
+              paymentMethod,
+              paymentAmount,
+              pointAmount,
+              totalAmount
+            ).then((res) => {
+              // 성공 case
+              if (res?.data.status == 200) {
+                location.href = res?.data.result.paymentUrl;
+              }
+            });
+
+            // 에러 케이스
+          } else {
+            console.log("주문 생성은 되었으나 주문 상세에서 에러");
+            console.log(res);
+          }
+        });
+
+        return;
+      }
+
+      // 실패 case: 토큰 만료
+      if (res?.data.code == 403) {
+        loginRefreshRequest(rt).then((res) => {
+          // 토큰 갱신 성공 case
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+            /**
+           * orderUnitType: orderUnitType,
+          productNo: productNo,
+          productOptionNo: productOptionNo,
+          amount: amount,
+          count: count,
+          cartNo: cartNo,
+           * 
+           */
+            createOrder(
+              at,
+              "SAMPLE",
+              items,
+              deliveryMethod,
+              selectAdress.addressNo,
+              selectAdress.firstName,
+              selectAdress.lastName,
+              selectAdress.postCode,
+              selectAdress.countryCode,
+              selectAdress.state,
+              selectAdress.streetAddress1,
+              selectAdress.streetAddress2,
+              selectAdress.phoneNumber,
+              totalAmount
+            ).then((res) => {
+              // 성공 case
+              // 실패 case
+            });
+            return;
+            // 토큰 갱신 실패 case
+          }
+        });
+      }
+
+      // 실패 case
+    });
   };
 
   return (
