@@ -439,7 +439,8 @@ const useId = () => {
 
     /** 비로그인이면 로그인페이지로 이동 */
     if (at == null) {
-      router.push("/login");
+      const url = window.location.pathname.substr(1);
+      router.push(`/login?${url}`);
       return;
     }
 
@@ -503,6 +504,17 @@ const useId = () => {
     } else {
       at = localStorage.getItem("at");
       rt = localStorage.getItem("rt");
+    }
+
+    /** 솔드아웃이면 주문 안되게 */
+    // if (seletedOption.quantity == 0) {
+    //   return;
+    // }
+
+    /** 비로그인이면 로그인페이지로 이동 */
+    if (at == null) {
+      router.push("/login/asdf");
+      return;
     }
 
     addCartRequest(at, seletedOption.productOptionNo, "SAMPLE", 1).then(
