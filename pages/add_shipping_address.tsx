@@ -249,7 +249,7 @@ const useAdd_shiping_address = () => {
         });
         break;
       }
-      if (i == 9) {
+      if (i == 10) {
         return true;
       }
     }
