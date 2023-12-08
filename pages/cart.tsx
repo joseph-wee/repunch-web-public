@@ -591,6 +591,7 @@ const Container = styled.div`
   margin: 0 auto;
   padding-top: 30px;
   max-width: 637px;
+  min-height: 350px;
   @media screen and (max-width: 1279px) {
     max-width: 608px;
   }
@@ -598,7 +599,7 @@ const Container = styled.div`
     padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
-    boxsizing: border-box;
+    box-sizing: border-box;
   }
 `;
 const Main = styled.div`
