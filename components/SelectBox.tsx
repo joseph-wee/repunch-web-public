@@ -123,6 +123,7 @@ const Container = styled.div<{ isActive: boolean }>`
   height: 40px;
 
   border: none;
+  cursor: default;
 `;
 const Select = styled.div`
   display: flex;
