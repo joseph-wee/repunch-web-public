@@ -38,7 +38,7 @@ const useFavorite = () => {
         </TitleWrapper>
         <ItemSortBar>
           <Items>
-            <Count>6</Count>
+            <Count>{`${result}`}</Count>
             <ItemsTitle>items</ItemsTitle>
           </Items>
           <SortButton onClick={() => setSortIsActive(!sortIsActive)}>
@@ -54,7 +54,10 @@ const useFavorite = () => {
               Latest
             </SortMenu>
             <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
-              Popular
+              Low Price
+            </SortMenu>
+            <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+              High Price
             </SortMenu>
           </SortMenuWrapper>
         </ItemSortBar>
