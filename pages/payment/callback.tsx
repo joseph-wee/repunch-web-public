@@ -10,6 +10,7 @@ const useCallback = () => {
     const PayerID = router.asPath.split("&")[1].split("PayerID=")[1];
 
     paymentRequest2(localStorage.getItem("at"), token, PayerID).then((res) => {
+      console.log(res);
       //성공 case
       if (res?.data.result.status == "COMPLETED") {
         router.push("/payment_complete");
