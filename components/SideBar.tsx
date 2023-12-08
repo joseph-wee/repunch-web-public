@@ -30,76 +30,91 @@ const useSideBar = () => {
   };
 
   return (
-    <Container>
-      <Link href="/my_account" style={{ textDecoration: "none" }}>
-        <Menu isActive={pathCheck("/my_account")}>
-          <ImageWrapper isActive={pathCheck("/my_account")}>
-            <Image src={ic_nav_indi} alt={"button_close"} />
-          </ImageWrapper>
-          My Account
-        </Menu>
-      </Link>
-      <Link href="/favorite" style={{ textDecoration: "none" }}>
-        <Menu isActive={pathCheck("/favorite")}>
-          <ImageWrapper isActive={pathCheck("/favorite")}>
-            <Image src={ic_nav_indi} alt={"button_close"} />
-          </ImageWrapper>
-          Favorits
-        </Menu>
-      </Link>
-      <Link href="/cart" style={{ textDecoration: "none" }}>
-        <Menu isActive={pathCheck("/cart")}>
-          <ImageWrapper isActive={pathCheck("/cart")}>
-            <Image src={ic_nav_indi} alt={"button_close"} />
-          </ImageWrapper>
-          Cart
-        </Menu>
-      </Link>
-      <Link href="/order" style={{ textDecoration: "none" }}>
-        <Menu isActive={pathCheck("/order")}>
-          <ImageWrapper isActive={pathCheck("/order")}>
-            <Image src={ic_nav_indi} alt={"button_close"} />
-          </ImageWrapper>
-          Order
-        </Menu>
-      </Link>
-      <Link href="/order_history" style={{ textDecoration: "none" }}>
-        <Menu isActive={pathCheck("/order_history")}>
-          <ImageWrapper isActive={pathCheck("/order_history")}>
-            <Image src={ic_nav_indi} alt={"button_close"} />
-          </ImageWrapper>
-          Order History
-        </Menu>
-      </Link>
-      <Link href="/address" style={{ textDecoration: "none" }}>
-        <Menu isActive={addressPathCheck()}>
-          <ImageWrapper isActive={addressPathCheck()}>
-            <Image src={ic_nav_indi} alt={"button_close"} />
-          </ImageWrapper>
-          Address
-        </Menu>
-      </Link>
-      <Link href="/account_detail" style={{ textDecoration: "none" }}>
-        <Menu isActive={pathCheck("/account_detail")}>
-          <ImageWrapper isActive={pathCheck("/account_detail")}>
-            <Image src={ic_nav_indi} alt={"button_close"} />
-          </ImageWrapper>
-          Account Detail
-        </Menu>
-      </Link>
-      {/**로그아웃 기능 추가하기 */}
-      <Link
-        onClick={() => logoutHandler()}
-        href="/"
-        style={{ textDecoration: "none" }}
-      >
-        <LogoutMenu>Logout</LogoutMenu>
-      </Link>
-    </Container>
+    <ContainerWrapper>
+      <Container>
+        <Link href="/my_account" style={{ textDecoration: "none" }}>
+          <Menu isActive={pathCheck("/my_account")}>
+            <ImageWrapper isActive={pathCheck("/my_account")}>
+              <Image src={ic_nav_indi} alt={"button_close"} />
+            </ImageWrapper>
+            My Account
+          </Menu>
+        </Link>
+        <Link href="/favorite" style={{ textDecoration: "none" }}>
+          <Menu isActive={pathCheck("/favorite")}>
+            <ImageWrapper isActive={pathCheck("/favorite")}>
+              <Image src={ic_nav_indi} alt={"button_close"} />
+            </ImageWrapper>
+            Favorits
+          </Menu>
+        </Link>
+        <Link href="/cart" style={{ textDecoration: "none" }}>
+          <Menu isActive={pathCheck("/cart")}>
+            <ImageWrapper isActive={pathCheck("/cart")}>
+              <Image src={ic_nav_indi} alt={"button_close"} />
+            </ImageWrapper>
+            Cart
+          </Menu>
+        </Link>
+        <Link href="/order" style={{ textDecoration: "none" }}>
+          <Menu isActive={pathCheck("/order")}>
+            <ImageWrapper isActive={pathCheck("/order")}>
+              <Image src={ic_nav_indi} alt={"button_close"} />
+            </ImageWrapper>
+            Order
+          </Menu>
+        </Link>
+        <Link href="/order_history" style={{ textDecoration: "none" }}>
+          <Menu isActive={pathCheck("/order_history")}>
+            <ImageWrapper isActive={pathCheck("/order_history")}>
+              <Image src={ic_nav_indi} alt={"button_close"} />
+            </ImageWrapper>
+            Order History
+          </Menu>
+        </Link>
+        <Link href="/address" style={{ textDecoration: "none" }}>
+          <Menu isActive={addressPathCheck()}>
+            <ImageWrapper isActive={addressPathCheck()}>
+              <Image src={ic_nav_indi} alt={"button_close"} />
+            </ImageWrapper>
+            Address
+          </Menu>
+        </Link>
+        <Link href="/account_detail" style={{ textDecoration: "none" }}>
+          <Menu isActive={pathCheck("/account_detail")}>
+            <ImageWrapper isActive={pathCheck("/account_detail")}>
+              <Image src={ic_nav_indi} alt={"button_close"} />
+            </ImageWrapper>
+            Account Detail
+          </Menu>
+        </Link>
+        {/**로그아웃 기능 추가하기 */}
+        <Link
+          onClick={() => logoutHandler()}
+          href="/"
+          style={{ textDecoration: "none" }}
+        >
+          <LogoutMenu>Logout</LogoutMenu>
+        </Link>
+      </Container>
+    </ContainerWrapper>
   );
 };
-
+const ContainerWrapper = styled.div`
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+  width: 190px;
+  height: auto;
+  @media screen and (max-width: 1279px) {
+    width: 160px;
+  }
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
 const Container = styled.div`
+  position: fixed;
   margin-top: 16px;
   flex-shrink: 0;
   width: 190px;
