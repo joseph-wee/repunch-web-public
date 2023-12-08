@@ -13,14 +13,15 @@ import Image from "next/legacy/image";
 import Link from "next/link";
 import { keepDeleteReqeust, keepReqeust } from "../utils/api";
 import { useRouter } from "next/router";
+import { loginCheck, priceToDollar } from "../utils/functions";
 
-const Product = ({ product }: any) => {
+const Product = ({ product, index, productList, setProductList }: any) => {
   const [favoriteIsActive, setFavoriteIsActive] = useState(product.keep);
   const [optionLength, setOptionLength] = useState(
     `${product.options[0].length}m`
   );
   const [thumbnail, setThumnail] = useState(product.options[0].thumbnailUrl);
-  const [productList, setProductList] = useState([]);
+
   const [price, setPrice] = useState(product.options[0].price);
   const [colorList, setColorList] = useState<any>([]);
   const [selectNo, setSelectNo] = useState<number | undefined>();
@@ -99,8 +100,11 @@ const Product = ({ product }: any) => {
 
   const keepHandler = () => {
     let at = localStorage.getItem("at");
+
+    let v = productList;
+
     // 로그인안한 케이스
-    if (!at) {
+    if (!loginCheck()) {
       router.push("/login");
     }
 
@@ -108,7 +112,10 @@ const Product = ({ product }: any) => {
     if (favoriteIsActive) {
       keepDeleteReqeust(at, product.productNo).then(
         (res) =>
-          res?.data.status == 200 && setFavoriteIsActive(!favoriteIsActive)
+          res?.data.status == 200 &&
+          (setFavoriteIsActive(!favoriteIsActive),
+          (v[index].like = false),
+          setProductList([...v]))
       );
       return;
     }
@@ -193,7 +200,7 @@ const Product = ({ product }: any) => {
           })}
         </RatioWrapper>
         <PriceUnitWrapper>
-          <Price>{`$ ${price}`}</Price>
+          <Price>{`$ ${priceToDollar(price)}`}</Price>
           <Meter>/m</Meter>
         </PriceUnitWrapper>
         <ColorLength>{optionLength}</ColorLength>
