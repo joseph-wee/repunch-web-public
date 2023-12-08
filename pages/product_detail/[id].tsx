@@ -25,6 +25,7 @@ import {
   productDetailRequest,
 } from "../../utils/api";
 import { VideoPlayer } from "../../components";
+import { loginCheck } from "../../utils/functions";
 
 const useId = () => {
   const [popUpIsActive, setPopUpIsActive] = useState(0);
@@ -227,7 +228,7 @@ const useId = () => {
           // 쿼리 옵션 바로 표시하기 위해 index찾기
           if (
             tempOptionListIndex == 0 &&
-            el.color.productOptionNo == router.query.selectNo
+            el.productOptionNo == router.query.selectNo
           ) {
             tempOptionListIndex = index;
           }
@@ -418,6 +419,10 @@ const useId = () => {
     return value;
   };
 
+  useEffect(() => {
+    console.log(info);
+  }, [info]);
+
   const [options, setOptions] = useState("");
 
   /** 미터 장바구니 추가 핸들러 */
@@ -438,7 +443,7 @@ const useId = () => {
     }
 
     /** 비로그인이면 로그인페이지로 이동 */
-    if (at == null) {
+    if (!loginCheck()) {
       const url = window.location.pathname.substr(1);
       router.push(`/login?${url}`);
       return;
@@ -507,13 +512,14 @@ const useId = () => {
     }
 
     /** 솔드아웃이면 주문 안되게 */
-    // if (seletedOption.quantity == 0) {
-    //   return;
-    // }
+    if (seletedOption.quantity == 0) {
+      return;
+    }
 
     /** 비로그인이면 로그인페이지로 이동 */
-    if (at == null) {
-      router.push("/login/asdf");
+    if (!loginCheck()) {
+      const url = window.location.pathname.substr(1);
+      router.push(`/login?${url}`);
       return;
     }
 
@@ -639,6 +645,9 @@ const useId = () => {
                   alt={"logo_favorite"}
                 />
               </LikeButton>
+              <SoldOutBanner status={seletedOption.quantity == 0}>
+                SOLD OUT
+              </SoldOutBanner>
             </BigImagevideoWrapper>
             <SmallImageVideoWrapper ref={ref}>
               {thumbnailVideoList.map((el: any, j: number) => {
@@ -1072,6 +1081,23 @@ const LikeButton = styled.div`
   height: 22px;
 
   cursor: pointer;
+`;
+const SoldOutBanner = styled.div<{ status: boolean }>`
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 13px;
+  box-sizing: border-box;
+  height: 27px;
+  background-color: #121822;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  ${(props) => {
+    return props.status ? `display: flex` : "display: none";
+  }};
 `;
 const SmallImageVideoWrapper = styled.div`
   display: flex;
