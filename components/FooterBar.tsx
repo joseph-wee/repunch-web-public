@@ -20,7 +20,7 @@ const FooterBar = () => {
         <Nav>
           <Menu>
             <Link
-              href="/term_of_service"
+              href="/terms_of_service"
               style={{ textDecoration: "none", color: "#536C6D" }}
             >
               TERM OF SERVICE
