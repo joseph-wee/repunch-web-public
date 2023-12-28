@@ -5,6 +5,7 @@ import {
   home_image_desktop,
   home_image_mobile,
   home_image_pad,
+  ic_check_web_status,
   ic_down_bk,
   ic_down_bk_filter,
   ic_filter,
@@ -15,12 +16,73 @@ import Image from "next/legacy/image";
 import { useEffect, useState } from "react";
 import { Filter, ProductList } from "../components";
 
+/** 카테고리 객체 타입 */
+export interface List {
+  name: string; // 이름
+  group_code: string; // 그룹 코드
+  code: string; // 코드
+  isChecked: boolean; // 체크유무
+}
+
+/** 임시 필터 리스트 타입 */
+export interface TempList {
+  name: string; // 이름
+  isChecked: boolean; // 체크유무
+}
+
+/** 카테고리 객체타입을 배열 형태로 확장 */
+export interface ListCountryArray extends Array<List> {}
+
+export interface ListTempArray extends Array<TempList> {}
+
 export default function Home() {
   const [sortIsActive, setSortIsActive] = useState(true);
   const [filterIsActive, setFilterIsActive] = useState(false);
   const [sortFilterIsActive, setSortFilterIsActive] = useState(false);
   const [sortType, setSortType] = useState("LATEST");
   const [result, setResult] = useState(0);
+
+  const [colors, setColors] = useState<any>();
+  const [projects, setProjects] = useState<any>();
+  const [designs, setDesigns] = useState<any>();
+  const [materials, setMaterials] = useState<any>();
+  const [origins, setOrigins] = useState<any>();
+  const [widthList, setWidthList] = useState<ListTempArray>([
+    {
+      name: "36",
+      isChecked: false,
+    },
+    {
+      name: "53",
+      isChecked: false,
+    },
+    {
+      name: "60",
+      isChecked: false,
+    },
+  ]);
+  const [weightList, setWeightList] = useState<ListTempArray>([
+    {
+      name: "Extra light under 80g/m²",
+      isChecked: false,
+    },
+    {
+      name: "Light 80-135 g/m²",
+      isChecked: false,
+    },
+    {
+      name: "Medium 135-270 g/m²",
+      isChecked: false,
+    },
+    {
+      name: "Heavy 270-400 g/m²",
+      isChecked: false,
+    },
+    {
+      name: "Extra heavy over 400m²",
+      isChecked: false,
+    },
+  ]);
 
   return (
     <Container>
@@ -81,6 +143,20 @@ export default function Home() {
           setIsActive={setFilterIsActive}
           sortFilterIsActive={sortFilterIsActive}
           setSortFilterIsActive={setSortFilterIsActive}
+          colors={colors}
+          projects={projects}
+          designs={designs}
+          materials={materials}
+          origins={origins}
+          widthList={widthList}
+          weightList={weightList}
+          setColors={setColors}
+          setProjects={setProjects}
+          setDesigns={setDesigns}
+          setMaterials={setMaterials}
+          setOrigins={setOrigins}
+          setWidthList={setWidthList}
+          setWeightList={setWeightList}
         />
         <ProductListWrapper>
           <ButtonFlexWrapper>
@@ -111,6 +187,7 @@ export default function Home() {
             </ButtonWrapper>
             <SortMenuWrapper isActive={sortIsActive}>
               <SortMenu
+                isActive={sortType == "LATEST"}
                 onClick={() => {
                   setSortIsActive(!sortIsActive);
                   setSortFilterIsActive(true);
@@ -118,8 +195,14 @@ export default function Home() {
                 }}
               >
                 Latest
+                {sortType == "LATEST" ? (
+                  <Image src={ic_check_web_status} alt={"ic_check_web"} />
+                ) : (
+                  ""
+                )}
               </SortMenu>
               <SortMenu
+                isActive={sortType == "LOW_PRICE"}
                 onClick={() => {
                   setSortIsActive(!sortIsActive);
                   setSortFilterIsActive(true);
@@ -127,8 +210,14 @@ export default function Home() {
                 }}
               >
                 Low Price
+                {sortType == "LOW_PRICE" ? (
+                  <Image src={ic_check_web_status} alt={"ic_check_web"} />
+                ) : (
+                  ""
+                )}
               </SortMenu>
               <SortMenu
+                isActive={sortType == "HIGH_PRICE"}
                 onClick={() => {
                   setSortIsActive(!sortIsActive);
                   setSortFilterIsActive(true);
@@ -136,11 +225,26 @@ export default function Home() {
                 }}
               >
                 High Price
+                {sortType == "HIGH_PRICE" ? (
+                  <Image src={ic_check_web_status} alt={"ic_check_web"} />
+                ) : (
+                  ""
+                )}
               </SortMenu>
             </SortMenuWrapper>
           </ButtonFlexWrapper>
           <ProductListGridWrapper>
-            <ProductList sortType={sortType} setResult={setResult} />
+            <ProductList
+              sortType={sortType}
+              setResult={setResult}
+              colors={colors}
+              projects={projects}
+              designs={designs}
+              materials={materials}
+              origins={origins}
+              widthList={widthList}
+              weightList={weightList}
+            />
           </ProductListGridWrapper>
         </ProductListWrapper>
       </Main>
@@ -475,10 +579,12 @@ const SortMenuWrapper = styled.div<{ isActive: boolean }>`
 
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 `;
-const SortMenu = styled.div`
+const SortMenu = styled.div<{ isActive: boolean }>`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding-left: 15px;
+  padding-right: 7px;
   height: 40px;
   box-sizing: border-box;
   border-bottom: 1px solid #dee8ec;
@@ -491,6 +597,9 @@ const SortMenu = styled.div`
     border: none;
   }
   cursor: pointer;
+  ${(props) => {
+    return props.isActive ? "background-color: #F2F6F8; font-weight: 700;" : "";
+  }};
 `;
 const ProductListGridWrapper = styled.div`
   display: grid;
