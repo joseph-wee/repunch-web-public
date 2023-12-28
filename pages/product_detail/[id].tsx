@@ -622,7 +622,7 @@ const useId = () => {
   }, [thumbnailVideoList]);
 
   /** 가격 -> 달러 표시 */
-  const priceToDollar = (pirce: number) => {
+  const priceToDollar = (price: number) => {
     let USDollar = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -631,6 +631,10 @@ const useId = () => {
 
     return dollar;
   };
+
+  useEffect(() => {
+    console.log(seletedOption);
+  }, [seletedOption]);
 
   return (
     <>
@@ -1131,6 +1135,7 @@ const SmallImageVideo = styled.div<{
   background-color: #f2f6f8;
   box-sizing: border-box;
   transition: 0.5s;
+  cursor: pointer;
 `;
 const BorderBox = styled.div<{ isClicked: boolean }>`
   position: absolute;
