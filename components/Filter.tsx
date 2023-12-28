@@ -11,6 +11,13 @@ import {
   ic_down_bk,
   ic_up_bk,
 } from "../assets";
+import {
+  colorsRequest,
+  designsRequest,
+  materialsRequest,
+  originsRequest,
+  projectsRequest,
+} from "../utils/api";
 
 /** 카테고리 객체 타입 */
 export interface List {
@@ -36,11 +43,39 @@ const UseFilter = ({
   setIsActive,
   sortFilterIsActive,
   setSortFilterIsActive,
+  colors,
+  projects,
+  designs,
+  materials,
+  origins,
+  widthList,
+  weightList,
+  setColors,
+  setProjects,
+  setDesigns,
+  setMaterials,
+  setOrigins,
+  setWidthList,
+  setWeightList,
 }: {
   isActive: boolean;
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
   sortFilterIsActive: boolean;
   setSortFilterIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+  colors: any;
+  projects: any;
+  designs: any;
+  materials: any;
+  origins: any;
+  widthList: any;
+  weightList: any;
+  setColors: React.Dispatch<any>;
+  setProjects: React.Dispatch<any>;
+  setDesigns: React.Dispatch<any>;
+  setMaterials: React.Dispatch<any>;
+  setOrigins: React.Dispatch<any>;
+  setWidthList: React.Dispatch<any>;
+  setWeightList: React.Dispatch<any>;
 }) => {
   const [suppliesIsActive, setSuppliesIsActive] = useState(true);
   const [projectIsActive, setProjectIsActive] = useState(true);
@@ -251,42 +286,6 @@ const UseFilter = ({
       isChecked: false,
     },
   ]);
-  const [widthList, setWidthList] = useState<ListTempArray>([
-    {
-      name: "36 inches / 90cm",
-      isChecked: false,
-    },
-    {
-      name: "53 inches / 135cm",
-      isChecked: false,
-    },
-    {
-      name: "60 inches / 150cm",
-      isChecked: false,
-    },
-  ]);
-  const [weightList, setWeightList] = useState<ListTempArray>([
-    {
-      name: "Extra light under 80g/m²",
-      isChecked: false,
-    },
-    {
-      name: "Light 80-135 g/m²",
-      isChecked: false,
-    },
-    {
-      name: "Medium 135-270 g/m²",
-      isChecked: false,
-    },
-    {
-      name: "Heavy 270-400 g/m²",
-      isChecked: false,
-    },
-    {
-      name: "Extra heavy over 400m²",
-      isChecked: false,
-    },
-  ]);
 
   /**  */
   const suppliesListHandler = (order: number) => {
@@ -339,7 +338,7 @@ const UseFilter = ({
 
   /** 컬러클릭시 컬러에 따라 다른 체크 아이콘 리턴 */
   const colorCheckHandler = (n: number) => {
-    let blackCheckArr = [9, 10, 13, 14, 15];
+    let blackCheckArr = [0, 3, 12, 13, 14];
 
     // 검은색 체크아이콘이 되어야 하는 컬러면 해당 체크 표시 반영
     if (blackCheckArr.includes(n)) {
@@ -373,14 +372,14 @@ const UseFilter = ({
         return;
       }
     });
-    widthList.forEach((i) => {
+    widthList.forEach((i: any) => {
       if (i.isChecked == true) {
         count++;
         setSortFilterIsActive(true);
         return;
       }
     });
-    weightList.forEach((i) => {
+    weightList.forEach((i: any) => {
       if (i.isChecked == true) {
         count++;
         setSortFilterIsActive(true);
@@ -428,10 +427,10 @@ const UseFilter = ({
       tempDesignList = tempDesignList.map((i) => {
         return { ...i, isChecked: false };
       });
-      tempWidthList = tempWidthList.map((i) => {
+      tempWidthList = tempWidthList.map((i: any) => {
         return { ...i, isChecked: false };
       });
-      tempWeightList = tempWeightList.map((i) => {
+      tempWeightList = tempWeightList.map((i: any) => {
         return { ...i, isChecked: false };
       });
       tempColorList = tempColorList.map((i) => {
@@ -447,6 +446,79 @@ const UseFilter = ({
       console.log(tempProjectList);
     }
   }, [sortFilterIsActive]);
+
+  useEffect(() => {
+    console.log(colors);
+  }, [colors]);
+
+  /** 필터 리스트들 세팅 */
+  useEffect(() => {
+    sessionStorage.getItem("colors")
+      ? setColors([...JSON.parse(sessionStorage.getItem("colors") || "{}")])
+      : colorsRequest().then((res: any) => {
+          console.log(res?.data.result);
+          sessionStorage.setItem("colors", JSON.stringify(res?.data.result));
+          setColors([
+            ...res?.data.result.map((el: any) => {
+              return { ...el, isChecked: false };
+            }),
+          ]);
+        });
+
+    sessionStorage.getItem("projects")
+      ? setProjects([...JSON.parse(sessionStorage.getItem("projects") || "{}")])
+      : projectsRequest().then((res: any) => {
+          sessionStorage.setItem("projects", JSON.stringify(res?.data.result));
+          setProjects([
+            ...res?.data.result.map((el: any) => {
+              return { ...el, isChecked: false };
+            }),
+          ]);
+        });
+
+    sessionStorage.getItem("designs")
+      ? setDesigns([...JSON.parse(sessionStorage.getItem("designs") || "{}")])
+      : designsRequest().then((res: any) => {
+          sessionStorage.setItem("designs", JSON.stringify(res?.data.result));
+          setDesigns([
+            ...res?.data.result.map((el: any) => {
+              return { ...el, isChecked: false };
+            }),
+          ]);
+        });
+
+    sessionStorage.getItem("materials")
+      ? setMaterials([
+          ...JSON.parse(sessionStorage.getItem("materials") || "{}"),
+        ])
+      : materialsRequest().then((res: any) => {
+          sessionStorage.setItem("materials", JSON.stringify(res?.data.result));
+          setMaterials([
+            ...res?.data.result.map((el: any) => {
+              return { ...el, isChecked: false };
+            }),
+          ]);
+        });
+
+    sessionStorage.getItem("origins")
+      ? setOrigins([...JSON.parse(sessionStorage.getItem("origins") || "{}")])
+      : originsRequest().then((res: any) => {
+          sessionStorage.setItem("origins", JSON.stringify(res?.data.result));
+          setOrigins([
+            ...res?.data.result.map((el: any) => {
+              return { ...el, isChecked: false };
+            }),
+          ]);
+        });
+  }, []);
+
+  /** 체크 핸들러 */
+  const checkHandler = (list: any, setList: any, index: number) => {
+    console.log("??");
+    let tempList = list;
+    tempList[index].isChecked = !tempList[index].isChecked;
+    setList([...tempList]);
+  };
 
   return (
     <>
@@ -468,18 +540,20 @@ const UseFilter = ({
           <CategoryTitle>SELECT COLOR</CategoryTitle>
         </CategoryTitleWrapper>
         <ColorWraaper isActive={suppliesIsActive}>
-          {colorChecked.map((i: any, j: number) => {
-            return (
-              <ColorCircle
-                onClick={() => colorCheckedHandler(j)}
-                key={`asdf${j}`}
-              >
-                <ColorChecked isChecked={colorChecked[j]}>
-                  <Image src={colorCheckHandler(j)} alt="check_icon" />
-                </ColorChecked>
-              </ColorCircle>
-            );
-          })}
+          {colors &&
+            colors.map((el: any, index: number) => {
+              return (
+                <ColorCircle
+                  onClick={() => checkHandler(colors, setColors, index)}
+                  key={`asdf${index}`}
+                  url={el.imagePath}
+                >
+                  <ColorChecked isChecked={el.isChecked}>
+                    <Image src={colorCheckHandler(index)} alt="check_icon" />
+                  </ColorChecked>
+                </ColorCircle>
+              );
+            })}
         </ColorWraaper>
         <CategoryTitleWrapper
           onClick={() => setProjectIsActive(!projectIsActive)}
@@ -490,27 +564,28 @@ const UseFilter = ({
           />
           <CategoryTitle>Project</CategoryTitle>
         </CategoryTitleWrapper>
-        {projectList.map((i, j) => {
-          return (
-            <CategoryListWrapper
-              isActive={projectIsActive}
-              key={`test${j}`}
-              onClick={() => projectCheckedHandler(j)}
-            >
-              <Label
-                htmlFor={`project${j}`}
-                isChecked={i.isChecked}
-                img={ic_check_wht.src}
-              />
-              <Checkbox
-                type="checkbox"
-                id={`project${j}`}
-                onChange={() => projectCheckedHandler(j)}
-              />
-              {i.name}
-            </CategoryListWrapper>
-          );
-        })}
+        {projects &&
+          projects.map((el: any, index: number) => {
+            return (
+              <CategoryListWrapper
+                isActive={projectIsActive}
+                key={`test${index}`}
+              >
+                <Label htmlFor={`project${index}`}>
+                  <CustomCheckBox
+                    isChecked={el.isChecked}
+                    img={ic_check_wht.src}
+                  />
+                  {el.name}
+                </Label>
+                <Checkbox
+                  type="checkbox"
+                  id={`project${index}`}
+                  onChange={() => checkHandler(projects, setProjects, index)}
+                />
+              </CategoryListWrapper>
+            );
+          })}
 
         <CategoryTitleWrapper
           onClick={() => setDesignIsActive(!designIsActive)}
@@ -521,27 +596,28 @@ const UseFilter = ({
           />
           <CategoryTitle>Design</CategoryTitle>
         </CategoryTitleWrapper>
-        {designList.map((i, j) => {
-          return (
-            <CategoryListWrapper
-              isActive={designIsActive}
-              key={`designaa${j}`}
-              onClick={() => designCheckedHandler(j)}
-            >
-              <Label
-                htmlFor={`design${j}`}
-                isChecked={i.isChecked}
-                img={ic_check_wht.src}
-              />
-              <Checkbox
-                type="checkbox"
-                id={`design${j}`}
-                onChange={() => designCheckedHandler(j)}
-              />
-              {i.name}
-            </CategoryListWrapper>
-          );
-        })}
+        {designs &&
+          designs.map((el: any, index: number) => {
+            return (
+              <CategoryListWrapper
+                isActive={designIsActive}
+                key={`designaa${index}`}
+              >
+                <Label htmlFor={`design${index}`}>
+                  <CustomCheckBox
+                    isChecked={el.isChecked}
+                    img={ic_check_wht.src}
+                  />
+                  {el.name}
+                </Label>
+                <Checkbox
+                  type="checkbox"
+                  id={`design${index}`}
+                  onChange={() => checkHandler(designs, setDesigns, index)}
+                />
+              </CategoryListWrapper>
+            );
+          })}
 
         <CategoryTitleWrapper
           onClick={() => setCompositionIsActive(!compositionIsActive)}
@@ -552,53 +628,52 @@ const UseFilter = ({
           />
           <CategoryTitle>Composition</CategoryTitle>
         </CategoryTitleWrapper>
-        {compositionList.map((i, j) => {
-          return (
-            <CategoryListWrapper
-              isActive={compositionIsActive}
-              key={`composition${j}`}
-              onClick={() => compositionCheckedHandler(j)}
-            >
-              <Label
-                htmlFor={`composition${j}`}
-                isChecked={i.isChecked}
-                img={ic_check_wht.src}
-              />
-              <Checkbox
-                type="checkbox"
-                id={`composition${j}`}
-                onChange={() => compositionCheckedHandler(j)}
-              />
-              {i.name}
-            </CategoryListWrapper>
-          );
-        })}
+        {materials &&
+          materials.map((el: any, index: number) => {
+            return (
+              <CategoryListWrapper
+                isActive={compositionIsActive}
+                key={`composition${index}`}
+              >
+                <Label htmlFor={`composition${index}`}>
+                  <CustomCheckBox
+                    isChecked={el.isChecked}
+                    img={ic_check_wht.src}
+                  />
+
+                  {el.name}
+                </Label>
+                <Checkbox
+                  type="checkbox"
+                  id={`composition${index}`}
+                  onChange={() => checkHandler(materials, setMaterials, index)}
+                />
+              </CategoryListWrapper>
+            );
+          })}
 
         <CategoryTitleWrapper onClick={() => setWidthIsActive(!widthIsActive)}>
           <Image
             src={widthIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
-          <CategoryTitle>WIDTH</CategoryTitle>
+          <CategoryTitle>WIDTH(Inch)</CategoryTitle>
         </CategoryTitleWrapper>
-        {widthList.map((i, j) => {
+        {widthList.map((i: any, j: number) => {
           return (
-            <CategoryListWrapper
-              isActive={widthIsActive}
-              key={`width${j}`}
-              onClick={() => widthCheckedHandler(j)}
-            >
-              <Label
-                htmlFor={`width${j}`}
-                isChecked={i.isChecked}
-                img={ic_check_wht.src}
-              />
+            <CategoryListWrapper isActive={widthIsActive} key={`width${j}`}>
+              <Label htmlFor={`width${j}`}>
+                <CustomCheckBox
+                  isChecked={i.isChecked}
+                  img={ic_check_wht.src}
+                />
+                {i.name}
+              </Label>
               <Checkbox
                 type="checkbox"
                 id={`width${j}`}
                 onChange={() => widthCheckedHandler(j)}
               />
-              {i.name}
             </CategoryListWrapper>
           );
         })}
@@ -612,24 +687,21 @@ const UseFilter = ({
           />
           <CategoryTitle>Weight</CategoryTitle>
         </CategoryTitleWrapper>
-        {weightList.map((i, j) => {
+        {weightList.map((i: any, j: number) => {
           return (
-            <CategoryListWrapper
-              isActive={weightIsActive}
-              key={`weight${j}`}
-              onClick={() => weightCheckedHandler(j)}
-            >
-              <Label
-                htmlFor={`weight${j}`}
-                isChecked={i.isChecked}
-                img={ic_check_wht.src}
-              />
+            <CategoryListWrapper isActive={weightIsActive} key={`weight${j}`}>
+              <Label htmlFor={`weight${j}`}>
+                <CustomCheckBox
+                  isChecked={i.isChecked}
+                  img={ic_check_wht.src}
+                />
+                {i.name}
+              </Label>
               <Checkbox
                 type="checkbox"
                 id={`weight${j}`}
                 onChange={() => weightCheckedHandler(j)}
               />
-              {i.name}
             </CategoryListWrapper>
           );
         })}
@@ -754,7 +826,13 @@ const Checkbox = styled.input`
   display: none;
 `;
 
-const Label = styled.label<{ isChecked: boolean; img: string }>`
+const Label = styled.label`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+`;
+const CustomCheckBox = styled.div<{ isChecked: boolean; img: string }>`
   display: inline-block;
   margin-left: 1px;
   margin-right: 9px;
@@ -777,8 +855,6 @@ const Label = styled.label<{ isChecked: boolean; img: string }>`
   background-size: 9.5px 7.4px;
   background-position: center;
   background-repeat: no-repeat;
-
-  cursor: pointer;
 `;
 const ColorWraaper = styled.div<{ isActive: boolean }>`
   display: ${(props) => {
@@ -788,7 +864,7 @@ const ColorWraaper = styled.div<{ isActive: boolean }>`
   width: 188px;
   height: 190px;
 `;
-const ColorCircle = styled.div`
+const ColorCircle = styled.div<{ url: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -800,7 +876,18 @@ const ColorCircle = styled.div`
   border-radius: 100%;
   cursor: pointer;
 
+  ${(props) => {
+    return `background-image: url(${props.url})`;
+  }};
+
+  background-position: center;
+
   &:nth-of-type(1) {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+  }
+
+  /* &:nth-of-type(1) {
     background-color: #1b759f;
   }
   &:nth-of-type(2) {
@@ -873,7 +960,7 @@ const ColorCircle = styled.div`
       #00bdf9 72.22%,
       #0075ff 90.03%
     );
-  }
+  } */
 `;
 
 const ColorChecked = styled.div<{ isChecked: boolean }>`
