@@ -186,9 +186,7 @@ const Product = ({ product, index, productList, setProductList }: any) => {
 
       <InfoWrapper>
         <ProductTitle>{product.title}</ProductTitle>
-        <ProductCategory>
-          {product.design ? product.design.name : "null"}
-        </ProductCategory>
+
         <RatioWrapper>
           {product.certificated && <Image src={cert} alt="cert" />}
           {product.materials.map((i: any, j: number) => {
@@ -217,11 +215,13 @@ const Product = ({ product, index, productList, setProductList }: any) => {
                     setOptionLength(`${i.length}m`);
                     setThumnail(i.thumbnailUrl);
                     setSelectNo(i.productOptionNo);
+                    setPrice(i.price);
                   }}
                   onTouchEnd={() => {
                     setOptionLength(`${i.length}m`);
                     setThumnail(i.thumbnailUrl);
                     setSelectNo(i.productOptionNo);
+                    setPrice(i.price);
                   }}
                 />
               </Wrapper>
@@ -291,6 +291,7 @@ const InfoWrapper = styled.div`
   background-color: #ffffff;
 `;
 const ProductTitle = styled.div`
+  margin-bottom: 7px;
   height: 36px;
   overflow: hidden;
   text-overflow: ellipsis;
