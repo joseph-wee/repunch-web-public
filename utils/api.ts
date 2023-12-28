@@ -105,14 +105,30 @@ export const productsRequest = async (
   at: string | null,
   sortType: string,
   count: number,
-  searchAfter: number | null
+  searchAfter: number | null,
+  colorNos: string | null,
+  projectNos: string | null,
+  designsNos: string | null,
+  materialsNos: string | null,
+  widthType: string | null,
+  weightType: string | null
 ) => {
+  // http://test.api.repunch.io/v1/products?count=8&sortType=LATEST&colorNos=1,2,3,4,5,6,7&projectNos=8&designNos=1,10&materialNos=5&widthType=MEDIUM&weightType=LIGHT
   try {
     const res = await axios({
       method: "GET",
-      url: searchAfter
-        ? `/products?sortType=${sortType}&count=${count}&searchAfter=${searchAfter}`
-        : `/products?sortType=${sortType}&count=${count}`,
+      url: `/products?count=${count}&sortType=${sortType}${
+        colorNos ? `&colorNos=${colorNos}` : ""
+      }${projectNos ? `&projectNos=${projectNos}` : ""}${
+        designsNos ? `&designNos=${designsNos}` : ""
+      }${materialsNos ? `&materialNos=${materialsNos}` : ""}${
+        widthType ? `&widthType=${widthType}` : ""
+      }${weightType ? `&weightType=${weightType}` : ""}${
+        searchAfter ? `&searchAfter=${searchAfter}` : ""
+      }`,
+      // searchAfter
+      // ? `/products?sortType=${sortType}&count=${count}&searchAfter=${searchAfter}`
+      // : `/products?sortType=${sortType}&count=${count}`,
       headers: at
         ? {
             Authorization: `Bearer ${at}`,
@@ -398,20 +414,6 @@ export const paymentRequest = async (token: string, payerId: string) => {
   }
 };
 
-/** 원단 소재 목록 조회 */
-export const materialsRequest = () => {
-  axios
-    .get("/product/materials")
-    .then((res: any) => {
-      console.log(res);
-      return res;
-    })
-    .catch((error) => {
-      console.log(error);
-      return error;
-    });
-};
-
 /** 주소 목록 조회 */
 export const addressListRequest = async (
   acessToken: string | null,
@@ -580,19 +582,6 @@ export const cartDelteRequest = async (
         Authorization: `Bearer ${accessToken}`,
       },
       url: `/carts/${cartNo}`,
-    });
-    return res;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-/** 컬러 목록 조회 */
-export const colorsRequest = async () => {
-  try {
-    const res = await axios({
-      method: "GET",
-      url: `/product/colors`,
     });
     return res;
   } catch (error) {
@@ -982,6 +971,76 @@ export const likeListRequest = async (accessToken: string | null) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 컬러 목록 조회 */
+export const colorsRequest = async () => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/product/colors`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 원단 디자인 목록 조회 */
+export const designsRequest = async () => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/product/designs`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 원단 소재 목록 조회 */
+export const materialsRequest = async () => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/product/materials`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 원산지 목록 조회 */
+export const originsRequest = async () => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/product/origins`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 생산 목표 상품 목록 조회 */
+export const projectsRequest = async () => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/product/projects`,
     });
     return res;
   } catch (error: any) {
