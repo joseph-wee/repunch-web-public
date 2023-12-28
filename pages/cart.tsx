@@ -455,7 +455,7 @@ const useCart = () => {
 
           {cartValue == 0 ? (
             <>
-              {rollList.length > 0 && (
+              {rollTotalCount > 0 && (
                 <SelectAllBoxWrapper>
                   <Checkbox
                     type="checkbox"
@@ -522,7 +522,7 @@ const useCart = () => {
                 <Image src={ic_info} alt={"ic_info"} />
                 Samples can be ordered from 10-20 pieces.
               </SampleInfoMessage>
-              {sampleList.length > 0 && (
+              {sampleTotalCount > 0 && (
                 <SelectAllBoxWrapper>
                   <Checkbox
                     type="checkbox"
