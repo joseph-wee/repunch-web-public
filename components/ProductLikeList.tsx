@@ -50,45 +50,6 @@ const ProductLikeList = ({
       });
       return;
     }
-    // 비로그인 상태
-    productsRequest(null, sortType, 8, null).then((res) => {
-      console.log(3);
-      let x = res?.data.result.data;
-      console.log(x);
-      setProductList([...x]);
-      setSearchAfter(x[x.length - 1].productNo);
-      setLoading(false);
-      setResult(res?.data.result.metadata.totalCount);
-    });
-  };
-
-  /** 상품 리스트 호출 함수 */
-  const productListRequestAdditionalHandler = () => {
-    let at: any = localStorage.getItem("at");
-    let rt = localStorage.getItem("rt");
-    if (at) {
-      productsRequest(at, sortType, 8, searchAfter).then((res) => {
-        if (res?.data.result.data) {
-          let x = res?.data.result.data;
-          setProductList([...productList, ...x]);
-          setSearchAfter(x[x.length - 1].productNo);
-          console.log(x[x.length - 1].productNo);
-          setLoading(false);
-          return;
-        }
-      });
-      return;
-    }
-    productsRequest(null, sortType, 8, searchAfter).then((res) => {
-      if (res?.data.result.data) {
-        let x = res?.data.result.data;
-        setProductList([...productList, ...x]);
-        setSearchAfter(x[x.length - 1].productNo);
-        console.log(x[x.length - 1].productNo);
-        setLoading(false);
-        return;
-      }
-    });
   };
 
   /** sortType 바뀌면 productList초기화 후 다시 상품 리스트 호출 */
