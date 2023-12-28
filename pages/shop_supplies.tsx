@@ -46,12 +46,12 @@ const useShop_supplies = () => {
         </BannerTextWrapper>
       </Banner>
       <Main>
-        <Filter
+        {/* <Filter
           isActive={filterIsActive}
           setIsActive={setFilterIsActive}
           sortFilterIsActive={sortFilterIsActive}
           setSortFilterIsActive={setSortFilterIsActive}
-        />
+        /> */}
         <ProductListWrapper>
           <ButtonFlexWrapper>
             <FilterButton onClick={() => setFilterIsActive(!filterIsActive)}>
