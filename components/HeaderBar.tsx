@@ -85,6 +85,10 @@ const useHeaderBar = () => {
         break;
       case "/about_us":
         break;
+      case "/terms_of_service":
+        break;
+      case "/privacy_policy":
+        break;
 
       default:
         !loginCheck() && router.push("/login");
@@ -147,6 +151,8 @@ const useHeaderBar = () => {
         <Menu onClick={() => clickHandler("/favorite")}>
           <Image src={ic_favorite_wht} alt="favorite_menu_button" />
         </Menu>
+        <Menu onClick={() => clickHandler("/about_us")}>About us</Menu>
+        <BarLine />
       </Container>
       {/* <NavTopBar /> */}
       <NavMobileBar
@@ -177,6 +183,10 @@ const Logo = styled.div``;
 const Menu = styled.div`
   position: absolute;
   right: 20px;
+  font-size: 16px;
+
+  font-weight: 400;
+  line-height: 20.8px;
   &:nth-of-type(2) {
     right: 64px;
     @media screen and (max-width: 768px) {
@@ -189,7 +199,24 @@ const Menu = styled.div`
       display: none;
     }
   }
+  &:nth-of-type(4) {
+    right: 175px;
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+  }
   cursor: pointer;
+`;
+
+const BarLine = styled.div`
+  width: 1px;
+  height: 20px;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  position: absolute;
+  right: 155px;
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export default useHeaderBar;
