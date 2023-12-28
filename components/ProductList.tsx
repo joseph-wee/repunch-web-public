@@ -6,9 +6,23 @@ import Product from "./Product";
 const ProductList = ({
   sortType,
   setResult,
+  colors,
+  projects,
+  designs,
+  materials,
+  origins,
+  widthList,
+  weightList,
 }: {
   sortType: any;
   setResult: React.Dispatch<React.SetStateAction<number>>;
+  colors: any;
+  projects: any;
+  designs: any;
+  materials: any;
+  origins: any;
+  widthList: any;
+  weightList: any;
 }) => {
   const [productList, setProductList] = useState<any>([]);
 
@@ -17,10 +31,24 @@ const ProductList = ({
 
   const ref = useRef<any>();
 
+  /** 필터링 값 리턴 */
+  const returnOfFilter = (state: any) => {
+    if (state)
+      return state
+        .filter((x: any) => x.isChecked === true)
+        .map((el: any) => {
+          return el.projectNo || el.designNo || el.materialNo || el.colorNo;
+        })
+        .join();
+
+    return null;
+  };
+
   /** 상품 리스트 초기화 후 호출 함수 */
   const productListRequestInitHandler = () => {
     let at: any = localStorage.getItem("at");
     let rt = localStorage.getItem("rt");
+
     // 로그인 상태
     if (at) {
       loginRefreshRequest(rt).then((res) => {
@@ -33,10 +61,24 @@ const ProductList = ({
           localStorage.setItem("at", at);
           localStorage.setItem("rt", `${rt}`);
           console.log(2);
-          productsRequest(at, sortType, 8, null).then((res) => {
-            console.log(3);
+          productsRequest(
+            at,
+            sortType,
+            8,
+            null,
+            returnOfFilter(colors),
+            returnOfFilter(projects),
+            returnOfFilter(designs),
+            returnOfFilter(materials),
+            null,
+            null
+          ).then((res) => {
+            console.log(res);
             let x = res?.data.result.data;
-            console.log(x);
+            if (x === null) {
+              setProductList([]);
+              return;
+            }
             setProductList([...x]);
             setSearchAfter(x[x.length - 1].productNo);
             setLoading(false);
@@ -47,7 +89,18 @@ const ProductList = ({
       return;
     }
     // 비로그인 상태
-    productsRequest(null, sortType, 8, null).then((res) => {
+    productsRequest(
+      null,
+      sortType,
+      8,
+      null,
+      returnOfFilter(colors),
+      returnOfFilter(projects),
+      returnOfFilter(designs),
+      returnOfFilter(materials),
+      null,
+      null
+    ).then((res) => {
       console.log(3);
       let x = res?.data.result.data;
       console.log(x);
@@ -63,8 +116,20 @@ const ProductList = ({
     let at: any = localStorage.getItem("at");
     let rt = localStorage.getItem("rt");
     if (at) {
-      productsRequest(at, sortType, 8, searchAfter).then((res) => {
+      productsRequest(
+        at,
+        sortType,
+        8,
+        searchAfter,
+        returnOfFilter(colors),
+        returnOfFilter(projects),
+        returnOfFilter(designs),
+        returnOfFilter(materials),
+        null,
+        null
+      ).then((res) => {
         if (res?.data.result.data) {
+          console.log(res);
           let x = res?.data.result.data;
           setProductList([...productList, ...x]);
           setSearchAfter(x[x.length - 1].productNo);
@@ -75,7 +140,18 @@ const ProductList = ({
       });
       return;
     }
-    productsRequest(null, sortType, 8, searchAfter).then((res) => {
+    productsRequest(
+      null,
+      sortType,
+      8,
+      searchAfter,
+      returnOfFilter(colors),
+      returnOfFilter(projects),
+      returnOfFilter(designs),
+      returnOfFilter(materials),
+      null,
+      null
+    ).then((res) => {
       if (res?.data.result.data) {
         let x = res?.data.result.data;
         setProductList([...productList, ...x]);
@@ -90,7 +166,16 @@ const ProductList = ({
   /** sortType 바뀌면 productList초기화 후 다시 상품 리스트 호출 */
   useEffect(() => {
     productListRequestInitHandler();
-  }, [sortType]);
+  }, [
+    sortType,
+    colors,
+    projects,
+    designs,
+    materials,
+    origins,
+    widthList,
+    weightList,
+  ]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([{ isIntersecting }]) => {
