@@ -9,9 +9,9 @@ const terms_of_service = () => {
       <Text>
         Tujuan Ketentuan Layanan ini adalah untuk mengatur hak, kewajiban,
         tanggung jawab dan hal-hal lain yang diperlukan antara PT. JOOB GLOBAL
-        INDONESIA ("Perseroan") dan "Pengguna" (sebagaimana didefinisikan di
-        bawah) sehubungan dengan penggunaan JOOB, layanan aplikasi seluler yang
-        disediakan oleh Perseroan.
+        INDONESIA (&quot;Perseroan&quot;) dan &quot;Pengguna&quot; (sebagaimana
+        didefinisikan di bawah) sehubungan dengan penggunaan JOOB, layanan
+        aplikasi seluler yang disediakan oleh Perseroan.
         <br />1 – Definisi
       </Text>
       <Wrapper>
@@ -19,9 +19,10 @@ const terms_of_service = () => {
           <Dot />
         </DotWrapper>
         <Text>
-          "Bisnis" mengacu pada entitas tempat lowongan pekerjaan didaftarkan
-          dengan tujuan mencari kandidat untuk pekerjaan dan menghubungkan
-          Pemilik Bisnis, Manajer Bisnis, dan dengan calon Karyawan.
+          &quot;Bisnis&quot; mengacu pada entitas tempat lowongan pekerjaan
+          didaftarkan dengan tujuan mencari kandidat untuk pekerjaan dan
+          menghubungkan Pemilik Bisnis, Manajer Bisnis, dan dengan calon
+          Karyawan.
         </Text>
       </Wrapper>
       <Wrapper>
@@ -29,9 +30,9 @@ const terms_of_service = () => {
           <Dot />
         </DotWrapper>
         <Text>
-          "Pemilik Bisnis" mengacu pada otoritas yang dapat mendaftarkan Bisnis,
-          menambah, mengedit, dan menghapus posting pekerjaan, serta mengelola
-          daftar Karyawan dan Manajer Bisnis.
+          &quot;Pemilik Bisnis&quot; mengacu pada otoritas yang dapat
+          mendaftarkan Bisnis, menambah, mengedit, dan menghapus posting
+          pekerjaan, serta mengelola daftar Karyawan dan Manajer Bisnis.
         </Text>
       </Wrapper>
       <Wrapper>
@@ -39,8 +40,9 @@ const terms_of_service = () => {
           <Dot />
         </DotWrapper>
         <Text>
-          "Manajer Bisnis" mengacu pada otoritas yang dapat menambah, mengedit,
-          dan menghapus posting pekerjaan dan mengelola daftar Karyawan.
+          &quot;Manajer Bisnis&quot; mengacu pada otoritas yang dapat menambah,
+          mengedit, dan menghapus posting pekerjaan dan mengelola daftar
+          Karyawan.
         </Text>
       </Wrapper>
       <Wrapper>
@@ -48,8 +50,8 @@ const terms_of_service = () => {
           <Dot />
         </DotWrapper>
         <Text>
-          "Pencari Kerja" mengacu pada orang yang mengakses layanan JOOB untuk
-          mencari pekerjaan.
+          &quot;Pencari Kerja&quot; mengacu pada orang yang mengakses layanan
+          JOOB untuk mencari pekerjaan.
         </Text>
       </Wrapper>
       <Wrapper>
@@ -65,8 +67,8 @@ const terms_of_service = () => {
           <Dot />
         </DotWrapper>
         <Text>
-          "Pengguna" mengacu pada setiap orang atau entitas yang menggunakan
-          aspek apa pun dari layanan JOOB.
+          &quot;Pengguna&quot; mengacu pada setiap orang atau entitas yang
+          menggunakan aspek apa pun dari layanan JOOB.
         </Text>
       </Wrapper>
       <Wrapper>
