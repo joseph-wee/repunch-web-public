@@ -227,7 +227,7 @@ const VideoPlayer = ({
         onClick={() => imageClickHandler(0)}
       >
         <Image
-          src={select ? select.imageUrl : ""}
+          src={select ? `${select.imageUrl}?&w=320&q=75` : ""}
           alt="image"
           layout="fill"
           objectFit="cover"
