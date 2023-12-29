@@ -244,22 +244,22 @@ const useOrder_temp = () => {
           <DeliveryWrapper>
             {deliveryMethod == "AIR" && (
               <>
-                <Image src={ic_air} alt={"air_image"} width={16} height={16} />
-                <DeliveryAirText>By air&nbsp;</DeliveryAirText>
-                <DeliveryFreeText>(about 3week)</DeliveryFreeText>
+                {/* <Image src={ic_air} alt={"air_image"} width={16} height={16} /> */}
+                <DeliveryAirText>Express&nbsp;</DeliveryAirText>
+                {/* <DeliveryFreeText>(about 3week)</DeliveryFreeText> */}
               </>
             )}
 
             {deliveryMethod == "SHIP" && (
               <>
-                <Image
+                {/* <Image
                   src={ic_ship}
                   alt={"ship_image"}
                   width={16}
                   height={16}
-                />
+                /> */}
                 <DeliveryAirText>By Ship&nbsp;</DeliveryAirText>
-                <DeliveryFreeText>(about 5week)</DeliveryFreeText>
+                {/* <DeliveryFreeText>(about 5week)</DeliveryFreeText> */}
               </>
             )}
           </DeliveryWrapper>
