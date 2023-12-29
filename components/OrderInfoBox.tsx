@@ -583,9 +583,11 @@ const useOrderInfoBox = ({
                     data.items[0].shippingAddress.trackingNumber && (
                       <>
                         <ShippingBracket>(&nbsp;</ShippingBracket>
-                        <ShippingNumber>
-                          {data.items[0].shippingAddress.trackingNumber}
-                        </ShippingNumber>
+                        <A href="https://www.naver.com" target="_blank">
+                          <ShippingNumber>
+                            {data.items[0].shippingAddress.trackingNumber}
+                          </ShippingNumber>
+                        </A>
                         <ShippingBracket>&nbsp;)</ShippingBracket>
                       </>
                     )}
@@ -1576,6 +1578,7 @@ const ShippingBracket = styled.span`
   font-size: 12px;
   line-height: 16px;
 `;
+const A = styled.a``;
 const TrackOrderContentWrapper = styled.div<{ status: string }>`
   display: flex;
   align-items: center;
