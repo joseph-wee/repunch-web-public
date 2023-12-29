@@ -560,13 +560,14 @@ const useRegister = () => {
           <Text>
             By Apply(Sign up as a member), you agree to our <br />
           </Text>
-          <LinkText href="https://www.naver.com" target="_blank">
-            Terms of Service
-          </LinkText>
+          <Link href="/terms_of_service" style={{ textDecoration: "none" }}>
+            <LinkText>Terms of Service</LinkText>
+          </Link>
+
           <Text>and</Text>
-          <LinkText href="https://www.naver.com" target="_blank">
-            Privacy Policy
-          </LinkText>
+          <Link href="/privacy_policy" style={{ textDecoration: "none" }}>
+            <LinkText>Privacy Policy</LinkText>
+          </Link>
         </TextContainer>
       </Container>
       <AuthContainer isActive={authPageIsActive}>
@@ -780,7 +781,7 @@ const Text = styled.span`
   margin-left: 3.8px;
   margin-right: 3.8px;
 `;
-const LinkText = styled.a`
+const LinkText = styled.span`
   font-weight: 700;
   text-decoration: none;
   text-decoration-line: underline;
