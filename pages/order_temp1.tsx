@@ -518,6 +518,7 @@ const useOrder_temp1 = () => {
                     companyName: selectAdress.companyName,
                     countryCode: selectAdress.countryCode,
                     state: selectAdress.state,
+                    city: selectAdress.city,
                     streetAddress2: selectAdress.streetAddress2,
                     streetAddress1: selectAdress.streetAddress1,
                     postCode: selectAdress.postCode,
@@ -539,6 +540,7 @@ const useOrder_temp1 = () => {
               </ProfileName>
               <AddressText>{selectAdress.streetAddress2}</AddressText>
               <AddressText>{selectAdress.streetAddress1}</AddressText>
+              <AddressText>{selectAdress.city}</AddressText>
               <AddressText>{selectAdress.state}</AddressText>
               <AddressText>
                 {countryList.filter((x: any) => x.code == "KR")[0].name}
@@ -549,7 +551,9 @@ const useOrder_temp1 = () => {
               </AddressPhoneNumber>
             </>
           )}
-          <AddressButton onClick={() => router.push("/add_shipping_address")}>
+          <AddressButton
+            onClick={() => router.push("/add_shipping_address?order_temp1")}
+          >
             + Add a new address
           </AddressButton>
           <AddressButton onClick={() => setPopUpIsActive(1)}>
@@ -569,7 +573,7 @@ const useOrder_temp1 = () => {
             <CheckedCircle isChecked={deliveryIsChecked} order={0}>
               <SmallCircle />
             </CheckedCircle>
-            By air (about 3week)
+            Express
           </RadioLabel>
           <DashLine />
           <RadioButton type="radio" id="air" name="delivery" />
@@ -583,9 +587,9 @@ const useOrder_temp1 = () => {
             <CheckedCircle isChecked={deliveryIsChecked} order={1}>
               <SmallCircle />
             </CheckedCircle>
-            By ship (about 5week)
+            By ship
           </RadioLabel>
-          <DashLine />
+          {/* <DashLine />
           <RadioButton type="radio" id="air" name="delivery" />
           <RadioLabel
             htmlFor="air"
@@ -608,7 +612,7 @@ const useOrder_temp1 = () => {
             <PickupTimeContent>
               Mon-Fri 10:00-19:00 Closed on Sat, Sun, and public holidays
             </PickupTimeContent>
-          </PickupInfo>
+          </PickupInfo> */}
         </ContentWrapper>
         {/* <ContentTitle>Payment</ContentTitle>
         <ContentWrapper>
