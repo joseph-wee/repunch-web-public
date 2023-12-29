@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { MobileSideBar, OrderInfoBox, SideBar } from "../components";
+import {
+  MobileSideBar,
+  OrderInfoBox,
+  OrderInfoBoxSample,
+  SideBar,
+} from "../components";
 import Link from "next/link";
-import { ordersRequest, userInfoRequest } from "../utils/api";
+import {
+  orderCountRequest,
+  ordersRequest,
+  userInfoRequest,
+} from "../utils/api";
 
 const useMy_account = () => {
   const [data, setData] = useState<any>({});
@@ -16,6 +25,10 @@ const useMy_account = () => {
   const [clicked, setClicked] = useState(1); // 클릭 상태
   const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
   const [orders, setOrders] = useState<any>([]); // 주문 리스트
+
+  const [favoriteCount, setFavoriteCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
 
   const [countInReview, setCountInReview] = useState(0);
   const [countOrderConfirmed, setCountOrderConfiremd] = useState(0);
@@ -81,12 +94,31 @@ const useMy_account = () => {
   /** 처음 렌더링시 주문 목록 세팅 */
   useEffect(() => {
     ordersAllRequestHandler();
+    orderCountRequestHandler();
   }, []);
 
   /** recent orders 개수 계산 - clickd, orders 변경감지 */
   useEffect(() => {
     orders.length > 0 && calculator(clicked);
   }, [clicked, orders]);
+
+  /** 주문 요청 목록 핸들러 */
+  const orderCountRequestHandler = () => {
+    let at: string | null;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    orderCountRequest(at).then((res: any) => {
+      console.log(res);
+    });
+  };
 
   return (
     <Container>
@@ -109,7 +141,7 @@ const useMy_account = () => {
           </Link>
           <Link href="/order" style={{ textDecoration: "none" }}>
             <Box>
-              <Count>1</Count>
+              <Count>20</Count>
               <CountTitle>Order</CountTitle>
             </Box>
           </Link>
@@ -119,7 +151,8 @@ const useMy_account = () => {
           return (
             el.status != "CLOSING_ORDER" &&
             el.status != "RETURNS" &&
-            el.status != "CANCEL" && (
+            el.status != "CANCEL" &&
+            (el.items[0].product.orderUnitType == "ROLL" ? (
               <OrderInfoBox
                 data={el}
                 clicked={clicked}
@@ -127,7 +160,15 @@ const useMy_account = () => {
                 myAccount={false}
                 key={`eas-${index}`}
               />
-            )
+            ) : (
+              <OrderInfoBoxSample
+                data={el}
+                clicked={clicked}
+                accomplish={false}
+                myAccount={false}
+                key={`eas-${index}`}
+              />
+            ))
           );
         })}
         <InfoContainer>
@@ -165,7 +206,7 @@ const Container = styled.div`
   padding-top: 30px;
   padding-bottom: 40px;
   max-width: 637px;
-  @media screen and (max-width: 1279px) {
+  @media screen and (max-width: 1280px) {
     max-width: 608px;
   }
   @media screen and (max-width: 768px) {
