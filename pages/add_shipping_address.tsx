@@ -223,6 +223,18 @@ const useAdd_shiping_address = () => {
     return false;
   };
 
+  /** 작업 후 이전 페이지로 이동 */
+  const sendToLandingPage = () => {
+    const landingPage = router.asPath.split("?")[1];
+    // 랜딩 페이지 없을 경우
+    if (landingPage == undefined) {
+      router.push("/address");
+      return;
+    }
+    // 랜딩 페이지있으면 랜딩 페이지로 이동
+    router.push(landingPage);
+  };
+
   /** 모든 유효성 검사 */
   const validationAll = () => {
     let validationResult = new Array(10);
@@ -288,7 +300,7 @@ const useAdd_shiping_address = () => {
         console.log("여기서에러?");
         // 성공 case
         if (res?.data?.status == 200) {
-          router.push("/address");
+          sendToLandingPage();
           return;
         }
 
@@ -324,7 +336,7 @@ const useAdd_shiping_address = () => {
               ).then((res) => {
                 // 성공 case
                 if (res?.data?.status == 200) {
-                  router.push("/address");
+                  sendToLandingPage();
                   return;
                 }
               });
