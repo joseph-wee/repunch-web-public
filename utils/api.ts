@@ -723,7 +723,7 @@ export const orderDetailRequest = async (
 /** 주문 목록 */
 export const ordersRequest = async (
   accessToken: string | null,
-  orderUnitType: string,
+  orderUnitType: string | null,
   orderStatus: string | null,
   allStatus: boolean,
   count: number,
@@ -734,7 +734,9 @@ export const ordersRequest = async (
     if (orderStatus && allStatus && searchAfter) {
       const res = await axios({
         method: "GET",
-        url: `/orders?orderUnitType=${orderUnitType}&orderStatus=${orderStatus}&allStatus=${allStatus}&count=${count}&searchAfter=${searchAfter}`,
+        url: `/orders?${
+          orderUnitType ? `orderUnitType=${orderUnitType}&` : ""
+        }orderStatus=${orderStatus}&allStatus=${allStatus}&count=${count}&searchAfter=${searchAfter}`,
 
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -746,7 +748,9 @@ export const ordersRequest = async (
     // 기본
     const res = await axios({
       method: "GET",
-      url: `/orders?orderUnitType=${orderUnitType}&allStatus=${allStatus}&count=${count}`,
+      url: `/orders?${
+        orderUnitType ? `orderUnitType=${orderUnitType}&` : ""
+      }allStatus=${allStatus}&count=${count}`,
 
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -1041,6 +1045,23 @@ export const projectsRequest = async () => {
     const res = await axios({
       method: "GET",
       url: `/product/projects`,
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 현재 유저의 주문 개수 목록 */
+export const orderCountRequest = async (accessToken: string | null) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/user/order-count`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
     return res;
   } catch (error: any) {
