@@ -2,6 +2,7 @@ import { is } from "immer/dist/internal";
 import React, { useEffect, useRef, useState } from "react";
 import { loginRefreshRequest, productsRequest } from "../utils/api";
 import Product from "./Product";
+import { useAppSelector } from "../redux/hooks";
 
 const ProductList = ({
   sortType,
@@ -31,6 +32,12 @@ const ProductList = ({
 
   const ref = useRef<any>();
 
+  const { value: isLogin } = useAppSelector((state) => state.isLogin);
+
+  useEffect(() => {
+    console.log(isLogin);
+  });
+
   /** 필터링 값 리턴 */
   const returnOfFilter = (state: any) => {
     if (state)
@@ -50,7 +57,7 @@ const ProductList = ({
     let rt = localStorage.getItem("rt");
 
     // 로그인 상태
-    if (at) {
+    if (at && isLogin) {
       loginRefreshRequest(rt).then((res) => {
         console.log(1);
         // 토큰 재발급 성공 case
@@ -115,7 +122,7 @@ const ProductList = ({
   const productListRequestAdditionalHandler = () => {
     let at: any = localStorage.getItem("at");
     let rt = localStorage.getItem("rt");
-    if (at) {
+    if (at && isLogin) {
       productsRequest(
         at,
         sortType,
