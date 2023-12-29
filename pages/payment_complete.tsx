@@ -18,7 +18,10 @@ const usePayment_complete = () => {
         email below
       </InformText>
       <EmailRepunch>support@repunch.co.kr</EmailRepunch>
-      <ButtonHome onClick={() => router.push("/")}>Home</ButtonHome>
+      <ButtonWrapper>
+        <Button onClick={() => router.push("/")}>Home</Button>
+        <Button onClick={() => router.push("/order")}>Order detail</Button>
+      </ButtonWrapper>
     </Container>
   );
 };
@@ -64,11 +67,15 @@ const EmailRepunch = styled.div`
   text-decoration-line: underline;
   color: #121822;
 `;
-const ButtonHome = styled.button`
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+const Button = styled.button`
   display: block;
   margin: 0 auto;
   height: 48px;
-  width: 280px;
+  width: 100%;
   box-sizing: border-box;
   font-family: Roboto;
   font-size: 14px;
