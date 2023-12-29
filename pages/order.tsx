@@ -38,7 +38,7 @@ const useOrder = () => {
       rt = localStorage.getItem("rt");
     }
 
-    ordersRequest(at, "ROLL", null, false, 20, null).then((res) => {
+    ordersRequest(at, null, null, false, 30, null).then((res) => {
       let sumInReview = countInReview;
       let sumOrderConfirmed = countOrderConfirmed;
       let sumInProduction = countInProduction;
@@ -58,28 +58,12 @@ const useOrder = () => {
         el.status == "PICK_UP" && (sumPickUp += 1);
       }
 
-      ordersRequest(at, "SAMPLE", null, false, 20, null).then((res) => {
-        console.log(res);
-        // 성공 case
-        setOrdersSample([...res?.data.result.data]);
-        for (const el of res?.data.result.data) {
-          el.status == "IN_REVIEW" && (sumInReview += 1);
-          el.status == "ORDER_CONFIRMED" && (sumOrderConfirmed += 1);
-          el.status == "IN_PRODUCTION" && (sumInProduction += 1);
-          el.status == "SHIPPED" && (sumShipped += 1);
-          el.status == "DELIVERED" && (sumDelivered += 1);
-          el.status == "PICK_UP" && (sumPickUp += 1);
-        }
-        setCountInReview(sumInReview);
-        setCountOrderConfiremd(sumOrderConfirmed);
-        setCountInProduction(sumInProduction);
-        setCountShipped(sumShipped);
-        setCountDelivered(sumDelivered);
-        setCountPickUp(sumPickUp);
-
-        // 실패 case: 토큰 만료
-        // 실패 case
-      });
+      setCountInReview(sumInReview);
+      setCountOrderConfiremd(sumOrderConfirmed);
+      setCountInProduction(sumInProduction);
+      setCountShipped(sumShipped);
+      setCountDelivered(sumDelivered);
+      setCountPickUp(sumPickUp);
 
       // 실패 case: 토큰 만료
       // 실패 case
@@ -145,7 +129,8 @@ const useOrder = () => {
           return (
             el.status != "CLOSING_ORDER" &&
             el.status != "RETURNS" &&
-            el.status != "CANCEL" && (
+            el.status != "CANCEL" &&
+            (el.items[0].product.orderUnitType == "ROLL" ? (
               <OrderInfoBox
                 data={el}
                 clicked={clicked}
@@ -153,14 +138,7 @@ const useOrder = () => {
                 myAccount={false}
                 key={`eas-${index}`}
               />
-            )
-          );
-        })}
-        {ordersSample.map((el: any, index: number) => {
-          return (
-            el.status != "CLOSING_ORDER" &&
-            el.status != "RETURNS" &&
-            el.status != "CANCEL" && (
+            ) : (
               <OrderInfoBoxSample
                 data={el}
                 clicked={clicked}
@@ -168,7 +146,7 @@ const useOrder = () => {
                 myAccount={false}
                 key={`eas-${index}`}
               />
-            )
+            ))
           );
         })}
       </Main>
@@ -262,7 +240,7 @@ const AllButton = styled.button<{ clicked: number }>`
   cursor: pointer;
 `;
 const ReviewButton = styled.button<{ clicked: number }>`
-  width: 87px;
+  min-width: 87px;
   height: 36px;
   background-color: #ffffff;
   ${(props) => {
@@ -287,7 +265,7 @@ const ReviewButton = styled.button<{ clicked: number }>`
   cursor: pointer;
 `;
 const ConfirmButton = styled.button<{ clicked: number }>`
-  width: 122px;
+  min-width: 122px;
   height: 36px;
   background-color: #ffffff;
   ${(props) => {
@@ -312,7 +290,7 @@ const ConfirmButton = styled.button<{ clicked: number }>`
   cursor: pointer;
 `;
 const ShipButton = styled.button<{ clicked: number }>`
-  width: 104px;
+  min-width: 104px;
   height: 36px;
   background-color: #ffffff;
   ${(props) => {
@@ -337,7 +315,7 @@ const ShipButton = styled.button<{ clicked: number }>`
   cursor: pointer;
 `;
 const DeliveredButton = styled.button<{ clicked: number }>`
-  width: 84px;
+  min-width: 84px;
   height: 36px;
   background-color: #ffffff;
   ${(props) => {
