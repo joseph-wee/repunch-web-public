@@ -39,7 +39,7 @@ const NavMobileBar = ({
     localStorage.clear();
     sessionStorage.clear();
     dispatch(logout);
-    router.push("/");
+    location.href = "/";
   };
 
   /** 로컬에 저장된 후에 홈페이지 재접속 했을 때 로그인 되게 */
