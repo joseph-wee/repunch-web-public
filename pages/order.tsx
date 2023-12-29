@@ -136,9 +136,9 @@ const useOrder = () => {
           <PickupButton onClick={() => setClicked(6)} clicked={clicked}>
             Delivered ({countDelivered})
           </PickupButton>
-          <CanceledButton onClick={() => setClicked(7)} clicked={clicked}>
+          {/* <CanceledButton onClick={() => setClicked(7)} clicked={clicked}>
             Pick up ({countPickUp})
-          </CanceledButton>
+          </CanceledButton> */}
         </ButtonWrapper>
         <RecentOrders>Recent orders {sum}</RecentOrders>
         {orders.map((el: any, index: number) => {
