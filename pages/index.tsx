@@ -177,7 +177,11 @@ export default function Home() {
                 Clear Filter
               </ClearButton> */}
               <SortButton onClick={() => setSortIsActive(!sortIsActive)}>
-                <ButtonTextSort>Sort By</ButtonTextSort>
+                <ButtonTextSort>
+                  {sortType == "LATEST" && "Sort by latest"}
+                  {sortType == "LOW_PRICE" && "Sort by low price"}
+                  {sortType == "HIGH_PRICE" && "Sort by high price"}
+                </ButtonTextSort>
 
                 <Image
                   src={sortIsActive ? ic_down_bk_filter : ic_up_bk_filter}
