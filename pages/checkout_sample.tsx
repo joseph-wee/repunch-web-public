@@ -163,7 +163,7 @@ const useCheck_out_sample = () => {
         }
         // 주소목록 없는 case
         if (res?.data.result.data == null) {
-          router.push("/add_shipping_address");
+          router.push("/add_shipping_address?checkout_sample");
           return;
         }
       }
@@ -193,7 +193,7 @@ const useCheck_out_sample = () => {
                 }
                 // 주소목록 없는 case
                 if (res?.data.result.data == null) {
-                  router.push("/add_shipping_address");
+                  router.push("/add_shipping_address?checkout_sample");
                   return;
                 }
               }
@@ -442,6 +442,7 @@ const useCheck_out_sample = () => {
                     companyName: selectAdress.companyName,
                     countryCode: selectAdress.countryCode,
                     state: selectAdress.state,
+                    city: selectAdress.city,
                     streetAddress2: selectAdress.streetAddress2,
                     streetAddress1: selectAdress.streetAddress1,
                     postCode: selectAdress.postCode,
@@ -473,7 +474,9 @@ const useCheck_out_sample = () => {
               </AddressPhoneNumber>
             </>
           )}
-          <AddressButton onClick={() => router.push("/add_shiping_address")}>
+          <AddressButton
+            onClick={() => router.push("/add_shipping_address?checkout_sample")}
+          >
             + Add a new address
           </AddressButton>
           <AddressButton onClick={() => setPopUpIsActive(1)}>
@@ -484,7 +487,7 @@ const useCheck_out_sample = () => {
         <ContentWrapper>
           <DeliveryWrapper>
             <Image src={ic_air} alt={"air_image"} width={16} height={16} />
-            <DeliveryAirText>By air&nbsp;</DeliveryAirText>
+            <DeliveryAirText>Express&nbsp;</DeliveryAirText>
             <DeliveryFreeText>(Free delivery)</DeliveryFreeText>
           </DeliveryWrapper>
           {/* <RadioButton type="radio" id="ship" name="delivery" />
