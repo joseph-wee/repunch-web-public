@@ -78,14 +78,22 @@ const UseFilter = ({
   setWeightList: React.Dispatch<any>;
 }) => {
   const [suppliesIsActive, setSuppliesIsActive] = useState(true);
-  const [projectIsActive, setProjectIsActive] = useState(true);
+  const [projectIsActive, setProjectIsActive] = useState(false);
   const [colorIsActive, setColorIsActive] = useState(true);
-  const [designIsActive, setDesignIsActive] = useState(true);
-  const [compositionIsActive, setCompositionIsActive] = useState(true);
-  const [widthIsActive, setWidthIsActive] = useState(true);
-  const [weightIsActive, setWeightIsActive] = useState(true);
+  const [designIsActive, setDesignIsActive] = useState(false);
+  const [compositionIsActive, setCompositionIsActive] = useState(false);
+  const [widthIsActive, setWidthIsActive] = useState(false);
+  const [weightIsActive, setWeightIsActive] = useState(false);
   const [yarnIsActive, setYarnIsActive] = useState(true);
   const [colorChecked, setColorChecked] = useState(new Array(16).fill(false));
+
+  // 필터 개수들
+  const [colorCount, setColorCount] = useState(0);
+  const [projectCount, setProjectCount] = useState(0);
+  const [designCount, setDesingCount] = useState(0);
+  const [materialCount, setMaterialCount] = useState(0);
+  const [widthCount, setWidthCount] = useState(0);
+  const [weightCount, setWeightCount] = useState(0);
 
   const [suppliesList, setSuppliesList] = useState<ListCountryArray>([
     {
@@ -332,6 +340,11 @@ const UseFilter = ({
   /** 필터 weight 리스트 항목들 체크 핸들러 */
   const weightCheckedHandler = (num: number) => {
     let arr = weightList;
+    for (let index = 0; index < arr.length; index++) {
+      if (index !== num && arr[index].isChecked === true) {
+        return;
+      }
+    }
     arr[num].isChecked = !arr[num].isChecked;
     setWeightList([...arr]);
   };
@@ -520,6 +533,47 @@ const UseFilter = ({
     setList([...tempList]);
   };
 
+  /** 체크한 개수 계산 */
+  const checkCounter = (list: any, setCount: any) => {
+    let count = 0;
+    for (const el of list) {
+      if (el.isChecked === true) {
+        count += 1;
+      }
+    }
+    setCount(count);
+  };
+
+  /** 컬러 개수 계산 */
+  useEffect(() => {
+    colors && checkCounter(colors, setColorCount);
+  }, [colors]);
+
+  /** 프로젝트 개수 계산 */
+  useEffect(() => {
+    projects && checkCounter(projects, setProjectCount);
+  }, [projects]);
+
+  /** 디자인 개수 계산 */
+  useEffect(() => {
+    designs && checkCounter(designs, setDesingCount);
+  }, [designs]);
+
+  /** 컴포 개수 계산 */
+  useEffect(() => {
+    materials && checkCounter(materials, setMaterialCount);
+  }, [materials]);
+
+  /** 너비 개수 계산 */
+  useEffect(() => {
+    widthList && checkCounter(widthList, setWidthCount);
+  }, [widthList]);
+
+  /** 무게 개수 계산 */
+  useEffect(() => {
+    weightList && checkCounter(weightList, setWeightCount);
+  }, [weightList]);
+
   return (
     <>
       <Background isActive={isActive} onClick={() => setIsActive(false)} />
@@ -537,7 +591,9 @@ const UseFilter = ({
             src={suppliesIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
-          <CategoryTitle>SELECT COLOR</CategoryTitle>
+          <CategoryTitle>
+            SELECT COLOR {colorCount !== 0 && ` (${colorCount})`}
+          </CategoryTitle>
         </CategoryTitleWrapper>
         <ColorWraaper isActive={suppliesIsActive}>
           {colors &&
@@ -562,7 +618,9 @@ const UseFilter = ({
             src={projectIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
-          <CategoryTitle>Project</CategoryTitle>
+          <CategoryTitle>
+            Project {projectCount !== 0 && ` (${projectCount})`}
+          </CategoryTitle>
         </CategoryTitleWrapper>
         {projects &&
           projects.map((el: any, index: number) => {
@@ -594,7 +652,9 @@ const UseFilter = ({
             src={designIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
-          <CategoryTitle>Design</CategoryTitle>
+          <CategoryTitle>
+            Design {designCount !== 0 && ` (${designCount})`}
+          </CategoryTitle>
         </CategoryTitleWrapper>
         {designs &&
           designs.map((el: any, index: number) => {
@@ -626,7 +686,9 @@ const UseFilter = ({
             src={compositionIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
-          <CategoryTitle>Composition</CategoryTitle>
+          <CategoryTitle>
+            Composition {materialCount !== 0 && ` (${materialCount})`}
+          </CategoryTitle>
         </CategoryTitleWrapper>
         {materials &&
           materials.map((el: any, index: number) => {
@@ -657,7 +719,9 @@ const UseFilter = ({
             src={widthIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
-          <CategoryTitle>WIDTH(Inch)</CategoryTitle>
+          <CategoryTitle>
+            WIDTH(Inch) {widthCount !== 0 && ` (${widthCount})`}
+          </CategoryTitle>
         </CategoryTitleWrapper>
         {widthList.map((i: any, j: number) => {
           return (
@@ -685,7 +749,9 @@ const UseFilter = ({
             src={weightIsActive ? ic_down_bk : ic_up_bk}
             alt={"arrow_down"}
           />
-          <CategoryTitle>Weight</CategoryTitle>
+          <CategoryTitle>
+            Weight {weightCount !== 0 && ` (${weightCount})`}
+          </CategoryTitle>
         </CategoryTitleWrapper>
         {weightList.map((i: any, j: number) => {
           return (
