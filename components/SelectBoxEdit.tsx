@@ -17,8 +17,8 @@ const SelectBoxEdit = ({
   setValidationResult,
 }: {
   list: ListCountryArray;
-  value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  value: string | undefined;
+  setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
   validationStart: boolean;
   setValidationResult: React.Dispatch<React.SetStateAction<number>>;
 }) => {
