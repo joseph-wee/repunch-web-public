@@ -318,7 +318,7 @@ const useOrder_temp1 = () => {
   const orderPaymentHandler = () => {
     // AIR Case
     if (deliveryIsChecked == 0) {
-      createOrderRequestHandler("AIR");
+      createOrderRequestHandler("EXPRESS");
       return;
     }
     // SHIP Case
