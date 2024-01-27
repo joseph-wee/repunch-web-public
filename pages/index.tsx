@@ -61,28 +61,61 @@ export default function Home() {
       isChecked: false,
     },
   ]);
-  const [weightList, setWeightList] = useState<ListTempArray>([
+  const [weightList, setWeightList] = useState<any>([
     {
       name: "Extra light under 80g/m²",
+      type: "EXTRA_LIGHT",
       isChecked: false,
     },
     {
       name: "Light 80-135 g/m²",
+      type: "LIGHT",
       isChecked: false,
     },
     {
       name: "Medium 135-270 g/m²",
+      type: "MEDIUM",
       isChecked: false,
     },
     {
       name: "Heavy 270-400 g/m²",
+      type: "HEAVY",
       isChecked: false,
     },
     {
       name: "Extra heavy over 400m²",
+      type: "EXTRA_HEAVY",
       isChecked: false,
     },
   ]);
+  const [filterIsApplied, setFilterIsApplied] = useState(false); // 필터 적용 유무 값
+
+  /** 필터 리스트들 순회하며 체크되었으면 return true */
+  const filterChecker = (list: any) => {
+    for (const el of list) {
+      if (el.isChecked === true) {
+        return true;
+      }
+    }
+  };
+
+  /** 필터 적용되면 filterIsApplied 값 true  */
+  useEffect(() => {
+    colors &&
+    projects &&
+    designs &&
+    materials &&
+    widthList &&
+    weightList &&
+    (filterChecker(colors) ||
+      filterChecker(projects) ||
+      filterChecker(designs) ||
+      filterChecker(materials) ||
+      filterChecker(widthList) ||
+      filterChecker(weightList))
+      ? setFilterIsApplied(true)
+      : setFilterIsApplied(false);
+  }, [colors, projects, designs, materials, widthList, weightList]);
 
   return (
     <Container>
@@ -164,7 +197,7 @@ export default function Home() {
               <Image src={ic_filter} alt={"filter_button"} />
               <ButtonTextFilter>Filter</ButtonTextFilter>
               {/** 필터관련 이슈 해결 되면 display 수정 */}
-              <FilterAlarmBackground>
+              <FilterAlarmBackground isActive={filterIsApplied}>
                 <FilterAlarmCircle />
               </FilterAlarmBackground>
             </FilterButton>
@@ -477,8 +510,10 @@ const ButtonTextFilter = styled.div`
 
   color: #121822;
 `;
-const FilterAlarmBackground = styled.div`
-  display: none;
+const FilterAlarmBackground = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive == true ? "block" : "none";
+  }};
   position: absolute;
   top: 6px;
   left: 22px;
