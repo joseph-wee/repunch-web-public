@@ -98,8 +98,10 @@ const useCartMeterageProduct = ({
     }
 
     cartDelteRequest(at, cartNo);
-    setExist(false);
     setRollTotalCount((prev) => prev - 1);
+    let temp = rollList;
+    temp[index].display = false;
+    setRollList([...temp]);
   };
 
   useEffect(() => {
@@ -110,7 +112,7 @@ const useCartMeterageProduct = ({
   }, [el.count]);
 
   return (
-    <Container exist={exist}>
+    <Container display={el.display}>
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
@@ -182,9 +184,9 @@ const useCartMeterageProduct = ({
   );
 };
 
-const Container = styled.div<{ exist: boolean }>`
+const Container = styled.div<{ display: boolean }>`
   display: ${(props) => {
-    return props.exist ? "block" : "none";
+    return props.display ? "block" : "none";
   }};
   margin-bottom: 10px;
   border: 1px solid #dee8ec;

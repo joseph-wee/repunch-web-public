@@ -12,12 +12,16 @@ import { cartDelteRequest } from "../utils/api";
 
 const useCartSampleProduct = ({
   el,
+  sampleList,
+  setSampleList,
   sampleCheckArr, // 롤 체크 유무 배열
   setSampleCheckArr,
   index,
   setSampleTotalCount,
 }: {
   el: any;
+  sampleList: any;
+  setSampleList: any;
   sampleCheckArr: Array<boolean>;
   setSampleCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
   index: number;
@@ -47,12 +51,14 @@ const useCartSampleProduct = ({
     }
 
     cartDelteRequest(at, cartNo);
-    setExist(false);
     setSampleTotalCount((prev) => prev - 1);
+    let temp = sampleList;
+    temp[index].display = false;
+    setSampleList([...temp]);
   };
 
   return (
-    <Container exist={exist}>
+    <Container display={el.display}>
       <CheckCancelWrapper>
         <Checkbox
           type="checkbox"
@@ -93,9 +99,9 @@ const useCartSampleProduct = ({
   );
 };
 
-const Container = styled.div<{ exist: boolean }>`
+const Container = styled.div<{ display: boolean }>`
   display: ${(props) => {
-    return props.exist ? "block" : "none";
+    return props.display ? "block" : "none";
   }};
   margin-bottom: 10px;
   border: 1px solid #dee8ec;
