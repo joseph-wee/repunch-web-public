@@ -44,7 +44,13 @@ const ProductList = ({
       return state
         .filter((x: any) => x.isChecked === true)
         .map((el: any) => {
-          return el.projectNo || el.designNo || el.materialNo || el.colorNo;
+          return (
+            el.projectNo ||
+            el.designNo ||
+            el.materialNo ||
+            el.colorNo ||
+            el.type
+          );
         })
         .join();
 
@@ -78,7 +84,7 @@ const ProductList = ({
             returnOfFilter(designs),
             returnOfFilter(materials),
             null,
-            null
+            returnOfFilter(weightList)
           ).then((res) => {
             console.log(res);
             let x = res?.data.result.data;
@@ -87,7 +93,7 @@ const ProductList = ({
               return;
             }
             setProductList([...x]);
-            setSearchAfter(x[x.length - 1].productNo);
+            setSearchAfter(res?.data.result.metadata.searchAfter);
             setLoading(false);
             setResult(res?.data.result.metadata.totalCount);
           });
@@ -106,13 +112,13 @@ const ProductList = ({
       returnOfFilter(designs),
       returnOfFilter(materials),
       null,
-      null
+      returnOfFilter(weightList)
     ).then((res) => {
       console.log(3);
       let x = res?.data.result.data;
       console.log(x);
       setProductList([...x]);
-      setSearchAfter(x[x.length - 1].productNo);
+      setSearchAfter(res?.data.result.metadata.searchAfter);
       setLoading(false);
       setResult(res?.data.result.metadata.totalCount);
     });
@@ -133,13 +139,14 @@ const ProductList = ({
         returnOfFilter(designs),
         returnOfFilter(materials),
         null,
-        null
+        returnOfFilter(weightList)
       ).then((res) => {
+        console.log(res?.data);
         if (res?.data.result.data) {
           console.log(res);
           let x = res?.data.result.data;
           setProductList([...productList, ...x]);
-          setSearchAfter(x[x.length - 1].productNo);
+          setSearchAfter(res?.data.result.metadata.searchAfter);
           console.log(x[x.length - 1].productNo);
           setLoading(false);
           return;
@@ -157,12 +164,12 @@ const ProductList = ({
       returnOfFilter(designs),
       returnOfFilter(materials),
       null,
-      null
+      returnOfFilter(weightList)
     ).then((res) => {
       if (res?.data.result.data) {
         let x = res?.data.result.data;
         setProductList([...productList, ...x]);
-        setSearchAfter(x[x.length - 1].productNo);
+        setSearchAfter(res?.data.result.metadata.searchAfter);
         console.log(x[x.length - 1].productNo);
         setLoading(false);
         return;
