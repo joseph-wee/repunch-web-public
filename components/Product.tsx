@@ -22,7 +22,7 @@ const Product = ({ product, index, productList, setProductList }: any) => {
   );
   const [thumbnail, setThumnail] = useState(product.options[0].thumbnailUrl);
 
-  const [price, setPrice] = useState(product.options[0].price);
+  const [price, setPrice] = useState(product.price);
   const [colorList, setColorList] = useState<any>([]);
   const [selectNo, setSelectNo] = useState<number | undefined>();
 
@@ -94,7 +94,7 @@ const Product = ({ product, index, productList, setProductList }: any) => {
   useEffect(() => {
     setOptionLength(`${product.options[0].length}m`);
     setThumnail(product.options[0].thumbnailUrl);
-    setPrice(product.options[0].price);
+    setPrice(product.price);
     setFavoriteIsActive(product.like);
   }, [product]);
 
@@ -131,10 +131,11 @@ const Product = ({ product, index, productList, setProductList }: any) => {
 
   useEffect(() => {
     console.log(product.options);
+    console.log(product.display);
   }, [thumbnail]);
 
   return (
-    <Card>
+    <Card display={product.display}>
       <ThumbnailWrapper>
         {/* <Link
                     href={{
@@ -215,13 +216,11 @@ const Product = ({ product, index, productList, setProductList }: any) => {
                     setOptionLength(`${i.length}m`);
                     setThumnail(i.thumbnailUrl);
                     setSelectNo(i.productOptionNo);
-                    setPrice(i.price);
                   }}
                   onTouchEnd={() => {
                     setOptionLength(`${i.length}m`);
                     setThumnail(i.thumbnailUrl);
                     setSelectNo(i.productOptionNo);
-                    setPrice(i.price);
                   }}
                 />
               </Wrapper>
@@ -233,7 +232,10 @@ const Product = ({ product, index, productList, setProductList }: any) => {
   );
 };
 
-const Card = styled.div`
+const Card = styled.div<{ display: boolean }>`
+  display: ${(props) => {
+    return props.display ? "block" : "none";
+  }};
   border-radius: 4px;
   filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.15));
 `;
