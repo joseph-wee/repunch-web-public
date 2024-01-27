@@ -56,10 +56,10 @@ const useHeaderBar = () => {
   const clickHandler = (url: string) => {
     setIsActive(false);
     if (loginCheck()) {
-      router.push(url);
+      router.push(`/${url}`);
       return;
     }
-    router.push("/login");
+    router.push(`/login?${url}`);
   };
 
   /** 스위치 해당 페이지 제외하고 나머지 페이지의 경우 로그인 체크 후 false일 때 로그인 페이지로 이동 */
@@ -145,13 +145,13 @@ const useHeaderBar = () => {
             alt="button_menu"
           />
         </Menu>
-        <Menu onClick={() => clickHandler("/cart")}>
+        <Menu onClick={() => clickHandler("cart")}>
           <Image src={ic_cart_wht} alt="cart_menu_button" />
         </Menu>
-        <Menu onClick={() => clickHandler("/favorite")}>
+        <Menu onClick={() => clickHandler("favorite")}>
           <Image src={ic_favorite_wht} alt="favorite_menu_button" />
         </Menu>
-        <Menu onClick={() => clickHandler("/about_us")}>About us</Menu>
+        <Menu onClick={() => clickHandler("about_us")}>About us</Menu>
         <BarLine />
       </Container>
       {/* <NavTopBar /> */}
