@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect } from "react";
 import { goBack } from "../utils/functions";
+import { userInfoRequest } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -101,53 +102,25 @@ const useAccount_detail = () => {
     { name: "empty4", code: "empty5" },
   ];
 
-  const test = () => {
-    console.log(firstName);
-    console.log(lastName);
-    console.log(countryCode);
-    console.log(companyName);
-    console.log(industryCode);
-    console.log(homepageUrl);
-    console.log(countryPhoneNumber);
-    console.log(phoneNumber);
-    console.log(userId);
-    console.log(password);
-    console.log(passwordConfirm);
-    console.log(role);
-  };
+  /** 현재 유저 정보 요청 및 세팅 */
+  const userInfoHandler = () => {
+    let at = localStorage.getItem("at");
+    userInfoRequest(at).then((res: any) => {
+      const data = res?.data.result;
+      console.log(data);
 
-  /** 회원가입 요청 api */
-  const registerApiRequest = () => {
-    axios({
-      method: "POST",
-      url: process.env.NEXT_PUBLIC_API_KEY + "signup",
-      data: {
-        firstName: firstName,
-        lastName: lastName,
-        countryCode: countryCode,
-        companyName: companyName,
-        industryCode: industryCode,
-        homepageUrl: homepageUrl,
-        countryPhoneNumber: countryPhoneNumber,
-        phoneNumber: phoneNumber,
-        userId: userId,
-        password: password,
-        passwordConfirm: passwordConfirm,
-        role: role,
-      },
-    })
-      .then(function (response) {
-        if (response.data.status == 200) {
-          alert("회원가입에 성공하였습니다.(임시 메세지)");
-          router.push("/login");
-        } else if (response.data.status == 500) {
-          alert("중복된 아이디 입니다.(임시 메세지)");
-        }
-      })
-      .catch(function (error) {
-        alert("통신에 실패하였습니다.(임시 메세지)");
-        console.log(error);
-      });
+      data.firstName && setFirstName(data.firstName);
+      data.lastName && setLastName(data.lastName);
+      data.companyName && setCompanyName(data.companyName);
+      // 카테고리 삭제하기로 하지않았나?
+      // 카테고리 삭제하는거 아니면 카테고리 세팅 코드 삽입
+      data.companyUrl && setHomepageUrl(data.companyUrl);
+      data.countryCode &&
+        setCounryCode(countryList.filter((x) => x.code === "KR")[0].code_num);
+      data.phoneNumber && setPhoneNumber(data.phoneNumber);
+      data.userId && setUserId(data.userId);
+      data.role && setRole(data.role);
+    });
   };
 
   /** 국가코드에따라 국가 전화 코드 할당하는 함수 */
@@ -195,8 +168,15 @@ const useAccount_detail = () => {
     phoneNumberHandler();
   }, [countryCode]);
 
+  useEffect(() => {
+    userInfoHandler();
+
+    console.log(countryList.filter((x) => x.code === "KR"));
+  }, []);
+
   return (
     <Container>
+      <SideBar />
       <Main>
         <TitleWrapper>
           <ImageWrapper onClick={() => goBack()}>
@@ -211,7 +191,7 @@ const useAccount_detail = () => {
             <Input
               type="text"
               onChange={(e) => setFirstName(e.target.value)}
-              value="Joseph"
+              value={firstName}
               disabled
             />
           </InputContainer>
@@ -220,7 +200,7 @@ const useAccount_detail = () => {
             <Input
               type="text"
               onChange={(e) => setLastName(e.target.value)}
-              value="Kim"
+              value={lastName}
               disabled
             />
           </InputContainer>
@@ -235,22 +215,23 @@ const useAccount_detail = () => {
           <Input
             type="text"
             onChange={(e) => setCompanyName(e.target.value)}
-            value="test"
+            value={companyName}
             disabled
           />
         </InputContainer>
-        <InputContainer>
+        {/** 나중에 추가 */}
+        {/* <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
-          <Input type="text" value="test" disabled />
-        </InputContainer>
+          <Input type="text" value="" disabled />
+        </InputContainer> */}
         <InputContainer>
           <InputTitle>Company URL</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
           <Input
             type="text"
             onChange={(e) => setHomepageUrl(e.target.value)}
-            value="test"
+            value={homepageUrl}
             disabled
           />
         </InputContainer>
@@ -258,11 +239,11 @@ const useAccount_detail = () => {
           <InputTitle>Phone number</InputTitle>
           <Wrapper>
             <SelectBoxCountryCodeNumTemporary>
-              82
+              {countryCode}
             </SelectBoxCountryCodeNumTemporary>
             <Input
               type="text"
-              value="01012345678"
+              value={phoneNumber}
               onChange={(e) => inputHandlerOnlyNumber(e)}
               disabled
             />
@@ -289,30 +270,11 @@ const useAccount_detail = () => {
           <InputEmail
             type="email"
             onChange={(e) => setUserId(e.target.value)}
-            value="test"
+            value={userId}
             disabled
           />
         </InputContainer>
-        <InputContainer>
-          <InputTitle>Password</InputTitle>
 
-          <Input
-            type="password"
-            onChange={(e) => setPassowrd(e.target.value)}
-            value="test"
-            disabled
-          />
-        </InputContainer>
-        <InputContainer>
-          <InputTitle>Password confirm</InputTitle>
-
-          <Input
-            type="password"
-            onChange={(e) => setPasswordConfirm(e.target.value)}
-            value="test"
-            disabled
-          />
-        </InputContainer>
         <Link href="/edit_account_password" style={{ textDecoration: "none" }}>
           <EditButton>Edit password</EditButton>
         </Link>
@@ -354,27 +316,28 @@ const SelectBoxCountryCodeNumTemporary = styled.div`
 
 const Container = styled.div`
   display: flex;
+  position: relative;
   justify-content: center;
   margin: 0 auto;
   padding-top: 30px;
   padding-bottom: 40px;
-  max-width: 427px;
+  max-width: 637px;
+  min-height: 350px;
+  @media screen and (max-width: 1279px) {
+    max-width: 608px;
+  }
   @media screen and (max-width: 768px) {
-    display: block;
-    max-width: 100%; // 사이드바 추가하는거면 나중에 여기 삭제
     padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
-    boxsizing: border-box;
+    box-sizing: border-box;
   }
 `;
 const Main = styled.div`
-  position: relative;
   margin-left: 20px;
   width: 100%;
   @media screen and (max-width: 768px) {
     margin-left: 0;
-    margin-bottom: 20px;
   }
 `;
 const TitleWrapper = styled.div`
@@ -465,21 +428,17 @@ const InputEmail = styled.input`
   color: #121822;
 
   &:disabled {
-    background-color: #f2f6f8;
+    background-color: #ffffff;
   }
 `;
-const EditButton = styled.button`
+const EditButton = styled.div`
   margin-bottom: 20px;
-  width: 100%;
-  height: 48px;
-  background-color: #f2f6f8;
-  border: 1px solid #dee8ec;
-  border-radius: 2px;
-  font-weight: 700;
   font-size: 14px;
-  line-height: 18px;
-  color: #121822;
-  cursor: pointer;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18.2px;
+  color: #a4b0b2;
+  text-decoration-line: underline;
 `;
 const Line = styled.div`
   margin-bottom: 20px;
