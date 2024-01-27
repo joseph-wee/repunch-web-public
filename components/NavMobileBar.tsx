@@ -30,7 +30,7 @@ const NavMobileBar = ({
       let at = localStorage.getItem("at");
       dispatch(login());
       userCheck(at).then((res) => {
-        setName(res?.data.result.lastName);
+        setName(res?.data.result.lastName + " " + res?.data.result.firstName);
       });
     }
   };
@@ -46,6 +46,19 @@ const NavMobileBar = ({
   useEffect(() => {
     loginCheckHandler();
   }, [isLogin]);
+
+  /** 링크 클릭 핸들러 */
+  // 엑티브 비활성화
+  // 로그인 체크 후 false면 로그인 페이지로 이동
+  // true면 해당 페이지로 이동
+  const routingHandler = (url: string) => {
+    setIsActive(false);
+    if (loginCheck()) {
+      router.push(`/${url}`);
+      return;
+    }
+    router.push(`/login?${url}`);
+  };
 
   return (
     <>
@@ -65,33 +78,6 @@ const NavMobileBar = ({
               Shop
             </Link>
           </Menu>
-          {/* <Menu>
-            <Link
-              onClick={() => setIsActive(false)}
-              href="/shop_fabrics"
-              style={{ textDecoration: "none", color: "#121822" }}
-            >
-              Shop fabric
-            </Link>
-          </Menu>
-          <Menu>
-            <Link
-              onClick={() => setIsActive(false)}
-              href="/shop_supplies"
-              style={{ textDecoration: "none", color: "#121822" }}
-            >
-              Shop supplies
-            </Link>
-          </Menu>
-          <Menu>
-            <Link
-              onClick={() => setIsActive(false)}
-              href="/shop_project"
-              style={{ textDecoration: "none", color: "#121822" }}
-            >
-              Shop by project
-            </Link>
-          </Menu> */}
           <Menu>
             <Link
               onClick={() => setIsActive(false)}
@@ -101,17 +87,29 @@ const NavMobileBar = ({
               About us
             </Link>
           </Menu>
-          {isLogin && (
-            <Menu>
-              <Link
-                onClick={() => setIsActive(false)}
-                href="/my_account"
-                style={{ textDecoration: "none", color: "#121822" }}
-              >
-                Profile
-              </Link>
-            </Menu>
-          )}
+
+          <Menu>
+            <Button onClick={() => routingHandler("my_account")}>
+              Profile
+            </Button>
+          </Menu>
+          <Menu>
+            <Button onClick={() => routingHandler("order")}>Order</Button>
+          </Menu>
+          <Menu>
+            <Button onClick={() => routingHandler("order_history")}>
+              Order history
+            </Button>
+          </Menu>
+          <Menu>
+            <Button onClick={() => routingHandler("address")}>Address</Button>
+          </Menu>
+          <Menu>
+            <Button onClick={() => routingHandler("account_detail")}>
+              Account Detail
+            </Button>
+          </Menu>
+          <Line />
           <Menu>
             <MenuButton isActive={isLogin}>
               <Link
@@ -183,7 +181,7 @@ const Container = styled.nav<{ isActive: boolean; url: string }>`
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
   box-sizing: border-box;
   width: 100%;
   background-color: ${(props) => {
@@ -195,7 +193,6 @@ const Container = styled.nav<{ isActive: boolean; url: string }>`
 
 const MenuWrapper = styled.ul``;
 const Menu = styled.li`
-  display: flex;
   position: relative;
   margin-bottom: 15px;
   height: 31px;
@@ -206,15 +203,27 @@ const Menu = styled.li`
   font-size: 16px;
   color: #121822;
   &:last-of-type {
+    display: flex;
+    cursor: default;
     margin-bottom: 0px;
     height: 24px;
   }
+`;
+const Button = styled.span`
+  cursor: pointer;
 `;
 const MenuButtonWrapper = styled.nav`
   position: absolute;
   left: 0px;
   bottom: 26px;
   width: 100%;
+`;
+const Line = styled.div`
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  border-top: 1px solid #4f590f;
+  opacity: 0.3;
 `;
 const MenuButtonBox = styled.div`
   position: relative;
