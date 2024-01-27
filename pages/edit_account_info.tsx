@@ -19,6 +19,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { goBack } from "../utils/functions";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { editInfoRequest, userInfoRequest } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -33,20 +34,21 @@ export interface ListCountryArray extends Array<List> {}
 const useEdit_account_info = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
 
-  const [firstName, setFirstName] = useState<string>("jkim"); // 성
-  const [lastName, setLastName] = useState<string>("jkim"); // 이름
-  const [countryCode, setCounryCode] = useState<string>("KR"); // 국가코드
-  const [companyName, setCompanyName] = useState<string>("test"); // 회사이름
+  const [firstName, setFirstName] = useState<string>(""); // 성
+  const [lastName, setLastName] = useState<string>(""); // 이름
+  const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
+  const [companyName, setCompanyName] = useState<string>(""); // 회사이름
   const [industryCode, setIndustryCode] = useState<string | undefined>(""); // 회사 업종구분 코드
-  const [homepageUrl, setHomepageUrl] = useState<string>("test"); // 회사 홈페이지 url
+  const [homepageUrl, setHomepageUrl] = useState<string>(""); // 회사 홈페이지 url
   const [countryPhoneNumber, setCountryPhoneNumber] = useState<
     string | undefined
   >(""); // 국가 전화코드
-  const [phoneNumber, setPhoneNumber] = useState<string>("01012345678"); // 전화번호
-  const [userId, setUserId] = useState<string>("jkim"); // 유저ID(이메일주소)
+  const [phoneNumber, setPhoneNumber] = useState<string>(""); // 전화번호
+  const [userId, setUserId] = useState<string>(""); // 유저ID(이메일주소)
   const [password, setPassowrd] = useState<string>(""); // 비밀번호
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
-  const [role, setRole] = useState<string>("USER"); // 유저 권한
+  const [role, setRole] = useState<string>(""); // 유저 권한
+  const [companyCategory, setCompanyCategory] = useState("");
 
   const router = useRouter();
 
@@ -154,38 +156,25 @@ const useEdit_account_info = () => {
     console.log(role);
   };
 
-  /** 회원가입 요청 api */
-  const registerApiRequest = () => {
-    axios({
-      method: "POST",
-      url: process.env.NEXT_PUBLIC_API_KEY + "signup",
-      data: {
-        firstName: firstName,
-        lastName: lastName,
-        countryCode: countryCode,
-        companyName: companyName,
-        industryCode: industryCode,
-        homepageUrl: homepageUrl,
-        countryPhoneNumber: countryPhoneNumber,
-        phoneNumber: phoneNumber,
-        userId: userId,
-        password: password,
-        passwordConfirm: passwordConfirm,
-        role: role,
-      },
-    })
-      .then(function (response) {
-        if (response.data.status == 200) {
-          alert("회원가입에 성공하였습니다.(임시 메세지)");
-          router.push("/login");
-        } else if (response.data.status == 500) {
-          alert("중복된 아이디 입니다.(임시 메세지)");
-        }
-      })
-      .catch(function (error) {
-        alert("통신에 실패하였습니다.(임시 메세지)");
-        console.log(error);
-      });
+  /** 현재 유저 정보 요청 및 세팅 */
+  const userInfoHandler = () => {
+    let at = localStorage.getItem("at");
+    userInfoRequest(at).then((res: any) => {
+      const data = res?.data.result;
+      console.log(data);
+
+      data.firstName && setFirstName(data.firstName);
+      data.lastName && setLastName(data.lastName);
+      data.companyName && setCompanyName(data.companyName);
+      // 카테고리 삭제하기로 하지않았나?
+      // 카테고리 삭제하는거 아니면 카테고리 세팅 코드 삽입
+      data.companyUrl && setHomepageUrl(data.companyUrl);
+      data.countryCode &&
+        setCounryCode(countryList.filter((x) => x.code === "KR")[0].code);
+      data.phoneNumber && setPhoneNumber(data.phoneNumber);
+      data.userId && setUserId(data.userId);
+      data.role && setRole(data.role);
+    });
   };
 
   /** 국가코드에따라 국가 전화 코드 할당하는 함수 */
@@ -357,13 +346,57 @@ const useEdit_account_info = () => {
     }
   };
 
-  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
-  const validationCheckAndSignupRequest = () => {
-    validationAll() && router.push("/account_detail");
+  /** 회원 정보 수정 핸들러 */
+  const editInfoHandler = () => {
+    let at: any;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    editInfoRequest(
+      at,
+      firstName,
+      lastName,
+      countryCode,
+      companyName,
+      countryPhoneNumber,
+      phoneNumber,
+      userId,
+      homepageUrl,
+      companyCategory
+    ).then((res) => {
+      // 성공 케이스
+      if (res?.data.status === 200) {
+        router.push("/account_detail");
+      }
+    });
   };
+
+  /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
+  const validationCheckAndEditInfoRequest = () => {
+    validationAll() && editInfoHandler();
+  };
+
+  /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
+  useEffect(() => {
+    phoneNumberHandler();
+  }, [countryCode]);
+
+  useEffect(() => {
+    userInfoHandler();
+
+    console.log(countryList.filter((x) => x.code === "KR"));
+  }, []);
 
   return (
     <Container>
+      <SideBar />
       <Main>
         <TitleWrapper>
           <ImageWrapper onClick={() => goBack()}>
@@ -427,7 +460,7 @@ const useEdit_account_info = () => {
         </InputContainer>
         <InputContainer>
           <InputTitle>Company name</InputTitle>
-          <InputOptionalText>(Optional)</InputOptionalText>
+
           <Input
             type="text"
             value={companyName}
@@ -442,7 +475,8 @@ const useEdit_account_info = () => {
             ErrorCase
           </ErrorCase>
         </InputContainer>
-        <InputContainer>
+        {/** 나중에 추가하기로함 */}
+        {/* <InputContainer>
           <InputTitle>Company Category</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
           <SelectBox
@@ -460,7 +494,7 @@ const useEdit_account_info = () => {
           >
             ErrorCase
           </ErrorCase>
-        </InputContainer>
+        </InputContainer> */}
         <InputContainer>
           <InputTitle>Company URL</InputTitle>
           <InputOptionalText>(Optional)</InputOptionalText>
@@ -520,7 +554,7 @@ const useEdit_account_info = () => {
             </Link>
           </Button>
 
-          <Button onClick={() => validationCheckAndSignupRequest()}>
+          <Button onClick={() => validationCheckAndEditInfoRequest()}>
             Done
           </Button>
         </ButtonWrapper>
@@ -551,26 +585,28 @@ const SelectBoxCountryCodeNumTemporary = styled.div`
 `;
 const Container = styled.div`
   display: flex;
+  position: relative;
   justify-content: center;
   margin: 0 auto;
   padding-top: 30px;
   padding-bottom: 40px;
-  max-width: 427px;
+  max-width: 637px;
+  min-height: 350px;
+  @media screen and (max-width: 1279px) {
+    max-width: 608px;
+  }
   @media screen and (max-width: 768px) {
-    display: block;
-    max-width: 100%; // 사이드바 추가하는거면 나중에 여기 삭제
+    padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
-    boxsizing: border-box;
+    box-sizing: border-box;
   }
 `;
 const Main = styled.div`
-  position: relative;
   margin-left: 20px;
   width: 100%;
   @media screen and (max-width: 768px) {
     margin-left: 0;
-    margin-bottom: 20px;
   }
 `;
 const TitleWrapper = styled.div`
