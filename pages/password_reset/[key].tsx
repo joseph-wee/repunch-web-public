@@ -40,17 +40,18 @@ const usePassword_reset = () => {
   };
 
   const pwResetRequestHandler = () => {
-    let pwVa = validationPassword();
-    let pwConfirmVa = validationPasswordConfirm();
-    let sessionKey = router.query.key;
-    if (pwVa && pwConfirmVa) {
-      pwResetRequest(sessionKey, password, passwordConfirm).then((res) => {
-        if (res?.data == 200) {
-          setPopUpIsActive(true);
-          router.push("/login");
-        }
-      });
-    }
+    // 리셋 api 나오면 다시 수정하기
+    // let pwVa = validationPassword();
+    // let pwConfirmVa = validationPasswordConfirm();
+    // let sessionKey = router.query.key;
+    // if (pwVa && pwConfirmVa) {
+    //   pwResetRequest(sessionKey, password, passwordConfirm).then((res) => {
+    //     if (res?.data == 200) {
+    //       setPopUpIsActive(true);
+    //       router.push("/login");
+    //     }
+    //   });
+    // }
   };
 
   return (
