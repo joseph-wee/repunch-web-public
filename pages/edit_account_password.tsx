@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect } from "react";
 import { goBack } from "../utils/functions";
+import { pwResetRequest, userInfoRequest } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -42,10 +43,13 @@ const useEdit_account_password = () => {
   >(""); // 국가 전화코드
   const [phoneNumber, setPhoneNumber] = useState<string>(""); // 전화번호
   const [userId, setUserId] = useState<string>(""); // 유저ID(이메일주소)
+  const [currentPw, setCurrentPw] = useState<string>(""); // 현재 비밀번호
   const [password, setPassowrd] = useState<string>(""); // 비밀번호
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
   const [role, setRole] = useState<string>("USER"); // 유저 권한
 
+  const [currentPasswordValidationResult, setCurrentPassowrdValidationResult] =
+    useState<number>(0); // 현재 비밀번호 유효성 체크
   const [passwordValidationResult, setPassowrdValidationResult] =
     useState<number>(0); // 비밀번호 유효성 체크
   const [passwordConfirmValidationResult, setPasswordConfirmValidationResult] =
@@ -196,6 +200,17 @@ const useEdit_account_password = () => {
     }
   };
 
+  /** current pw 유효성 검사 */
+  const validationCurrentPw = () => {
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (regexp.test(currentPw)) {
+      setCurrentPassowrdValidationResult(1);
+      return true;
+    }
+    setCurrentPassowrdValidationResult(2);
+    return false;
+  };
+
   /** password 유효성 검사 */
   const validationPassword = () => {
     let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
@@ -219,22 +234,87 @@ const useEdit_account_password = () => {
 
   /** 모든 유효성 검사 */
   const validationAll = () => {
-    let validationResult = new Array(2);
-    validationResult[0] = validationPassword();
-    validationResult[1] = validationPasswordConfirm();
+    let validationResult = new Array(3);
+    validationResult[0] = validationCurrentPw();
+    validationResult[1] = validationPassword();
+    validationResult[2] = validationPasswordConfirm();
 
-    if (validationResult[0] && validationResult[1]) {
+    if (validationResult[0] && validationResult[1] && validationResult[2]) {
       return true;
+    }
+
+    //유효성 결과 false값있으면 그 input으로 포커스, 모두 true면 return true
+    for (let i = 0; i < 2; i++) {
+      if (validationResult[i] == false) {
+        ref.current[i]?.focus();
+        ref.current[i]?.scrollIntoView({
+          block: "center",
+          inline: "start",
+        });
+        break;
+      }
     }
   };
 
   /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
   const validationCheckAndSignupRequest = () => {
-    validationAll() && router.push("/account_detail");
+    validationAll() && pwResetRequestHandler();
   };
+
+  /** 현재 유저 정보 요청 및 세팅 */
+  const userInfoHandler = () => {
+    let at = localStorage.getItem("at");
+    userInfoRequest(at).then((res: any) => {
+      const data = res?.data.result;
+      console.log(data);
+
+      data.firstName && setFirstName(data.firstName);
+      data.lastName && setLastName(data.lastName);
+      data.companyName && setCompanyName(data.companyName);
+      // 카테고리 삭제하기로 하지않았나?
+      // 카테고리 삭제하는거 아니면 카테고리 세팅 코드 삽입
+      data.companyUrl && setHomepageUrl(data.companyUrl);
+      data.countryCode &&
+        setCounryCode(countryList.filter((x) => x.code === "KR")[0].code);
+      data.phoneNumber && setPhoneNumber(data.phoneNumber);
+      data.userId && setUserId(data.userId);
+      data.role && setRole(data.role);
+    });
+  };
+
+  /** 비밀번호 재설정 요청 */
+  const pwResetRequestHandler = () => {
+    const at = localStorage.getItem("at");
+    pwResetRequest(at, currentPw, password, passwordConfirm).then((res) => {
+      const status = res?.data.status;
+
+      // 성공 case
+      if (status === 200) {
+        router.push("/account_detail");
+        return;
+      }
+      // 실패 case : 현재 비밀번호가 잘못됨
+      if (status === 500) {
+        setCurrentPassowrdValidationResult(3);
+        ref.current[0]?.focus();
+        ref.current[0]?.scrollIntoView({
+          block: "center",
+          inline: "start",
+        });
+        return;
+      }
+    });
+  };
+
+  useEffect(() => {
+    userInfoHandler();
+
+    console.log(countryList.filter((x) => x.code === "KR"));
+  }, []);
 
   return (
     <Container>
+      <SideBar />
       <Main>
         <TitleWrapper>
           <ImageWrapper onClick={() => goBack()}>
@@ -250,9 +330,27 @@ const useEdit_account_password = () => {
           <InputEmail
             type="email"
             onChange={(e) => setUserId(e.target.value)}
-            value="test"
+            value={userId}
             disabled
           />
+        </InputContainer>
+        <InputContainer>
+          <InputTitle>Current Password</InputTitle>
+
+          <Input
+            type="password"
+            onChange={(e) => {
+              setCurrentPw(e.target.value);
+            }}
+            ref={(element) => {
+              ref.current[0] = element;
+            }}
+          />
+          <ErrorCase isActive={currentPasswordValidationResult}>
+            {currentPasswordValidationResult === 2
+              ? "Please enter a password of at least 10 characters."
+              : "It's wrong current password."}
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password</InputTitle>
@@ -263,7 +361,7 @@ const useEdit_account_password = () => {
               setPassowrd(e.target.value);
             }}
             ref={(element) => {
-              ref.current[8] = element;
+              ref.current[1] = element;
             }}
           />
           <ErrorCase isActive={passwordValidationResult}>ErrorCase</ErrorCase>
@@ -277,7 +375,7 @@ const useEdit_account_password = () => {
               setPasswordConfirm(e.target.value);
             }}
             ref={(element) => {
-              ref.current[9] = element;
+              ref.current[2] = element;
             }}
           />
           <ErrorCase isActive={passwordConfirmValidationResult}>
@@ -302,26 +400,28 @@ const useEdit_account_password = () => {
 
 const Container = styled.div`
   display: flex;
+  position: relative;
   justify-content: center;
   margin: 0 auto;
   padding-top: 30px;
   padding-bottom: 40px;
-  max-width: 427px;
+  max-width: 637px;
+  min-height: 350px;
+  @media screen and (max-width: 1279px) {
+    max-width: 608px;
+  }
   @media screen and (max-width: 768px) {
-    display: block;
-    max-width: 100%; // 사이드바 추가하는거면 나중에 여기 삭제
+    padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
-    boxsizing: border-box;
+    box-sizing: border-box;
   }
 `;
 const Main = styled.div`
-  position: relative;
   margin-left: 20px;
   width: 100%;
   @media screen and (max-width: 768px) {
     margin-left: 0;
-    margin-bottom: 20px;
   }
 `;
 const TitleWrapper = styled.div`
@@ -398,9 +498,14 @@ const Input = styled.input`
   }
 `;
 const ErrorCase = styled.div<{ isActive: number }>`
+  display: none;
   display: ${(props) => {
-    return props.isActive == 2 ? "block" : "none";
+    return props.isActive == 2 && "block";
   }};
+  display: ${(props) => {
+    return props.isActive == 3 && "block";
+  }};
+
   margin-top: 10px;
   height: ${(props) => {
     return props.isActive == 0 || props.isActive == 1 ? "0px" : "";
