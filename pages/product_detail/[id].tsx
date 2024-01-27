@@ -150,7 +150,7 @@ const useId = () => {
     setCount(count - 1);
   };
   const plus = () => {
-    if (count == seletedOption.quantity) return;
+    if (count >= seletedOption.quantity) return;
     setCount(count + 1);
   };
 
@@ -159,8 +159,11 @@ const useId = () => {
     let reg = /[0-9]/g;
     productDetailRequest(window.location.pathname.slice(16)).then(
       async (res) => {
-        setInfo(res.data.result);
-        console.log(res.data.result);
+        let data = res.data.result;
+        data.description = replacer(data.description);
+        setInfo(data);
+        console.log(data);
+
         // 임시로 옵션들 소팅 후 할당
         let tempOptions = res.data.result.options.sort(
           (a: any, b: any) =>
@@ -218,7 +221,7 @@ const useId = () => {
             color: el.color.name,
             width: res.data.result.width,
             length: el.length,
-            price: el.price,
+            price: res?.data.result.price,
             quantity: el.quantity,
             samplePrice: el.samplePrice,
             sampleQuantity: el.sampleQuantity,
@@ -256,6 +259,7 @@ const useId = () => {
                 productOptionNo: el.productOptionNo,
                 color: el.color.name,
                 type: "thumbnail",
+                // `${select.imageUrl}?&w=320&q=75` : ""}
                 imageUrl: sl.resourceUrl,
                 videoUrl: "",
                 clicked: false,
@@ -439,6 +443,7 @@ const useId = () => {
     }
     /** 솔드아웃이면 주문 안되게 */
     if (seletedOption.quantity == 0) {
+      setPopUpIsActive(2);
       return;
     }
 
@@ -512,7 +517,8 @@ const useId = () => {
     }
 
     /** 솔드아웃이면 주문 안되게 */
-    if (seletedOption.quantity == 0) {
+    if (seletedOption.sampleQuantity === 0) {
+      setSamplePopUp(2);
       return;
     }
 
@@ -632,6 +638,13 @@ const useId = () => {
     return dollar;
   };
 
+  /** 개행문자 치환 */
+  const replacer = (str: string) => {
+    console.log(str);
+    const result = str.replace(/\\r\\n|\\r/g, "\n").split("\n");
+    return result;
+  };
+
   useEffect(() => {
     console.log(seletedOption);
   }, [seletedOption]);
@@ -642,7 +655,11 @@ const useId = () => {
         <ProductInfoContainer>
           <ImageVideoWrapper>
             <BigImagevideoWrapper>
-              <VideoPlayer isActive={true} select={select} />
+              <VideoPlayer
+                isActive={true}
+                select={select}
+                thumbnailList={thumbnailVideoList}
+              />
               <LikeButton onClick={() => setLike(!like)}>
                 <Image
                   src={like ? btn_review_sm : btn_favorite_inact_sm}
@@ -715,16 +732,9 @@ const useId = () => {
               </InfoContent>
             </InfoWrapper>
             <InfoWrapper>
-              <InfoTitle>Width/length</InfoTitle>
+              <InfoTitle>Width</InfoTitle>
               <InfoContent>
-                {info &&
-                  info.options.map((i: any, j: number) => {
-                    return (
-                      <WidthContent key={`width-${j}`}>
-                        {`${info.width}cm*${i.length}m(W*L)`}
-                      </WidthContent>
-                    );
-                  })}
+                <InfoContent>{info && `${info.width} Inch`}</InfoContent>
               </InfoContent>
             </InfoWrapper>
             <InfoWrapper>
@@ -742,11 +752,18 @@ const useId = () => {
               <InfoContent>{info && `${availableChanger(info)}`}</InfoContent>
             </InfoWrapper>
             <InfoWrapper>
-              <InfoTitle>Color</InfoTitle>
+              <InfoTitle>Color/length</InfoTitle>
               <InfoContent>
                 {info &&
-                  productColors.map((i: any, j: number) => {
-                    return <WidthContent key={`color-${j}`}>{i}</WidthContent>;
+                  info.options.map((i: any, j: number) => {
+                    return (
+                      <WidthContent key={`color-${j}`}>
+                        {`${i.color.name} / ${i.length}m(Length)${
+                          j !== info.options.length - 1 ? "," : ""
+                        }`}
+                        &nbsp;
+                      </WidthContent>
+                    );
                   })}
               </InfoContent>
             </InfoWrapper>
@@ -764,7 +781,16 @@ const useId = () => {
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Descripttion</InfoTitle>
-              <InfoDescription>{info && `${info.description}`}</InfoDescription>
+              <InfoDescriptionContent>
+                {info &&
+                  info.description.map((el: any, index: number) => {
+                    return (
+                      <InfoDescription key={`${index}-iop`}>
+                        {`${el}`}
+                      </InfoDescription>
+                    );
+                  })}
+              </InfoDescriptionContent>
             </InfoWrapper>
           </ProductInfoPurchaseContainer>
         </ProductInfoContainer>
@@ -838,7 +864,9 @@ const useId = () => {
                   seletedOption.length * count
                 } m`}</ProductUnit>
                 <ProductPrice>
-                  $ {seletedOption.price && priceToDollar(seletedOption.price)}
+                  ${" "}
+                  {seletedOption.price &&
+                    priceToDollar(seletedOption.price * count)}
                 </ProductPrice>
               </ProductPriceWrapper>
             </LengthWrapper>
@@ -887,16 +915,9 @@ const useId = () => {
             </InfoContent>
           </InfoWrapper>
           <InfoWrapper>
-            <InfoTitle>Width/length</InfoTitle>
+            <InfoTitle>Width</InfoTitle>
             <InfoContent>
-              {info &&
-                info.options.map((i: any, j: number) => {
-                  return (
-                    <WidthContent key={`width-${j}`}>
-                      {`${info.width}cm*${i.length}m(W*L)`}
-                    </WidthContent>
-                  );
-                })}
+              <InfoContent>{info && `${info.width} Inch`}</InfoContent>
             </InfoContent>
           </InfoWrapper>
           <InfoWrapper>
@@ -914,17 +935,16 @@ const useId = () => {
             <InfoContent>{info && `${availableChanger(info)}`}</InfoContent>
           </InfoWrapper>
           <InfoWrapper>
-            <InfoTitle>Color</InfoTitle>
+            <InfoTitle>Color/length</InfoTitle>
             <InfoContent>
               {info &&
                 info.options.map((i: any, j: number) => {
                   return (
                     <WidthContent key={`color-${j}`}>
-                      {info &&
-                        `${
-                          colors.filter((el: any) => el.colorNo == i.colorNo)[0]
-                            .name
-                        }`}
+                      {`${i.color.name} / ${i.length}m(Length)${
+                        j !== i.length - 1 && `,`
+                      }`}
+                      &nbsp;
                     </WidthContent>
                   );
                 })}
@@ -944,7 +964,16 @@ const useId = () => {
           </InfoWrapper>
           <InfoWrapper>
             <InfoTitle>Descripttion</InfoTitle>
-            <InfoDescription>{info && `${info.description}`}</InfoDescription>
+            <InfoDescriptionContent>
+              {info &&
+                info.description.map((el: any, index: number) => {
+                  return (
+                    <InfoDescription key={`${index}-iop`}>
+                      {`${el}`}
+                    </InfoDescription>
+                  );
+                })}
+            </InfoDescriptionContent>
           </InfoWrapper>
         </ProductInfoPurchaseContainerMobile>
 
@@ -1211,6 +1240,7 @@ const InfoWrapper = styled.div`
     margin-bottom: 0px;
   }
 `;
+
 const InfoTitle = styled.div`
   margin-right: 6px;
   flex-shrink: 0;
@@ -1224,6 +1254,9 @@ const InfoTitle = styled.div`
   color: #a4b0b3;
 `;
 const InfoContent = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 12px;
   font-weight: 500;
   font-size: 14px;
   line-height: 17px;
@@ -1232,16 +1265,20 @@ const InfoContent = styled.div`
 
   color: #333333;
 `;
-const WidthContent = styled.div`
-  margin-bottom: 12px;
-  &:last-of-type {
-    margin-bottom: 0px;
-  }
-`;
+const WidthContent = styled.div``;
 const InfoWidthLengthWrapper = styled.div`
   margin-bottom: 12px;
 `;
 const InfoDescription = styled.div`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+
+  letter-spacing: -0.011em;
+
+  color: #333333;
+`;
+const InfoDescriptionContent = styled.div`
   font-weight: 400;
   font-size: 14px;
   line-height: 17px;
@@ -1695,7 +1732,7 @@ const PopUpBox = styled.div<{ isActive: number }>`
 `;
 const SamplePopUpBox = styled.div<{ isActive: number }>`
   display: ${(props) => {
-    return props.isActive == 0 ? "none" : "flex";
+    return props.isActive === 0 ? "none" : "flex";
   }};
   z-index: 3;
   position: fixed;
