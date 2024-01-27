@@ -81,8 +81,20 @@ const useSideBar = () => {
           </Menu>
         </Link>
         <Link href="/account_detail" style={{ textDecoration: "none" }}>
-          <Menu isActive={pathCheck("/account_detail")}>
-            <ImageWrapper isActive={pathCheck("/account_detail")}>
+          <Menu
+            isActive={
+              pathCheck("/account_detail") ||
+              pathCheck("/edit_account_info") ||
+              pathCheck("/edit_account_password")
+            }
+          >
+            <ImageWrapper
+              isActive={
+                pathCheck("/account_detail") ||
+                pathCheck("/edit_account_info") ||
+                pathCheck("/edit_account_password")
+              }
+            >
               <Image src={ic_nav_indi} alt={"button_close"} />
             </ImageWrapper>
             Account Detail
