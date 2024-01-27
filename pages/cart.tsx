@@ -3,13 +3,17 @@ import styled from "styled-components";
 import { SideBar, CartMeterageProduct, CartSampleProduct } from "../components";
 import Link from "next/link";
 import Image from "next/image";
-import { btn_web_back, ic_check_wht, ic_info } from "../assets";
+import { btn_web_back, ic_check_wht, ic_info, ic_logo_gray } from "../assets";
 import { goBack } from "../utils/functions";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setMeterage, setSample } from "../features/login/cartSlice";
 import { useRouter } from "next/router";
-import { cartListRequest, loginRefreshRequest } from "../utils/api";
+import {
+  cartDelteRequest,
+  cartListRequest,
+  loginRefreshRequest,
+} from "../utils/api";
 import { setTempOrderList } from "../features/login/tempOrderSlice";
 
 const useCart = () => {
@@ -32,6 +36,9 @@ const useCart = () => {
 
   const [rollList, setRollList] = useState<any>([]); // 카트 목록 담길 state
   const [sampleList, setSampleList] = useState<any>([]); // 샘플 목록 담길 state
+
+  const [noRoll, setNoRoll] = useState(false);
+  const [noSample, setNoSample] = useState(false);
 
   const { value: tempOrderList } = useAppSelector(
     (state) => state.tempOrderList
@@ -171,6 +178,7 @@ const useCart = () => {
               if (res?.data.status == 200) {
                 // 장바구니 개수가 0개이면 리턴
                 if (res.data.result.data == null) {
+                  rollList.length === 0 && setNoRoll(true);
                   return;
                 }
 
@@ -188,10 +196,11 @@ const useCart = () => {
                     color: el.option.color.name, // 컬러
                     width: el.product.width, // 너비
                     length: el.option.length, // 길이
-                    price: el.option.price, // 가격
+                    price: el.product.price, // 가격
                     count: el.count, // 담은 개수
-                    totalPrice: el.count * el.option.price, // 토탈 가격
+                    totalPrice: el.count * el.price, // 토탈 가격
                     quantity: el.option.quantity, // 판매 가능 개수
+                    display: true,
                   });
                 });
               }
@@ -207,6 +216,7 @@ const useCart = () => {
       if (res?.data.status == 200) {
         // 장바구니 개수가 0개이면 리턴
         if (res.data.result.data == null) {
+          rollList.length === 0 && setNoRoll(true);
           return;
         }
         console.log(res);
@@ -224,10 +234,11 @@ const useCart = () => {
             color: el.option.color.name, // 컬러
             width: el.product.width, // 너비
             length: el.option.length, // 길이
-            price: el.option.price, // 가격
+            price: el.product.price, // 가격
             count: el.count, // 담은 개수
-            totalPrice: el.count * el.option.price, // 토탈 가격
+            totalPrice: el.count * el.price, // 토탈 가격
             quantity: el.option.quantity, // 판매 가능 개수
+            display: true,
           });
         });
         console.log(tempList);
@@ -273,10 +284,6 @@ const useCart = () => {
           // 토큰 재발급 성공 case
           // 엑세스 토큰, 리프레쉬 토큰 세팅 후 카트목록 재요청
           if (res?.data.status == 200) {
-            // 장바구니 개수가 0개이면 리턴
-            if (res.data.result.data == null) {
-              return;
-            }
             at = res.data.result.access_token;
             rt = res.data.result.refresh_token;
 
@@ -294,6 +301,7 @@ const useCart = () => {
               if (res?.data.status == 200) {
                 // 장바구니 개수가 0개이면 리턴
                 if (res.data.result.data == null) {
+                  sampleList.length === 0 && setNoSample(true);
                   return;
                 }
                 // nextSearchAfter 저장
@@ -312,8 +320,9 @@ const useCart = () => {
                     length: el.option.length, // 길이
                     price: el.option.samplePrice, // 가격
                     count: el.count, // 담은 개수
-                    totalPrice: el.count * el.price, // 토탈 가격
+                    totalPrice: el.count * el.samplePrice, // 토탈 가격
                     quantity: el.option.quantity, // 판매 가능 개수
+                    display: true,
                   });
                 });
               }
@@ -329,6 +338,7 @@ const useCart = () => {
       if (res?.data.status == 200) {
         // 장바구니 개수가 0개이면 리턴
         if (res.data.result.data == null) {
+          sampleList.length === 0 && setNoSample(true);
           return;
         }
         console.log(res);
@@ -348,8 +358,9 @@ const useCart = () => {
             length: el.option.length, // 길이
             price: el.option.samplePrice, // 가격
             count: el.count, // 담은 개수
-            totalPrice: el.count * el.price, // 토탈 가격
+            totalPrice: el.count * el.samplePrice, // 토탈 가격
             quantity: el.option.quantity, // 판매 가능 개수
+            display: true,
           });
         });
 
@@ -384,10 +395,6 @@ const useCart = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(sampleList);
-  }, [sampleList]);
-
   /** 선택목록 데이터 주문 페이지로 넘기기 */
   const purchaseHandler = () => {
     let temp: any = [];
@@ -420,6 +427,52 @@ const useCart = () => {
       if (temp.length < 10 || temp.length > 20) {
         setIsActive(true);
       }
+    }
+  };
+
+  /** 카트 선택 삭제 핸들러 */
+  const removeHandler = () => {
+    let at: any;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    // Roll 삭제 케이스
+    if (cartValue === 0 && rollSelectCount > 0) {
+      let temp = rollList;
+      let deleteCount = 0;
+      rollCheckArr.forEach((el: boolean, index: number) => {
+        if (el) {
+          cartDelteRequest(at, rollList[index].cartNo);
+          deleteCount++;
+          temp[index].display = false;
+        }
+      });
+      setRollTotalCount((prev) => prev - deleteCount);
+      setRollList([...temp]);
+      return;
+    }
+
+    // Sample 삭제 케이스
+    if (cartValue === 1 && sampleSelectCount > 0) {
+      let temp = sampleList;
+      let deleteCount = 0;
+      sampleCheckArr.forEach((el: boolean, index: number) => {
+        if (el) {
+          cartDelteRequest(at, sampleList[index].cartNo);
+          deleteCount++;
+          temp[index].display = false;
+        }
+      });
+      setSampleTotalCount((prev) => prev - deleteCount);
+      setSampleList([...temp]);
+      return;
     }
   };
 
@@ -544,6 +597,8 @@ const useCart = () => {
                   <SampleProudctWrapper key={`sample-${index}`}>
                     <CartSampleProduct
                       el={el}
+                      sampleList={sampleList}
+                      setSampleList={setSampleList}
                       sampleCheckArr={sampleCheckArr}
                       setSampleCheckArr={setSampleCheckArr}
                       index={index}
@@ -554,12 +609,32 @@ const useCart = () => {
               })}
             </>
           )}
+          {/** 카트에 담긴거 없을 때 */}
+          <NoDataBox
+            render={
+              (cartValue === 0 && noRoll) || (cartValue === 1 && noSample)
+            }
+          >
+            <NoDataImageWrapper>
+              <Image
+                src={ic_logo_gray}
+                width={84}
+                height={84}
+                alt="nodata_logo_gray"
+              />
+            </NoDataImageWrapper>
+            <NoDataText>
+              There is no
+              <br />
+              information to display
+            </NoDataText>
+          </NoDataBox>
         </Main>
       </Container>
       <Line />
       <ButtonContainer>
         <RemovePurchaseButtonWrapper>
-          <RemoveButton>
+          <RemoveButton onClick={() => removeHandler()}>
             Remove({cartValue == 0 ? rollSelectCount : sampleSelectCount})
           </RemoveButton>
           <PurchaseButton onClick={() => purchaseHandler()}>
@@ -632,6 +707,24 @@ const Title = styled.div`
     line-height: 26px;
     margin-left: 8px;
   }
+`;
+const NoDataBox = styled.div<{ render: boolean }>`
+  display: ${(props) => {
+    return props.render ? "block" : "none";
+  }};
+  padding-top: 60px;
+`;
+const NoDataImageWrapper = styled.div`
+  width: 84px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+`;
+const NoDataText = styled.div`
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.154px;
+  color: #a4b0b2;
 `;
 const AllMeterSampleButtonWrapper = styled.div<{ isActive: number }>`
   display: flex;
