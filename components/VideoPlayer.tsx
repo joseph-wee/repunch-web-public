@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRef } from "react";
-import { btn_play_l, btn_stop_l, ic_play_fullscreen } from "../assets";
+import {
+  btn_play_l,
+  btn_stop_l,
+  ic_play_fullscreen,
+  test_image,
+} from "../assets";
 import Image from "next/image";
 
 const VideoPlayer = ({
   isActive,
   select,
+  thumbnailList,
 }: {
   isActive: boolean;
   select: any;
+  thumbnailList: any;
 }) => {
   const [nowPlaying, setNowPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -226,13 +233,39 @@ const VideoPlayer = ({
         isActive={select ? select.type : ""}
         onClick={() => imageClickHandler(0)}
       >
-        <Image
-          src={select ? `${select.imageUrl}?&w=320&q=75` : ""}
-          alt="image"
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
-        />
+        {/** PC용 이미지 */}
+        {thumbnailList.map((el: any, index: number) => {
+          return (
+            <DeskTopImageWrapper
+              isSelect={el.imageUrl === select.imageUrl}
+              key={`${index}-asbcs`}
+            >
+              <Image
+                src={`${el.imageUrl}?&w=320&q=75`}
+                alt="image"
+                width={320}
+                height={320}
+              />
+            </DeskTopImageWrapper>
+          );
+        })}
+        {/** 태블릿, 모바일 이미지 */}
+        {thumbnailList.map((el: any, index: number) => {
+          return (
+            <MobileImageWrapper
+              isSelect={el.imageUrl === select.imageUrl}
+              key={`${index}-asbcs`}
+            >
+              <Image
+                src={`${el.imageUrl}?&w=320&q=75`}
+                alt="image"
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+              />
+            </MobileImageWrapper>
+          );
+        })}
       </ImageContaienr>
       <VideoContainer ref={containerRef} isActive={select ? select.type : ""}>
         <Video
@@ -334,10 +367,39 @@ const ImageContaienr = styled.div<{ isActive: string }>`
   position: absolute;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 
   display: ${(props) => {
     return props.isActive == "thumbnail" ? `block` : `none`;
   }};
+  overflow: hidden;
+`;
+const DeskTopImageWrapper = styled.div<{ isSelect: boolean }>`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+  visibility: ${(props) => {
+    return props.isSelect === true ? `visible` : `hidden`;
+  }};
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`;
+const MobileImageWrapper = styled.div<{ isSelect: boolean }>`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: block;
+  }
+  visibility: ${(props) => {
+    return props.isSelect === true ? `visible` : `hidden`;
+  }};
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
 const ClickedImageContaienr = styled.div<{
   isActive: string;
