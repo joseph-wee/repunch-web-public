@@ -253,7 +253,7 @@ const useCheck_out_sample = () => {
       at,
       "SAMPLE",
       items,
-      deliveryMethod,
+      "EXPRESS",
       selectAdress.addressNo,
       selectAdress.firstName,
       selectAdress.lastName,
@@ -334,7 +334,7 @@ const useCheck_out_sample = () => {
               at,
               "SAMPLE",
               items,
-              deliveryMethod,
+              "EXPRESS",
               selectAdress.addressNo,
               selectAdress.firstName,
               selectAdress.lastName,
@@ -631,7 +631,7 @@ const useCheck_out_sample = () => {
       <Line />
       <ButtonWrapper>
         <CancelButton onClick={() => router.push("/cart")}>Cancel</CancelButton>
-        <CheckoutButton onClick={() => createOrderRequestHandler("AIR")}>
+        <CheckoutButton onClick={() => createOrderRequestHandler("EXPRESS")}>
           Checkout
         </CheckoutButton>
       </ButtonWrapper>
