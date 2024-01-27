@@ -179,7 +179,7 @@ const useOrderInfoBox = ({
           <OrderInfoWrapper>
             <OrderInfoTitle>Delivery</OrderInfoTitle>
             <OrderInfoContent>
-              {data.deliveryMethod == "AIR" ? "Express" : "By ship"}
+              {data.deliveryMethod == "EXPRESS" ? "Express" : "By ship"}
               {/* {data.deliveryFee != 0 && `$(${data.deliveryFee})`} */}
               {/* / {`{{date}}`}) */}
             </OrderInfoContent>
@@ -190,7 +190,7 @@ const useOrderInfoBox = ({
           <OrderInfoWrapper>
             <OrderInfoTitle>Delivery</OrderInfoTitle>
             <OrderInfoContent>
-              {data.deliveryMethod == "AIR" ? "Express" : "By ship"}&nbsp;
+              {data.deliveryMethod == "EXPRESS" ? "Express" : "By ship"}&nbsp;
               {`$(${priceToDollar(data.deliveryFee)})`}
               {/* / {`{{date}}`}) */}
             </OrderInfoContent>
