@@ -156,8 +156,8 @@ export const pwMailingRequest = async (userId: string) => {
   }
 };
 
-/** 유저 패스워드 재설정 */
-export const pwResetRequest = async (
+/** 이메일 패스워드 재설정 */
+export const emailPwResetRequest = async (
   sessionKey: undefined | string | string[],
   password: string,
   passwordConfirm: string
@@ -170,6 +170,32 @@ export const pwResetRequest = async (
         sessionKey: sessionKey,
         password: password,
         passwordConfirm: passwordConfirm,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 현재 유저 패스워드 변경 */
+export const pwResetRequest = async (
+  acessToken: string | null,
+  currentPassword: string,
+  newPassword: string,
+  newPasswordConfirm: string
+) => {
+  try {
+    const res = await axios({
+      method: "PUT",
+      url: `/user/password`,
+      headers: {
+        Authorization: `Bearer ${acessToken}`,
+      },
+      data: {
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        newPasswordConfirm: newPasswordConfirm,
       },
     });
     return res;
@@ -1067,5 +1093,43 @@ export const orderCountRequest = async (accessToken: string | null) => {
   } catch (error: any) {
     console.log(error);
     return error;
+  }
+};
+
+/** 개인정보 편집 편집 */
+export const editInfoRequest = async (
+  accessToken: string | null,
+  firstName: string,
+  lastName: string,
+  countryCode: string | undefined,
+  companyName: string,
+  countryPhoneNumber: string | undefined,
+  phoneNumber: string,
+  companyEmail: string,
+  companyUrl: string,
+  companyCategory: string
+) => {
+  try {
+    const res = await axios({
+      method: "PUT",
+      url: `/user/me`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        firstName: firstName,
+        lastName: lastName,
+        countryCode: countryCode,
+        companyName: companyName,
+        countryPhoneNumber: countryPhoneNumber,
+        phoneNumber: phoneNumber,
+        companyEmail: companyEmail,
+        companyUrl: companyUrl,
+        companyCategory: companyCategory,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
   }
 };
