@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRef } from "react";
-import {
-  btn_play_l,
-  btn_stop_l,
-  ic_play_fullscreen,
-  test_image,
-} from "../assets";
+import { btn_play_l, btn_stop_l, ic_play_fullscreen } from "../assets";
 import Image from "next/image";
 
 const VideoPlayer = ({
