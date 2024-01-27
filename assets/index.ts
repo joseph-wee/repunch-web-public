@@ -64,3 +64,4 @@ export { default as scene5 } from "./scene5.png";
 export { default as sceneVector } from "./sceneVector.svg";
 export { default as sceneVector2 } from "./sceneVector2.svg";
 export { default as ic_check_web_status } from "./ic_check_web_status.svg";
+export { default as ic_logo_gray } from "./ic_logo_gray.svg";
