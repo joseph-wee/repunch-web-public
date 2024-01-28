@@ -90,6 +90,7 @@ const ProductList = ({
             let x = res?.data.result.data;
             if (x === null) {
               setProductList([]);
+              setResult(0);
               return;
             }
             setProductList([...x]);
@@ -117,6 +118,11 @@ const ProductList = ({
       console.log(3);
       let x = res?.data.result.data;
       console.log(x);
+      if (x === null) {
+        setProductList([]);
+        setResult(0);
+        return;
+      }
       setProductList([...x]);
       setSearchAfter(res?.data.result.metadata.searchAfter);
       setLoading(false);
