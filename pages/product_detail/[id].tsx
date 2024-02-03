@@ -832,10 +832,9 @@ const useId = () => {
                     onClick={() => clickHandler(index)}
                     key={`reyrtjh${index}`}
                   >
-                    <ColorName>{el.color}</ColorName>
+                    <LengthText>{`${el.width} Inch`}</LengthText>
                     <MiniCircle />
-                    <LengthText>{`${el.width}m*${el.length}m`}</LengthText>
-                    <UnitText>(W*L)</UnitText>
+                    <ColorName>{`${el.color} / ${el.length}m(Length)`}</ColorName>
                   </Product>
                 );
               })}
