@@ -235,7 +235,7 @@ export const productDetailRequest = async (productNo: string | null) => {
 };
 
 /** 현재 유저 정보 조회 */
-export const userCheck = async (accessToken: string | null) => {
+export const userCheck = async (accessToken: any) => {
   try {
     const res = await axios({
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -1131,5 +1131,72 @@ export const editInfoRequest = async (
     return res;
   } catch (error) {
     console.log(error);
+  }
+};
+
+/////////////////////////////////////////////////////////////////////////////
+
+// 여기서 부터 셀러
+
+/////////////////////////////////////////////////////////////////////////////
+
+// 셀러가 등록한 상품 조회
+
+/** 로그인 했을경우 상품(원단) 목록 조회 api */
+export const sellerProductsRequest = async (
+  at: string | null,
+  sortType: string,
+  count: number,
+  searchAfter: number | null,
+  colorNos: string | null,
+  projectNos: string | null,
+  designsNos: string | null,
+  materialsNos: string | null,
+  widthType: string | null,
+  weightType: string | null
+) => {
+  // http://test.api.repunch.io/v1/products?count=8&sortType=LATEST&colorNos=1,2,3,4,5,6,7&projectNos=8&designNos=1,10&materialNos=5&widthType=MEDIUM&weightType=LIGHT
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/user/products?count=${count}&sortType=${sortType}${
+        colorNos ? `&colorNos=${colorNos}` : ""
+      }${projectNos ? `&projectNos=${projectNos}` : ""}${
+        designsNos ? `&designNos=${designsNos}` : ""
+      }${materialsNos ? `&materialNos=${materialsNos}` : ""}${
+        widthType ? `&widthType=${widthType}` : ""
+      }${weightType ? `&weightType=${weightType}` : ""}${
+        searchAfter ? `&searchAfter=${searchAfter}` : ""
+      }`,
+      // searchAfter
+      // ? `/products?sortType=${sortType}&count=${count}&searchAfter=${searchAfter}`
+      // : `/products?sortType=${sortType}&count=${count}`,
+      headers: at
+        ? {
+            Authorization: `Bearer ${at}`,
+          }
+        : {},
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};
+
+/** 셀러 - 현재 유저의 주문 개수 목록 */
+export const sellerOrderCountRequest = async (accessToken: string | null) => {
+  try {
+    const res = await axios({
+      method: "GET",
+      url: `/seller/order-count`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
   }
 };
