@@ -16,22 +16,29 @@ import Link from "next/link";
 import NavTopBar from "./NavTopBar";
 import NavMobileBar from "./NavMobileBar";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { login } from "../features/login/loginSlice";
 import { loginCheck } from "../utils/functions";
 import { useRouter } from "next/router";
-import { colorsRequest } from "../utils/api";
+import { colorsRequest, loginRefreshRequest } from "../utils/api";
 import { setColors } from "../features/login/colorSlice";
 
 const useHeaderBar = () => {
   const [isActive, setIsActive] = useState<boolean>(false);
-  const { value: isLogin } = useAppSelector((state) => state.isLogin);
 
   const router = useRouter();
 
   const dispatch = useAppDispatch();
 
+  /** 로그인 체크, 토큰 갱신, 로그인 상태 세팅 */
+  const loginCheckHandler = () => {
+    const prevRt = localStorage.getItem("rt");
+
+    loginRefreshRequest(prevRt).then((res) => {
+      console.log(res);
+    });
+  };
+
   useEffect(() => {
-    sessionStorage.getItem("rt") ? dispatch(login()) : "";
+    sessionStorage.getItem("rt");
     colorsRequestHandler();
   }, []);
 

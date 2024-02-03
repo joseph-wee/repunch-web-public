@@ -8,6 +8,7 @@ import { logout, login } from "../features/login/loginSlice";
 import { loginCheck } from "../utils/functions";
 import { userCheck } from "../utils/api";
 import { useRouter } from "next/router";
+import { setRole } from "../features/login/roleSlice";
 
 const NavMobileBar = ({
   isActive,
@@ -20,6 +21,7 @@ const NavMobileBar = ({
 }) => {
   const [name, setName] = useState("");
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
+  const { value: role } = useAppSelector((state) => state.role);
   const router = useRouter();
 
   const dispatch = useAppDispatch();
@@ -29,8 +31,12 @@ const NavMobileBar = ({
     if (loginCheck()) {
       let at = localStorage.getItem("at");
       dispatch(login());
+
+      // 유저 이름 세팅, 셀러일경우 권한 세팅
       userCheck(at).then((res) => {
+        const role = res?.data.result.role;
         setName(res?.data.result.lastName + " " + res?.data.result.firstName);
+        role === "SELLER" && dispatch(setRole());
       });
     }
   };
@@ -109,6 +115,33 @@ const NavMobileBar = ({
               Account Detail
             </Button>
           </Menu>
+
+          {/** seller case */}
+          {role === "SELLER" && (
+            <>
+              <Menu>
+                <Button onClick={() => routingHandler("seller_center/home")}>
+                  Seller Center Home
+                </Button>
+              </Menu>
+              <Menu>
+                <Button
+                  onClick={() => routingHandler("seller_center/my_product")}
+                >
+                  My Product Management
+                </Button>
+              </Menu>
+              <Menu>
+                <Button
+                  onClick={() =>
+                    routingHandler("seller_center/order_management")
+                  }
+                >
+                  Order Management
+                </Button>
+              </Menu>
+            </>
+          )}
           <Line />
           <Menu>
             <MenuButton isActive={isLogin}>

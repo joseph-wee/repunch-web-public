@@ -6,11 +6,12 @@ import axios from "axios";
 import { ic_check_wht } from "../assets";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { loginRequest } from "../utils/api";
+import { loginRequest, userCheck } from "../utils/api";
 import { PopUp } from "../components";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../features/login/loginSlice";
 import { userIdValidation } from "../utils/functions";
+import { setRole } from "../features/login/roleSlice";
 
 const useLogin = () => {
   const [userId, setUserId] = useState<string>(""); // id
@@ -63,10 +64,17 @@ const useLogin = () => {
   };
 
   /** 로그인 후 이전 페이지로 이동 */
-  const sendToLandingPage = () => {
+  const sendToLandingPage = (role: string) => {
     const landingPage = router.asPath.split("?")[1];
-    // 랜딩 페이지 없을 경우
-    if (landingPage == undefined) {
+
+    // 랜딩 페이지 없고 셀러일 경우
+    if (landingPage === undefined && role === "SELLER") {
+      router.push("/seller_center/home");
+      return;
+    }
+
+    // 랜딩 페이지만 없을 경우
+    if (landingPage === undefined) {
       router.push("/");
       return;
     }
@@ -83,28 +91,45 @@ const useLogin = () => {
     let idValidationValue = idValidationCheck();
 
     if (idValidationValue) {
-      loginRequest(userId, password).then((res) => {
+      loginRequest(userId, password).then((res?) => {
+        // success case : id, pw 모두 통과
         if (res?.data?.status == 200) {
-          dispatch(login());
+          const at = res?.data.result.access_token;
+          const rt = res?.data.result.refresh_token;
 
-          localStorage.setItem("at", res.data.result.access_token);
-          localStorage.setItem("rt", res.data.result.refresh_token);
+          localStorage.setItem("at", at);
+          localStorage.setItem("rt", rt);
           sessionStorage.setItem("keep", "true");
 
-          sendToLandingPage();
+          dispatch(login());
+
+          // 현재 유저 정보 불러와서 셀러일경우 권한 세팅 후 셀러 센터 홈으로
+          userCheck(at).then((res) => {
+            const role = res?.data.result.role;
+            const companyName = res?.data.result.companyName;
+            const sellerName = `${res?.data.result.firstName} ${res?.data.result.lastName}`;
+            localStorage.setItem("role", role);
+            sessionStorage.setItem("companyName", companyName);
+            sessionStorage.setItem("sellerName", sellerName);
+            sendToLandingPage(role);
+          });
+
           return;
         }
 
+        // error case : id 없음
         if (res?.response.data.code == 1001) {
           setIdValidation(2);
           return;
         }
 
+        // error case : id 맞고 비번 틀림
         if (res?.response.data.code == 1002) {
           setPwValidation(2);
           return;
         }
 
+        // error case : id, pw 맞지만 이메일 인증 안한 상태
         if (res?.response.status == 403) {
           setAuthPageIsActive(true);
           return;
@@ -512,7 +537,7 @@ const ConfirmWrapper = styled.div`
 `;
 const Id = styled.div`
   display: flex;
-  align-itmes: center;
+  align-items: center;
   justify-content: center;
   font-weight: 400;
   font-size: 14px;
@@ -523,7 +548,7 @@ const Id = styled.div`
 const Email = styled.div`
   display: flex;
   margin-bottom: 12px;
-  align-itmes: center;
+  align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
