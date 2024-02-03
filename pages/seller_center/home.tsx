@@ -11,7 +11,7 @@ import { ic_link, ic_link_gray } from "../../assets";
 import Image from "next/image";
 import Link from "next/link";
 
-const home = () => {
+const useHome = () => {
   const [sellerInfo, setSellerInfo] = useState({
     companyName: "",
     sellerName: "",
@@ -334,4 +334,4 @@ const OrderCount = styled.div`
   font-weight: 700;
 `;
 
-export default home;
+export default useHome;

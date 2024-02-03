@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import Image from "next/image";
 import { ic_check_wht, ic_link_gray, ic_plus } from "../../assets";
-const add_product = () => {
+const useAdd_product = () => {
   const [productInfo, setProductInfo] = useState({
     title: "",
     description: "",
@@ -422,4 +422,4 @@ const ColorName = styled.div`
   color: #a4b0b2;
 `;
 
-export default add_product;
+export default useAdd_product;
