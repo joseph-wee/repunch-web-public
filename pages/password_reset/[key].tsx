@@ -44,12 +44,14 @@ const usePassword_reset = () => {
     let pwConfirmVa = validationPasswordConfirm();
     let sessionKey = router.query.key;
     if (pwVa && pwConfirmVa) {
-      emailPwResetRequest(sessionKey, password, passwordConfirm).then((res) => {
-        if (res?.data.status === 200) {
-          setPopUpIsActive(true);
-          router.push("/login");
+      emailPwResetRequest(sessionKey, password, passwordConfirm).then(
+        (res?) => {
+          console.log(res);
+          if (res?.data.status === 200) {
+            setPopUpIsActive(true);
+          }
         }
-      });
+      );
     }
   };
 
