@@ -67,3 +67,7 @@ export { default as ic_check_web_status } from "./ic_check_web_status.svg";
 export { default as ic_logo_gray } from "./ic_logo_gray.svg";
 export { default as ic_link } from "./ic_link.svg";
 export { default as ic_link_gray } from "./ic_link_gray.svg";
+export { default as btn_to_facebook_wht_test } from "./btn_to_facebook_wht_test.png";
+export { default as btn_to_instagram_wht_test } from "./btn_to_instagram_wht_test.png";
+export { default as btn_to_mail_wht_test } from "./btn_to_mail_wht_test.png";
+export { default as img_repunch_logo_test } from "./img_repunch_logo_test.png";
