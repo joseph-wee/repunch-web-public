@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SelectBoxCountryCodeNum } from "../../components";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { pwResetRequest } from "../../utils/api";
+import { emailPwResetRequest, pwResetRequest } from "../../utils/api";
 
 const usePassword_reset = () => {
   const [popUpIsActive, setPopUpIsActive] = useState(false);
@@ -20,8 +20,8 @@ const usePassword_reset = () => {
 
   /** password 유효성 검사 */
   const validationPassword = () => {
-    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
-    if (regexp.test(password)) {
+    // let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (password.length >= 10) {
       setPassowrdValidationResult(1);
       return true;
     }
@@ -30,8 +30,8 @@ const usePassword_reset = () => {
   };
   /** passwordConfirm 유효성 검사 */
   const validationPasswordConfirm = () => {
-    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
-    if (password == passwordConfirm && regexp.test(passwordConfirm)) {
+    // let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (password == passwordConfirm && passwordConfirm.length > 0) {
       setPasswordConfirmValidationResult(1);
       return true;
     }
@@ -40,18 +40,17 @@ const usePassword_reset = () => {
   };
 
   const pwResetRequestHandler = () => {
-    // 리셋 api 나오면 다시 수정하기
-    // let pwVa = validationPassword();
-    // let pwConfirmVa = validationPasswordConfirm();
-    // let sessionKey = router.query.key;
-    // if (pwVa && pwConfirmVa) {
-    //   pwResetRequest(sessionKey, password, passwordConfirm).then((res) => {
-    //     if (res?.data == 200) {
-    //       setPopUpIsActive(true);
-    //       router.push("/login");
-    //     }
-    //   });
-    // }
+    let pwVa = validationPassword();
+    let pwConfirmVa = validationPasswordConfirm();
+    let sessionKey = router.query.key;
+    if (pwVa && pwConfirmVa) {
+      emailPwResetRequest(sessionKey, password, passwordConfirm).then((res) => {
+        if (res?.data.status === 200) {
+          setPopUpIsActive(true);
+          router.push("/login");
+        }
+      });
+    }
   };
 
   return (
@@ -69,7 +68,10 @@ const usePassword_reset = () => {
               type="password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            <ErrorCase isActive={passwordValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={passwordValidationResult}>
+              {" "}
+              Please enter a password of at least 10 characters.
+            </ErrorCase>
           </InputContainer>
         </Wrapper>
         <Wrapper>
@@ -80,7 +82,7 @@ const usePassword_reset = () => {
               onChange={(e) => setPasswordConfrim(e.target.value)}
             />
             <ErrorCase isActive={passwordConfirmValidationResult}>
-              ErrorCase
+              Please enter a same password.
             </ErrorCase>
           </InputContainer>
         </Wrapper>
@@ -183,8 +185,8 @@ const Input = styled.input`
   color: #121822;
 `;
 const ErrorCase = styled.div<{ isActive: number }>`
-  visibility: ${(props) => {
-    return props.isActive == 2 ? "visible" : "hidden";
+  display: ${(props) => {
+    return props.isActive == 2 ? "block" : "none";
   }};
   margin-top: 10px;
   height: ${(props) => {
