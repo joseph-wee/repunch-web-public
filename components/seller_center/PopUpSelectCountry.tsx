@@ -116,7 +116,6 @@ const PopUpSelectCountry = ({
         selectInput={selectInput}
       />
       <ContentWrapper>
-        <Notice>The configuration should be 100% overall.</Notice>
         {tempList &&
           tempList.map((el: any, index: number) => {
             return (
