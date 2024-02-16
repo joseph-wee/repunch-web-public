@@ -71,3 +71,6 @@ export { default as btn_to_facebook_wht_test } from "./btn_to_facebook_wht_test.
 export { default as btn_to_instagram_wht_test } from "./btn_to_instagram_wht_test.png";
 export { default as btn_to_mail_wht_test } from "./btn_to_mail_wht_test.png";
 export { default as img_repunch_logo_test } from "./img_repunch_logo_test.png";
+export { default as ic_camera_play_wht } from "./ic_camera_play_wht.svg";
+export { default as ic_image_upload_wht } from "./ic_image_upload_wht.svg";
+export { default as ic_check_red } from "./ic_check_red.svg";
