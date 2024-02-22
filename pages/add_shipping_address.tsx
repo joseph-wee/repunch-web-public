@@ -357,7 +357,7 @@ const useAdd_shiping_address = () => {
             <ImageWrapper onClick={() => goBack()}>
               <Image src={btn_web_back} alt={"btn_web_back"} />
             </ImageWrapper>
-            <Title>Edit shipping Address</Title>
+            <Title>Add shipping Address</Title>
           </TitleWrapper>
           <ContentTitleBar>Shipping address</ContentTitleBar>
           <InputContainer>
