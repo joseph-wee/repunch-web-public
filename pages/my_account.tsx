@@ -8,6 +8,9 @@ import {
 } from "../components";
 import Link from "next/link";
 import {
+  cartListRequest,
+  likeListRequest,
+  loginRefreshRequest,
   orderCountRequest,
   ordersRequest,
   userInfoRequest,
@@ -22,20 +25,12 @@ const useMy_account = () => {
     });
   }, []);
 
-  const [clicked, setClicked] = useState(1); // 클릭 상태
-  const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
-  const [orders, setOrders] = useState<any>([]); // 주문 리스트
-
+  const [orders, setOrders] = useState<any>([]); // 최신 주문 리스트
+  const [totalOrdersCount, setTotalOrdersCount] = useState(0); // 전체 주문 개수
+  const [recentOrderCount, setRecentOrderCount] = useState(0); // 최근 주문 개수
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [cartCount, setCartCount] = useState(0);
-  const [orderCount, setOrderCount] = useState(0);
 
-  const [countInReview, setCountInReview] = useState(0);
-  const [countOrderConfirmed, setCountOrderConfiremd] = useState(0);
-  const [countInProduction, setCountInProduction] = useState(0);
-  const [countShipped, setCountShipped] = useState(0);
-  const [countDelivered, setCountDelivered] = useState(0);
-  const [countPickUp, setCountPickUp] = useState(0);
   /** 주문 요청 핸들러 - ALL */
   const ordersAllRequestHandler = () => {
     let at;
@@ -50,45 +45,13 @@ const useMy_account = () => {
     }
 
     ordersRequest(at, "ROLL", null, false, 20, null).then((res) => {
-      let sumInReview = countInReview;
-      let sumOrderConfirmed = countOrderConfirmed;
-      let sumInProduction = countInProduction;
-      let sumShipped = countShipped;
-      let sumDelivered = countDelivered;
-      let sumPickUp = countPickUp;
-
       console.log(res);
       // 성공 case
       setOrders([...res?.data.result.data]);
-      for (const el of res?.data.result.data) {
-        el.status == "IN_REVIEW" && (sumInReview += 1);
-        el.status == "ORDER_CONFIRMED" && (sumOrderConfirmed += 1);
-        el.status == "IN_PRODUCTION" && (sumInProduction += 1);
-        el.status == "SHIPPED" && (sumShipped += 1);
-        el.status == "DELIVERED" && (sumDelivered += 1);
-        el.status == "PICK_UP" && (sumPickUp += 1);
-      }
-      setCountInReview(sumInReview);
-      setCountOrderConfiremd(sumOrderConfirmed);
-      setCountInProduction(sumInProduction);
-      setCountShipped(sumShipped);
-      setCountDelivered(sumDelivered);
-      setCountPickUp(sumPickUp);
 
       // 실패 case: 토큰 만료
       // 실패 case
     });
-  };
-
-  /** recent orders, All, in review... 개수 계산 */
-  const calculator = (clicked: number) => {
-    clicked == 1 && setSum(orders.length);
-    clicked == 2 && setSum(countInReview);
-    clicked == 3 && setSum(countOrderConfirmed);
-    clicked == 4 && setSum(countInProduction);
-    clicked == 5 && setSum(countShipped);
-    clicked == 6 && setSum(countDelivered);
-    clicked == 7 && setSum(countPickUp);
   };
 
   /** 처음 렌더링시 주문 목록 세팅 */
@@ -96,11 +59,6 @@ const useMy_account = () => {
     ordersAllRequestHandler();
     orderCountRequestHandler();
   }, []);
-
-  /** recent orders 개수 계산 - clickd, orders 변경감지 */
-  useEffect(() => {
-    orders.length > 0 && calculator(clicked);
-  }, [clicked, orders]);
 
   /** 주문 요청 목록 핸들러 */
   const orderCountRequestHandler = () => {
@@ -116,37 +74,146 @@ const useMy_account = () => {
     }
 
     orderCountRequest(at).then((res: any) => {
-      console.log(res);
+      const result = res?.data.result;
+      let x = 0;
+      let y = 0;
+      result.forEach((el: any) => {
+        x += el.count;
+        el.status !== "CLOSING_ORDER" &&
+          el.status !== "CANCELED" &&
+          el.status !== "RETURNS" &&
+          (y += el.count);
+      });
+      setTotalOrdersCount(x);
+      setRecentOrderCount(y);
     });
   };
+
+  /** ROLL 카트 목록 핸들러 */
+  const cartListHandler = async (searchAfter: number) => {
+    let at;
+    let rt: string | null;
+
+    if (sessionStorage.getItem("at")) {
+      at = sessionStorage.getItem("at");
+      rt = sessionStorage.getItem("rt");
+    } else {
+      at = localStorage.getItem("at");
+      rt = localStorage.getItem("rt");
+    }
+
+    let nextSearchAfter = await cartListRequest(
+      at,
+      "ROLL",
+      50,
+      searchAfter
+    ).then((res) => {
+      res?.data.result.metadata.totalCount &&
+        setCartCount(res?.data.result.metadata.totalCount);
+
+      let tempNextSearchAfter; // 다음 장바구니 목록 가져오기 위한 임시 저장 변수
+
+      // 실패 case (토큰 유효하지 않음)
+      if (res?.data.code == 1003) {
+        loginRefreshRequest(rt).then((res) => {
+          // 토큰 재발급 성공 case
+          // 엑세스 토큰, 리프레쉬 토큰 세팅 후 카트목록 재요청
+          if (res?.data.status == 200) {
+            at = res.data.result.access_token;
+            rt = res.data.result.refresh_token;
+
+            if (sessionStorage.getItem("at")) {
+              sessionStorage.setItem("at", at);
+              sessionStorage.setItem("rt", `${rt}`);
+            } else {
+              localStorage.setItem("at", at);
+              localStorage.setItem("rt", `${rt}`);
+            }
+
+            // 카트목록 재요청
+            cartListRequest(at, "ROLL", 50, searchAfter).then((res) => {
+              // 성공 case
+              if (res?.data.status == 200) {
+                res?.data.result.metadata.totalCount &&
+                  setCartCount(res?.data.result.metadata.totalCount);
+                // 장바구니 개수가 0개이면 리턴
+                if (res.data.result.data == null) {
+                  return;
+                }
+
+                // nextSearchAfter 저장
+                tempNextSearchAfter = res?.data.result.metadata.searchAfter;
+                // response 가공해서 저장
+              }
+            });
+          }
+        });
+
+        return;
+      }
+
+      // 성공 case
+      if (res?.data.status == 200) {
+        // 장바구니 개수가 0개이면 리턴
+        res?.data.result.metadata.totalCount &&
+          setCartCount(res?.data.result.metadata.totalCount);
+        if (res.data.result.data == null) {
+          return;
+        }
+
+        // nextSearchAfter 저장
+        tempNextSearchAfter = res?.data.result.metadata.searchAfter;
+        // response 가공해서 저장
+
+        return tempNextSearchAfter;
+      }
+
+      // 실패 case: 장바구니 목록 더 이상 조회할게 없음
+      if (res?.data.code == 9999) {
+        return -1;
+      }
+    });
+    return nextSearchAfter;
+  };
+
+  /** favorite, cart 개수 카운팅 나중에 바꾸기 */
+  useEffect(() => {
+    const at = localStorage.getItem("at");
+    likeListRequest(at).then((res) => {
+      setFavoriteCount(res?.data.result.metadata.totalCount);
+    });
+    cartListHandler(0);
+  }, []);
 
   return (
     <Container>
       <SideBar />
       <Main>
-        <Title>Your ID</Title>
+        <Title>{data.userId !== undefined ? `${data.userId}` : ""}</Title>
         <WelcomeText>Welcome to your Account</WelcomeText>
         <FavoriteCartOrderCountWrapper>
           <Link href="/favorits" style={{ textDecoration: "none" }}>
             <Box>
-              <Count>13</Count>
+              <Count>{favoriteCount && `${favoriteCount}`}</Count>
               <CountTitle>Favorite</CountTitle>
             </Box>
           </Link>
           <Link href="/cart" style={{ textDecoration: "none" }}>
             <Box>
-              <Count>13</Count>
+              <Count>{cartCount && `${cartCount}`}</Count>
               <CountTitle>Cart</CountTitle>
             </Box>
           </Link>
           <Link href="/order" style={{ textDecoration: "none" }}>
             <Box>
-              <Count>20</Count>
+              <Count>{totalOrdersCount && `${totalOrdersCount}`}</Count>
               <CountTitle>Order</CountTitle>
             </Box>
           </Link>
         </FavoriteCartOrderCountWrapper>
-        <RecentOrders>Recent orders {sum}</RecentOrders>
+        <RecentOrders>
+          Recent orders {recentOrderCount && `${recentOrderCount}`}
+        </RecentOrders>
         {orders.map((el: any, index: number) => {
           return (
             el.status != "CLOSING_ORDER" &&
@@ -155,7 +222,7 @@ const useMy_account = () => {
             (el.items[0].product.orderUnitType == "ROLL" ? (
               <OrderInfoBox
                 data={el}
-                clicked={clicked}
+                clicked={1}
                 accomplish={false}
                 myAccount={false}
                 key={`eas-${index}`}
@@ -163,7 +230,7 @@ const useMy_account = () => {
             ) : (
               <OrderInfoBoxSample
                 data={el}
-                clicked={clicked}
+                clicked={1}
                 accomplish={false}
                 myAccount={false}
                 key={`eas-${index}`}
