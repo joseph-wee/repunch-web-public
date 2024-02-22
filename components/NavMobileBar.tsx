@@ -81,16 +81,16 @@ const NavMobileBar = ({
               href="/"
               style={{ textDecoration: "none", color: "#121822" }}
             >
-              Shop
+              Home
             </Link>
           </Menu>
           <Menu>
             <Link
               onClick={() => setIsActive(false)}
-              href="/about_us"
+              href="/shop"
               style={{ textDecoration: "none", color: "#121822" }}
             >
-              About us
+              Shop
             </Link>
           </Menu>
 

@@ -158,7 +158,7 @@ const useHeaderBar = () => {
         <Menu onClick={() => clickHandler("favorite")}>
           <Image src={ic_favorite_wht} alt="favorite_menu_button" />
         </Menu>
-        <Menu onClick={() => clickHandler("about_us")}>About us</Menu>
+        <Menu onClick={() => router.push("/shop")}>Shop</Menu>
         <BarLine />
       </Container>
       {/* <NavTopBar /> */}
