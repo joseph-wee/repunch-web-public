@@ -327,7 +327,7 @@ const ImageWrapper = styled.div`
 `;
 const Title = styled.div`
   font-weight: 700;
-  font-size: 22px;
+  font-size: 24px;
   line-height: 26px;
   letter-spacing: -0.011em;
   color: #121822;
