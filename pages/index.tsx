@@ -203,12 +203,12 @@ export default function Home() {
             </FilterButton>
             <Result>{result}&nbsp;</Result>
             <ButtonWrapper>
-              {/* <ClearButton
+              <ClearButton
                 isActive={sortFilterIsActive}
                 onClick={() => setSortFilterIsActive(false)}
               >
                 Clear Filter
-              </ClearButton> */}
+              </ClearButton>
               <SortButton onClick={() => setSortIsActive(!sortIsActive)}>
                 <ButtonTextSort>
                   {sortType == "LATEST" && "Sort by latest"}

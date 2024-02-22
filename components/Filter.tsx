@@ -409,35 +409,28 @@ const UseFilter = ({
     }
   };
 
-  /** 필터들 체크되면 클리어버튼 활성화, 혹은 체크 모두 해제되면 비활성화 */
-  useEffect(() => {
-    clearButtonHandler();
-  }, [
-    suppliesList,
-    projectList,
-    designList,
-    widthList,
-    weightList,
-    colorChecked,
-  ]);
+  // /** 필터들 체크되면 클리어버튼 활성화, 혹은 체크 모두 해제되면 비활성화 */
+  // useEffect(() => {
+  //   clearButtonHandler();
+  // }, [colors, projects, designs, materials, widthList, weightList]);
 
   /** 클리어버튼 클릭시 필터 체크들 모두 해제 */
   useEffect(() => {
-    if (sortFilterIsActive == false) {
-      let tempSupplieList = suppliesList;
-      let tempProjectList = projectList;
-      let tempDesignList = designList;
+    if (sortFilterIsActive == false && colors) {
+      let tempMaterials = materials;
+      let tempProjectList = projects;
+      let tempDesignList = designs;
       let tempWidthList = widthList;
       let tempWeightList = weightList;
-      let tempColorList = colorChecked;
+      let tempColorList = colors;
 
-      tempProjectList = tempProjectList.map((i) => {
+      tempMaterials = tempMaterials.map((i: any) => {
         return { ...i, isChecked: false };
       });
-      tempProjectList = tempProjectList.map((i) => {
+      tempProjectList = tempProjectList.map((i: any) => {
         return { ...i, isChecked: false };
       });
-      tempDesignList = tempDesignList.map((i) => {
+      tempDesignList = tempDesignList.map((i: any) => {
         return { ...i, isChecked: false };
       });
       tempWidthList = tempWidthList.map((i: any) => {
@@ -446,17 +439,18 @@ const UseFilter = ({
       tempWeightList = tempWeightList.map((i: any) => {
         return { ...i, isChecked: false };
       });
-      tempColorList = tempColorList.map((i) => {
-        return false;
+      tempColorList = tempColorList.map((i: any) => {
+        return { ...i, isChecked: false };
       });
+      console.log(tempProjectList);
 
-      setSuppliesList([...tempSupplieList]);
-      setProjectList([...tempProjectList]);
-      setDesignList([...tempDesignList]);
+      setMaterials([...tempMaterials]);
+      setProjects([...tempProjectList]);
+      setDesigns([...tempDesignList]);
       setWidthList([...tempWidthList]);
       setWeightList([...tempWeightList]);
-      setColorChecked([...tempColorList]);
-      console.log(tempProjectList);
+      setColors([...tempColorList]);
+      console.log("이거안되는거여 ?");
     }
   }, [sortFilterIsActive]);
 
@@ -542,6 +536,11 @@ const UseFilter = ({
       }
     }
     setCount(count);
+    if (count > 0) {
+      setSortFilterIsActive(true);
+    } else {
+      setSortFilterIsActive(false);
+    }
   };
 
   /** 컬러 개수 계산 */
