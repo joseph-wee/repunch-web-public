@@ -603,11 +603,7 @@ const useId = () => {
 
   /** 카운트 핸들러 */
   const countHandler = (e: any) => {
-    if (e.target.value < 1) {
-      setCount(1);
-      return;
-    }
-
+    e.target.value = e.target.value.replace(/[^0-9]/gi, "");
     if (e.target.value > seletedOption.quantity) {
       setCount(seletedOption.quantity);
       return;
@@ -848,11 +844,11 @@ const useId = () => {
                   <Image src={ic_minus} alt={"minus_button"} />
                 </MinusButton>
                 <LengthInput
-                  type="number"
-                  step="1"
+                  type="text"
                   value={count}
-                  onChange={(e) => countHandler(e)}
-                  disabled
+                  onChange={(e) => {
+                    countHandler(e);
+                  }}
                 />
                 <PlusButton onClick={() => plus()}>
                   <Image src={ic_plus} alt={"plus_button"} />
