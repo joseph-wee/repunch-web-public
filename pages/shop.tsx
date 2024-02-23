@@ -35,7 +35,7 @@ export interface ListCountryArray extends Array<List> {}
 
 export interface ListTempArray extends Array<TempList> {}
 
-export default function shop() {
+export default function useShop() {
   const [sortIsActive, setSortIsActive] = useState(true);
   const [filterIsActive, setFilterIsActive] = useState(false);
   const [sortFilterIsActive, setSortFilterIsActive] = useState(false);
