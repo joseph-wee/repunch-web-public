@@ -66,13 +66,6 @@ const useCartMeterageProduct = ({
 
   /** 카운트 핸들러 */
   const countHandler = (e: any) => {
-    if (e.target.value < 1) {
-      let temp = rollList;
-      temp[index].count = 1;
-      setRollList([...temp]);
-      return;
-    }
-
     if (e.target.value > el.quantity) {
       let temp = rollList;
       temp[index].count = el.quantity;
@@ -149,26 +142,24 @@ const useCartMeterageProduct = ({
             <Color color={el.color} />
             {el.color}
             <VerticalLine />
-            {`${el.width}m*${el.length}m`}
+            {`${el.width}inch*${el.length}m`}
           </OptionWrapper>
         </TextWrapper>
       </ProductWrapper>
       <Line />
       <LengthWrapper>
         <LengthPriceWrapper>
-          <Length>{`${el.width}m*${el.length}m`}</Length>
-          <PriceInfo>{`$ ${el.price}`}</PriceInfo>
+          <Length>{`${el.quantity} available`}</Length>
+          <PriceInfo>{`$ ${priceToDollar(el.price)}`}</PriceInfo>
         </LengthPriceWrapper>
         <ButtonInputWrapper>
           <MinusButton onClick={() => minus()}>
             <Image src={ic_minus} alt={"minus_button"} />
           </MinusButton>
           <LengthInput
-            type="number"
-            step="1"
+            type="text"
             value={el.count}
             onChange={(e) => countHandler(e)}
-            disabled
           />
           <PlusButton onClick={() => plus()}>
             <Image src={ic_plus} alt={"plus_button"} />
@@ -177,7 +168,7 @@ const useCartMeterageProduct = ({
       </LengthWrapper>
       <Line />
       <PriceWrapper>
-        <Exvat>EX VAT</Exvat>
+        <Exvat>{`${el.count} Qty / ${el.length} m`}</Exvat>
         <Price>{`$ ${priceToDollar(el.totalPrice)}`}</Price>
       </PriceWrapper>
     </Container>
@@ -367,9 +358,9 @@ const LengthWrapper = styled.div`
 `;
 const LengthPriceWrapper = styled.div``;
 const Length = styled.div`
-  color: #333333;
+  color: #536c6d;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
 `;
 const PriceInfo = styled.div`
   color: #121822;
@@ -450,11 +441,11 @@ const Exvat = styled.div`
   color: #121822;
 `;
 const Price = styled.div`
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
   line-height: 18px;
 
-  color: #ff2f01;
+  color: #121822;
 `;
 
 export default useCartMeterageProduct;
