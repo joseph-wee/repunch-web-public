@@ -15,7 +15,13 @@ import { keepDeleteReqeust, keepReqeust } from "../utils/api";
 import { useRouter } from "next/router";
 import { loginCheck, priceToDollar } from "../utils/functions";
 
-const Product = ({ product, index, productList, setProductList }: any) => {
+const Product = ({
+  product,
+  index,
+  productList,
+  setProductList,
+  selectedColorNo,
+}: any) => {
   const [favoriteIsActive, setFavoriteIsActive] = useState(product.keep);
   const [optionLength, setOptionLength] = useState(
     `${product.options[0].length}m`
@@ -69,7 +75,7 @@ const Product = ({ product, index, productList, setProductList }: any) => {
       tempColorObject.find((x: any) => x.color == el.color.name).totalLength +=
         el.length;
     });
-    console.log(tempColorObject);
+
     setColorList([...tempColorObject]);
   };
 
@@ -93,10 +99,27 @@ const Product = ({ product, index, productList, setProductList }: any) => {
 
   useEffect(() => {
     setOptionLength(`${product.options[0].length}m`);
-    setThumnail(product.options[0].thumbnailUrl);
+
     setPrice(product.price);
     setFavoriteIsActive(product.like);
+    selectedColorNo
+      ? thumbnailSetting()
+      : setThumnail(product.options[0].thumbnailUrl);
   }, [product]);
+
+  /** 색깔 필터링시 해당 색깔 썸네일 세팅 */
+  const thumbnailSetting = () => {
+    const colorArr = selectedColorNo.split(",");
+
+    // 상품 옵션컬러에서 인덱스 숫자가 낮은걸 보여줌
+    for (let i = 0; i < product.options.length; i++) {
+      if (colorArr.indexOf(`${product.options[i].colorNo}`) !== -1) {
+        setSelectNo(product.options[i].productOptionNo);
+        setThumnail(product.options[i].thumbnailUrl);
+        return;
+      }
+    }
+  };
 
   const keepHandler = () => {
     let at = localStorage.getItem("at");
@@ -105,7 +128,7 @@ const Product = ({ product, index, productList, setProductList }: any) => {
 
     // 로그인안한 케이스
     if (!loginCheck()) {
-      router.push("/login");
+      router.push("/login?shop");
     }
 
     // 찜해제 케이스
@@ -128,11 +151,6 @@ const Product = ({ product, index, productList, setProductList }: any) => {
       return;
     }
   };
-
-  useEffect(() => {
-    console.log(product.options);
-    console.log(product.display);
-  }, [thumbnail]);
 
   return (
     <Card display={product.display}>
