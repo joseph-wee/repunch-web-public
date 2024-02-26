@@ -96,6 +96,8 @@ const useHeaderBar = () => {
         break;
       case "/privacy_policy":
         break;
+      case "/shop":
+        break;
 
       default:
         !loginCheck() && router.push("/login");
