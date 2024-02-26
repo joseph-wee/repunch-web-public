@@ -20,6 +20,8 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setMeterage, setSample } from "../../features/login/cartSlice";
 import {
   addCartRequest,
+  keepDeleteReqeust,
+  keepReqeust,
   loginRefreshRequest,
   materialsRequest,
   productDetailRequest,
@@ -162,6 +164,7 @@ const useId = () => {
         let data = res.data.result;
         data.description = replacer(data.description);
         setInfo(data);
+        setLike(data.like);
         console.log(data);
 
         // 임시로 옵션들 소팅 후 할당
@@ -643,7 +646,33 @@ const useId = () => {
 
   useEffect(() => {
     console.log(seletedOption);
+    console.log(window.location.pathname.substring(1));
   }, [seletedOption]);
+
+  /** 좋아요 핸들러 */
+  const keepHandler = () => {
+    let at = localStorage.getItem("at");
+    console.log(loginCheck());
+    // 로그인안한 케이스
+    if (!loginCheck()) {
+      router.push(`/login?${window.location.pathname.substring(1)}`);
+    }
+
+    // 찜해제 케이스
+    if (like) {
+      keepDeleteReqeust(at, info.productNo).then(
+        (res) => res?.data.status == 200 && setLike(!like)
+      );
+      return;
+    }
+    // 찜하기 케이스
+    if (!like) {
+      keepReqeust(at, info.productNo).then(
+        (res) => res?.data.status == 200 && setLike(!like)
+      );
+      return;
+    }
+  };
 
   return (
     <>
@@ -656,7 +685,7 @@ const useId = () => {
                 select={select}
                 thumbnailList={thumbnailVideoList}
               />
-              <LikeButton onClick={() => setLike(!like)}>
+              <LikeButton onClick={() => keepHandler()}>
                 <Image
                   src={like ? btn_review_sm : btn_favorite_inact_sm}
                   alt={"logo_favorite"}
@@ -836,7 +865,11 @@ const useId = () => {
               })}
 
             <AvailableText>
-              {`${seletedOption.quantity} available`}
+              {`${seletedOption.quantity} available`} (
+              <BoldText>{`$ ${priceToDollar(
+                seletedOption.price / seletedOption.length
+              )}`}</BoldText>
+              /m)
             </AvailableText>
             <LengthWrapper>
               <ButtonInputWrapper>
@@ -870,18 +903,18 @@ const useId = () => {
                 Add to cart
               </PurchaseButton>
             </PricePurchaseWrapper>
-            <RequestSample onClick={() => addSampleCartHandler()}>
-              Request sample(Add to cart)&nbsp;
-              <BoldText>
+            <RequestSample>
+              Request sample
+              {/* <BoldText>
                 $ {seletedOption.samplePrice}
                 (-30%)
-              </BoldText>
+              </BoldText> */}
             </RequestSample>
-            <DiscountMessage>-30% Open Promotion Due to ‘23.10</DiscountMessage>
+            {/* <DiscountMessage>-30% Open Promotion Due to ‘23.10</DiscountMessage>
             <SmapleMessage>
               <Image src={ic_info} alt={"ic_info"} />
               Samples can be ordered from 10-20 pieces.
-            </SmapleMessage>
+            </SmapleMessage> */}
           </PurchaseBox>
         </PurchaseContainer>
 
@@ -1630,11 +1663,11 @@ const RequestSample = styled.button`
     display: block;
   }
 `;
-const BoldText = styled.div`
-  font-weight: 600;
+const BoldText = styled.span`
+  font-weight: 800;
   font-size: 14px;
   line-height: 18px;
-  color: #ff2f01;
+  color: #000000;
 `;
 const DiscountMessage = styled.div`
   margin-left: 8px;
