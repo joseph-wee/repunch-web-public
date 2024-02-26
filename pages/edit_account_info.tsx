@@ -19,7 +19,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { goBack } from "../utils/functions";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { editInfoRequest, userInfoRequest } from "../utils/api";
+import { editInfoRequest, originsRequest, userInfoRequest } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -87,6 +87,51 @@ const useEdit_account_info = () => {
 
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
   const dispatch = useAppDispatch();
+
+  /** 국가 리스트 */
+  const [origins, setOrigins] = useState<any>();
+  const [originsCallingCode, setOriginsCallingCode] = useState<any>();
+
+  useEffect(() => {
+    if (sessionStorage.getItem("origins")) {
+      const result = [...JSON.parse(sessionStorage.getItem("origins") || "{}")];
+      setOrigins(result);
+      setOriginsCallingCode(
+        result.map((el: any) => {
+          let countryCodeArr = [];
+          for (const x of result) {
+            el.callingCode === x.callingCode &&
+              countryCodeArr.push(x.countryCode);
+          }
+          return {
+            name: el.name,
+            callingCode: el.callingCode,
+            countryCodeArr: countryCodeArr,
+          };
+        })
+      );
+    }
+
+    originsRequest().then((res: any) => {
+      const result = res?.data.result;
+      setOrigins(result);
+      setOriginsCallingCode(
+        result.map((el: any) => {
+          let countryCodeArr = [];
+          for (const x of result) {
+            el.callingCode === x.callingCode &&
+              countryCodeArr.push(x.countryCode);
+          }
+          return {
+            name: el.name,
+            callingCode: el.callingCode,
+            countryCodeArr: countryCodeArr,
+          };
+        })
+      );
+      sessionStorage.setItem("origins", JSON.stringify(result));
+    });
+  }, []);
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -517,11 +562,11 @@ const useEdit_account_info = () => {
           <Wrapper>
             <InputContainerCountryCodeNum>
               <SelectBoxCountryCodeNum
-                list={countryList}
+                list={originsCallingCode}
                 value={countryPhoneNumber}
                 setValue={setCountryPhoneNumber}
                 validationStart={validationStart}
-                setValidationResult={setCounryCodeValidationResult}
+                setValidationResult={setCountryPhoneNumberValidationResult}
                 countryCode={countryCode}
                 setCountryCode={setCounryCode}
               />
