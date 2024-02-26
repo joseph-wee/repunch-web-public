@@ -449,9 +449,14 @@ const Main = styled.div`
   padding-top: 47px;
   padding-bottom: 20px;
 
-  max-width: 1030px;
+  max-width: 1240px;
   min-height: 2843.35px;
   box-sizing: border-box;
+
+  @media screen and (max-width: 1489px) {
+    max-width: 1030px;
+  }
+
   @media screen and (max-width: 1279px) {
     padding-top: 20px;
     padding-left: 80px;
@@ -642,9 +647,15 @@ const SortMenu = styled.div<{ isActive: boolean }>`
 `;
 const ProductListGridWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   row-gap: 50px;
   column-gap: 20px;
+
+  @media screen and (max-width: 1489px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    row-gap: 40px;
+    column-gap: 20px;
+  }
 
   @media screen and (max-width: 1279px) {
     grid-template-columns: 1fr 1fr 1fr;
