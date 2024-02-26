@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -348,6 +348,10 @@ const useAdd_shiping_address = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(firstName);
+  }, [firstName]);
+
   return (
     <Container>
       <SideBar />
@@ -364,6 +368,7 @@ const useAdd_shiping_address = () => {
             <InputTitle>Address title</InputTitle>
             <Input
               type="text"
+              maxLength={30}
               onChange={(e) => setTitle(e.target.value)}
               ref={(element) => {
                 ref.current[0] = element;
@@ -378,7 +383,9 @@ const useAdd_shiping_address = () => {
               <InputTitle>First name</InputTitle>
               <Input
                 type="text"
+                maxLength={30}
                 onChange={(e) => {
+                  e.target.value = e.target.value.replace(/[^A-Za-z0-9]/gi, "");
                   setFirstName(e.target.value);
                 }}
                 ref={(element) => {
@@ -393,7 +400,9 @@ const useAdd_shiping_address = () => {
               <InputTitle>Last name</InputTitle>
               <Input
                 type="text"
+                maxLength={30}
                 onChange={(e) => {
+                  e.target.value = e.target.value.replace(/[^A-Za-z0-9]/gi, "");
                   setLastName(e.target.value);
                 }}
                 ref={(element) => {
@@ -409,6 +418,7 @@ const useAdd_shiping_address = () => {
             <InputTitle>Company name</InputTitle>
             <Input
               type="text"
+              maxLength={50}
               onChange={(e) => setCompanyName(e.target.value)}
               ref={(element) => {
                 ref.current[3] = element;
@@ -441,7 +451,11 @@ const useAdd_shiping_address = () => {
             <InputTitle>State /Province</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setState(e.target.value)}
+              maxLength={30}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                setState(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[5] = element;
               }}
@@ -454,7 +468,11 @@ const useAdd_shiping_address = () => {
             <InputTitle>City</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setCity(e.target.value)}
+              maxLength={30}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                setCity(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[6] = element;
               }}
@@ -467,7 +485,11 @@ const useAdd_shiping_address = () => {
             <InputTitle>Street address</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setStreetAddress1(e.target.value)}
+              maxLength={50}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z0-9]/gi, "");
+                setStreetAddress1(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[7] = element;
               }}
@@ -477,7 +499,11 @@ const useAdd_shiping_address = () => {
             </ErrorCase>
             <Input
               type="text"
-              onChange={(e) => setStreetAddress2(e.target.value)}
+              maxLength={50}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z0-9]/gi, "");
+                setStreetAddress2(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[8] = element;
               }}
@@ -490,7 +516,11 @@ const useAdd_shiping_address = () => {
             <InputTitle>Postcode</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setPostCode(e.target.value)}
+              maxLength={30}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/gi, "");
+                setPostCode(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[9] = element;
               }}
@@ -503,7 +533,11 @@ const useAdd_shiping_address = () => {
             <InputTitle>Phone number</InputTitle>
             <Input
               type="text"
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              maxLength={30}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/gi, "");
+                setPhoneNumber(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[10] = element;
               }}
