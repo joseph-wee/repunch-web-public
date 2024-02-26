@@ -26,10 +26,10 @@ const SelectBox = ({
   const [text, setText] = useState<any>(""); // 선택된 값이 보여지는 텍스트
 
   /** 옵션 선택하면 해당 값이 세팅 */
-  const optionHandler = (i: List) => {
+  const optionHandler = (i: any) => {
     setText(i.name);
-    setValue(i.code);
-    valueValidation(i.code, validationStart, setValidationResult);
+    setValue(i.countryCode);
+    valueValidation(i.countryCode, validationStart, setValidationResult);
   };
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
@@ -77,16 +77,6 @@ const SelectBox = ({
     { name: "Hong Kong", code: "HK", code_num: "852" },
   ];
 
-  useEffect(() => {
-    let temp: string = "";
-    countryList.forEach((el) => {
-      if (el.code == value) {
-        temp = el.name;
-      }
-    });
-    value && setText(temp);
-  }, [value]);
-
   return (
     <>
       <Container
@@ -102,13 +92,14 @@ const SelectBox = ({
           </ImageWrapper>
         </Select>
         <OptionWrapper isActive={isActive}>
-          {list.map((i, j) => {
-            return (
-              <Option key={j} onClick={() => optionHandler(i)}>
-                {i.name}
-              </Option>
-            );
-          })}
+          {list &&
+            list.map((i, j) => {
+              return (
+                <Option key={j} onClick={() => optionHandler(i)}>
+                  {i.name}
+                </Option>
+              );
+            })}
         </OptionWrapper>
       </Container>
     </>

@@ -12,7 +12,7 @@ import {
   passwordValidation,
   passwordConfirmValidation,
 } from "../utils/functions";
-import { signupRequest, loginRequest } from "../utils/api";
+import { signupRequest, loginRequest, originsRequest } from "../utils/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../features/login/loginSlice";
 import { PopUp } from "../components";
@@ -83,50 +83,6 @@ const useRegister = () => {
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
   const dispatch = useAppDispatch();
 
-  /** 나라 리스트 숫자 코드는 업데이트 필요 */
-  const countryList: ListCountryArray = [
-    { name: "Republic of Korea", code: "KR", code_num: "82" },
-    { name: "United States of America", code: "US", code_num: "1" },
-    { name: "Greece", code: "GR", code_num: "30" },
-    { name: "Netherlands", code: "NL", code_num: "31" },
-    { name: "Nepal", code: "NP", code_num: "977" },
-    { name: "Norway", code: "NO", code_num: "47" },
-    { name: "Danmark", code: "DK", code_num: "45" },
-    { name: "Germany", code: "DE", code_num: "49" },
-    { name: "Laos", code: "LA", code_num: "856" },
-    { name: "Malaysia", code: "MY", code_num: "60" },
-    { name: "Mexico", code: "MX", code_num: "62" },
-    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "95" },
-    { name: "Bangladesh", code: "BD", code_num: "880" },
-    { name: "Viet Nam", code: "VN", code_num: "84" },
-    { name: "Belgium", code: "BE", code_num: "32" },
-    {
-      name: "United Kingdom of Great Britain and Northern Ireland",
-      code: "GB",
-      code_num: "44",
-    },
-    { name: "Australia", code: "AU", code_num: "61" },
-    { name: "Austria", code: "AT", code_num: "43" },
-    { name: "Uzbekistan", code: "UZ", code_num: "998" },
-    { name: "Egypt", code: "EG", code_num: "20" },
-    { name: "Italy", code: "IT", code_num: "39" },
-    { name: "India", code: "IN", code_num: "91" },
-    { name: "Indonesia", code: "ID", code_num: "62" },
-    { name: "Japan", code: "JP", code_num: "81" },
-    { name: "China", code: "CN", code_num: "86" },
-    { name: "Cambodia", code: "KH", code_num: "855" },
-    { name: "Canada", code: "CA", code_num: "1" },
-    { name: "Taiwan", code: "TW", code_num: "886" },
-    { name: "Thailand", code: "TH", code_num: "66" },
-    { name: "Turkey", code: "TR", code_num: "90" },
-    { name: "Portugal", code: "PT", code_num: "351" },
-    { name: "Poland", code: "PL", code_num: "48" },
-    { name: "Puerto Rico", code: "PR", code_num: "1" },
-    { name: "France", code: "FR", code_num: "33" },
-    { name: "Finland", code: "FI", code_num: "358" },
-    { name: "Philippines", code: "PH", code_num: "63" },
-    { name: "Hong Kong", code: "HK", code_num: "852" },
-  ];
   /** 회사 카테고리 리스트 업데이트 필요 */
   const companyCategoryList: ListCountryArray = [
     { name: "empty", code: "empty1" },
@@ -136,12 +92,50 @@ const useRegister = () => {
     { name: "empty4", code: "empty5" },
   ];
 
-  /** 국가코드에따라 국가 전화 코드 할당하는 함수 */
-  const phoneNumberHandler = () => {
-    countryList.forEach((i) => {
-      i.code == countryCode ? setCountryPhoneNumber(i.code_num) : "";
+  /** 국가 리스트 */
+  const [origins, setOrigins] = useState<any>();
+  const [originsCallingCode, setOriginsCallingCode] = useState<any>();
+
+  useEffect(() => {
+    if (sessionStorage.getItem("origins")) {
+      const result = [...JSON.parse(sessionStorage.getItem("origins") || "{}")];
+      setOrigins(result);
+      setOriginsCallingCode(
+        result.map((el: any) => {
+          let countryCodeArr = [];
+          for (const x of result) {
+            el.callingCode === x.callingCode &&
+              countryCodeArr.push(x.countryCode);
+          }
+          return {
+            name: el.name,
+            callingCode: el.callingCode,
+            countryCodeArr: countryCodeArr,
+          };
+        })
+      );
+    }
+
+    originsRequest().then((res: any) => {
+      const result = res?.data.result;
+      setOrigins(result);
+      setOriginsCallingCode(
+        result.map((el: any) => {
+          let countryCodeArr = [];
+          for (const x of result) {
+            el.callingCode === x.callingCode &&
+              countryCodeArr.push(x.countryCode);
+          }
+          return {
+            name: el.name,
+            callingCode: el.callingCode,
+            countryCodeArr: countryCodeArr,
+          };
+        })
+      );
+      sessionStorage.setItem("origins", JSON.stringify(result));
     });
-  };
+  }, []);
 
   /** 인풋 숫자만 되게하는 함수 */
   const inputHandlerOnlyNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,11 +162,6 @@ const useRegister = () => {
     // });
     router.push("/");
   };
-
-  /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
-  useEffect(() => {
-    phoneNumberHandler();
-  }, [countryCode]);
 
   /** firstName 유효성 검사 */
   const validationFirstname = () => {
@@ -251,8 +240,8 @@ const useRegister = () => {
   };
   /** password 유효성 검사 */
   const validationPassword = () => {
-    // let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
-    if (password.length >= 10) {
+    let regexp = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (regexp.test(password)) {
       setPassowrdValidationResult(1);
       return true;
     }
@@ -261,7 +250,7 @@ const useRegister = () => {
   };
   /** passwordConfirm 유효성 검사 */
   const validationPasswordConfirm = () => {
-    // let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
     if (password == passwordConfirm && passwordConfirm.length > 0) {
       setPasswordConfirmValidationResult(1);
       return true;
@@ -322,6 +311,7 @@ const useRegister = () => {
         passwordConfirm,
         role
       ).then((res) => {
+        console.log(res);
         if (res?.data?.status == 200) {
           loginRequest(userId, password).then((res) => {
             if (Boolean(res?.data)) {
@@ -349,11 +339,24 @@ const useRegister = () => {
     console.log(loading);
   }, [loading]);
 
-  /** 특수문자, 숫자, 공백 차단 */
+  useEffect(() => {
+    countryCode &&
+      setCountryPhoneNumber(
+        originsCallingCode.find((x: any) =>
+          x.countryCodeArr.includes(countryCode)
+        ).callingCode
+      );
+  }, [countryCode]);
+
+  /** 영어만 허용 */
   const charBlocker = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const reg = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=0-9]/gi;
+    const reg = /[^A-Za-z]/gi;
     e.target.value = e.target.value.replace(reg, "");
   };
+
+  useEffect(() => {
+    console.log(countryCode);
+  }, [countryCode]);
 
   return (
     <>
@@ -369,6 +372,7 @@ const useRegister = () => {
                 charBlocker(e);
                 setFirstName(e.target.value);
               }}
+              maxLength={20}
               ref={(element) => {
                 ref.current[0] = element;
               }}
@@ -385,6 +389,7 @@ const useRegister = () => {
                 charBlocker(e);
                 setLastName(e.target.value);
               }}
+              maxLength={20}
               ref={(element) => {
                 ref.current[1] = element;
               }}
@@ -403,7 +408,7 @@ const useRegister = () => {
             Country
           </InputTitle>
           <SelectBox
-            list={countryList}
+            list={origins}
             value={countryCode}
             setValue={setCounryCode}
             validationStart={validationStart}
@@ -421,6 +426,7 @@ const useRegister = () => {
             onChange={(e) => {
               setCompanyName(e.target.value);
             }}
+            maxLength={50}
             ref={(element) => {
               ref.current[3] = element;
             }}
@@ -453,8 +459,13 @@ const useRegister = () => {
           <Input
             type="text"
             onChange={(e) => {
+              e.target.value = e.target.value.replace(
+                /[^\{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=0-9A-Za-z]/gi,
+                ""
+              );
               setHomepageUrl(e.target.value);
             }}
+            maxLength={50}
             ref={(element) => {
               ref.current[5] = element;
             }}
@@ -468,11 +479,11 @@ const useRegister = () => {
           <Wrapper>
             <InputContainerCountryCodeNum>
               <SelectBoxCountryCodeNum
-                list={countryList}
+                list={originsCallingCode}
                 value={countryPhoneNumber}
                 setValue={setCountryPhoneNumber}
                 validationStart={validationStart}
-                setValidationResult={setCounryCodeValidationResult}
+                setValidationResult={setCountryPhoneNumberValidationResult}
                 countryCode={countryCode}
                 setCountryCode={setCounryCode}
               />
@@ -485,8 +496,10 @@ const useRegister = () => {
                 type="text"
                 value={phoneNumber}
                 onChange={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/gi, "");
                   inputHandlerOnlyNumber(e);
                 }}
+                maxLength={50}
                 ref={(element) => {
                   ref.current[6] = element;
                 }}
@@ -506,6 +519,7 @@ const useRegister = () => {
             onChange={(e) => {
               setUserId(e.target.value);
             }}
+            maxLength={50}
             ref={(element) => {
               ref.current[7] = element;
             }}
@@ -522,13 +536,15 @@ const useRegister = () => {
             onChange={(e) => {
               setPassowrd(e.target.value);
             }}
+            maxLength={20}
             ref={(element) => {
               ref.current[8] = element;
             }}
           />
-          <ErrorCase isActive={passwordValidationResult}>
-            Please enter a password of at least 10 characters.
-          </ErrorCase>
+          <PasswordNotice isActive={passwordValidationResult}>
+            The password must be at least 8 characters including uppercase
+            letters, lowercase letters, and numbers.
+          </PasswordNotice>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password confirm</InputTitle>
@@ -538,12 +554,13 @@ const useRegister = () => {
             onChange={(e) => {
               setPasswordConfirm(e.target.value);
             }}
+            maxLength={20}
             ref={(element) => {
               ref.current[9] = element;
             }}
           />
           <ErrorCase isActive={passwordConfirmValidationResult}>
-            Please enter a same password.
+            The passwords are not the same.
           </ErrorCase>
         </InputContainer>
         <Wrapper>
@@ -713,6 +730,16 @@ const ErrorCase = styled.div<{ isActive: number }>`
   line-height: 14px;
   color: #ff5c01;
 `;
+const PasswordNotice = styled.div<{ isActive: number }>`
+  margin-top: 10px;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  color: ${(props) => {
+    return props.isActive == 2 ? "#ff5c01" : "#A4B0B2";
+  }};
+`;
+
 const Line = styled.div`
   margin-bottom: 20px;
   border-top: 1px dashed #dee8ec;

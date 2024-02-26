@@ -16,7 +16,7 @@ const SelectBoxCountryCodeNum = ({
   countryCode,
   setCountryCode,
 }: {
-  list: ListCountryArray;
+  list: any;
   value: string | undefined;
   setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
   validationStart: boolean;
@@ -25,6 +25,23 @@ const SelectBoxCountryCodeNum = ({
   setCountryCode: any;
 }) => {
   const [isActive, setIsActive] = useState<boolean>(false); // 옵션 활성 유무
+  const [text, setText] = useState<any>();
+  //       callingCode: el.callingCode,
+  //        countryCodeArr: countryCodeArr,
+
+  // useEffect(() => {
+  //   list &&
+  //     countryCode &&
+  //     console.log(
+  //       list.find((x: any) => x.countryCodeArr.includes(countryCode))
+  //     );
+  // }, [countryCode]);
+
+  // const countryCodeFind = () => {
+  //   console.log(
+  //     list.find((x: any) => x.countryCodeArr.find(countryCode) !== undefined)
+  //   );
+  // };
 
   return (
     <>
@@ -35,31 +52,36 @@ const SelectBoxCountryCodeNum = ({
         onBlur={() => setIsActive(false)}
       >
         <Select>
-          {`${value} `}
-          {countryCode ? `(${countryCode})` : ""}
+          <CallingCode>{`${value} `}</CallingCode>
+          {value
+            ? `(${list
+                .find((x: any) => x.callingCode.includes(value))
+                .countryCodeArr.join(", ")})`
+            : ""}
           <ImageWrapper>
             <Image src={isActive ? arrow_up : arrow_down} alt="arrow" />
           </ImageWrapper>
         </Select>
         <OptionWrapper isActive={isActive}>
-          {list.map((i) => {
-            return (
-              <Option
-                key={i.code}
-                onClick={() => {
-                  setValue(i.code_num);
-                  valueValidation(
-                    i.code_num,
-                    validationStart,
-                    setValidationResult
-                  );
-                  setCountryCode("");
-                }}
-              >
-                {i.code_num}
-              </Option>
-            );
-          })}
+          {list &&
+            list.map((i: any, index: number) => {
+              return (
+                <Option
+                  key={`${index}abd-=sc`}
+                  onClick={() => {
+                    setValue(i.callingCode);
+                    valueValidation(
+                      i.callingCode,
+                      validationStart,
+                      setValidationResult
+                    );
+                  }}
+                >
+                  <CallingCode>{`${i.callingCode}`}</CallingCode>(
+                  {`${i.countryCodeArr.join(", ")}`})
+                </Option>
+              );
+            })}
         </OptionWrapper>
       </Container>
     </>
@@ -72,7 +94,7 @@ const Container = styled.div<{ isActive: boolean }>`
   }};
   margin-right: 8px;
   box-sizing: border-box;
-  width: 120px;
+  width: 160px;
   flex: 0 0 120px;
   height: 40px;
   cursor: default;
@@ -129,6 +151,9 @@ const Option = styled.div`
   line-height: 14px;
 
   background-color: #ffffff;
+`;
+const CallingCode = styled.div`
+  width: 35px;
 `;
 
 export default SelectBoxCountryCodeNum;
