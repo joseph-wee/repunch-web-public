@@ -401,8 +401,7 @@ const useCart = () => {
     // ROLL 구매 case
     if (cartValue == 0) {
       rollCheckArr.forEach((el: any, index: number) => {
-        el && temp.push(rollList[index]);
-        console.log(index);
+        el && rollList[index].count > 0 && temp.push(rollList[index]);
       });
 
       // 체크한게 있어야 구매 진행
