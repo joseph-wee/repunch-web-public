@@ -33,10 +33,7 @@ const ProductList = ({
   const ref = useRef<any>();
 
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
-
-  useEffect(() => {
-    console.log(isLogin);
-  });
+  const [selectedColorNo, setSelectedColorNo] = useState("");
 
   /** 필터링 값 리턴 */
   const returnOfFilter = (state: any) => {
@@ -59,6 +56,7 @@ const ProductList = ({
 
   /** 상품 리스트 초기화 후 호출 함수 */
   const productListRequestInitHandler = () => {
+    setSelectedColorNo(returnOfFilter(colors));
     let at: any = localStorage.getItem("at");
     let rt = localStorage.getItem("rt");
 
@@ -211,7 +209,13 @@ const ProductList = ({
     <>
       {productList &&
         productList.map((i: any, j: number) => {
-          return <Product product={i} key={`product${j}`} />;
+          return (
+            <Product
+              product={i}
+              selectedColorNo={selectedColorNo}
+              key={`product${j}`}
+            />
+          );
         })}
       {productList && <div ref={ref}></div>}
     </>
