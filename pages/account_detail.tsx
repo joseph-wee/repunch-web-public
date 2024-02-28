@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect } from "react";
 import { goBack } from "../utils/functions";
-import { userInfoRequest } from "../utils/api";
+import { originsRequest, userInfoRequest } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -35,6 +35,7 @@ const useAccount_detail = () => {
   const [firstName, setFirstName] = useState<string>(""); // 성
   const [lastName, setLastName] = useState<string>(""); // 이름
   const [countryCode, setCounryCode] = useState<string | undefined>(""); // 국가코드
+  const [countryName, setCountryName] = useState<string | undefined>(""); // 국가이름
   const [companyName, setCompanyName] = useState<string>(""); // 회사이름
   const [industryCode, setIndustryCode] = useState<string | undefined>(""); // 회사 업종구분 코드
   const [homepageUrl, setHomepageUrl] = useState<string>(""); // 회사 홈페이지 url
@@ -49,50 +50,52 @@ const useAccount_detail = () => {
 
   const router = useRouter();
 
-  /** 나라 리스트 숫자 코드는 업데이트 필요 */
-  const countryList: ListCountryArray = [
-    { name: "Republic of Korea", code: "KR", code_num: "82" },
-    { name: "United States of America", code: "US", code_num: "1" },
-    { name: "Greece", code: "GR", code_num: "99" },
-    { name: "Netherlands", code: "NL", code_num: "99" },
-    { name: "Nepal", code: "NP", code_num: "22" },
-    { name: "Norway", code: "NO", code_num: "22" },
-    { name: "Danmark", code: "DK", code_num: "22" },
-    { name: "Germany", code: "DE", code_num: "49" },
-    { name: "Laos", code: "LA", code_num: "22" },
-    { name: "Malaysia", code: "MY", code_num: "22" },
-    { name: "Mexico", code: "MX", code_num: "22" },
-    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
-    { name: "Bangladesh", code: "BD", code_num: "22" },
-    { name: "Viet Nam", code: "VN", code_num: "84" },
-    { name: "Belgium", code: "BE", code_num: "22" },
-    {
-      name: "United Kingdom of Great Britain and Northern Ireland",
-      code: "GB",
-      code_num: "44",
-    },
-    { name: "Australia", code: "AU", code_num: "61" },
-    { name: "Austria", code: "AT", code_num: "22" },
-    { name: "Uzbekistan", code: "UZ", code_num: "22" },
-    { name: "Egypt", code: "EG", code_num: "22" },
-    { name: "Italy", code: "IT", code_num: "22" },
-    { name: "India", code: "IN", code_num: "91" },
-    { name: "Indonesia", code: "ID", code_num: "22" },
-    { name: "Japan", code: "JP", code_num: "22" },
-    { name: "China", code: "CN", code_num: "86" },
-    { name: "Cambodia", code: "KH", code_num: "22" },
-    { name: "Canada", code: "CA", code_num: "1" },
-    { name: "Taiwan", code: "TW", code_num: "22" },
-    { name: "Thailand", code: "TH", code_num: "886" },
-    { name: "Turkey", code: "TR", code_num: "22" },
-    { name: "Portugal", code: "PT", code_num: "22" },
-    { name: "Poland", code: "PL", code_num: "22" },
-    { name: "Puerto Rico", code: "PR", code_num: "22" },
-    { name: "France", code: "FR", code_num: "33" },
-    { name: "Finland", code: "FI", code_num: "22" },
-    { name: "Philippines", code: "PH", code_num: "63" },
-    { name: "Hong Kong", code: "HK", code_num: "852" },
-  ];
+  /** 국가 리스트 */
+  const [origins, setOrigins] = useState<any>();
+  const [originsCallingCode, setOriginsCallingCode] = useState<any>();
+
+  /** 국가리스트 세팅 */
+  useEffect(() => {
+    if (sessionStorage.getItem("origins")) {
+      const result = [...JSON.parse(sessionStorage.getItem("origins") || "{}")];
+      setOrigins(result);
+      setOriginsCallingCode(
+        result.map((el: any) => {
+          let countryCodeArr = [];
+          for (const x of result) {
+            el.callingCode === x.callingCode &&
+              countryCodeArr.push(x.countryCode);
+          }
+          return {
+            name: el.name,
+            callingCode: el.callingCode,
+            countryCodeArr: countryCodeArr,
+          };
+        })
+      );
+    }
+
+    originsRequest().then((res: any) => {
+      const result = res?.data.result;
+      setOrigins(result);
+      setOriginsCallingCode(
+        result.map((el: any) => {
+          let countryCodeArr = [];
+          for (const x of result) {
+            el.callingCode === x.callingCode &&
+              countryCodeArr.push(x.countryCode);
+          }
+          return {
+            name: el.name,
+            callingCode: el.callingCode,
+            countryCodeArr: countryCodeArr,
+          };
+        })
+      );
+      sessionStorage.setItem("origins", JSON.stringify(result));
+    });
+  }, []);
+
   /** 회사 카테고리 리스트 업데이트 필요 */
   const companyCategoryList: ListCountryArray = [
     { name: "empty", code: "empty1" },
@@ -115,8 +118,13 @@ const useAccount_detail = () => {
       // 카테고리 삭제하기로 하지않았나?
       // 카테고리 삭제하는거 아니면 카테고리 세팅 코드 삽입
       data.companyUrl && setHomepageUrl(data.companyUrl);
+      data.countryCode && setCounryCode(data.countryCode);
       data.countryCode &&
-        setCounryCode(countryList.filter((x) => x.code === "KR")[0].code_num);
+        setCountryName(origins.find((x: any) => x.countryCode === "KR").name);
+      data.countryCode &&
+        setCountryPhoneNumber(
+          origins.find((x: any) => x.countryCode === "KR").callingCode
+        );
       data.phoneNumber && setPhoneNumber(data.phoneNumber);
       data.userId && setUserId(data.userId);
       data.role && setRole(data.role);
@@ -125,7 +133,7 @@ const useAccount_detail = () => {
 
   /** 국가코드에따라 국가 전화 코드 할당하는 함수 */
   const phoneNumberHandler = () => {
-    countryList.forEach((i) => {
+    origins.forEach((i: any) => {
       i.code == countryCode ? setCountryPhoneNumber(i.code_num) : "";
     });
   };
@@ -165,14 +173,25 @@ const useAccount_detail = () => {
 
   /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
   useEffect(() => {
-    phoneNumberHandler();
+    // phoneNumberHandler();
   }, [countryCode]);
 
   useEffect(() => {
-    userInfoHandler();
+    origins && userInfoHandler();
 
-    console.log(countryList.filter((x) => x.code === "KR"));
-  }, []);
+    if (originsCallingCode && countryPhoneNumber) {
+      console.log(originsCallingCode);
+      console.log(countryPhoneNumber);
+      console.log(
+        originsCallingCode
+          .find((x: any) => x.callingCode.includes(countryPhoneNumber))
+          .countryCodeArr.join(", ")
+      );
+    }
+    // console.log(
+    //   originsCallingCode.find((x: any) => x.callingCode.includes(countryCode))
+    // );
+  });
 
   return (
     <Container>
@@ -207,7 +226,7 @@ const useAccount_detail = () => {
         </Wrapper>
         <InputContainer>
           <InputTitle>Country</InputTitle>
-          <Input type="text" value="korea" disabled />
+          <Input type="text" value={countryName} disabled />
         </InputContainer>
         <InputContainer>
           <InputTitle>Company name</InputTitle>
@@ -239,7 +258,12 @@ const useAccount_detail = () => {
           <InputTitle>Phone number</InputTitle>
           <Wrapper>
             <SelectBoxCountryCodeNumTemporary>
-              {countryCode}
+              <CallingCode>{`${countryPhoneNumber}`}</CallingCode>
+              {originsCallingCode &&
+                countryPhoneNumber &&
+                `(${originsCallingCode
+                  .find((x: any) => x.callingCode.includes(countryPhoneNumber))
+                  .countryCodeArr.join(", ")})`}
             </SelectBoxCountryCodeNumTemporary>
             <Input
               type="text"
@@ -312,6 +336,10 @@ const SelectBoxCountryCodeNumTemporary = styled.div`
   font-size: 14px;
   font-weight: 400;
   color: #121822;
+`;
+
+const CallingCode = styled.div`
+  width: 35px;
 `;
 
 const Container = styled.div`
