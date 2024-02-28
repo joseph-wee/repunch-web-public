@@ -133,50 +133,6 @@ const useEdit_account_info = () => {
     });
   }, []);
 
-  /** 나라 리스트 숫자 코드는 업데이트 필요 */
-  const countryList: ListCountryArray = [
-    { name: "Republic of Korea", code: "KR", code_num: "82" },
-    { name: "United States of America", code: "US", code_num: "1" },
-    { name: "Greece", code: "GR", code_num: "99" },
-    { name: "Netherlands", code: "NL", code_num: "99" },
-    { name: "Nepal", code: "NP", code_num: "22" },
-    { name: "Norway", code: "NO", code_num: "22" },
-    { name: "Danmark", code: "DK", code_num: "22" },
-    { name: "Germany", code: "DE", code_num: "49" },
-    { name: "Laos", code: "LA", code_num: "22" },
-    { name: "Malaysia", code: "MY", code_num: "22" },
-    { name: "Mexico", code: "MX", code_num: "22" },
-    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
-    { name: "Bangladesh", code: "BD", code_num: "22" },
-    { name: "Viet Nam", code: "VN", code_num: "84" },
-    { name: "Belgium", code: "BE", code_num: "22" },
-    {
-      name: "United Kingdom of Great Britain and Northern Ireland",
-      code: "GB",
-      code_num: "44",
-    },
-    { name: "Australia", code: "AU", code_num: "61" },
-    { name: "Austria", code: "AT", code_num: "22" },
-    { name: "Uzbekistan", code: "UZ", code_num: "22" },
-    { name: "Egypt", code: "EG", code_num: "22" },
-    { name: "Italy", code: "IT", code_num: "22" },
-    { name: "India", code: "IN", code_num: "91" },
-    { name: "Indonesia", code: "ID", code_num: "22" },
-    { name: "Japan", code: "JP", code_num: "22" },
-    { name: "China", code: "CN", code_num: "86" },
-    { name: "Cambodia", code: "KH", code_num: "22" },
-    { name: "Canada", code: "CA", code_num: "1" },
-    { name: "Taiwan", code: "TW", code_num: "22" },
-    { name: "Thailand", code: "TH", code_num: "886" },
-    { name: "Turkey", code: "TR", code_num: "22" },
-    { name: "Portugal", code: "PT", code_num: "22" },
-    { name: "Poland", code: "PL", code_num: "22" },
-    { name: "Puerto Rico", code: "PR", code_num: "22" },
-    { name: "France", code: "FR", code_num: "33" },
-    { name: "Finland", code: "FI", code_num: "22" },
-    { name: "Philippines", code: "PH", code_num: "63" },
-    { name: "Hong Kong", code: "HK", code_num: "852" },
-  ];
   /** 회사 카테고리 리스트 업데이트 필요 */
   const companyCategoryList: ListCountryArray = [
     { name: "empty", code: "empty1" },
@@ -213,21 +169,23 @@ const useEdit_account_info = () => {
       data.companyName && setCompanyName(data.companyName);
       // 카테고리 삭제하기로 하지않았나?
       // 카테고리 삭제하는거 아니면 카테고리 세팅 코드 삽입
+      data.countryCode && setCounryCode(data.countryCode);
       data.companyUrl && setHomepageUrl(data.companyUrl);
-      data.countryCode &&
-        setCounryCode(countryList.filter((x) => x.code === "KR")[0].code);
       data.phoneNumber && setPhoneNumber(data.phoneNumber);
       data.userId && setUserId(data.userId);
       data.role && setRole(data.role);
     });
   };
 
-  /** 국가코드에따라 국가 전화 코드 할당하는 함수 */
-  const phoneNumberHandler = () => {
-    countryList.forEach((i) => {
-      i.code == countryCode ? setCountryPhoneNumber(i.code_num) : "";
-    });
-  };
+  /** 국가 선택에따라 국가 전화번호 세팅 */
+  useEffect(() => {
+    countryCode &&
+      setCountryPhoneNumber(
+        originsCallingCode.find((x: any) =>
+          x.countryCodeArr.includes(countryCode)
+        ).callingCode
+      );
+  }, [countryCode]);
 
   /** 인풋 숫자만 되게하는 함수 */
   const inputHandlerOnlyNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -262,11 +220,6 @@ const useEdit_account_info = () => {
     }
   };
 
-  /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
-  useEffect(() => {
-    phoneNumberHandler();
-  }, [countryCode]);
-
   /** firstName 유효성 검사 */
   const validationFirstname = () => {
     let regexp = /^[A-Za-z]{1,20}$/;
@@ -298,7 +251,7 @@ const useEdit_account_info = () => {
   };
   /** company name 유효성 검사 */
   const validationCompanyName = () => {
-    if (companyName.length < 50) {
+    if (companyName && companyName.length < 50) {
       setCompanyNameValidationResult(1);
       return true;
     }
@@ -428,15 +381,9 @@ const useEdit_account_info = () => {
     validationAll() && editInfoHandler();
   };
 
-  /** 국가코드 바뀔때마다 phoneNumberHandler 호출 */
-  useEffect(() => {
-    phoneNumberHandler();
-  }, [countryCode]);
-
+  /** 유저 정보 호출 */
   useEffect(() => {
     userInfoHandler();
-
-    console.log(countryList.filter((x) => x.code === "KR"));
   }, []);
 
   return (
@@ -460,12 +407,13 @@ const useEdit_account_info = () => {
                 e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
                 setFirstName(e.target.value);
               }}
+              maxLength={30}
               ref={(element) => {
                 ref.current[0] = element;
               }}
             />
             <ErrorCase isActive={firstNameValidationResult}>
-              ErrorCase
+              Please enter your first name.
             </ErrorCase>
           </InputContainer>
           <InputContainer>
@@ -477,11 +425,15 @@ const useEdit_account_info = () => {
                 e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
                 setLastName(e.target.value);
               }}
+              maxLength={30}
               ref={(element) => {
                 ref.current[1] = element;
               }}
             />
-            <ErrorCase isActive={lastNameValidationResult}>ErrorCase</ErrorCase>
+            <ErrorCase isActive={lastNameValidationResult}>
+              {" "}
+              Please enter your last name.
+            </ErrorCase>
           </InputContainer>
         </Wrapper>
         <InputContainer>
@@ -492,15 +444,15 @@ const useEdit_account_info = () => {
           >
             Country
           </InputTitle>
-          <SelectBoxEdit
-            list={countryList}
+          <SelectBox
+            list={origins}
             value={countryCode}
             setValue={setCounryCode}
             validationStart={validationStart}
             setValidationResult={setCounryCodeValidationResult}
           />
           <ErrorCase isActive={countryCodeValidationResult}>
-            ErrorCase
+            Please select your country.
           </ErrorCase>
         </InputContainer>
         <InputContainer>
@@ -512,12 +464,13 @@ const useEdit_account_info = () => {
             onChange={(e) => {
               setCompanyName(e.target.value);
             }}
+            maxLength={50}
             ref={(element) => {
               ref.current[3] = element;
             }}
           />
           <ErrorCase isActive={companyNameValidationResult}>
-            ErrorCase
+            Please enter your company name.
           </ErrorCase>
         </InputContainer>
         {/** 나중에 추가하기로함 */}
@@ -549,6 +502,7 @@ const useEdit_account_info = () => {
             onChange={(e) => {
               setHomepageUrl(e.target.value);
             }}
+            maxLength={50}
             ref={(element) => {
               ref.current[5] = element;
             }}
@@ -571,7 +525,7 @@ const useEdit_account_info = () => {
                 setCountryCode={setCounryCode}
               />
               <ErrorCase isActive={countryPhoneNumberValidationResult}>
-                ErrorCase
+                Please select your country number.
               </ErrorCase>
             </InputContainerCountryCodeNum>
             <InputContainerPhoneNumber>
@@ -581,12 +535,13 @@ const useEdit_account_info = () => {
                 onChange={(e) => {
                   inputHandlerOnlyNumber(e);
                 }}
+                maxLength={50}
                 ref={(element) => {
                   ref.current[6] = element;
                 }}
               />
               <ErrorCase isActive={phoneNumberValidationResult}>
-                ErrorCase
+                Please enter your phone number.
               </ErrorCase>
             </InputContainerPhoneNumber>
           </Wrapper>
