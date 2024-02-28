@@ -96,6 +96,7 @@ const useRegister = () => {
   const [origins, setOrigins] = useState<any>();
   const [originsCallingCode, setOriginsCallingCode] = useState<any>();
 
+  /** 국가리스트 세팅 */
   useEffect(() => {
     if (sessionStorage.getItem("origins")) {
       const result = [...JSON.parse(sessionStorage.getItem("origins") || "{}")];
@@ -335,10 +336,7 @@ const useRegister = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(loading);
-  }, [loading]);
-
+  /** 국가 선택에따라 국가 전화번호 세팅 */
   useEffect(() => {
     countryCode &&
       setCountryPhoneNumber(
@@ -354,9 +352,11 @@ const useRegister = () => {
     e.target.value = e.target.value.replace(reg, "");
   };
 
-  useEffect(() => {
-    console.log(countryCode);
-  }, [countryCode]);
+  /** 영어, 숫자만 허용 */
+  const charNumberBlocker = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const reg = /[^A-Za-z0-9]/gi;
+    e.target.value = e.target.value.replace(reg, "");
+  };
 
   return (
     <>
@@ -369,10 +369,10 @@ const useRegister = () => {
             <Input
               type="text"
               onChange={(e) => {
-                charBlocker(e);
+                charNumberBlocker(e);
                 setFirstName(e.target.value);
               }}
-              maxLength={20}
+              maxLength={30}
               ref={(element) => {
                 ref.current[0] = element;
               }}
@@ -386,10 +386,10 @@ const useRegister = () => {
             <Input
               type="text"
               onChange={(e) => {
-                charBlocker(e);
+                charNumberBlocker(e);
                 setLastName(e.target.value);
               }}
-              maxLength={20}
+              maxLength={30}
               ref={(element) => {
                 ref.current[1] = element;
               }}
