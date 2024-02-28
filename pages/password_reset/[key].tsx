@@ -20,8 +20,8 @@ const usePassword_reset = () => {
 
   /** password 유효성 검사 */
   const validationPassword = () => {
-    // let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
-    if (password.length >= 10) {
+    let regexp = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    if (regexp.test(password)) {
       setPassowrdValidationResult(1);
       return true;
     }
@@ -71,8 +71,8 @@ const usePassword_reset = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <ErrorCase isActive={passwordValidationResult}>
-              {" "}
-              Please enter a password of at least 10 characters.
+              The password must be at least 8 characters including uppercase
+              letters, lowercase letters, and numbers.
             </ErrorCase>
           </InputContainer>
         </Wrapper>
