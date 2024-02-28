@@ -16,7 +16,7 @@ const SelectBox = ({
   validationStart,
   setValidationResult,
 }: {
-  list: ListCountryArray;
+  list: any;
   value: string | string[] | undefined;
   setValue: any;
   validationStart: boolean;
@@ -32,71 +32,103 @@ const SelectBox = ({
     valueValidation(i.countryCode, validationStart, setValidationResult);
   };
 
-  /** 나라 리스트 숫자 코드는 업데이트 필요 */
-  const countryList: ListCountryArray = [
-    { name: "Republic of Korea", code: "KR", code_num: "82" },
-    { name: "United States of America", code: "US", code_num: "1" },
-    { name: "Greece", code: "GR", code_num: "99" },
-    { name: "Netherlands", code: "NL", code_num: "99" },
-    { name: "Nepal", code: "NP", code_num: "22" },
-    { name: "Norway", code: "NO", code_num: "22" },
-    { name: "Danmark", code: "DK", code_num: "22" },
-    { name: "Germany", code: "DE", code_num: "49" },
-    { name: "Laos", code: "LA", code_num: "22" },
-    { name: "Malaysia", code: "MY", code_num: "22" },
-    { name: "Mexico", code: "MX", code_num: "22" },
-    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
-    { name: "Bangladesh", code: "BD", code_num: "22" },
-    { name: "Viet Nam", code: "VN", code_num: "84" },
-    { name: "Belgium", code: "BE", code_num: "22" },
-    {
-      name: "United Kingdom of Great Britain and Northern Ireland",
-      code: "GB",
-      code_num: "44",
-    },
-    { name: "Australia", code: "AU", code_num: "61" },
-    { name: "Austria", code: "AT", code_num: "22" },
-    { name: "Uzbekistan", code: "UZ", code_num: "22" },
-    { name: "Egypt", code: "EG", code_num: "22" },
-    { name: "Italy", code: "IT", code_num: "22" },
-    { name: "India", code: "IN", code_num: "91" },
-    { name: "Indonesia", code: "ID", code_num: "22" },
-    { name: "Japan", code: "JP", code_num: "22" },
-    { name: "China", code: "CN", code_num: "86" },
-    { name: "Cambodia", code: "KH", code_num: "22" },
-    { name: "Canada", code: "CA", code_num: "1" },
-    { name: "Taiwan", code: "TW", code_num: "22" },
-    { name: "Thailand", code: "TH", code_num: "886" },
-    { name: "Turkey", code: "TR", code_num: "22" },
-    { name: "Portugal", code: "PT", code_num: "22" },
-    { name: "Poland", code: "PL", code_num: "22" },
-    { name: "Puerto Rico", code: "PR", code_num: "22" },
-    { name: "France", code: "FR", code_num: "33" },
-    { name: "Finland", code: "FI", code_num: "22" },
-    { name: "Philippines", code: "PH", code_num: "63" },
-    { name: "Hong Kong", code: "HK", code_num: "852" },
-  ];
+  const [result, setResult] = useState<any>([]); // 실시간 검색 결과
+
+  /** 검색 결과 초기화 */
+  useEffect(() => {
+    if (list) {
+      setResult([...list]);
+    }
+  }, [list]);
+
+  /** 주소 편집시 값 있으면 보여지는 Text 초기화 */
+  useEffect(() => {
+    if (list && value) {
+      setText(list.find((x: any) => x.countryCode === value).name);
+    }
+  }, [list, value]);
+
+  /** 실시간 나라 검색 결과 세팅 */
+  useEffect(() => {
+    if (list === undefined) {
+      return;
+    }
+    let tempResult = [];
+    let tempIncludeReuslt = [];
+
+    // 시작 문자열이 입력 문자열과 같으면 push
+    // 시작 문자열이 같지않고 문자열이 포함되어있으면 includeResult에 push
+
+    for (const el of list) {
+      el.name.toLowerCase().startsWith(text.toLowerCase())
+        ? tempResult.push(el)
+        : el.name.toLowerCase().includes(text.toLowerCase()) &&
+          tempIncludeReuslt.push(el);
+    }
+    // 그리고 두 배열을 합친후 세팅
+    tempResult = tempResult.concat(tempIncludeReuslt);
+    setResult([...tempResult]);
+  }, [text]);
+
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+
+  /** 영어만 허용 */
+  const charBlocker = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const reg = /[^A-Za-z\s]/gi;
+    e.target.value = e.target.value.replace(reg, "");
+  };
 
   return (
     <>
-      <Container
-        isActive={isActive}
-        onClick={() => setIsActive(!isActive)}
-        tabIndex={0}
-        onBlur={() => setIsActive(false)}
-      >
+      <Container isActive={isActive}>
         <Select>
-          {text}
+          <Input
+            type="text"
+            onChange={(e) => {
+              charBlocker(e);
+              setText(e.target.value);
+            }}
+            value={text}
+            onFocus={() => setIsActive(true)}
+            onBlur={() => setIsActive(false)}
+            placeholder="Input your country"
+            maxLength={50}
+          />
+
           <ImageWrapper>
             <Image src={isActive ? arrow_up : arrow_down} alt="arrow" />
           </ImageWrapper>
         </Select>
-        <OptionWrapper isActive={isActive}>
-          {list &&
-            list.map((i, j) => {
+        <OptionWrapper isActive={isActive} resultLength={result.length}>
+          {result &&
+            result.map((i: any, j: number) => {
+              let startIndex = 0;
+              i.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 &&
+                (startIndex = i.name.toLowerCase().indexOf(text.toLowerCase()));
+              let lastIndex = startIndex + text.length - 1;
+
               return (
-                <Option key={j} onClick={() => optionHandler(i)}>
-                  {i.name}
+                <Option
+                  key={`${j}aasccpas-dc`}
+                  onMouseDown={() => optionHandler(i)}
+                >
+                  {i.name.split("").map((el: string, index: number) => {
+                    return index >= startIndex &&
+                      index <= lastIndex &&
+                      text.length !== 0 ? (
+                      el === " " ? (
+                        <span key={`${el}${index}asc`}>&nbsp;</span>
+                      ) : (
+                        <Bold key={`${el}${index}asc`}>{`${el}`}</Bold>
+                      )
+                    ) : el === " " ? (
+                      <span key={`${el}${index}asc`}>&nbsp;</span>
+                    ) : (
+                      <span key={`${el}${index}asc`}>{`${el}`}</span>
+                    );
+                  })}
                 </Option>
               );
             })}
@@ -119,6 +151,12 @@ const Container = styled.div<{ isActive: boolean }>`
 const Select = styled.div`
   display: flex;
   position: relative;
+  width: 100%;
+  height: 40px;
+
+  align-items: center;
+`;
+const Input = styled.input`
   padding-left: 16px;
   width: 100%;
   height: 40px;
@@ -130,19 +168,27 @@ const Select = styled.div`
   font-size: 14px;
   font-weight: 400;
   line-height: 14px;
+  &::placeholder {
+    color: #dee8ec;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 14px;
+  }
 `;
-
 const ImageWrapper = styled.div`
   position: absolute;
   right: 10px;
 `;
 
-const OptionWrapper = styled.div<{ isActive: boolean }>`
+const OptionWrapper = styled.div<{ isActive: boolean; resultLength: number }>`
+  display: ${(props) => {
+    return props.resultLength === 0 ? "none" : "block";
+  }};
   z-index: 1;
   position: relative;
   margin-top: 1px;
-  height: ${(props) => {
-    return props.isActive ? "200px" : "0";
+  max-height: ${(props) => {
+    return props.isActive ? "300px" : "0";
   }};
   overflow: ${(props) => {
     return props.isActive ? "scroll" : "hidden";
@@ -162,7 +208,7 @@ const Option = styled.div`
   box-sizing: border-box;
   align-items: center;
   border-bottom: 1px solid #dee8ec;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   line-height: 14px;
 
@@ -172,4 +218,7 @@ const Option = styled.div`
   }
 `;
 
+const Bold = styled.span`
+  font-weight: 700;
+`;
 export default SelectBox;
