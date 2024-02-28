@@ -202,7 +202,7 @@ const useEdit_account_password = () => {
 
   /** current pw 유효성 검사 */
   const validationCurrentPw = () => {
-    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    let regexp = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
     if (regexp.test(currentPw)) {
       setCurrentPassowrdValidationResult(1);
       return true;
@@ -213,7 +213,7 @@ const useEdit_account_password = () => {
 
   /** password 유효성 검사 */
   const validationPassword = () => {
-    let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
+    let regexp = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
     if (regexp.test(password)) {
       setPassowrdValidationResult(1);
       return true;
@@ -224,7 +224,14 @@ const useEdit_account_password = () => {
   /** passwordConfirm 유효성 검사 */
   const validationPasswordConfirm = () => {
     let regexp = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/; // 비밀번호 유효성 검사 정규식 영문,숫자,특수문자 포함
-    if (password == passwordConfirm && regexp.test(passwordConfirm)) {
+
+    // 입력안했을 경우
+    if (passwordConfirm.length === 0) {
+      setPasswordConfirmValidationResult(3);
+      return false;
+    }
+    // 비밀번호 같을 경우
+    if (password === passwordConfirm) {
       setPasswordConfirmValidationResult(1);
       return true;
     }
@@ -287,6 +294,7 @@ const useEdit_account_password = () => {
     const at = localStorage.getItem("at");
     pwResetRequest(at, currentPw, password, passwordConfirm).then((res) => {
       const status = res?.data.status;
+      console.log(res);
 
       // 성공 case
       if (status === 200) {
@@ -342,13 +350,14 @@ const useEdit_account_password = () => {
             onChange={(e) => {
               setCurrentPw(e.target.value);
             }}
+            maxLength={20}
             ref={(element) => {
               ref.current[0] = element;
             }}
           />
           <ErrorCase isActive={currentPasswordValidationResult}>
             {currentPasswordValidationResult === 2
-              ? "Please enter a password of at least 10 characters."
+              ? "The password must be at least 8 characters including uppercase letters, lowercase letters, and numbers."
               : "It's wrong current password."}
           </ErrorCase>
         </InputContainer>
@@ -360,11 +369,15 @@ const useEdit_account_password = () => {
             onChange={(e) => {
               setPassowrd(e.target.value);
             }}
+            maxLength={20}
             ref={(element) => {
               ref.current[1] = element;
             }}
           />
-          <ErrorCase isActive={passwordValidationResult}>ErrorCase</ErrorCase>
+          <ErrorCase isActive={passwordValidationResult}>
+            The password must be at least 8 characters including uppercase
+            letters, lowercase letters, and numbers.
+          </ErrorCase>
         </InputContainer>
         <InputContainer>
           <InputTitle>Password confirm</InputTitle>
@@ -374,12 +387,15 @@ const useEdit_account_password = () => {
             onChange={(e) => {
               setPasswordConfirm(e.target.value);
             }}
+            maxLength={20}
             ref={(element) => {
               ref.current[2] = element;
             }}
           />
           <ErrorCase isActive={passwordConfirmValidationResult}>
-            ErrorCase
+            {passwordConfirmValidationResult === 2
+              ? "The passwords are not the same."
+              : "Please enter your password confirm."}
           </ErrorCase>
         </InputContainer>
         <ButtonWrapper>
