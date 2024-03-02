@@ -221,9 +221,10 @@ export const userInfoRequest = async (acessToken: string | null) => {
 };
 
 /** 상품(원단) 상세 조회 */
-export const productDetailRequest = async (productNo: string | null) => {
+export const productDetailRequest = async (accessToken: any, productNo: string | null) => {
   try {
     const res = await axios({
+      headers: { Authorization: `Bearer ${accessToken}` },
       method: "GET",
       url: `/products/${productNo}`,
     });
