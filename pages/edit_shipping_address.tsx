@@ -16,6 +16,7 @@ import {
   addAddressRequest,
   editAddress,
   loginRefreshRequest,
+  originsRequest,
 } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
@@ -48,50 +49,51 @@ const useEdit_shipping_address = () => {
 
   const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
 
-  /** 나라 리스트 숫자 코드는 업데이트 필요 */
-  const countryList: ListCountryArray = [
-    { name: "Republic of Korea", code: "KR", code_num: "82" },
-    { name: "United States of America", code: "US", code_num: "1" },
-    { name: "Greece", code: "GR", code_num: "99" },
-    { name: "Netherlands", code: "NL", code_num: "99" },
-    { name: "Nepal", code: "NP", code_num: "22" },
-    { name: "Norway", code: "NO", code_num: "22" },
-    { name: "Danmark", code: "DK", code_num: "22" },
-    { name: "Germany", code: "DE", code_num: "49" },
-    { name: "Laos", code: "LA", code_num: "22" },
-    { name: "Malaysia", code: "MY", code_num: "22" },
-    { name: "Mexico", code: "MX", code_num: "22" },
-    { name: "Republic of the Union of Myanmar", code: "MM", code_num: "22" },
-    { name: "Bangladesh", code: "BD", code_num: "22" },
-    { name: "Viet Nam", code: "VN", code_num: "84" },
-    { name: "Belgium", code: "BE", code_num: "22" },
-    {
-      name: "United Kingdom of Great Britain and Northern Ireland",
-      code: "GB",
-      code_num: "44",
-    },
-    { name: "Australia", code: "AU", code_num: "61" },
-    { name: "Austria", code: "AT", code_num: "22" },
-    { name: "Uzbekistan", code: "UZ", code_num: "22" },
-    { name: "Egypt", code: "EG", code_num: "22" },
-    { name: "Italy", code: "IT", code_num: "22" },
-    { name: "India", code: "IN", code_num: "91" },
-    { name: "Indonesia", code: "ID", code_num: "22" },
-    { name: "Japan", code: "JP", code_num: "22" },
-    { name: "China", code: "CN", code_num: "86" },
-    { name: "Cambodia", code: "KH", code_num: "22" },
-    { name: "Canada", code: "CA", code_num: "1" },
-    { name: "Taiwan", code: "TW", code_num: "22" },
-    { name: "Thailand", code: "TH", code_num: "886" },
-    { name: "Turkey", code: "TR", code_num: "22" },
-    { name: "Portugal", code: "PT", code_num: "22" },
-    { name: "Poland", code: "PL", code_num: "22" },
-    { name: "Puerto Rico", code: "PR", code_num: "22" },
-    { name: "France", code: "FR", code_num: "33" },
-    { name: "Finland", code: "FI", code_num: "22" },
-    { name: "Philippines", code: "PH", code_num: "63" },
-    { name: "Hong Kong", code: "HK", code_num: "852" },
-  ];
+  /** 국가 리스트 */
+  const [origins, setOrigins] = useState<any>();
+  const [originsCallingCode, setOriginsCallingCode] = useState<any>();
+
+  /** 국가리스트 세팅 */
+  useEffect(() => {
+    if (sessionStorage.getItem("origins")) {
+      const result = [...JSON.parse(sessionStorage.getItem("origins") || "{}")];
+      setOrigins(result);
+      setOriginsCallingCode(
+        result.map((el: any) => {
+          let countryCodeArr = [];
+          for (const x of result) {
+            el.callingCode === x.callingCode &&
+              countryCodeArr.push(x.countryCode);
+          }
+          return {
+            name: el.name,
+            callingCode: el.callingCode,
+            countryCodeArr: countryCodeArr,
+          };
+        })
+      );
+    }
+
+    originsRequest().then((res: any) => {
+      const result = res?.data.result;
+      setOrigins(result);
+      setOriginsCallingCode(
+        result.map((el: any) => {
+          let countryCodeArr = [];
+          for (const x of result) {
+            el.callingCode === x.callingCode &&
+              countryCodeArr.push(x.countryCode);
+          }
+          return {
+            name: el.name,
+            callingCode: el.callingCode,
+            countryCodeArr: countryCodeArr,
+          };
+        })
+      );
+      sessionStorage.setItem("origins", JSON.stringify(result));
+    });
+  }, []);
 
   const [titleValidationResult, setTitleValidationResult] = useState<number>(0); // 성 유효성 체크
   const [firstNameValidationResult, setFirstNameValidationResult] =
@@ -393,6 +395,7 @@ const useEdit_shipping_address = () => {
             <InputTitle>Address title</InputTitle>
             <Input
               type="text"
+              maxLength={30}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               ref={(element) => {
@@ -409,7 +412,9 @@ const useEdit_shipping_address = () => {
               <Input
                 type="text"
                 value={firstName}
+                maxLength={30}
                 onChange={(e) => {
+                  e.target.value = e.target.value.replace(/[^A-Za-z0-9]/gi, "");
                   setFirstName(e.target.value);
                 }}
                 ref={(element) => {
@@ -425,7 +430,9 @@ const useEdit_shipping_address = () => {
               <Input
                 type="text"
                 value={lastName}
+                maxLength={30}
                 onChange={(e) => {
+                  e.target.value = e.target.value.replace(/[^A-Za-z0-9]/gi, "");
                   setLastName(e.target.value);
                 }}
                 ref={(element) => {
@@ -442,6 +449,7 @@ const useEdit_shipping_address = () => {
             <Input
               type="text"
               value={companyName}
+              maxLength={50}
               onChange={(e) => setCompanyName(e.target.value)}
               ref={(element) => {
                 ref.current[3] = element;
@@ -460,7 +468,7 @@ const useEdit_shipping_address = () => {
               Country
             </InputTitle>
             <SelectBox
-              list={countryList}
+              list={origins}
               value={countryCode}
               setValue={setCounryCode}
               validationStart={validationStart}
@@ -475,7 +483,11 @@ const useEdit_shipping_address = () => {
             <Input
               type="text"
               value={state}
-              onChange={(e) => setState(e.target.value)}
+              maxLength={30}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                setState(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[5] = element;
               }}
@@ -489,7 +501,11 @@ const useEdit_shipping_address = () => {
             <Input
               type="text"
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              maxLength={30}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z]/gi, "");
+                setCity(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[6] = element;
               }}
@@ -503,7 +519,11 @@ const useEdit_shipping_address = () => {
             <Input
               type="text"
               value={streetAddress1}
-              onChange={(e) => setStreetAddress1(e.target.value)}
+              maxLength={50}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z0-9\s]/gi, "");
+                setStreetAddress1(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[7] = element;
               }}
@@ -514,7 +534,11 @@ const useEdit_shipping_address = () => {
             <Input
               type="text"
               value={streetAddress2}
-              onChange={(e) => setStreetAddress2(e.target.value)}
+              maxLength={50}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^A-Za-z0-9\s]/gi, "");
+                setStreetAddress2(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[8] = element;
               }}
@@ -528,7 +552,11 @@ const useEdit_shipping_address = () => {
             <Input
               type="text"
               value={postCode}
-              onChange={(e) => setPostCode(e.target.value)}
+              maxLength={30}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/gi, "");
+                setPostCode(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[9] = element;
               }}
@@ -542,7 +570,11 @@ const useEdit_shipping_address = () => {
             <Input
               type="text"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              maxLength={30}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/gi, "");
+                setPhoneNumber(e.target.value);
+              }}
               ref={(element) => {
                 ref.current[10] = element;
               }}

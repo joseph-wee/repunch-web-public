@@ -492,7 +492,7 @@ const useAdd_shiping_address = () => {
               type="text"
               maxLength={50}
               onChange={(e) => {
-                e.target.value = e.target.value.replace(/[^A-Za-z0-9]/gi, "");
+                e.target.value = e.target.value.replace(/[^A-Za-z0-9\s]/gi, "");
                 setStreetAddress1(e.target.value);
               }}
               ref={(element) => {
@@ -506,7 +506,7 @@ const useAdd_shiping_address = () => {
               type="text"
               maxLength={50}
               onChange={(e) => {
-                e.target.value = e.target.value.replace(/[^A-Za-z0-9]/gi, "");
+                e.target.value = e.target.value.replace(/[^A-Za-z0-9\s]/gi, "");
                 setStreetAddress2(e.target.value);
               }}
               ref={(element) => {
