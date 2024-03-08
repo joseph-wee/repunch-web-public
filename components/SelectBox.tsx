@@ -87,7 +87,8 @@ const SelectBox = ({
 
     // ref.current?.scrollTo({ top: ref.current?.scrollTop + 40 });
     // enter 누르면 해당 나라 선택
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && focusIndex !== -1) {
+      setIsActive(false);
       optionHandler(result[focusIndex]);
     }
 
@@ -151,6 +152,7 @@ const SelectBox = ({
           <Input
             type="text"
             onChange={(e) => {
+              setIsActive(true);
               charBlocker(e);
               setText(e.target.value);
               setFocusIndex(-1);
