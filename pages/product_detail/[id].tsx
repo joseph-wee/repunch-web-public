@@ -158,10 +158,23 @@ const useId = () => {
     setCount(count + 1);
   };
 
+  const getCookie = (name: string) => {
+    let matches = document.cookie.match(
+      new RegExp(
+        "(?:^|; )" +
+          name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
+          "=([^;]*)"
+      )
+    );
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+  };
+
   /** 상품 상세 호출 및 info에 저장, 옵션 컬러 세팅 */
   const productDetailRequestHandler = () => {
     let at: string | null;
     let rt: string | null;
+    let atExpire = getCookie("at");
+    let rtExpire = getCookie("rt");
 
     if (sessionStorage.getItem("at")) {
       at = sessionStorage.getItem("at");
@@ -170,7 +183,7 @@ const useId = () => {
       at = localStorage.getItem("at");
       rt = localStorage.getItem("rt");
     }
-    if (at) {
+    if (at && atExpire) {
       productDetailRequest("at", window.location.pathname.slice(16)).then(
         async (res) => {
           console.log(res);
@@ -341,6 +354,194 @@ const useId = () => {
 
       return;
     }
+
+    if (rt) {
+      loginRefreshRequest(rt).then((res) => {
+        at = res?.data.result.access_token;
+        rt = res?.data.result.refresh_token;
+        localStorage.setItem("at", `${at}`);
+        localStorage.setItem("rt", `${rt}`);
+
+        const atExpire = res?.data.result.expires_in;
+        const rtExpire = res?.data.result.refresh_token_expires_in;
+
+        document.cookie = `at=true; expires=${new Date(
+          atExpire
+        ).toUTCString()}; path=/`;
+        document.cookie = `rt=true; expires=${new Date(
+          rtExpire
+        ).toUTCString()}; path=/`;
+
+        let reg = /[0-9]/g;
+        productDetailRequest("", window.location.pathname.slice(16)).then(
+          async (res) => {
+            let data = res.data.result;
+            data.description = replacer(data.description);
+            setInfo(data);
+            setLike(data.like);
+            console.log(data);
+
+            // 임시로 옵션들 소팅 후 할당
+            let tempOptions = res.data.result.options.sort(
+              (a: any, b: any) =>
+                Number(a.productOptionNo) - Number(b.productOptionNo)
+            );
+
+            // 임시 컬러 배열 할당, 중복 없는 상품 칼라 할당
+            let tempColorArr: any = [];
+            let tempProductColors: any = [];
+            tempOptions.forEach((el: any, index: number) => {
+              tempColorArr.push({
+                productOptionNo: el.productOptionNo,
+                color: el.color.name,
+              });
+              if (!tempProductColors.find((x: any) => x == el.color.name)) {
+                tempProductColors.push(el.color.name);
+              }
+            });
+
+            // 임시 컬러 배열에서 중복 제거
+            // tempColorArr = Array.from(new Set(tempColorArr));
+
+            // 임시 컬러리스트 할당, 쿼리값에 해당되는 인덱스 할당
+            let tempColorList: any = []; // 임시 컬러리스트
+            let tempColorIndex = 0;
+            tempColorArr.forEach((el: any, index: number) => {
+              tempColorList.push({
+                productOptionNo: el.productOptionNo,
+                color: el.color,
+                checked: false,
+              });
+              if (el.productOptionNo == router.query.selectNo) {
+                tempColorIndex = index;
+              }
+            });
+
+            // 쿼리값 인덱스 혹은 첫번째값 checked : true
+            tempColorList[tempColorIndex].checked = true;
+
+            // setState 컬러리스트
+            setColorList([
+              ...tempColorList.sort(
+                (a: any, b: any) =>
+                  Number(a.productOptionNo) - Number(b.productOptionNo)
+              ),
+            ]);
+
+            // 모든 옵션들 리스트 형태로 관리하기 위해 초기화
+            let tempOptionList: any = [];
+            let tempOptionListIndex = 0;
+
+            tempOptions.forEach((el: any, index: number) => {
+              tempOptionList.push({
+                productOptionNo: el.productOptionNo,
+                color: el.color.name,
+                width: res.data.result.width,
+                length: el.length,
+                price: res?.data.result.price,
+                quantity: el.quantity,
+                samplePrice: el.samplePrice,
+                sampleQuantity: el.sampleQuantity,
+                clicked: false,
+              });
+
+              // 쿼리 옵션 바로 표시하기 위해 index찾기
+              if (
+                tempOptionListIndex == 0 &&
+                el.productOptionNo == router.query.selectNo
+              ) {
+                tempOptionListIndex = index;
+              }
+            });
+
+            tempOptionList[tempOptionListIndex].clicked = true;
+            setOptionList([
+              ...tempOptionList.sort(
+                (a: any, b: any) =>
+                  Number(a.productOptionNo) - Number(b.productOptionNo)
+              ),
+            ]);
+
+            /** 선택된 옵션 초기화 */
+            setSelectedOption({ ...tempOptionList[tempOptionListIndex] });
+
+            /** 썸네일 리스트 초기화 */
+            let tempThumbnailVideoList: any = thumbnailVideoList;
+
+            tempOptions.forEach((el: any) => {
+              el.files.forEach((sl: any) => {
+                // 썸네일 이미지 세팅
+                if (sl.type == "IMAGE") {
+                  tempThumbnailVideoList.push({
+                    productOptionNo: el.productOptionNo,
+                    color: el.color.name,
+                    type: "thumbnail",
+                    // `${select.imageUrl}?&w=320&q=75` : ""}
+                    imageUrl: sl.resourceUrl,
+                    videoUrl: "",
+                    clicked: false,
+                  });
+                }
+                // 비디오 세팅
+                if (sl.type == "VIDEO") {
+                  tempThumbnailVideoList.push({
+                    productOptionNo: el.productOptionNo,
+                    color: el.color.name,
+                    type: "video",
+                    imageUrl: sl.imageUrl,
+                    videoUrl: sl.resourceUrl,
+                    clicked: false,
+                  });
+                  return;
+                }
+              });
+            });
+
+            //   /** 썸네일 이미지 세팅 */
+            //   tempThumbnailVideoList.push({
+            //     color: el.color.name,
+            //     type: "thumbnail",
+            //     imageUrl: el.thumbnailUrl,
+            //     videoUrl: "",
+            //     clicked: false,
+            //   });
+
+            //   /** 동영상 세팅 */
+            //   if (el.files[1]) {
+            //     tempThumbnailVideoList.push({
+            //       color: el.color.name,
+            //       type: "video",
+            //       imageUrl: el.files[0].resourceUrl,
+            //       videoUrl: el.files[1].resourceUrl,
+            //       clicked: false,
+            //     });
+            //   }
+            // });
+
+            if (router.query.selectNo) {
+              tempThumbnailVideoList.find(
+                (el: any) => el.productOptionNo == router.query.selectNo
+              ).clicked = true;
+              setSelect({
+                ...tempThumbnailVideoList[
+                  tempThumbnailVideoList.findIndex(
+                    (el: any) => el.productOptionNo == router.query.selectNo
+                  )
+                ],
+              });
+            } else {
+              tempThumbnailVideoList[0].clicked = true;
+              setSelect({ ...tempThumbnailVideoList[0] });
+            }
+
+            setThumbnailVideoList([...tempThumbnailVideoList]);
+            setProductColors(tempProductColors);
+            // setVideoUrl(res.data.result.files[1].resourceUrl);
+          }
+        );
+      });
+    }
+
     let reg = /[0-9]/g;
     productDetailRequest("", window.location.pathname.slice(16)).then(
       async (res) => {
