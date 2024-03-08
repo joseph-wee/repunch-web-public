@@ -128,6 +128,7 @@ const ImageWrapper = styled.div`
 const OptionWrapper = styled.div<{ isActive: boolean }>`
   z-index: 1;
   position: relative;
+  margin-top: 1px;
   height: ${(props) => {
     return props.isActive ? "200px" : "0";
   }};
@@ -135,6 +136,7 @@ const OptionWrapper = styled.div<{ isActive: boolean }>`
     return props.isActive ? "scroll" : "hidden";
   }};
   overflow-x: hidden;
+  border: 1px solid #dee8ec;
 `;
 
 const Option = styled.div`
@@ -144,13 +146,16 @@ const Option = styled.div`
   height: 40px;
   box-sizing: border-box;
   align-items: center;
-  border: 1px solid #dee8ec;
+  border-bottom: 1px solid #dee8ec;
   border-radius: 2px;
   font-size: 14px;
   font-weight: 400;
   line-height: 14px;
 
   background-color: #ffffff;
+  &:last-of-type {
+    border: none;
+  }
 `;
 const CallingCode = styled.div`
   width: 35px;
