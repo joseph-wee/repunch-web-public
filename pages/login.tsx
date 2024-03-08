@@ -82,9 +82,10 @@ const useLogin = () => {
     router.push(landingPage);
   };
 
-  useEffect(() => {
-    console.log(router.asPath.split("?")[1]);
-  }, []);
+  // let date = new Date();
+  // date.setTime(date.getTime() + 365 * 24 * 60 * 60 * 1000); // 기간 1년
+  // document.cookie = `access=true; expires=${date.toUTCString()}; path=/`;
+  // router.push("/about_us");
 
   /** 로그인 api 요청후 결과에 따라 액션 */
   const loginRequestHandler = (userId: string, password: string) => {
@@ -94,6 +95,16 @@ const useLogin = () => {
       loginRequest(userId, password).then((res?) => {
         // success case : id, pw 모두 통과
         if (res?.data?.status == 200) {
+          const atExpire = res.data.result.expires_in;
+          const rtExpire = res.data.result.refresh_token_expires_in;
+
+          document.cookie = `at=true; expires=${new Date(
+            atExpire
+          ).toUTCString()}; path=/`;
+          document.cookie = `rt=true; expires=${new Date(
+            rtExpire
+          ).toUTCString()}; path=/`;
+
           const at = res?.data.result.access_token;
           const rt = res?.data.result.refresh_token;
 
