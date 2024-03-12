@@ -34,25 +34,13 @@ const PopUpSelectComposition = ({
 
   const [tempList, setTempList] = useState<any>();
 
-  const [selectInput, setSelectInput] = useState(-1);
+  const [selectIndex, setSelectIndex] = useState(-1);
   const [percent, setPercent] = useState(0);
   const ref = useRef<null[] | HTMLInputElement[]>([]);
 
   const inputHandler = (value: string, index: number) => {
-    // let x = tempList;
-    // x[index].value = value;
-    // setTempList([...x]);
     tempList[index].value = value;
     setTempList([...tempList]);
-  };
-
-  const selectFocusHandler = (index: number) => {
-    setSelectInput(index);
-    ref.current[0]?.focus();
-  };
-
-  const okHandelr = () => {
-    percent <= 100 && setSelectInput(-1);
   };
 
   const compositionSave = () => {
@@ -75,10 +63,6 @@ const PopUpSelectComposition = ({
       });
     setProductInfo({ ...productInfo });
   };
-
-  useEffect(() => {
-    ref.current[selectInput]?.focus();
-  }, [selectInput]);
 
   useEffect(() => {
     if (tempList) {
@@ -106,33 +90,49 @@ const PopUpSelectComposition = ({
             }),
           ]);
         });
+
+    console.log(ref);
   }, []);
+
+  /** composition 칸 클릭시 자동 포커스 */
+  useEffect(() => {
+    ref && ref.current[selectIndex]?.focus();
+  }, [selectIndex]);
 
   return (
     <Container selectCategory={selectCategory}>
-      <BackGround
-        onClick={() => setSelectCategory("")}
-        selectInput={selectInput}
-      />
+      <BackGround onClick={() => setSelectCategory("")} />
       <ContentWrapper>
-        <Notice>The configuration should be 100% overall.</Notice>
+        <Title>Composition</Title>
+        <PercentCalc percent={percent}>{`${percent}`}/100%</PercentCalc>
         {tempList &&
           tempList.map((el: any, index: number) => {
             return (
               <CategoryWrapper
-                value={el.value}
+                index={index}
+                selectIndex={selectIndex}
                 onClick={() => {
-                  setSelectInput(index);
+                  setSelectIndex(index);
                 }}
                 key={`${index}vbn`}
               >
                 <TitlePerecentWrapper>
                   <CategoryTitle>{`${el.name}`}</CategoryTitle>
-                  <Percent>{el.value > 0 && `${el.value}%`}</Percent>
+                  <Percent index={index} selectIndex={selectIndex}>
+                    {el.value > 0 && `${el.value}%`}
+                  </Percent>
                 </TitlePerecentWrapper>
-                {el.value > 0 && (
-                  <Image src={ic_check_red} alt="ic_check_red" />
-                )}
+                <PercentInputWrapper index={index} selectIndex={selectIndex}>
+                  {/** 수정하는 경우에 디폴트 벨류 세팅하면 될 듯 */}
+                  <PercentInput
+                    placeholder="Percent"
+                    onChange={(e) => inputHandler(e.target.value, index)}
+                    ref={(element) => {
+                      ref.current[index] = element;
+                    }}
+                  />
+                  <Unit>%</Unit>
+                </PercentInputWrapper>
               </CategoryWrapper>
             );
           })}
@@ -143,38 +143,8 @@ const PopUpSelectComposition = ({
           </ConfirmButton>
         </ButtonWrapper>
       </ContentWrapper>
-      <InputBackground selectInput={selectInput} />
-      <InputWindow selectInput={selectInput}>
-        <InputTitle>
-          Input fabric&aposs composition
-          <br />
-          percent
-        </InputTitle>
-        <InputWrapper>
-          {tempList &&
-            tempList.map((el: any, index: number) => {
-              return (
-                <Input
-                  placeholder="Percent"
-                  selectInput={selectInput}
-                  index={index}
-                  value={tempList[index].value}
-                  onChange={(e) => inputHandler(e.target.value, index)}
-                  ref={(el) => {
-                    ref.current[index] = el;
-                  }}
-                  key={`${index}vbntyu`}
-                />
-              );
-            })}
-          <Unit>%</Unit>
-        </InputWrapper>
-        <PercentCalc percent={percent}>{`${percent}`}/100%</PercentCalc>
-        <ErrorText>The total should not exceed 100%.</ErrorText>
-        <InputButton percent={percent} onClick={() => okHandelr()}>
-          OK
-        </InputButton>
-      </InputWindow>
+
+      {/* <ErrorText>The total should not exceed 100%.</ErrorText> */}
     </Container>
   );
 };
@@ -198,10 +168,7 @@ const Container = styled.div<{ selectCategory: string }>`
     z-index: 0;
   }
 `;
-const BackGround = styled.div<{ selectInput: number }>`
-  display: ${(props) => {
-    return props.selectInput === -1 ? "block" : "none";
-  }};
+const BackGround = styled.div`
   position: fixed;
   width: 100%;
   height: 100vh;
@@ -209,6 +176,7 @@ const BackGround = styled.div<{ selectInput: number }>`
 `;
 const ContentWrapper = styled.div`
   position: relative;
+  padding-top: 20px;
   padding-bottom: 20px;
   box-sizing: border-box;
   background-color: #ffffff;
@@ -231,19 +199,18 @@ const ContentWrapper = styled.div`
     scrollbar-width: none; /* 파이어폭스 */
   }
 `;
-const Notice = styled.div`
+
+const Title = styled.div`
   display: flex;
-  align-items: center;
   justify-content: center;
-  height: 56px;
-  color: #0f697c;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 15.6px;
-  box-sizing: border-box;
-  border-bottom: 1px solid #f2f6f8;
+  margin-bottom: 2px;
+  color: #121822;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20.8px;
 `;
-const CategoryWrapper = styled.div<{ value: number }>`
+
+const CategoryWrapper = styled.div<{ index: number; selectIndex: number }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -252,12 +219,9 @@ const CategoryWrapper = styled.div<{ value: number }>`
   height: 46px;
   box-sizing: border-box;
   border-bottom: 1px solid #f2f6f8;
-  background-color: ${(props) => {
-    return props.value > 0 && `#F5F8F9`;
-  }};
   cursor: pointer;
-  font-weight: ${(props) => {
-    return props.value > 0 ? `600` : `400`;
+  background-color: ${(props) => {
+    return props.selectIndex === props.index ? "#F5F8F9" : "";
   }};
 `;
 const TitlePerecentWrapper = styled.div`
@@ -266,8 +230,42 @@ const TitlePerecentWrapper = styled.div`
   align-items: center;
 `;
 const CategoryTitle = styled.div``;
-const Percent = styled.div`
+const Percent = styled.div<{ index: number; selectIndex: number }>`
+  display: ${(props) => {
+    return props.selectIndex !== props.index ? "block" : "none";
+  }};
   color: #ff2f01;
+`;
+const PercentInputWrapper = styled.div<{ index: number; selectIndex: number }>`
+  display: ${(props) => {
+    return props.selectIndex === props.index ? "block" : "none";
+  }};
+  position: relative;
+`;
+const PercentInput = styled.input`
+  padding-left: 12px;
+  padding-right: 25px;
+  width: 137px;
+  height: 28px;
+  border-radius: 2px;
+  border: 1px solid #dee8ec;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.2px;
+  &::placeholder {
+    color: #dee8ec;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18.2px;
+  }
+`;
+const Unit = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 14px;
+  font-weight: 400;
 `;
 
 const ButtonWrapper = styled.div`
@@ -345,13 +343,11 @@ const Input = styled.input<{ selectInput: number; index: number }>`
     color: #dee8ec;
   }
 `;
-const Unit = styled.div`
-  position: absolute;
-  right: 12px;
-  font-size: 14px;
-  font-weight: 400;
-`;
+
 const PercentCalc = styled.div<{ percent: number }>`
+  padding-bottom: 15px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #f2f6f8;
   text-align: center;
   font-size: 12px;
   font-weight: 400;
