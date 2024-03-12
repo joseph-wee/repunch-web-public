@@ -92,6 +92,11 @@ const SelectBox = ({
       optionHandler(result[focusIndex]);
     }
 
+    // 위,아래 방향키 눌렀을 경우에 커서 이동 차단
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+    }
+
     // 7개 이하면
     if (result.length <= 7) {
       // 윗 방향키인데 -1이면 return
