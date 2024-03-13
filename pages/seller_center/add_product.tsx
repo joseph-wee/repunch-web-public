@@ -38,10 +38,11 @@ const useAdd_product = () => {
     certificated: false,
     width: 0,
     widthUnitType: "INCH",
+    price: "",
     options: [
       {
         colorNo: 0,
-        length: 0,
+        length: "",
         lengthUnitType: "METER",
         amount: 0,
         quantity: 0,
@@ -110,28 +111,32 @@ const useAdd_product = () => {
     setProductInfo({ ...productInfo, weight: e.target.value });
   };
 
-  // TODO: price인 경우 - copy 할 때는 세팅 전에 amount에 $붙이고 세팅하면 될 듯
+  // TODO: price인 경우 - copy 할 때는 세팅 전에 price에 $붙이고 세팅하면 될 듯
   /** price input 숫자, . 만 입력 및 앞에 $ 표기 */
   const inputAmountHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "$") {
       e.target.value = "";
-      setAmount("");
+      setProductInfo({ ...productInfo, price: "" });
       return;
     }
     e.target.value = "$" + e.target.value.replace(/[^.0-9]/g, "");
-    setAmount(e.target.value);
+    setProductInfo({ ...productInfo, price: e.target.value });
   };
 
   /** length 숫자, . 만 입력되게 */
-  // const inputLengthHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   e.target.value = e.target.value.replace(/[^.0-9]/g, "");
-  //   setProductInfo({ ...productInfo, : e.target.value });
-  // }
+  const inputLengthHandler = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.target.value = e.target.value.replace(/[^.0-9]/g, "");
+    productInfo.options[index].length = e.target.value;
+    setProductInfo({ ...productInfo });
+  };
 
   const addColorHandler = () => {
     productInfo.options.push({
       colorNo: 0,
-      length: 0,
+      length: "",
       lengthUnitType: "METER",
       amount: 0,
       quantity: 0,
@@ -308,7 +313,7 @@ const useAdd_product = () => {
             <PriceInput
               placeholder="$0"
               onChange={(e) => inputAmountHandler(e)}
-              value={amount}
+              value={productInfo.price}
             />
             <Unit>/m</Unit>
           </InputContentWrapper2>
@@ -391,7 +396,10 @@ const useAdd_product = () => {
                 <LengthInputWrapper>
                   <Length>Length</Length>
                   <LengthUnitWrapper>
-                    <LengthInput placeholder="0" />
+                    <LengthInput
+                      placeholder="0"
+                      onChange={(e) => inputLengthHandler(e, index)}
+                    />
                     <LengthUnit>m</LengthUnit>
                   </LengthUnitWrapper>
                 </LengthInputWrapper>
