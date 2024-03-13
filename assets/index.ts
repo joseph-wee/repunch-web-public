@@ -74,3 +74,5 @@ export { default as img_repunch_logo_test } from "./img_repunch_logo_test.png";
 export { default as ic_camera_play_wht } from "./ic_camera_play_wht.svg";
 export { default as ic_image_upload_wht } from "./ic_image_upload_wht.svg";
 export { default as ic_check_red } from "./ic_check_red.svg";
+export { default as ic_x_photo_m } from "./ic_x_photo_m.svg";
+export { default as ic_down_link } from "./ic_down_link .svg";
