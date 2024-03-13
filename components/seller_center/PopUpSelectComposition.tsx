@@ -37,13 +37,30 @@ const PopUpSelectComposition = ({
   const [selectIndex, setSelectIndex] = useState(-1);
   const [percent, setPercent] = useState(0);
   const ref = useRef<null[] | HTMLInputElement[]>([]);
+  const [error, setError] = useState(false);
 
+  /** 숫자만, 다른 키 입력차단, 100 초과 불가 */
   const inputHandler = (value: string, index: number) => {
-    tempList[index].value = value;
+    const onlyNumber = value.replace(/[^0-9]/g, "");
+    // 100 넘을 경우
+    if (Number(onlyNumber) > 100) {
+      tempList[index].value = 100;
+      setTempList([...tempList]);
+      return;
+    }
+    // 아닌 경우
+    tempList[index].value = onlyNumber;
     setTempList([...tempList]);
   };
 
+  /** 저장 */
   const compositionSave = () => {
+    setSelectIndex(-1);
+    // 100퍼센트 미만 이면 에러
+    if (percent < 100) {
+      setError(true);
+      return;
+    }
     setSelectCategory("");
 
     productInfo.materials = tempList
@@ -64,6 +81,23 @@ const PopUpSelectComposition = ({
     setProductInfo({ ...productInfo });
   };
 
+  /** 취소 */
+  const cancelHandler = () => {
+    setSelectCategory("");
+    setSelectIndex(-1);
+    setTempList([
+      ...tempList.map((el: any, index: number) => {
+        return {
+          ...el,
+          value: productInfo.materials[index]
+            ? productInfo.materials[index].value
+            : "",
+        };
+      }),
+    ]);
+  };
+
+  /** 퍼센트 계산 */
   useEffect(() => {
     if (tempList) {
       let sum = 0;
@@ -74,6 +108,7 @@ const PopUpSelectComposition = ({
     }
   }, [tempList]);
 
+  /** 재료 목록 없으면 불러오고 체크 유무, 값 세팅 */
   useEffect(() => {
     let materials = sessionStorage.getItem("materials");
     sessionStorage.getItem("materials")
@@ -101,7 +136,7 @@ const PopUpSelectComposition = ({
 
   return (
     <Container selectCategory={selectCategory}>
-      <BackGround onClick={() => setSelectCategory("")} />
+      <BackGround />
       <ContentWrapper>
         <Title>Composition</Title>
         <PercentCalc percent={percent}>{`${percent}`}/100%</PercentCalc>
@@ -126,6 +161,7 @@ const PopUpSelectComposition = ({
                   {/** 수정하는 경우에 디폴트 벨류 세팅하면 될 듯 */}
                   <PercentInput
                     placeholder="Percent"
+                    value={el.value}
                     onChange={(e) => inputHandler(e.target.value, index)}
                     ref={(element) => {
                       ref.current[index] = element;
@@ -136,15 +172,15 @@ const PopUpSelectComposition = ({
               </CategoryWrapper>
             );
           })}
+        <ErrorText error={error}>The total should not exceed 100%.</ErrorText>
 
         <ButtonWrapper>
+          <CancelButton onClick={() => cancelHandler()}>Cancel</CancelButton>
           <ConfirmButton onClick={() => compositionSave()}>
             Confirm
           </ConfirmButton>
         </ButtonWrapper>
       </ContentWrapper>
-
-      {/* <ErrorText>The total should not exceed 100%.</ErrorText> */}
     </Container>
   );
 };
@@ -269,20 +305,36 @@ const Unit = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 6px;
   @media screen and (max-width: 768px) {
     position: absolute;
   }
-
-  margin-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
   width: 100%;
   box-sizing: border-box;
 `;
+const CancelButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+  font-weight: 400;
+  border-radius: 2px;
+  color: #121822;
+  border: 1px solid #dee8ec;
+  background-color: #f2f6f8;
+
+  cursor: pointer;
+`;
 const ConfirmButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   height: 48px;
   box-sizing: border-box;
   font-weight: 700;
@@ -357,8 +409,15 @@ const PercentCalc = styled.div<{ percent: number }>`
     return props.percent > 100 ? "#ff2f01" : "#536c6d";
   }};
 `;
-const ErrorText = styled.div`
-  margin-bottom: 16px;
+const ErrorText = styled.div<{ error: boolean }>`
+  visibility: ${(props) => {
+    return props.error ? "visible" : "hidden";
+  }};
+  height: ${(props) => {
+    return props.error ? "18.2px" : "0px";
+  }};
+  margin-top: 10px;
+  margin-bottom: 10px;
   text-align: center;
   font-size: 12px;
   color: #ff2f01;
