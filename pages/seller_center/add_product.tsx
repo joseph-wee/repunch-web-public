@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import Image from "next/image";
@@ -6,10 +6,13 @@ import {
   ic_camera_play_wht,
   ic_check_wht,
   ic_close_wht,
+  ic_down_link,
   ic_image_upload_wht,
+  ic_link,
   ic_link_gray,
   ic_minus,
   ic_plus,
+  ic_x_photo_m,
 } from "../../assets";
 import PopUpSelectColor from "../../components/seller_center/PopUpSelectColor";
 import PopUpSelectComposition from "../../components/seller_center/PopUpSelectComposition";
@@ -66,6 +69,10 @@ const useAdd_product = () => {
   const [amount, setAmount] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
   const [colors, setColors] = useState<any>(); // 컬러 리스트
+  const imageRef = useRef<any>();
+  const videoRef = useRef<any>();
+  const [imageFiles, setImageFiles] = useState<any>([]);
+  const [videoFiles, setVideoFiles] = useState([]);
 
   /** 컬러 리스트 세팅, 없으면 불러와서 세팅 */
   useEffect(() => {
@@ -113,14 +120,15 @@ const useAdd_product = () => {
 
   // TODO: price인 경우 - copy 할 때는 세팅 전에 price에 $붙이고 세팅하면 될 듯
   /** price input 숫자, . 만 입력 및 앞에 $ 표기 */
-  const inputAmountHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const inputPriceHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "$") {
       e.target.value = "";
       setProductInfo({ ...productInfo, price: "" });
       return;
     }
-    e.target.value = "$" + e.target.value.replace(/[^.0-9]/g, "");
+    e.target.value = e.target.value.replace(/[^.0-9]/g, "");
     setProductInfo({ ...productInfo, price: e.target.value });
+    e.target.value = "$" + e.target.value;
   };
 
   /** length 숫자, . 만 입력되게 */
@@ -133,6 +141,7 @@ const useAdd_product = () => {
     setProductInfo({ ...productInfo });
   };
 
+  /** 컬러 추가 */
   const addColorHandler = () => {
     productInfo.options.push({
       colorNo: 0,
@@ -156,9 +165,44 @@ const useAdd_product = () => {
     setProductInfo({ ...productInfo });
   };
 
+  /** 컬러 삭제 */
+  const removeColorHandler = (index: number) => {
+    // 컬러 옵션 하나 남아있는 경우 삭제 하지 않고 colorNo를 0으로
+    if (productInfo.options.length === 1) {
+      productInfo.options[index].colorNo = 0;
+      setProductInfo({ ...productInfo });
+      return;
+    }
+    productInfo.options.splice(index, 1);
+    setProductInfo({ ...productInfo });
+  };
+
+  /** 상품 개수 빼기 */
+  const minusQuantity = (index: number) => {
+    // 0이면 리턴
+    if (productInfo.options[index].quantity === 0) {
+      return;
+    }
+    productInfo.options[index].quantity -= 1;
+    setProductInfo({ ...productInfo });
+  };
+
+  /** 상품 개수 더하기 */
+  const plusQuantity = (index: number) => {
+    productInfo.options[index].quantity += 1;
+    setProductInfo({ ...productInfo });
+  };
+
   const samplePriceHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     productInfo.options[selectOption].samplePrice = Number(e.target.value);
     setProductInfo({ ...productInfo });
+  };
+
+  /** 이미지 업로드 관리 */
+  const imageFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(Array.from(e.target.files || []));
+    // imageFiles.push(Array.from(e.target.files || []));
+    // imageFiles([...imageFiles]);
   };
 
   useEffect(() => {
@@ -312,8 +356,7 @@ const useAdd_product = () => {
           <InputContentWrapper2>
             <PriceInput
               placeholder="$0"
-              onChange={(e) => inputAmountHandler(e)}
-              value={productInfo.price}
+              onChange={(e) => inputPriceHandler(e)}
             />
             <Unit>/m</Unit>
           </InputContentWrapper2>
@@ -321,7 +364,10 @@ const useAdd_product = () => {
         <InputColorContainer>
           <ColorButtonWrapper>
             <ColorTitle>Color</ColorTitle>
-            <AddColorButton onClick={() => addColorHandler()}>
+            <AddColorButton
+              onClick={() => addColorHandler()}
+              display={productInfo.options[0].colorNo === 0 ? false : true}
+            >
               <Image src={ic_plus} alt="ic_plus" />
               <AddColor>Add color</AddColor>
             </AddColorButton>
@@ -333,7 +379,7 @@ const useAdd_product = () => {
                 return (
                   <ColorTab
                     onClick={() => {
-                      setSelectCategory("color");
+                      el.colorNo === 0 && setSelectCategory("color");
                       setSelectOption(index);
                     }}
                     key={`${index}vbnuio`}
@@ -356,6 +402,26 @@ const useAdd_product = () => {
                         ? "Choose color"
                         : `${colors[el.colorNo - 1].name}`}
                     </ColorName>
+
+                    {el.colorNo === 0 ? (
+                      <IconWrapper>
+                        <Image
+                          src={ic_down_link}
+                          alt="ic_down_link"
+                          width={11}
+                          height={6}
+                        />
+                      </IconWrapper>
+                    ) : (
+                      <IconWrapper onClick={() => removeColorHandler(index)}>
+                        <Image
+                          src={ic_x_photo_m}
+                          alt="remove_ic"
+                          width={20}
+                          height={20}
+                        />
+                      </IconWrapper>
+                    )}
                   </ColorTab>
                 );
               })}
@@ -388,7 +454,9 @@ const useAdd_product = () => {
                   <ContentWrapper>
                     <ContentName>Price ($)</ContentName>
                     <ValueWrapper>
-                      <Value>{`${amount}`}</Value>
+                      <Value>{`${
+                        productInfo.price ? `$${productInfo.price}` : ""
+                      }`}</Value>
                       <Unit>/m</Unit>
                     </ValueWrapper>
                   </ContentWrapper>
@@ -406,25 +474,49 @@ const useAdd_product = () => {
                 <TotalPriceWrapper>
                   <TotalPriceName>TotalPrice</TotalPriceName>
                   <TotalPriceUnitWrapper>
-                    <TotalPrice></TotalPrice>
+                    <TotalPrice>
+                      {productInfo.options[index].length && productInfo.price
+                        ? `$${
+                            Number(productInfo.options[index].length) *
+                            Number(productInfo.price)
+                          }`
+                        : ""}
+                    </TotalPrice>
                     <RollUnit>/Roll</RollUnit>
-                    <InchMeterUnit>(100inch*30m)</InchMeterUnit>
+                    <InchMeterUnit>
+                      ({`${productInfo.width}`}inch*
+                      {`${
+                        productInfo.options[index].length
+                          ? productInfo.options[index].length
+                          : 0
+                      }`}
+                      m)
+                    </InchMeterUnit>
                   </TotalPriceUnitWrapper>
                 </TotalPriceWrapper>
                 <Roll>Roll available</Roll>
                 <RollInputWrapper>
                   <PlusMinusButton>
-                    <Image src={ic_minus} alt="ic_minus" />
+                    <Image
+                      src={ic_minus}
+                      alt="ic_minus"
+                      onClick={() => minusQuantity(index)}
+                    />
                   </PlusMinusButton>
                   <RollInput
                     value={productInfo.options[index].quantity}
                     count={productInfo.options[index].quantity}
+                    disabled
                   />
                   <PlusMinusButton>
-                    <Image src={ic_plus} alt="ic_minus" />
+                    <Image
+                      src={ic_plus}
+                      alt="ic_minus"
+                      onClick={() => plusQuantity(index)}
+                    />
                   </PlusMinusButton>
                 </RollInputWrapper>
-                <SampleButtonWrapper>
+                {/* <SampleButtonWrapper>
                   <SampleButton>Provide sample</SampleButton>
                   <SampleButton>Not provide sample</SampleButton>
                 </SampleButtonWrapper>
@@ -438,9 +530,15 @@ const useAdd_product = () => {
                     />
                     <Unit>/each</Unit>
                   </InputContentWrapper2>
-                </SamplePriceWrapper>
+                </SamplePriceWrapper> */}
                 <UploadImageVideoWrapper>
-                  <ImageButton>
+                  <ImageButton onClick={() => imageRef.current.click()}>
+                    <ImageVideoInput
+                      type="file"
+                      accept=".jpg, .jpeg, .png, .webp"
+                      ref={imageRef}
+                      onChange={(e) => imageFileHandler(e)}
+                    />
                     <Image
                       src={ic_image_upload_wht}
                       alt="ic_image_upload_wht"
@@ -467,7 +565,12 @@ const useAdd_product = () => {
                 </ImageVideoText>
 
                 <UploadImageVideoWrapper>
-                  <ImageButton>
+                  <ImageVideoInput
+                    type="file"
+                    accept=".mp4, .webm, .ogg"
+                    ref={videoRef}
+                  />
+                  <ImageButton onClick={() => videoRef.current.click()}>
                     <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
                   </ImageButton>
                   <ImageButton>
@@ -660,8 +763,11 @@ const ColorTitle = styled.div`
   font-weight: 700;
   line-height: 18.2px;
 `;
-const AddColorButton = styled.div`
-  display: flex;
+const AddColorButton = styled.div<{ display: boolean }>`
+  display: ${(props) => {
+    return props.display ? "flex" : "none";
+  }};
+
   gap: 4px;
   align-items: center;
   padding: 6px;
@@ -685,6 +791,7 @@ const ColorTab = styled.div`
   display: flex;
   gap: 4px;
   align-items: center;
+  position: relative;
 
   padding-top: 15px;
   padding-bottom: 15px;
@@ -714,10 +821,17 @@ const ColorWrapper = styled.div`
 const ColorName = styled.div`
   display: flex;
   align-items: center;
+
   font-size: 14px;
   font-weight: 400;
   line-height: 18.2px;
   color: #a4b0b2;
+`;
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 15px;
 `;
 const OptionInputContainer = styled.div<{
   index: number;
@@ -817,6 +931,10 @@ const TotalPriceUnitWrapper = styled.div`
 `;
 const TotalPrice = styled.div`
   margin-right: 3.5px;
+  color: #ff2f01;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18.2px;
 `;
 const RollUnit = styled.div`
   font-size: 14px;
@@ -855,6 +973,9 @@ const RollInput = styled.input<{ count: number }>`
   color: ${(props) => {
     return props.count === 0 ? "#A4B0B2" : "#000000";
   }};
+  &:disabled {
+    background-color: #ffffff;
+  }
 `;
 const PlusMinusButton = styled.div`
   display: flex;
@@ -866,6 +987,7 @@ const PlusMinusButton = styled.div`
   border-radius: 100%;
   border: 0.794px solid #dee8ec;
   background-color: #f2f6f8;
+  cursor: pointer;
 `;
 const SampleButtonWrapper = styled.div`
   display: flex;
@@ -915,6 +1037,10 @@ const ImageButton = styled.div`
   border-radius: 2px;
   background-color: #a4b0b2;
   overflow: hidden;
+  cursor: pointer;
+`;
+const ImageVideoInput = styled.input`
+  display: none;
 `;
 const RemoveButton = styled.div`
   display: flex;
