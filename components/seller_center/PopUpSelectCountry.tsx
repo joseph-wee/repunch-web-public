@@ -209,6 +209,8 @@ const ContentWrapper = styled.div`
   box-sizing: border-box;
   background-color: #ffffff;
   width: 460px;
+  height: 511px;
+  overflow-y: scroll;
 
   @media screen and (max-width: 768px) {
     padding-bottom: 84px;
