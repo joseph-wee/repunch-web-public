@@ -22,7 +22,7 @@ import {
   PopUpSelectProject,
   PopUpSelectWidth,
 } from "../../components/seller_center";
-import { colorsRequest } from "../../utils/api";
+import { colorsRequest, imageUploadRequest } from "../../utils/api";
 const useAdd_product = () => {
   const [productInfo, setProductInfo] = useState({
     title: "",
@@ -200,10 +200,40 @@ const useAdd_product = () => {
 
   /** 이미지 업로드 관리 */
   const imageFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e);
     console.log(Array.from(e.target.files || []));
     // imageFiles.push(Array.from(e.target.files || []));
     // imageFiles([...imageFiles]);
   };
+
+  /******************for base 64 *****************************/
+  function uploadFile(e: any) {
+    var file = e.target.files[0];
+    var reader = new FileReader();
+    reader.onloadend = function () {
+      // console.log("Encoded Base 64 File String:", reader.result);
+
+      /******************* for Binary ***********************/
+      var data: any = reader.result;
+      var base64: any = data.split(",")[1];
+
+      var binaryBlob = atob(base64);
+      console.log("바이너리 string");
+      console.log(base64);
+
+      const at = localStorage.getItem("at");
+
+      const formData = new FormData();
+      // formData.append("images", binaryBlob);
+
+      formData.append("images", file);
+
+      imageUploadRequest(at, formData).then((res) => {
+        console.log(res);
+      });
+    };
+    reader.readAsDataURL(file);
+  }
 
   useEffect(() => {
     console.log(productInfo);
@@ -537,7 +567,8 @@ const useAdd_product = () => {
                       type="file"
                       accept=".jpg, .jpeg, .png, .webp"
                       ref={imageRef}
-                      onChange={(e) => imageFileHandler(e)}
+                      // onChange={(e) => imageFileHandler(e)}
+                      onChange={(e) => uploadFile(e)}
                     />
                     <Image
                       src={ic_image_upload_wht}

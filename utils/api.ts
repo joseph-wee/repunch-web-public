@@ -221,7 +221,10 @@ export const userInfoRequest = async (acessToken: string | null) => {
 };
 
 /** 상품(원단) 상세 조회 */
-export const productDetailRequest = async (accessToken: any, productNo: string | null) => {
+export const productDetailRequest = async (
+  accessToken: any,
+  productNo: string | null
+) => {
   try {
     const res = await axios({
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -1199,5 +1202,27 @@ export const sellerOrderCountRequest = async (accessToken: string | null) => {
   } catch (error: any) {
     console.log(error);
     return error;
+  }
+};
+
+/** 셀러 - 이미지 업로드 */
+export const imageUploadRequest = async (
+  accessToken: string | null,
+  formData: any
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/images`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData,
+    });
+    console.log(formData.get("images"));
+    return res;
+  } catch (error) {
+    console.log(error);
   }
 };
