@@ -1226,3 +1226,44 @@ export const imageUploadRequest = async (
     console.log(error);
   }
 };
+
+/** 셀러 - 비디오 업로드 */
+export const videoUploadRequest = async (
+  accessToken: string | null,
+  formData: any
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/videos`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData,
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 셀러 - 상품 등록 */
+export const productRegisterRequest = async (
+  accessToken: string | null,
+  data: any
+) => {
+  try {
+    const res = await axios({
+      method: "POST",
+      url: `/products`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: data,
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};

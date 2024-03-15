@@ -22,7 +22,12 @@ import {
   PopUpSelectProject,
   PopUpSelectWidth,
 } from "../../components/seller_center";
-import { colorsRequest, imageUploadRequest } from "../../utils/api";
+import {
+  colorsRequest,
+  imageUploadRequest,
+  productRegisterRequest,
+  videoUploadRequest,
+} from "../../utils/api";
 const useAdd_product = () => {
   const [productInfo, setProductInfo] = useState({
     title: "",
@@ -207,7 +212,7 @@ const useAdd_product = () => {
   };
 
   /******************for base 64 *****************************/
-  function uploadFile(e: any) {
+  function uploadImage(e: any) {
     var file = e.target.files[0];
     var reader = new FileReader();
     reader.onloadend = function () {
@@ -234,6 +239,57 @@ const useAdd_product = () => {
     };
     reader.readAsDataURL(file);
   }
+
+  function uploadVideo(e: any) {
+    var file = e.target.files[0];
+    var reader = new FileReader();
+    reader.onloadend = function () {
+      // console.log("Encoded Base 64 File String:", reader.result);
+
+      /******************* for Binary ***********************/
+      var data: any = reader.result;
+      var base64: any = data.split(",")[1];
+
+      var binaryBlob = atob(base64);
+      console.log("바이너리 string");
+      console.log(base64);
+
+      const at = localStorage.getItem("at");
+
+      const formData = new FormData();
+      // formData.append("images", binaryBlob);
+
+      formData.append("images", file);
+
+      videoUploadRequest(at, formData).then((res) => {
+        console.log(res);
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /** 상품등록 요청 */
+  const productRegisterHandler = () => {
+    const at = localStorage.getItem("at");
+    productInfo.options[0].files[0].height = 400;
+    productInfo.options[0].files[0].width = 400;
+    productInfo.options[0].files[0].imageUrl =
+      "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/14/yD5qPanTkCt0mv6ge2.png";
+    productInfo.options[0].files[0].resourceUrl =
+      "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/14/yD5qPanTkCt0mv6ge2.png";
+
+    productInfo.options[1].files[0].height = 400;
+    productInfo.options[1].files[0].width = 400;
+    productInfo.options[1].files[0].imageUrl =
+      "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/15/hDS9pHdd6S8NRilcR6sEXs6mQHuZ4bI.png";
+    productInfo.options[1].files[0].resourceUrl =
+      "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/15/hDS9pHdd6S8NRilcR6sEXs6mQHuZ4bI.png";
+
+    console.log(productInfo);
+    productRegisterRequest(at, productInfo).then((res) => {
+      console.log(res);
+    });
+  };
 
   useEffect(() => {
     console.log(productInfo);
@@ -565,10 +621,10 @@ const useAdd_product = () => {
                   <ImageButton onClick={() => imageRef.current.click()}>
                     <ImageVideoInput
                       type="file"
-                      accept=".jpg, .jpeg, .png, .webp"
+                      accept=".jpg, .png"
                       ref={imageRef}
                       // onChange={(e) => imageFileHandler(e)}
-                      onChange={(e) => uploadFile(e)}
+                      onChange={(e) => uploadImage(e)}
                     />
                     <Image
                       src={ic_image_upload_wht}
@@ -598,8 +654,9 @@ const useAdd_product = () => {
                 <UploadImageVideoWrapper>
                   <ImageVideoInput
                     type="file"
-                    accept=".mp4, .webm, .ogg"
+                    accept=".mp4"
                     ref={videoRef}
+                    onChange={(e) => uploadVideo(e)}
                   />
                   <ImageButton onClick={() => videoRef.current.click()}>
                     <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
@@ -619,7 +676,9 @@ const useAdd_product = () => {
                 <ImageVideoText>
                   Uploading at least one video is required.(max1)
                 </ImageVideoText>
-                <SellProductButton>Sell Product</SellProductButton>
+                <SellProductButton onClick={() => productRegisterHandler()}>
+                  Sell Product
+                </SellProductButton>
               </OptionInputContainer>
             );
           })}
