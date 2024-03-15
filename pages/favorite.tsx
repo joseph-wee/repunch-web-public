@@ -7,7 +7,7 @@ import {
   RecentOrders,
   SideBar,
 } from "../components";
-import { ic_down_bk, ic_up_bk } from "../assets";
+import { ic_down_bk, ic_logo_gray, ic_up_bk } from "../assets";
 import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back } from "../assets";
@@ -64,6 +64,22 @@ const useFavorite = () => {
         <ProductListGridWrapper>
           <ProductLikeList sortType={"LATEST"} setResult={setResult} />
         </ProductListGridWrapper>
+        {/** 표시할 내용 없을 때 */}
+        <NoDataBox render={result === 0}>
+          <NoDataImageWrapper>
+            <Image
+              src={ic_logo_gray}
+              width={84}
+              height={84}
+              alt="nodata_logo_gray"
+            />
+          </NoDataImageWrapper>
+          <NoDataText>
+            There is no
+            <br />
+            information to display
+          </NoDataText>
+        </NoDataBox>
       </Main>
       <MobileSideBar />
     </Container>
@@ -232,5 +248,23 @@ const ProductListGridWrapper = styled.div`
     row-gap: 22px;
     column-gap: 15px;
   }
+`;
+const NoDataBox = styled.div<{ render: boolean }>`
+  display: ${(props) => {
+    return props.render ? "block" : "none";
+  }};
+  padding-top: 60px;
+`;
+const NoDataImageWrapper = styled.div`
+  width: 84px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+`;
+const NoDataText = styled.div`
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.154px;
+  color: #a4b0b2;
 `;
 export default useFavorite;

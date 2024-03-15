@@ -4,11 +4,10 @@ import {
   MobileSideBar,
   OrderInfoBox,
   OrderInfoBoxSample,
-  RecentOrders,
   SideBar,
 } from "../components";
 import Link from "next/link";
-import { btn_web_back } from "../assets";
+import { btn_web_back, ic_logo_gray } from "../assets";
 import Image from "next/image";
 import { goBack } from "../utils/functions";
 import {
@@ -41,8 +40,14 @@ const useOrder_history = () => {
 
     ordersRequest(at, "ROLL", null, true, 20, null).then((res) => {
       console.log(res);
+      // 실패 case
+      if (res?.data.result.data === null) {
+        return;
+      }
+
       // 성공 case
       res?.data.result.data && (tempOrder = res?.data.result.data);
+
       setOrders([...tempOrder]);
 
       ordersRequest(at, "SAMPLE", null, true, 20, null).then((res) => {
@@ -52,7 +57,6 @@ const useOrder_history = () => {
         setOrdersSample([...tempOrder]);
 
         // 실패 case: 토큰 만료
-        // 실패 case
       });
     });
   };
@@ -90,7 +94,7 @@ const useOrder_history = () => {
             Sample ({ordersSample.length})
           </SampleButton>
         </AllMeterSampleButtonWrapper>
-        <RecentOrders />
+        <RecentOrders>Recent orders {sum}</RecentOrders>
         <MeterageOrderWrapper isActive={orderCategory}>
           {orders.map((el: any, index: number) => {
             return (
@@ -122,6 +126,22 @@ const useOrder_history = () => {
           })}
         </SampleOrderWrapper>
         {/* <OrderInfoBox accomplish={true} myAccount={false} /> */}
+        {/** 카트에 담긴거 없을 때 */}
+        <NoDataBox render={orders.length === 0}>
+          <NoDataImageWrapper>
+            <Image
+              src={ic_logo_gray}
+              width={84}
+              height={84}
+              alt="nodata_logo_gray"
+            />
+          </NoDataImageWrapper>
+          <NoDataText>
+            There is no
+            <br />
+            information to display
+          </NoDataText>
+        </NoDataBox>
       </Main>
       <MobileSideBar />
     </Container>
@@ -207,6 +227,20 @@ const SampleButton = styled.button<{ isActive: number }>`
 
   cursor: pointer;
 `;
+const RecentOrders = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-left: 16px;
+  height: 30px;
+  background: #f2f6f8;
+  border: 0.79402px solid #dee8ec;
+  border-radius: 2px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+  color: #121822;
+`;
 const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -240,6 +274,24 @@ const SampleOrderWrapper = styled.div<{ isActive: number }>`
   display: ${(props) => {
     return props.isActive == 1 ? "block" : "none";
   }};
+`;
+const NoDataBox = styled.div<{ render: boolean }>`
+  display: ${(props) => {
+    return props.render ? "block" : "none";
+  }};
+  padding-top: 60px;
+`;
+const NoDataImageWrapper = styled.div`
+  width: 84px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+`;
+const NoDataText = styled.div`
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.154px;
+  color: #a4b0b2;
 `;
 
 export default useOrder_history;

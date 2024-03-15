@@ -38,6 +38,10 @@ const ProductLikeList = ({
           localStorage.setItem("rt", `${rt}`);
           console.log(2);
           likeListRequest(at).then((res) => {
+            // 데이터 없는경우
+            if (res?.data.result.data === null) {
+              return;
+            }
             console.log(3);
             let x = res?.data.result.data;
             console.log(x);

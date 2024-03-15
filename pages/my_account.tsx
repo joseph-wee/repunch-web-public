@@ -45,7 +45,13 @@ const useMy_account = () => {
     }
 
     ordersRequest(at, "ROLL", null, false, 20, null).then((res) => {
-      console.log(res);
+      console.log(res?.data.result);
+      // 실패 case: 주문 목록 없을 때
+      if (res?.data.result.data === null) {
+        console.log("?");
+        return;
+      }
+
       // 성공 case
       setOrders([...res?.data.result.data]);
 

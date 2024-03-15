@@ -8,7 +8,7 @@ import {
 } from "../components";
 import Link from "next/link";
 import Image from "next/image";
-import { btn_web_back } from "../assets";
+import { btn_web_back, ic_logo_gray } from "../assets";
 import { goBack } from "../utils/functions";
 import { ordersRequest } from "../utils/api";
 
@@ -46,6 +46,11 @@ const useOrder = () => {
       let sumDelivered = countDelivered;
       let sumPickUp = countPickUp;
 
+      // 실패 case
+      if (res?.data.result.data === null) {
+        return;
+      }
+
       console.log(res);
       // 성공 case
       setOrders([...res?.data.result.data]);
@@ -66,7 +71,6 @@ const useOrder = () => {
       setCountPickUp(sumPickUp);
 
       // 실패 case: 토큰 만료
-      // 실패 case
     });
   };
 
@@ -149,6 +153,22 @@ const useOrder = () => {
             ))
           );
         })}
+        {/** 카트에 담긴거 없을 때 */}
+        <NoDataBox render={sum === 0}>
+          <NoDataImageWrapper>
+            <Image
+              src={ic_logo_gray}
+              width={84}
+              height={84}
+              alt="nodata_logo_gray"
+            />
+          </NoDataImageWrapper>
+          <NoDataText>
+            There is no
+            <br />
+            information to display
+          </NoDataText>
+        </NoDataBox>
       </Main>
       <MobileSideBar />
     </Container>
@@ -414,6 +434,24 @@ const RecentOrders = styled.div`
   font-size: 12px;
   line-height: 12px;
   color: #121822;
+`;
+const NoDataBox = styled.div<{ render: boolean }>`
+  display: ${(props) => {
+    return props.render ? "block" : "none";
+  }};
+  padding-top: 60px;
+`;
+const NoDataImageWrapper = styled.div`
+  width: 84px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+`;
+const NoDataText = styled.div`
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.154px;
+  color: #a4b0b2;
 `;
 
 export default useOrder;
