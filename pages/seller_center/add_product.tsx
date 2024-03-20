@@ -28,8 +28,9 @@ import {
   productRegisterRequest,
   videoUploadRequest,
 } from "../../utils/api";
+import axios from "axios";
 const useAdd_product = () => {
-  const [productInfo, setProductInfo] = useState({
+  const [productInfo, setProductInfo] = useState<any>({
     title: "",
     description: "",
     materials: [
@@ -58,13 +59,13 @@ const useAdd_product = () => {
         samplePrice: 0,
         sampleQuantity: 0,
         files: [
-          {
-            type: "IMAGE",
-            imageUrl: "",
-            resourceUrl: "",
-            width: 0,
-            height: 0,
-          },
+          // {
+          //   type: "IMAGE",
+          //   imageUrl: "",
+          //   resourceUrl: "",
+          //   width: 0,
+          //   height: 0,
+          // },
         ],
       },
     ],
@@ -156,13 +157,13 @@ const useAdd_product = () => {
       samplePrice: 0,
       sampleQuantity: 0,
       files: [
-        {
-          type: "IMAGE",
-          imageUrl: "",
-          resourceUrl: "",
-          width: 0,
-          height: 0,
-        },
+        // {
+        //   type: "IMAGE",
+        //   imageUrl: "",
+        //   resourceUrl: "",
+        //   width: 0,
+        //   height: 0,
+        // },
       ],
     });
     setProductInfo({ ...productInfo });
@@ -281,19 +282,47 @@ const useAdd_product = () => {
 
   /** 이미지 서버에 저장 */
   const imageUploadRequestHandler = () => {
-    const at = localStorage.getItem("at");
-    for (let i = 0; i < imageFiles.length; i++) {
-      for (const file of imageFiles[i]) {
-        const formData = new FormData();
-        formData.append("images", file);
-        imageUploadRequest(at, formData).then((res) => {
-          console.log(res);
-          productInfo.options[i];
-        });
+    const multiImageUploadRequest = () => {
+      let arr = [];
+      const at = localStorage.getItem("at");
+      for (const fileArr of imageFiles) {
+        for (const file of fileArr) {
+          arr.push(file);
+        }
       }
-    }
-    console.log("test");
+      console.log(arr);
+      return arr.map((el: any, index: number) => {
+        const formData = new FormData();
+        formData.append("images", el);
+        console.log(formData);
+        return imageUploadRequest(at, formData);
+      });
+    };
+
+    const multiVideoUploadRequest = () => {
+      const at = localStorage.getItem("at");
+    };
+
+    axios.all(multiImageUploadRequest()).then((res) => {
+      let index = 0;
+      for (let x = 0; x < imageFiles.length; x++) {
+        for (let y = 0; y < imageFiles[x].length; y++) {
+          const result = res[index]?.data.result;
+
+          productInfo.options[x].files.push({
+            type: "IMAGE",
+            imageUrl: result.resourceUrl,
+            resourceUrl: result.resourceUrl,
+            width: result.width,
+            height: result.height,
+          });
+          index += 1;
+        }
+      }
+    });
   };
+
+  useEffect(() => {}, []);
 
   const test = async () => {
     let promise = new Promise((resolve, reject) => {
@@ -749,29 +778,43 @@ const useAdd_product = () => {
                   of your products.(max10)
                 </ImageVideoText>
 
-                <UploadImageVideoWrapper>
-                  <ImageVideoInput
-                    type="file"
-                    accept=".mp4"
-                    multiple
-                    ref={videoRef}
-                    onChange={(e) => uploadVideo(e)}
-                  />
-                  <ImageButton onClick={() => videoRef.current.click()}>
-                    <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
-                  </ImageButton>
-                  <ImageButton>
-                    <RemoveButton>
-                      <Image
-                        src={ic_close_wht}
-                        alt="ic_close_wht"
-                        width={20}
-                        height={20}
-                      />
-                    </RemoveButton>
-                    <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
-                  </ImageButton>
-                </UploadImageVideoWrapper>
+                <UploadImageVideoWrapper></UploadImageVideoWrapper>
+                <ImageButton onClick={() => videoRef.current.click()}>
+                  <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
+                </ImageButton>
+                <ImageVideoInput
+                  type="file"
+                  accept=".mp4"
+                  ref={videoRef}
+                  onChange={(e) =>
+                    uploadFile(
+                      e.target.files,
+                      previewVideos,
+                      setPreviewVideos,
+                      imageFiles,
+                      setImageFiles
+                    )
+                  }
+                />
+                {previewVideos[selectOption] &&
+                  previewVideos[selectOption].map((el: any, index: number) => {
+                    return (
+                      <ImageButton>
+                        <RemoveButton>
+                          <Image
+                            src={ic_close_wht}
+                            alt="ic_close_wht"
+                            width={20}
+                            height={20}
+                          />
+                        </RemoveButton>
+                        <Image
+                          src={ic_camera_play_wht}
+                          alt="ic_camera_play_wht"
+                        />
+                      </ImageButton>
+                    );
+                  })}
                 <ImageVideoText>
                   Uploading at least one video is required.(max1)
                 </ImageVideoText>
