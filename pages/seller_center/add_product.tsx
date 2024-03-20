@@ -76,8 +76,6 @@ const useAdd_product = () => {
   const [colors, setColors] = useState<any>(); // 컬러 리스트
   const imageRef = useRef<any>();
   const videoRef = useRef<any>();
-  const [imageFiles, setImageFiles] = useState<any>([]);
-  const [videoFiles, setVideoFiles] = useState([]);
 
   /** 컬러 리스트 세팅, 없으면 불러와서 세팅 */
   useEffect(() => {
@@ -211,34 +209,105 @@ const useAdd_product = () => {
     // imageFiles([...imageFiles]);
   };
 
-  /******************for base 64 *****************************/
-  function uploadImage(e: any) {
-    var file = e.target.files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      // console.log("Encoded Base 64 File String:", reader.result);
+  const [previewImages, setPreviewImages] = useState<[string[]]>([[]]); // 이미지 미리보기
+  const [previewVideos, setPreviewVideos] = useState<[string[]]>([[]]); // 비디오 미리보기
+  const [imageFiles, setImageFiles] = useState<any>([[]]);
+  const [videoFiles, setVideoFiles] = useState<any>([[]]);
 
-      /******************* for Binary ***********************/
-      var data: any = reader.result;
-      var base64: any = data.split(",")[1];
+  useEffect(() => {
+    console.log(imageFiles);
+  }, [imageFiles]);
+  // TODO: 파일 추가 기능
 
-      var binaryBlob = atob(base64);
-      console.log("바이너리 string");
-      console.log(base64);
+  /** 파일 업로드 */
+  function uploadFile(
+    files: any,
+    previews: [string[]],
+    setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
+    contentFiles: any,
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>
+  ) {
+    // 파일개수 없는 경우
+    if (
+      previews[selectOption] === undefined ||
+      previews[selectOption].length === 0
+    ) {
+      // 미리보기 세팅
+      previews[selectOption] = [];
+      for (let i = 0; i < files.length; i++) {
+        previews[selectOption].push(URL.createObjectURL(files[i]));
+      }
+      setPreviews([...previews]);
+      // 파일 배열 형태로 세팅
+      contentFiles[selectOption] = Array.from(files || []);
+      setContentFiles([...contentFiles]);
+      return;
+    }
 
-      const at = localStorage.getItem("at");
-
-      const formData = new FormData();
-      // formData.append("images", binaryBlob);
-
-      formData.append("images", file);
-
-      imageUploadRequest(at, formData).then((res) => {
-        console.log(res);
-      });
-    };
-    reader.readAsDataURL(file);
+    // 파일 개수 있는 경우
+    // 미리보기 세팅
+    for (let i = 0; i < files.length; i++) {
+      previews[selectOption].push(URL.createObjectURL(files[i]));
+    }
+    setPreviews([...previews]);
+    // 파일 배열 형태로 세팅
+    contentFiles[selectOption] = Array.from(files || []);
+    setContentFiles([...contentFiles]);
+    return;
   }
+
+  /** 파일 삭제 */
+  const deleteFile = (
+    index: number,
+    previews: [string[]],
+    setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
+    contentFiles: any,
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>
+  ) => {
+    // 미리보기 삭제
+    previews[selectOption] = [
+      ...previews[selectOption].slice(0, index),
+      ...previews[selectOption].slice(index + 1),
+    ];
+    setPreviews([...previews]);
+
+    // file array 삭제
+    contentFiles[selectOption] = [
+      ...contentFiles[selectOption].slice(0, index),
+      ...contentFiles[selectOption].slice(index + 1),
+    ];
+    setContentFiles([...contentFiles]);
+  };
+
+  /** 이미지 서버에 저장 */
+  const imageUploadRequestHandler = () => {
+    const at = localStorage.getItem("at");
+    for (let i = 0; i < imageFiles.length; i++) {
+      for (const file of imageFiles[i]) {
+        const formData = new FormData();
+        formData.append("images", file);
+        imageUploadRequest(at, formData).then((res) => {
+          console.log(res);
+          productInfo.options[i];
+        });
+      }
+    }
+    console.log("test");
+  };
+
+  const test = async () => {
+    let promise = new Promise((resolve, reject) => {
+      setTimeout(() => resolve("완료!"), 1000);
+    });
+
+    let result = await promise; // 프라미스가 이행될 때까지 기다림 (*)
+
+    return result; // "완료!"
+  };
+
+  useEffect(() => {
+    console.log(test());
+  }, []);
 
   function uploadVideo(e: any) {
     var file = e.target.files[0];
@@ -262,7 +331,7 @@ const useAdd_product = () => {
       formData.append("images", file);
 
       videoUploadRequest(at, formData).then((res) => {
-        console.log(res);
+        console.log(res?.data.result.resourceUrl);
       });
     };
     reader.readAsDataURL(file);
@@ -270,25 +339,26 @@ const useAdd_product = () => {
 
   /** 상품등록 요청 */
   const productRegisterHandler = () => {
-    const at = localStorage.getItem("at");
-    productInfo.options[0].files[0].height = 400;
-    productInfo.options[0].files[0].width = 400;
-    productInfo.options[0].files[0].imageUrl =
-      "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/14/yD5qPanTkCt0mv6ge2.png";
-    productInfo.options[0].files[0].resourceUrl =
-      "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/14/yD5qPanTkCt0mv6ge2.png";
+    imageUploadRequestHandler();
+    // const at = localStorage.getItem("at");
+    // productInfo.options[0].files[0].height = 400;
+    // productInfo.options[0].files[0].width = 400;
+    // productInfo.options[0].files[0].imageUrl =
+    //   "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/14/yD5qPanTkCt0mv6ge2.png";
+    // productInfo.options[0].files[0].resourceUrl =
+    //   "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/14/yD5qPanTkCt0mv6ge2.png";
 
-    productInfo.options[1].files[0].height = 400;
-    productInfo.options[1].files[0].width = 400;
-    productInfo.options[1].files[0].imageUrl =
-      "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/15/hDS9pHdd6S8NRilcR6sEXs6mQHuZ4bI.png";
-    productInfo.options[1].files[0].resourceUrl =
-      "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/15/hDS9pHdd6S8NRilcR6sEXs6mQHuZ4bI.png";
+    // productInfo.options[1].files[0].height = 400;
+    // productInfo.options[1].files[0].width = 400;
+    // productInfo.options[1].files[0].imageUrl =
+    //   "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/15/hDS9pHdd6S8NRilcR6sEXs6mQHuZ4bI.png";
+    // productInfo.options[1].files[0].resourceUrl =
+    //   "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/15/hDS9pHdd6S8NRilcR6sEXs6mQHuZ4bI.png";
 
-    console.log(productInfo);
-    productRegisterRequest(at, productInfo).then((res) => {
-      console.log(res);
-    });
+    // console.log(productInfo);
+    // productRegisterRequest(at, productInfo).then((res) => {
+    //   console.log(res);
+    // });
   };
 
   useEffect(() => {
@@ -622,29 +692,57 @@ const useAdd_product = () => {
                     <ImageVideoInput
                       type="file"
                       accept=".jpg, .png"
+                      multiple
                       ref={imageRef}
                       // onChange={(e) => imageFileHandler(e)}
-                      onChange={(e) => uploadImage(e)}
+                      onChange={(e) =>
+                        uploadFile(
+                          e.target.files,
+                          previewImages,
+                          setPreviewImages,
+                          imageFiles,
+                          setImageFiles
+                        )
+                      }
                     />
                     <Image
                       src={ic_image_upload_wht}
                       alt="ic_image_upload_wht"
                     />
                   </ImageButton>
-                  <ImageButton>
-                    <RemoveButton>
-                      <Image
-                        src={ic_close_wht}
-                        alt="ic_close_wht"
-                        width={10}
-                        height={10}
-                      />
-                    </RemoveButton>
-                    <Image
-                      src={ic_image_upload_wht}
-                      alt="ic_image_upload_wht"
-                    />
-                  </ImageButton>
+                  {previewImages[selectOption] &&
+                    previewImages[selectOption].map(
+                      (el: any, index: number) => {
+                        return (
+                          <ImageButton>
+                            <RemoveButton
+                              onClick={() =>
+                                deleteFile(
+                                  index,
+                                  previewImages,
+                                  setPreviewImages,
+                                  imageFiles,
+                                  setImageFiles
+                                )
+                              }
+                            >
+                              <Image
+                                src={ic_close_wht}
+                                alt="ic_close_wht"
+                                width={10}
+                                height={10}
+                              />
+                            </RemoveButton>
+                            <Image
+                              src={el}
+                              alt="ic_image_upload_wht"
+                              width={80}
+                              height={80}
+                            />
+                          </ImageButton>
+                        );
+                      }
+                    )}
                 </UploadImageVideoWrapper>
                 <ImageVideoText>
                   Please upload clear photos so that buyers can see the details
@@ -655,6 +753,7 @@ const useAdd_product = () => {
                   <ImageVideoInput
                     type="file"
                     accept=".mp4"
+                    multiple
                     ref={videoRef}
                     onChange={(e) => uploadVideo(e)}
                   />
