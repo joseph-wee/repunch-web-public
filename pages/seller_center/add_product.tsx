@@ -825,7 +825,7 @@ const useAdd_product = () => {
                     previewImages[selectOption].map(
                       (el: any, index: number) => {
                         return (
-                          <ImageButton>
+                          <ImageButton key={`${index}-298`}>
                             <RemoveButton
                               onClick={() =>
                                 deleteFile(
@@ -884,6 +884,7 @@ const useAdd_product = () => {
                       (el: any, index: number) => {
                         return (
                           <VideoPreview
+                            key={`${index}-773`}
                             el={el}
                             deleteFile={deleteFile}
                             index={index}
