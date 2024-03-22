@@ -30,6 +30,7 @@ import {
   videoUploadRequest,
 } from "../../utils/api";
 import axios from "axios";
+import { useRouter } from "next/router";
 const useAdd_product = () => {
   const [productInfo, setProductInfo] = useState<any>({
     title: "",
@@ -78,6 +79,20 @@ const useAdd_product = () => {
   const [colors, setColors] = useState<any>(); // 컬러 리스트
   const imageRef = useRef<any>();
   const videoRef = useRef<any>();
+
+  const [validation, setValidation] = useState<{ [key: string]: number }>({
+    title: 0,
+    description: 0,
+    composition: 0,
+    design: 0,
+    project: 0,
+    country: 0,
+    width: 0,
+    weight: 0,
+    price: 0,
+  });
+
+  const router = useRouter();
 
   /** 컬러 리스트 세팅, 없으면 불러와서 세팅 */
   useEffect(() => {
@@ -281,34 +296,115 @@ const useAdd_product = () => {
     setContentFiles([...contentFiles]);
   };
 
+  // title: false,
+  // description: false,
+  // composition: false,
+  // design: false,
+  // project: false,
+  // country: false,
+  // width: false,
+  // weight: false,
+  // price: false,
+  /** 유효성 검사 */
+  const validationCheck = () => {
+    // title
+    productInfo.title.length > 0
+      ? (validation.title = 2)
+      : (validation.title = 1);
+    // description
+    productInfo.description.length > 0
+      ? (validation.description = 2)
+      : (validation.description = 1);
+    // composition
+    let sum = 0;
+    for (const el of productInfo.materials) {
+      sum += Number(el.value);
+    }
+    sum === 100 ? (validation.composition = 2) : (validation.composition = 1);
+    // design
+    productInfo.designNo !== 0
+      ? (validation.design = 2)
+      : (validation.design = 1);
+    // project
+    productInfo.projectNo !== 0
+      ? (validation.project = 2)
+      : (validation.project = 1);
+    // country
+    productInfo.originNo !== 0
+      ? (validation.country = 2)
+      : (validation.country = 1);
+    // width
+    productInfo.width !== 0 ? (validation.width = 2) : (validation.width = 1);
+    // weight
+    productInfo.weight.length > 0
+      ? (validation.weight = 2)
+      : (validation.weight = 1);
+    // price
+    productInfo.price.length > 0
+      ? (validation.price = 2)
+      : (validation.price = 1);
+
+    setValidation({ ...validation });
+
+    let result = true;
+    for (let key in validation) {
+      validation[key] === 1 && (result = false);
+    }
+    console.log(result);
+    return result;
+  };
+
+  useEffect(() => {
+    console.log(validation);
+  }, [validation]);
+
   /** 이미지 서버에 저장 */
   const imageUploadRequestHandler = () => {
+    const at = localStorage.getItem("at");
     const multiImageUploadRequest = () => {
       let arr = [];
-      const at = localStorage.getItem("at");
       for (const fileArr of imageFiles) {
         for (const file of fileArr) {
           arr.push(file);
         }
       }
-      console.log(arr);
+
       return arr.map((el: any, index: number) => {
         const formData = new FormData();
         formData.append("images", el);
-        console.log(formData);
+        console.log(el);
+        console.log(formData.get("images"));
+
         return imageUploadRequest(at, formData);
       });
     };
 
     const multiVideoUploadRequest = () => {
-      const at = localStorage.getItem("at");
+      let arr = [];
+      for (const fileArr of videoFiles) {
+        for (const file of fileArr) {
+          arr.push(file);
+        }
+      }
+
+      return arr.map((el: any, index: number) => {
+        const formData = new FormData();
+        formData.append("videos", el);
+        console.log(el);
+        console.log(formData.get("videos"));
+
+        return videoUploadRequest(at, formData);
+      });
     };
 
-    axios.all(multiImageUploadRequest()).then((res) => {
+    axios.all(multiImageUploadRequest()).then((res: any) => {
+      console.log(res);
+
       let index = 0;
       for (let x = 0; x < imageFiles.length; x++) {
         for (let y = 0; y < imageFiles[x].length; y++) {
           const result = res[index]?.data.result;
+          console.log(result);
 
           productInfo.options[x].files.push({
             type: "IMAGE",
@@ -320,111 +416,53 @@ const useAdd_product = () => {
           index += 1;
         }
       }
-    });
-  };
+      axios.all(multiVideoUploadRequest()).then((res: any) => {
+        console.log(res);
+        let index = 0;
+        for (let x = 0; x < videoFiles.length; x++) {
+          for (let y = 0; y < videoFiles[x].length; y++) {
+            const result = res[index]?.data.result;
 
-  useEffect(() => {}, []);
-
-  const test = async () => {
-    let promise = new Promise((resolve, reject) => {
-      setTimeout(() => resolve("완료!"), 1000);
-    });
-
-    let result = await promise; // 프라미스가 이행될 때까지 기다림 (*)
-
-    return result; // "완료!"
-  };
-
-  useEffect(() => {
-    console.log(test());
-  }, []);
-
-  function uploadVideo(e: any) {
-    var file = e.target.files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      // console.log("Encoded Base 64 File String:", reader.result);
-
-      /******************* for Binary ***********************/
-      var data: any = reader.result;
-      var base64: any = data.split(",")[1];
-
-      var binaryBlob = atob(base64);
-      console.log("바이너리 string");
-      console.log(base64);
-
-      const at = localStorage.getItem("at");
-
-      const formData = new FormData();
-      // formData.append("images", binaryBlob);
-
-      formData.append("images", file);
-
-      videoUploadRequest(at, formData).then((res) => {
-        console.log(res?.data.result.resourceUrl);
+            productInfo.options[x].files.push({
+              type: "VIDEO",
+              resourceUrl: result,
+            });
+            index += 1;
+          }
+        }
       });
-    };
-    reader.readAsDataURL(file);
-  }
+
+      console.log(productInfo);
+      // TODO: 현재 동영상 업로드가 안됨, 예상 문제로는 동영상 파라미터 width, weight 빠져서 그런걸 수도 ? 처음부터 resourceURL확인해서 작업해보자
+      // 상품 등록 요청
+      productRegisterRequest(at, productInfo).then((res) => {
+        console.log(res);
+        // 성공 case
+        if (res?.data.status === 200) {
+          router.push("/seller_center/home");
+        }
+      });
+    });
+  };
 
   /** 상품등록 요청 */
   const productRegisterHandler = () => {
-    imageUploadRequestHandler();
-    // const at = localStorage.getItem("at");
-    // productInfo.options[0].files[0].height = 400;
-    // productInfo.options[0].files[0].width = 400;
-    // productInfo.options[0].files[0].imageUrl =
-    //   "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/14/yD5qPanTkCt0mv6ge2.png";
-    // productInfo.options[0].files[0].resourceUrl =
-    //   "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/14/yD5qPanTkCt0mv6ge2.png";
-
-    // productInfo.options[1].files[0].height = 400;
-    // productInfo.options[1].files[0].width = 400;
-    // productInfo.options[1].files[0].imageUrl =
-    //   "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/15/hDS9pHdd6S8NRilcR6sEXs6mQHuZ4bI.png";
-    // productInfo.options[1].files[0].resourceUrl =
-    //   "https://djywcis5bfuua.cloudfront.net/test/images/2024/03/15/hDS9pHdd6S8NRilcR6sEXs6mQHuZ4bI.png";
-
-    // console.log(productInfo);
-    // productRegisterRequest(at, productInfo).then((res) => {
-    //   console.log(res);
-    // });
+    validationCheck() && imageUploadRequestHandler();
   };
 
   useEffect(() => {
     console.log(productInfo);
   }, [productInfo]);
 
-  const [videoState, setVideoState] = useState<any>([]);
-  const [nowPlaying, setNowPlaying] = useState(false);
-
-  /** 비디오 클릭 */
-  const videoHandler = (index: number) => {
-    // 재생중인 경우
-    // if (nowPlaying) {
-    //   videoRef2.current[index].pause();
-    //   setNowPlaying(false);
-    //   return;
-    // }
-    // // 재생중 아닌 경우
-    // videoRef2.current[index].play();
-    // setNowPlaying(true);
-    console.log(videoState.current);
-  };
-
-  const testing = () => {
-    const q = async () => {
-      setTimeout(() => console.log("first"), 1000);
-    };
-    q().then((res) => {
+  const imageUploadTest = () => {
+    console.log(imageFiles);
+    const data = new FormData();
+    data.append("images", imageFiles[0][0]);
+    const at = localStorage.getItem("at");
+    imageUploadRequest(at, data).then((res) => {
       console.log(res);
-      console.log("second");
     });
   };
-
-  useEffect(() => {
-    testing();
-  }, []);
 
   return (
     <>
@@ -479,6 +517,7 @@ const useAdd_product = () => {
               setProductInfo({ ...productInfo, title: e.target.value })
             }
           />
+          <ErrorCase0 error={validation.title}>Error case</ErrorCase0>
           <TitleInputLine />
           <Description>Description</Description>
           <DescriptionInput
@@ -489,6 +528,7 @@ const useAdd_product = () => {
           <DescriptionInputCount>
             {`${productInfo.description.length}`}/1000
           </DescriptionInputCount>
+          <ErrorCase0 error={validation.description}>Error case</ErrorCase0>
         </TitleDescriptionContainer>
         <InputWrapper>
           <InputTitle>Composition</InputTitle>
@@ -497,6 +537,7 @@ const useAdd_product = () => {
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
+        <ErrorCase error={validation.composition}>Error case</ErrorCase>
         <InputWrapper>
           <InputTitle>Design</InputTitle>
           <InputContentWrapper onClick={() => setSelectCategory("design")}>
@@ -504,6 +545,7 @@ const useAdd_product = () => {
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
+        <ErrorCase error={validation.design}>Error case</ErrorCase>
         <InputWrapper onClick={() => setSelectCategory("project")}>
           <InputTitle>Project</InputTitle>
           <InputContentWrapper>
@@ -511,6 +553,7 @@ const useAdd_product = () => {
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
+        <ErrorCase error={validation.project}>Error case</ErrorCase>
         <InputWrapper onClick={() => setSelectCategory("country")}>
           <InputTitle>Country of origin</InputTitle>
           <InputContentWrapper>
@@ -518,6 +561,7 @@ const useAdd_product = () => {
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
+        <ErrorCase error={validation.country}>Error case</ErrorCase>
         <InputWrapper>
           <InputTitle>Transparent</InputTitle>
           <InputContentWrapper>
@@ -534,6 +578,7 @@ const useAdd_product = () => {
             />
           </InputContentWrapper>
         </InputWrapper>
+        <ErrorCase error={2}></ErrorCase>
         <InputWrapper>
           <InputTitle>Repunch certification</InputTitle>
           <InputContentWrapper>
@@ -550,6 +595,7 @@ const useAdd_product = () => {
             />
           </InputContentWrapper>
         </InputWrapper>
+        <ErrorCase error={2}></ErrorCase>
         <InputWrapper>
           <InputTitle>Width (Inch)</InputTitle>
           <InputContentWrapper onClick={() => setSelectCategory("width")}>
@@ -557,6 +603,7 @@ const useAdd_product = () => {
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
+        <ErrorCase error={validation.width}>Error case</ErrorCase>
         <InputWrapper>
           <InputTitle>Weight (g/m2)</InputTitle>
           <InputContentWrapper2>
@@ -568,6 +615,7 @@ const useAdd_product = () => {
             <Unit>g/m2</Unit>
           </InputContentWrapper2>
         </InputWrapper>
+        <ErrorCase error={validation.weight}>Error case</ErrorCase>
         <InputWrapper>
           <InputTitle>Price ($)</InputTitle>
           <InputContentWrapper2>
@@ -578,6 +626,7 @@ const useAdd_product = () => {
             <Unit>/m</Unit>
           </InputContentWrapper2>
         </InputWrapper>
+        <ErrorCase error={validation.price}>Error case</ErrorCase>
         <InputColorContainer>
           <ColorButtonWrapper>
             <ColorTitle>Color</ColorTitle>
@@ -825,8 +874,8 @@ const useAdd_product = () => {
                         e.target.files,
                         previewVideos,
                         setPreviewVideos,
-                        imageFiles,
-                        setImageFiles
+                        videoFiles,
+                        setVideoFiles
                       )
                     }
                   />
@@ -906,7 +955,7 @@ const Container = styled.div`
   color: #121822;
 `;
 const TitleDescriptionContainer = styled.div`
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   padding-left: 20px;
   padding-right: 20px;
   font-size: 14px;
@@ -917,7 +966,6 @@ const Title = styled.div`
   margin-bottom: 7px;
 `;
 const TitleInput = styled.input`
-  margin-bottom: 20px;
   padding: 0;
   padding-top: 7px;
   padding-bottom: 8px;
@@ -932,6 +980,45 @@ const TitleInput = styled.input`
   &::placeholder {
     color: #a4b0b2;
   }
+`;
+const ErrorCase0 = styled.div<{ error: number }>`
+  visibility: ${(props) => {
+    return props.error === 1 ? "visible" : "hidden";
+  }};
+  margin-top: ${(props) => {
+    return props.error === 1 ? "7px" : "4px";
+  }};
+  height: ${(props) => {
+    return props.error === 1 ? "" : "0px";
+  }};
+  margin-bottom: 16px;
+  color: #ff2f01;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.6px;
+  &:nth-of-type(2) {
+    margin-top: ${(props) => {
+      return props.error === 1 ? "7px" : "0px";
+    }};
+    margin-bottom: 20px;
+  }
+`;
+const ErrorCase = styled.div<{ error: number }>`
+  visibility: ${(props) => {
+    return props.error === 1 ? "visible" : "hidden";
+  }};
+  margin-top: ${(props) => {
+    return props.error === 1 ? "10px" : "0px";
+  }};
+  height: ${(props) => {
+    return props.error === 1 ? "" : "0px";
+  }};
+  margin-bottom: 16px;
+  padding-left: 20px;
+  color: #ff2f01;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.6px;
 `;
 const TitleInputLine = styled.div``;
 const Description = styled.div`
@@ -952,7 +1039,6 @@ const DescriptionInputCount = styled.div`
 `;
 const InputWrapper = styled.div`
   padding-top: 16px;
-  padding-bottom: 16px;
   padding-left: 20px;
   padding-right: 20px;
   display: flex;
@@ -1383,6 +1469,7 @@ const SellProductButton = styled.div`
 
   font-weight: 700;
   line-height: 18.2px;
+  cursor: pointer;
 `;
 const Video = styled.video`
   width: 80px;
