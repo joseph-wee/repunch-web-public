@@ -1220,7 +1220,6 @@ export const imageUploadRequest = async (
       },
       data: formData,
     });
-    console.log(formData.get("images"));
     return res;
   } catch (error) {
     console.log(error);
