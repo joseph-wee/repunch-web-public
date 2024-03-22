@@ -21,6 +21,7 @@ import {
   PopUpSelectDesign,
   PopUpSelectProject,
   PopUpSelectWidth,
+  VideoPreview,
 } from "../../components/seller_center";
 import {
   colorsRequest,
@@ -394,6 +395,37 @@ const useAdd_product = () => {
     console.log(productInfo);
   }, [productInfo]);
 
+  const [videoState, setVideoState] = useState<any>([]);
+  const [nowPlaying, setNowPlaying] = useState(false);
+
+  /** 비디오 클릭 */
+  const videoHandler = (index: number) => {
+    // 재생중인 경우
+    // if (nowPlaying) {
+    //   videoRef2.current[index].pause();
+    //   setNowPlaying(false);
+    //   return;
+    // }
+    // // 재생중 아닌 경우
+    // videoRef2.current[index].play();
+    // setNowPlaying(true);
+    console.log(videoState.current);
+  };
+
+  const testing = () => {
+    const q = async () => {
+      setTimeout(() => console.log("first"), 1000);
+    };
+    q().then((res) => {
+      console.log(res);
+      console.log("second");
+    });
+  };
+
+  useEffect(() => {
+    testing();
+  }, []);
+
   return (
     <>
       <PopUpSelectColor
@@ -717,8 +749,9 @@ const useAdd_product = () => {
                   </InputContentWrapper2>
                 </SamplePriceWrapper> */}
                 <UploadImageVideoWrapper>
-                  <ImageButton onClick={() => imageRef.current.click()}>
+                  <ImageButton htmlFor="imageUpload">
                     <ImageVideoInput
+                      id="imageUpload"
                       type="file"
                       accept=".jpg, .png"
                       multiple
@@ -778,43 +811,80 @@ const useAdd_product = () => {
                   of your products.(max10)
                 </ImageVideoText>
 
-                <UploadImageVideoWrapper></UploadImageVideoWrapper>
-                <ImageButton onClick={() => videoRef.current.click()}>
-                  <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
-                </ImageButton>
-                <ImageVideoInput
-                  type="file"
-                  accept=".mp4"
-                  ref={videoRef}
-                  onChange={(e) =>
-                    uploadFile(
-                      e.target.files,
-                      previewVideos,
-                      setPreviewVideos,
-                      imageFiles,
-                      setImageFiles
-                    )
-                  }
-                />
-                {previewVideos[selectOption] &&
-                  previewVideos[selectOption].map((el: any, index: number) => {
-                    return (
-                      <ImageButton>
-                        <RemoveButton>
-                          <Image
-                            src={ic_close_wht}
-                            alt="ic_close_wht"
-                            width={20}
-                            height={20}
+                <UploadImageVideoWrapper>
+                  <ImageButton htmlFor="videoUpload">
+                    <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
+                  </ImageButton>
+                  <ImageVideoInput
+                    id="videoUpload"
+                    type="file"
+                    accept=".mp4"
+                    ref={videoRef}
+                    onChange={(e) =>
+                      uploadFile(
+                        e.target.files,
+                        previewVideos,
+                        setPreviewVideos,
+                        imageFiles,
+                        setImageFiles
+                      )
+                    }
+                  />
+                  {previewVideos[selectOption] &&
+                    previewVideos[selectOption].map(
+                      (el: any, index: number) => {
+                        return (
+                          <VideoPreview
+                            el={el}
+                            deleteFile={deleteFile}
+                            index={index}
+                            previewVideos={previewVideos}
+                            setPreviewVideos={setPreviewVideos}
+                            videoFiles={videoFiles}
+                            setVideoFiles={setVideoFiles}
                           />
-                        </RemoveButton>
-                        <Image
-                          src={ic_camera_play_wht}
-                          alt="ic_camera_play_wht"
-                        />
-                      </ImageButton>
-                    );
-                  })}
+                          // <ImageButton onClick={() => videoHandler(index)}>
+                          //   <RemoveButton
+                          //     onClick={() =>
+                          //       deleteFile(
+                          //         index,
+                          //         previewVideos,
+                          //         setPreviewVideos,
+                          //         videoFiles,
+                          //         setVideoFiles
+                          //       )
+                          //     }
+                          //   >
+                          //     <Image
+                          //       src={ic_close_wht}
+                          //       alt="ic_close_wht"
+                          //       width={10}
+                          //       height={10}
+                          //     />
+                          //   </RemoveButton>
+                          //   <PlayButton>
+                          //     <Image
+                          //       src={ic_camera_play_wht}
+                          //       alt="ic_camera_play_wht"
+                          //     />
+                          //   </PlayButton>
+
+                          //   <Video
+                          //     src={el}
+                          //     width="80px"
+                          //     height="80px"
+                          //     ref={(el) => {
+                          //       setVideoState(el);
+                          //     }}
+                          //   >
+                          //     {/* <source src={el} type="video/mp4" /> */}
+                          //   </Video>
+                          // </ImageButton>
+                        );
+                      }
+                    )}
+                </UploadImageVideoWrapper>
+
                 <ImageVideoText>
                   Uploading at least one video is required.(max1)
                 </ImageVideoText>
@@ -1259,7 +1329,7 @@ const UploadImageVideoWrapper = styled.div`
   gap: 10px;
   margin-bottom: 12px;
 `;
-const ImageButton = styled.div`
+const ImageButton = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1286,6 +1356,9 @@ const RemoveButton = styled.div`
   border-radius: 100%;
   background-color: #121822;
 `;
+const PlayButton = styled.div`
+  position: absolute;
+`;
 const ImageVideoText = styled.div`
   margin-bottom: 20px;
   font-size: 12px;
@@ -1310,6 +1383,10 @@ const SellProductButton = styled.div`
 
   font-weight: 700;
   line-height: 18.2px;
+`;
+const Video = styled.video`
+  width: 80px;
+  height: 80px;
 `;
 
 export default useAdd_product;
