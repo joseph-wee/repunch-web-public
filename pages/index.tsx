@@ -125,377 +125,94 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      Home 제작중...
+      <BigText>We are more than just a textile marketplace.</BigText>
+      <MiddleText>
+        What sets us apart is our commitment to sustainability. We specialize in
+        clothing fabrics, offering a diverse range of materials to meet your
+        needs.
+      </MiddleText>
+      <BigText>Enviromental Responsibility</BigText>
+      <MiddleText>
+        What sets us apart is our commitment to sustainability. We specialize in
+        clothing fabrics, offering a diverse range of materials to meet your
+        needs.{" "}
+      </MiddleText>
+      <BigText>+370,000t / year</BigText>
+      <MiddleText>Clothing waste is thrown away every year.</MiddleText>
+      <BigText>200 year</BigText>
+      <MiddleText>Time taken for fiber decomposition</MiddleText>
+      <BigText>1.5°C /year</BigText>
+      <MiddleText>
+        Increase in typhoons due to rising global temperature
+      </MiddleText>
+      <BigText>Our solution</BigText>
+      <MiddleText>
+        What sets us apart is our commitment to sustainability.
+      </MiddleText>
+      <SmallText>
+        We stock up on as much recyclable fabric as possible.
+      </SmallText>
+      <SmallText>We provide you with access to old fabrics.</SmallText>
+      <SmallText>We create new products from old fabrics.</SmallText>
+      <BigText>10,000+ Products</BigText>
+      <MiddleText>
+        What sets us apart is our commitment to sustainability.
+      </MiddleText>
+      <BigText>What sets us apart is our commitment to sustainability.</BigText>
+      <MiddleText>
+        We will contact you to schedule an online meeting whenever possible.
+      </MiddleText>
+      <MiddleText2>Inquary</MiddleText2>
+      <SmallText2>
+        Please let us know what you are curious about, such as production,
+        fabric swatches, etc.
+      </SmallText2>
+      <MiddleText2>Business industry and detail</MiddleText2>
+      <SmallText2></SmallText2>
+      <MiddleText2>Business industry and detail</MiddleText2>
+      <SmallText2>
+        If you tell us about your business, we can prepare in advance and
+        provide you with detailed information.
+      </SmallText2>
+      <MiddleText2>Arrange meeting</MiddleText2>
+      <SmallText2>
+        please let us know the date and time when the meeting can be held online
+        and we will contact you.
+      </SmallText2>
     </Container>
   );
 }
+
 const Container = styled.div`
+  color: #121822;
   background-color: #fafafa;
-  text-align: center;
 `;
-
-const Banner = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-
-  height: 280px;
-  overflow: hidden;
-  box-sizing: border-box;
-  @media screen and (max-width: 768px) {
-    margin: 0;
-  }
-`;
-
-const BackgroundMobile = styled.div`
-  display: none;
-  height: 280px;
-  @media screen and (max-width: 768px) {
-    display: block;
-  }
-`;
-const BackgroundPad = styled.div`
-  display: none;
-  height: 280px;
-  @media screen and (max-width: 1279px) {
-    display: block;
-  }
-  @media screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-const BackgroundDesktop = styled.div`
-  display: block;
-  height: 280px;
-  @media screen and (max-width: 1279px) {
-    display: none;
-  }
-`;
-const BannerTextWrapper = styled.div`
-  z-index: 1;
-  position: relative;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  width: 100%;
-  height: 280px;
-  box-sizing: border-box;
-  color: #ffffff;
-
-  @media screen and (max-width: 768px) {
-    padding-right: 14px;
-  }
-`;
-const FlexWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  height: 19px;
-`;
-const Title = styled.div`
-  margin-bottom: 128px;
-
-  font-family: "Inter";
+const BigText = styled.div`
+  font-family: "Kaiti TC";
+  font-size: 25.898px;
   font-weight: 400;
-  font-size: 14.8998px;
-  line-height: 17px;
-  text-align: right;
-  letter-spacing: -0.011em;
-  text-transform: uppercase;
-  color: #e1ff20;
-
-  @media screen and (max-width: 768px) {
-    margin-right: 1.5px;
-  }
+  line-height: 20.718px;
 `;
-const Text1 = styled.div`
-  flex-shrink: 0;
-  height: 19px;
-  font-family: "Inter";
+const MiddleText2 = styled.div`
+  color: #000000; // 이거 의도한 색깔 ?
+  font-family: Inter;
+  font-size: 10px;
   font-weight: 400;
-  font-size: 14.8998px;
-  line-height: 17px;
-  text-align: right;
-  letter-spacing: -0.011em;
-  text-transform: uppercase;
-  color: #e1ff20;
 `;
-const LineLime = styled.div`
-  margin-right: 3px;
-  width: 100%;
-  height: 8px;
-
-  border-bottom: 1px solid #e1ff20;
-
-  @media screen and (max-width: 768px) {
-    margin-right: 0px;
-  }
-`;
-const Text2 = styled.div`
-  position: absolute;
-  bottom: 59.63px;
-  height: 19px;
-  font-family: "Inter";
+const MiddleText = styled.div`
+  font-family: Inter;
+  font-size: 8.633px;
   font-weight: 400;
-  font-size: 14.8998px;
-  line-height: 17px;
-  letter-spacing: -0.011em;
-  text-transform: uppercase;
-  color: #e1ff20;
 `;
-const Text3 = styled.div`
-  position: absolute;
-  bottom: 38.96px;
-  height: 19px;
-  margin-left: 47.16px;
-  font-family: "Inter";
+const SmallText = styled.div`
+  font-family: "Kaiti TC";
+  font-size: 8.633px;
   font-weight: 400;
-  font-size: 14.8998px;
-  line-height: 17px;
-  letter-spacing: -0.011em;
-  text-transform: uppercase;
-  color: #e1ff20;
+  line-height: 20.718px;
 `;
-const Text4 = styled.div`
-  position: absolute;
-  bottom: 20.33px;
-  height: 19px;
-  margin-left: 47.16px;
-  font-family: "Inter";
+const SmallText2 = styled.div`
+  color: #000000;
+  font-family: Inter;
+  font-size: 8px;
   font-weight: 400;
-  font-size: 14.8998px;
-  line-height: 17px;
-  letter-spacing: -0.011em;
-  text-transform: uppercase;
-  color: #e1ff20;
-`;
-const IoText = styled.div`
-  position: absolute;
-  left: 5px;
-  bottom: 24px;
-  height: 8px;
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 12.4px;
-  -webkit-transform: scale(0.5); //0.5 -> 50%
-  display: inline-block;
-  line-height: 8px;
-  color: #e1ff20;
-`;
-
-const Main = styled.div`
-  display: flex;
-  margin: 0 auto;
-  padding-top: 47px;
-  padding-bottom: 20px;
-
-  max-width: 1030px;
-  min-height: 2843.35px;
-  box-sizing: border-box;
-  @media screen and (max-width: 1279px) {
-    padding-top: 20px;
-    padding-left: 80px;
-    padding-right: 80px;
-  }
-
-  @media screen and (max-width: 768px) {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-`;
-const ProductListWrapper = styled.div`
-  width: 100%;
-`;
-const ButtonFlexWrapper = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: space-between;
-
-  margin-bottom: 20px;
-`;
-const FilterButton = styled.button`
-  display: none;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-
-  padding-top: 6px;
-  padding-bottom: 6px;
-  padding-left: 8px;
-  padding-right: 8px;
-  box-sizing: border-box;
-
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
-
-  cursor: pointer;
-
-  @media screen and (max-width: 1279px) {
-    display: flex;
-  }
-`;
-const ButtonTextFilter = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 4px;
-  margin-right: 7px;
-  height: 19px;
-
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 19px;
-
-  color: #121822;
-`;
-const FilterAlarmBackground = styled.div<{ isActive: boolean }>`
-  display: ${(props) => {
-    return props.isActive == true ? "block" : "none";
-  }};
-  position: absolute;
-  top: 6px;
-  left: 22px;
-
-  align-items: center;
-  justify-content: center;
-  width: 8px;
-  height: 8px;
-
-  background-color: #ffffff;
-  border-radius: 100%;
-`;
-const FilterAlarmCircle = styled.div`
-  width: 6px;
-  height: 6px;
-  background-color: #ff5c01;
-  border-radius: 100%;
-`;
-const Result = styled.div`
-  display: flex;
-
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 19px;
-
-  color: #121822;
-
-  letter-spacing: -0.011em;
-  &::after {
-    display: block;
-    content: "result";
-    font-weight: 400;
-    color: #121822;
-  }
-
-  @media screen and (max-width: 1279px) {
-    display: none;
-  }
-`;
-const ButtonWrapper = styled.div`
-  display: flex;
-  gap: 19px;
-  align-items: center;
-`;
-const ClearButton = styled.button<{ isActive: boolean }>`
-  display: ${(props) => {
-    return props.isActive == true ? "block" : "none";
-  }};
-  padding: 0;
-  border: none;
-  background-color: #fafafa;
-
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: -0.011em;
-  text-decoration-line: underline;
-  color: #536c6d;
-
-  cursor: pointer;
-`;
-const SortButton = styled.button`
-  display: flex;
-  align-items: center;
-  padding-left: 0;
-  border: none;
-  background-color: #fafafa;
-  cursor: pointer;
-`;
-const ButtonTextSort = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 14px;
-
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 16px;
-  letter-spacing: -0.011em;
-  color: #121822;
-
-  @media screen and (max-width: 1279px) {
-    margin-right: 7px;
-    font-size: 12px;
-  }
-`;
-const SortMenuWrapper = styled.div<{ isActive: boolean }>`
-  z-index: 1;
-  display: ${(props) => {
-    return props.isActive == true ? "none" : "block";
-  }};
-  position: absolute;
-  right: 0;
-  top: 25px;
-  @media screen and (max-width: 1279px) {
-    top: 40px;
-  }
-  width: 120px;
-  box-sizing: border-box;
-  background-color: #ffffff;
-  border-radius: 2px;
-
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-`;
-const SortMenu = styled.div<{ isActive: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 15px;
-  padding-right: 7px;
-  height: 40px;
-  box-sizing: border-box;
-  border-bottom: 1px solid #dee8ec;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: -0.011em;
-  color: #121822;
-  &:last-of-type {
-    border: none;
-  }
-  cursor: pointer;
-  ${(props) => {
-    return props.isActive ? "background-color: #F2F6F8; font-weight: 700;" : "";
-  }};
-`;
-const ProductListGridWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  row-gap: 50px;
-  column-gap: 20px;
-
-  @media screen and (max-width: 1279px) {
-    grid-template-columns: 1fr 1fr 1fr;
-    row-gap: 40px;
-    column-gap: 18px;
-  }
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-    row-gap: 15px;
-    column-gap: 15px;
-  }
 `;
