@@ -9,7 +9,6 @@ import { pwMailingRequest } from "../utils/api";
 const useLost_password = () => {
   const [userId, setUserId] = useState(""); // 이메일
   const [isActive, setIsActive] = useState(false); // 이메일 입력완료후 체크 임시용
-
   const [userIdValidationResult, setUserIdValidationResult] =
     useState<number>(0); // 유저ID(이메일주소) 유효성 체크
 
@@ -30,7 +29,7 @@ const useLost_password = () => {
     if (validation == true) {
       pwMailingRequest(userId).then((res) => {
         if (res.data.status == 200) {
-          alert("success");
+          setIsActive(true);
         } else {
           setUserIdValidationResult(2);
         }
@@ -40,7 +39,7 @@ const useLost_password = () => {
 
   return (
     <>
-      <ContainerFindId isActive={isActive}>
+      <ContainerFindId>
         <Title>Find password</Title>
         <WelcomeText>
           Please enter the email address you registered when registering as a
@@ -81,7 +80,20 @@ const useLost_password = () => {
           </Link>
         </InfoMessage>
       </ContainerFindId>
-      <ContainerYourPassword isActive={isActive}>
+      <PopUpBox isActive={isActive}>
+        <ContentBox>
+          <PopUpTitle>
+            Email is sent for
+            <br />
+            reset your password
+          </PopUpTitle>
+
+          <Link href="/login" style={{ textDecoration: "none" }}>
+            <PopUpButton>OK</PopUpButton>
+          </Link>
+        </ContentBox>
+      </PopUpBox>
+      {/* <ContainerYourPassword isActive={isActive}>
         <TitleYourPassword>
           Your password is
           <br />
@@ -100,12 +112,12 @@ const useLost_password = () => {
             <LinkStylingHome>Home</LinkStylingHome>
           </Link>
         </ButtonHome>
-      </ContainerYourPassword>
+      </ContainerYourPassword> */}
     </>
   );
 };
 
-const ContainerFindId = styled.div<{ isActive: boolean }>`
+const ContainerFindId = styled.div`
   position: relative;
   margin: 0 auto;
   padding-top: 20px;
@@ -117,10 +129,6 @@ const ContainerFindId = styled.div<{ isActive: boolean }>`
     padding-left: 20px;
     padding-right: 20px;
   }
-
-  display: ${(props) => {
-    return props.isActive == true ? "none" : "block";
-  }};
 `;
 const Title = styled.div`
   margin-bottom: 2px;
@@ -361,6 +369,68 @@ const LinkStylingHome = styled.div`
   line-height: 18px;
 
   color: #ffffff;
+`;
+const PopUpBox = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive ? "flex" : "none";
+  }};
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+`;
+const SamplePopUpBox = styled.div<{ isActive: number }>`
+  display: ${(props) => {
+    return props.isActive === 0 ? "none" : "flex";
+  }};
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+`;
+const ContentBox = styled.div`
+  padding: 20px;
+  width: 320px;
+
+  box-sizing: border-box;
+  background-color: #ffffff;
+`;
+const PopUpTitle = styled.div`
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  color: #121822;
+`;
+const PopUpMessage = styled.div`
+  margin-bottom: 24px;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  text-align: center;
+  color: #536c6d;
+`;
+const PopUpButton = styled.button`
+  width: 100%;
+  height: 36px;
+  background-color: #e1ff20;
+  border: 0.79402px solid #d4f01e;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: #121822;
+  cursor: pointer;
 `;
 
 export default useLost_password;
