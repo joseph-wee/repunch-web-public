@@ -216,7 +216,7 @@ const ImageWrapper = styled.div<{ scroll: number }>`
   height: 38.1px;
   transform-origin: top left;
   transform: ${(props) => {
-    return `translateX(calc(100vw - ${props.scroll / 4}px)) rotate(-30deg)`;
+    return `translateX(calc(100vw - ${props.scroll / 25}vw)) rotate(-30deg)`;
   }};
 `;
 const BigText = styled.div`
@@ -224,6 +224,8 @@ const BigText = styled.div`
   font-size: 25.898px;
   font-weight: 400;
   line-height: 20.718px;
+  padding-left: 63px;
+  margin-bottom: 26px;
   @media screen and (max-width: 768px) {
     padding-left: 40px;
     margin-bottom: 20px;
@@ -242,6 +244,7 @@ const MiddleText = styled.div`
   font-family: Inter;
   font-size: 8.633px;
   font-weight: 400;
+  padding-left: 63px;
   @media screen and (max-width: 768px) {
     padding-left: 40px;
   }
