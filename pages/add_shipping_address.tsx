@@ -230,14 +230,15 @@ const useAdd_shiping_address = () => {
 
   /** 작업 후 이전 페이지로 이동 */
   const sendToLandingPage = () => {
-    const landingPage = router.asPath.split("?")[1];
+    const landingPage = router.query.backLink;
+    console.log(router.query.backLink);
     // 랜딩 페이지 없을 경우
     if (landingPage == undefined) {
       router.push("/address");
       return;
     }
     // 랜딩 페이지있으면 랜딩 페이지로 이동
-    router.push(landingPage);
+    router.push(`${landingPage}`);
   };
 
   /** 모든 유효성 검사 */
@@ -355,6 +356,7 @@ const useAdd_shiping_address = () => {
 
   useEffect(() => {
     console.log(firstName);
+    console.log(router.query.backLink);
   }, [firstName]);
 
   return (
