@@ -137,16 +137,20 @@ const useOrder_temp1 = () => {
     addressListRequest(at, 50).then((res) => {
       // 통신 성공 case
       if (res?.data.status == 200) {
-        console.log(res?.data.result.data[0]);
+        // 주소목록 없는 case
+        if (res?.data.result.data === null) {
+          router.push({
+            pathname: "/add_shipping_address",
+            query: {
+              backLink: "/order_temp1",
+            },
+          });
+          return;
+        }
         // 주소목록 있는 case
         if (res?.data.result.data) {
           setAddressList(res?.data.result.data);
           setSelectAddress(res?.data.result.data[0]);
-          return;
-        }
-        // 주소목록 없는 case
-        if (res?.data.result.data == null) {
-          router.push("/add_shipping_address");
           return;
         }
       }
@@ -168,15 +172,20 @@ const useOrder_temp1 = () => {
             addressListRequest(at, 50).then((res) => {
               // 통신 성공 case
               if (res?.data.status == 200) {
+                // 주소목록 없는 case
+                if (res?.data.result.data == null) {
+                  router.push({
+                    pathname: "/add_shipping_address",
+                    query: {
+                      backLink: "/order_temp1",
+                    },
+                  });
+                  return;
+                }
                 // 주소목록 있는 case
                 if (res?.data.result.data) {
                   setAddressList(res?.data.result.data);
                   setSelectAddress(res?.data.result.data[0]);
-                  return;
-                }
-                // 주소목록 없는 case
-                if (res?.data.result.data == null) {
-                  router.push("/add_shipping_address");
                   return;
                 }
               }
