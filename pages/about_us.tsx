@@ -298,7 +298,7 @@ const Content = styled.div<{
   // location1보다 스크롤값이 낮은경우
   ${(props) => {
     return props.scroll < props.location1 && `opacity: 0;`;
-  }};
+  }}
   // location1과 location2 스크롤 사이인 경우
   ${(props) => {
     return (
@@ -308,7 +308,7 @@ const Content = styled.div<{
         ((props.location2 - props.location1) / 5)
       };`
     );
-  }};
+  }}
   // location2 보다 스크롤이 큰경우
   ${(props) => {
     return (
@@ -320,7 +320,7 @@ const Content = styled.div<{
         ((props.location2 - props.location1) / 5)
       };`
     );
-  }};
+  }}
   transition: 0.1s;
 `;
 // const Title1 = styled.div`
