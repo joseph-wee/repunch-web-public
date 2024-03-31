@@ -271,11 +271,11 @@ const usePayment = () => {
         <ContentTitle>Delivery</ContentTitle>
         <ContentWrapper>
           <DeliveryWrapper>
-            {deliveryMethod == "AIR" && (
+            {deliveryMethod == "EXPRESS" && (
               <>
-                <Image src={ic_air} alt={"air_image"} width={16} height={16} />
-                <DeliveryAirText>By air&nbsp;</DeliveryAirText>
-                <DeliveryFreeText>(about 3week)</DeliveryFreeText>
+                {/* <Image src={ic_air} alt={"air_image"} width={16} height={16} /> */}
+                <DeliveryAirText>Express</DeliveryAirText>
+                {/* <DeliveryFreeText>(about 3week)</DeliveryFreeText> */}
               </>
             )}
 
