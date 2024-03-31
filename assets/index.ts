@@ -77,3 +77,5 @@ export { default as ic_check_red } from "./ic_check_red.svg";
 export { default as ic_x_photo_m } from "./ic_x_photo_m.svg";
 export { default as ic_down_link } from "./ic_down_link .svg";
 export { default as home_repunch_image } from "./home_repunch_image.png";
+export { default as cube } from "./cube.svg";
+export { default as square } from "./square.svg";
