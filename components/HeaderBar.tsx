@@ -136,6 +136,10 @@ const useHeaderBar = () => {
   //   }
   // }, []);
 
+  useEffect(() => {
+    console.log(router.pathname);
+  }, []);
+
   return (
     <>
       <Container isActive={router.pathname}>
@@ -192,7 +196,7 @@ const Container = styled.header<{ isActive: string }>`
   width: 100%;
   height: 64px;
   background-color: ${(props) => {
-    return props.isActive == "/about_us" ? "" : "#e1ff20";
+    return props.isActive == "/" ? "#fafafa" : "";
   }};
 `;
 const Logo = styled.div``;
