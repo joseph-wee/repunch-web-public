@@ -79,3 +79,7 @@ export { default as ic_down_link } from "./ic_down_link .svg";
 export { default as home_repunch_image } from "./home_repunch_image.png";
 export { default as cube } from "./cube.svg";
 export { default as square } from "./square.svg";
+export { default as arrowShop } from "./arrowShop.svg";
+export { default as nature_image } from "./nature_image.jpeg";
+export { default as solution_image } from "./solution_image.png";
+export { default as logo_lime } from "./logo_lime.svg";
