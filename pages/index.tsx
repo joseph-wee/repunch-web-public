@@ -93,9 +93,12 @@ export default function Home() {
       </Head>
       {/** 1씬 */}
       <SceneContainer1>
-        <ImageWrapper scroll={scroll}>
+        <ImageWrapperMobile scroll={scroll}>
           <Image src={home_repunch_image} width={381} height={38.1} />
-        </ImageWrapper>
+        </ImageWrapperMobile>
+        <ImageWrapperDesk scroll={scroll}>
+          <Image src={home_repunch_image} width={762} height={76.2} />
+        </ImageWrapperDesk>
         <SceneContainer>
           <Scene1>
             <BigText1>
@@ -174,18 +177,16 @@ export default function Home() {
           </FlexWrapper>
         </Scene3>
         <NatureCircle observe={observe1} ref={ref1}>
-          <Image
-            src={nature_image}
-            width={236}
-            height={236}
-            alt="nature_image"
-          />
+          <Video id="video" key={""} loop={true} autoPlay muted>
+            <source src={require("../public/nature.mp4")} type="video/mp4" />
+          </Video>
         </NatureCircle>
+
         {/* <GrayCircle /> */}
         <LimeCircle observe={observe2} ref={ref2} />
       </SceneContainer>
       {/** 4씬 */}
-      <SceneContainer>
+      <SceneContainer4>
         <Scene4>
           <BigText4>
             Our
@@ -219,11 +220,18 @@ export default function Home() {
               <SmallText>We create new products from old fabrics.</SmallText>
             </InfoWrapper>
           </InfoContainer>
-          <SolutionImageWrapperDesk src={solution_image.src} />
-
-          <SolutionImageWrapperMobile src={solution_image.src} />
+          <SolutionImageWrapperDesk>
+            <VideoSolution id="video" key={""} loop={true} autoPlay muted>
+              <source src={require("../public/silk.mp4")} type="video/mp4" />
+            </VideoSolution>
+          </SolutionImageWrapperDesk>
+          <SolutionImageWrapperMobile>
+            <VideoSolution id="video" key={""} loop={true} autoPlay muted>
+              <source src={require("../public/silk.mp4")} type="video/mp4" />
+            </VideoSolution>
+          </SolutionImageWrapperMobile>
         </Scene4>
-      </SceneContainer>
+      </SceneContainer4>
       {/** 5씬 */}
       <SceneContainer5>
         <Scene5>
@@ -265,12 +273,14 @@ export default function Home() {
               })}
           </ProductWrapperMobile>
           <ShopButtonWrapper>
-            <ShopButton>
-              <ShopIconWrapper>
-                <Image src={arrowShop} width={18} height={13} />
-              </ShopIconWrapper>
-              <ShopText>Shop Products</ShopText>
-            </ShopButton>
+            <Link href={`/shop`} style={{ textDecoration: "none" }}>
+              <ShopButton>
+                <ShopIconWrapper>
+                  <Image src={arrowShop} width={18} height={13} />
+                </ShopIconWrapper>
+                <ShopText>Shop Products</ShopText>
+              </ShopButton>
+            </Link>
           </ShopButtonWrapper>
         </Scene5>
         <LogoImageWrapperDesk scroll={scroll} windowY={windowY}>
@@ -336,13 +346,22 @@ export default function Home() {
 const Container = styled.div`
   color: #121822;
   background-color: #fafafa;
+  contain: paint;
 `;
 const SceneContainer1 = styled.div`
   contain: paint;
   height: 800vh;
 `;
 const SceneContainer = styled.div`
-  contain: paint;
+  position: relative;
+  margin-bottom: 100vh;
+  height: 300vh;
+  &:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 20vh;
+  }
+`;
+const SceneContainer4 = styled.div`
   position: relative;
   margin-bottom: 100vh;
   height: 300vh;
@@ -372,7 +391,7 @@ const Scene2 = styled.div`
 const Scene3 = styled.div`
   position: sticky;
   top: 50%;
-  transform: translate(0, -10%);
+  transform: translate(0, -50%);
   @media screen and (max-width: 768px) {
     top: 50%;
     transform: translate(0, -50%);
@@ -384,6 +403,7 @@ const Scene4 = styled.div`
   height: 100vh;
 `;
 const Scene5 = styled.div`
+  z-index: 1;
   position: sticky;
   top: 124px;
   @media screen and (max-width: 768px) {
@@ -394,16 +414,34 @@ const Scene6 = styled.div`
   position: sticky;
   top: 154px;
 `;
-const ImageWrapper = styled.div<{ scroll: number }>`
+const ImageWrapperMobile = styled.div<{ scroll: number }>`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: block;
+    position: sticky;
+    top: 60vh;
+    width: 381px;
+    height: 38.1px;
+    transform-origin: top left;
+    transition: all 1s;
+    transform: ${(props) => {
+      return `translateX(calc(100vw - ${props.scroll / 25}vw)) rotate(-30deg)`;
+    }};
+  }
+`;
+const ImageWrapperDesk = styled.div<{ scroll: number }>`
   position: sticky;
-  top: 352px;
-  width: 381px;
-  height: 38.1px;
+  top: 80vh;
+  width: 762px;
+  height: 76.2px;
   transform-origin: top left;
   transition: all 1s;
   transform: ${(props) => {
     return `translateX(calc(100vw - ${props.scroll / 25}vw)) rotate(-30deg)`;
   }};
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 const FlexWrapper = styled.div`
   display: flex;
@@ -446,11 +484,14 @@ const BigText2 = styled.div`
 const BigText3 = styled.div`
   text-align: center;
   font-family: "Kaiti TC";
-  font-size: 25.898px;
+  font-size: 38.847px;
   font-weight: 400;
-  line-height: 20.718px;
+  line-height: 36.904px;
   margin-bottom: 14px;
   @media screen and (max-width: 768px) {
+    font-size: 25.898px;
+    font-weight: 400;
+    line-height: 24.603px;
     margin-bottom: 6px;
   }
 `;
@@ -689,6 +730,7 @@ const ShopText = styled.div`
   font-family: Inter;
   font-size: 16.769px;
   font-weight: 400;
+  color: #000000;
   @media screen and (max-width: 768px) {
     font-family: Inter;
     font-size: 11.179px;
@@ -732,7 +774,7 @@ const NatureCircle = styled.div<{ observe: boolean }>`
   border-radius: 100%;
   overflow: hidden;
   transform: translateX(-73px);
-  transition: all 4s;
+  transition: all 7s;
 
   top: ${(props) => {
     return props.observe ? `0px` : `500px`;
@@ -742,6 +784,15 @@ const NatureCircle = styled.div<{ observe: boolean }>`
     width: 118px;
     height: 118px;
     transform: translateX(-25px);
+  }
+`;
+const Video = styled.video`
+  z-index: 1;
+  width: auto;
+  height: 236px;
+  @media screen and (max-width: 768px) {
+    width: auto;
+    height: 118px;
   }
 `;
 const GrayCircle = styled.div`
@@ -767,7 +818,7 @@ const LimeCircle = styled.div<{ observe: boolean }>`
   border-radius: 100%;
   background-color: #e1ff20;
   transform: translateX(10px);
-  transition: all 4s;
+  transition: all 7s;
 
   top: ${(props) => {
     return props.observe ? `300px` : `500px`;
@@ -779,19 +830,16 @@ const LimeCircle = styled.div<{ observe: boolean }>`
   }
 `;
 
-const SolutionImageWrapperDesk = styled.div<{ src: string }>`
+const SolutionImageWrapperDesk = styled.div`
   position: absolute;
-  width: 917px;
+  width: 135vw;
   height: 209.022px;
   transform-origin: top left;
-  right: 0px;
-  bottom: 0px;
+  left: -15vw;
+  bottom: -39vw;
   overflow: hidden;
-  transform: translate(125px, 210px) rotate(-30deg);
+  transform: rotate(-30deg);
 
-  background-image: ${(props) => {
-    return `url(${props.src})`;
-  }};
   background-size: 100%;
   background-position: 0% 42%;
   background-repeat: no-repeat;
@@ -799,38 +847,57 @@ const SolutionImageWrapperDesk = styled.div<{ src: string }>`
     display: none;
   }
 `;
-const SolutionImageWrapperMobile = styled.div<{ src: string }>`
+const SolutionImageWrapperMobile = styled.div`
   display: none;
   @media screen and (max-width: 768px) {
     display: block;
     position: absolute;
-    width: 458px;
+    width: 135vw;
     height: 104.511px;
     transform-origin: top left;
+    left: -15vw;
+    bottom: -39vw;
 
     overflow: hidden;
-    transform: translate(123px, 220px) rotate(-30deg);
+    transform: rotate(-30deg);
 
-    background-image: ${(props) => {
-      return `url(${props.src})`;
-    }};
     background-size: 100%;
     background-position: 0% 42%;
     background-repeat: no-repeat;
+  }
+`;
+const VideoSolution = styled.video`
+  position: absolute;
+  top: -10vw;
+  width: auto;
+  height: 150vw;
+  @media screen and (max-width: 768px) {
+    width: auto;
+    height: 917px;
   }
 `;
 const LogoImageWrapperDesk = styled.div<{ scroll: number; windowY: number }>`
   position: sticky;
   width: 733px;
   height: 966px;
-  top: 0px;
+  left: 15vw;
+  top: 40vh;
   transform-origin: top left;
-  transform: ${(props) => {
-    return `translateY(-330px) translateX(calc(100vw - ${
-      (props.scroll - props.windowY * 14.1) / 25
-    }vw)) rotate(-30deg)`;
-  }};
+  transform: rotate(-30deg);
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 const LogoImageWrapperMobile = styled.div<{ scroll: number }>`
   display: none;
+  @media screen and (max-width: 768px) {
+    display: block;
+    position: sticky;
+    width: 386.567px;
+    height: 483.209px;
+    left: 15vw;
+    top: 25vh;
+    transform-origin: top left;
+    transform: rotate(-30deg);
+  }
 `;
