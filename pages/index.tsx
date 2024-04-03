@@ -664,7 +664,7 @@ const BigText6 = styled.div`
 `;
 const MiddleText1 = styled.div`
   position: relative;
-
+  z-index: 1;
   margin-bottom: 30vw;
   padding-left: 8.2vw;
   color: #000000; // 이거 의도한 색깔 ?
@@ -1099,7 +1099,7 @@ const SwatchContainer = styled.div<{ scroll: number }>`
   align-items: center;
   justify-content: center;
   gap: 5.3vw;
-  /* top: 70vw; */
+  left: 30vw;
   width: 50vw;
   height: 20.4vw;
   border-radius: 16.736px;
@@ -1108,6 +1108,13 @@ const SwatchContainer = styled.div<{ scroll: number }>`
   transform: ${(props) => {
     return `rotate(-30deg) translateX(${props.scroll / 2}vw)`;
   }};
+
+  @media screen and (max-width: 768px) {
+    top: 120vw;
+    transform: ${(props) => {
+      return `rotate(-30deg) translateX(${props.scroll / 2}vw)`;
+    }};
+  }
 `;
 
 const SwatchImageWrapper = styled.div`
