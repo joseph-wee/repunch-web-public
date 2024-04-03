@@ -927,7 +927,8 @@ const AuthButton = styled.button`
   overflow: hidden;
 
   background-color: #e1ff20;
-  border: none;
+  border: 1px solid #d4f01e;
+
   border-radius: 2px;
 
   cursor: pointer;
