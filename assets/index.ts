@@ -83,3 +83,6 @@ export { default as arrowShop } from "./arrowShop.svg";
 export { default as nature_image } from "./nature_image.jpeg";
 export { default as solution_image } from "./solution_image.png";
 export { default as logo_lime } from "./logo_lime.svg";
+export { default as nature_large } from "./nature_large.png";
+export { default as aperture } from "./aperture.svg";
+export { default as swatch } from "./swatch.jpeg";
