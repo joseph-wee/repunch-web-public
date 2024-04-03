@@ -142,7 +142,7 @@ const useHeaderBar = () => {
 
   return (
     <>
-      <Container isActive={router.pathname}>
+      <Container path={router.pathname} isActive={isActive}>
         <Link
           href="/"
           style={{ textDecoration: "none" }}
@@ -184,7 +184,7 @@ const useHeaderBar = () => {
   );
 };
 
-const Container = styled.header<{ isActive: string }>`
+const Container = styled.header<{ path: string; isActive: boolean }>`
   display: flex;
   z-index: 3;
   position: fixed;
@@ -196,10 +196,15 @@ const Container = styled.header<{ isActive: string }>`
   width: 100%;
   height: 64px;
   background-color: ${(props) => {
-    return props.isActive == "/" ? "#fafafa" : "";
+    return props.path == "/" ? "#transparent" : "#e1ff20";
+  }};
+  background-color: ${(props) => {
+    return props.isActive && "#e1ff20";
   }};
 `;
-const Logo = styled.div``;
+const Logo = styled.div`
+  position: relative;
+`;
 const Menu = styled.div`
   position: absolute;
   right: 20px;

@@ -2,14 +2,17 @@ import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
 import {
+  aperture,
   arrowShop,
   cube,
   home_repunch_image,
   logo,
   logo_lime,
   nature_image,
+  nature_large,
   solution_image,
   square,
+  swatch,
 } from "../assets";
 import Image from "next/legacy/image";
 import { useEffect, useRef, useState } from "react";
@@ -18,30 +21,54 @@ import Product from "../components/Product";
 
 export default function Home() {
   const [scroll, setScroll] = useState(0); // 스크롤 값
-  const [windowY, setWindowY] = useState(0);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
   const [productList, setProductList] = useState<any>();
   const [observe1, setObserve1] = useState(false);
   const [observe2, setObserve2] = useState(false);
   const ref1 = useRef<any>();
   const ref2 = useRef<any>();
 
+  const [natureCirceY, setNatureCircleY] = useState<number | undefined>(0); // nature circle y좌표
+  const [limeCircleY, setLimeCircleY] = useState<number | undefined>(0); // lime circle y좌표
+  const [swatchY, setSwatchY] = useState<any>(0); // lime circle y좌표
+
   /** 스크롤값 세팅 */
   const scrollHandler = () => {
     setScroll(window.scrollY);
-    setWindowY(window.innerHeight);
-    console.log(window.scrollY);
-    console.log(window.innerHeight);
-    console.log(window.scrollY / window.innerHeight);
+    setX(window.innerWidth);
+    setY(window.innerHeight);
+    // console.log(window.scrollY);
+    // console.log(window.innerHeight);
+    // console.log(window.scrollY / window.innerHeight);
     // console.log(window.scrollY - window.innerHeight * 7);
   };
 
   /** 스크롤 감지 */
   useEffect(() => {
+    setNatureCircleY(
+      document.getElementById("natureCircle")?.getBoundingClientRect().top
+    );
+    setLimeCircleY(
+      document.getElementById("limeCircle")?.getBoundingClientRect().top
+    );
+    setSwatchY(document.getElementById("swatch")?.getBoundingClientRect().top);
     window.addEventListener("scroll", scrollHandler);
     return () => {
       window.removeEventListener("scroll", scrollHandler);
     };
   }, []);
+
+  useEffect(() => {
+    console.log(scroll - swatchY);
+    console.log(x);
+    console.log(y);
+    console.log(scroll - swatchY - x + y);
+    console.log(document.body.clientHeight);
+    // console.log(
+    //   (Math.abs(scroll - document.body.clientHeight) / x / y) * 10000
+    // );
+  }, [scroll]);
 
   /** 상품 리스트 호출 및 세팅 */
   useEffect(() => {
@@ -64,79 +91,75 @@ export default function Home() {
 
   /** 감지기1 */
   useEffect(() => {
-    const observer1 = new IntersectionObserver(([{ isIntersecting }]) => {
-      isIntersecting ? setObserve1(true) : setObserve1(false);
+    const observer1 = new IntersectionObserver(([{ intersectionRatio }]) => {
+      // console.log(intersectionRatio);
     });
     observer1.observe(ref1.current);
     return () => {
       observer1.disconnect();
     };
-  }, []);
-  /** 감지기2 */
-  useEffect(() => {
-    const observer2 = new IntersectionObserver(([{ isIntersecting }]) => {
-      isIntersecting ? setObserve2(true) : setObserve2(false);
-    });
-    observer2.observe(ref2.current);
-    return () => {
-      observer2.disconnect();
-    };
-  }, []);
+  }, [scroll]);
+  // /** 감지기2 */
+  // useEffect(() => {
+  //   const observer2 = new IntersectionObserver(([{ isIntersecting }]) => {
+  //     isIntersecting ? setObserve2(true) : setObserve2(false);
+  //   });
+  //   observer2.observe(ref2.current);
+  //   return () => {
+  //     observer2.disconnect();
+  //   };
+  // }, []);
 
   return (
-    <Container>
-      <Head>
-        <title>Repunch-dev</title>
-        <meta name="description" content="repunch 웹개발 테스트 사이트" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      {/** 1씬 */}
-      <SceneContainer1>
-        <ImageWrapperMobile scroll={scroll}>
-          <Image src={home_repunch_image} width={381} height={38.1} />
-        </ImageWrapperMobile>
-        <ImageWrapperDesk scroll={scroll}>
-          <Image src={home_repunch_image} width={762} height={76.2} />
-        </ImageWrapperDesk>
-        <SceneContainer>
-          <Scene1>
-            <BigText1>
-              We are more than
-              <br />
-              just a textile
-              <br />
-              marketplace.
-            </BigText1>
-            <MiddleText1>
-              What sets us apart is our commitment to sustainability.
-              <br />
-              We specialize in clothing fabrics, offering a diverse
-              <br />
-              range of materials to meet your needs.
-            </MiddleText1>
-          </Scene1>
-        </SceneContainer>
+    <>
+      <Container>
+        <Head>
+          <title>Repunch-dev</title>
+          <meta name="description" content="repunch 웹개발 테스트 사이트" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        {/** 1씬 */}
+
+        <BigText1>
+          We are more than
+          <br />
+          just a textile
+          <br />
+          marketplace.
+        </BigText1>
+        <MiddleText1>
+          What sets us apart is our commitment to sustainability.
+          <br />
+          We specialize in clothing fabrics, offering a diverse
+          <br />
+          range of materials to meet your needs.
+        </MiddleText1>
+        <ImageWrapper scroll={scroll === 0 ? 0 : (scroll / x) * 180}>
+          <Image src={home_repunch_image} objectFit="fill" />
+        </ImageWrapper>
+        <ImageWrapper2 scroll={scroll === 0 ? 0 : (scroll / x) * 180}>
+          <Image src={home_repunch_image} objectFit="fill" />
+        </ImageWrapper2>
+        <ImageWrapper3 scroll={scroll === 0 ? 0 : (scroll / x) * 180}>
+          <Image src={home_repunch_image} objectFit="fill" />
+        </ImageWrapper3>
         {/** 2씬 */}
-        <SceneContainer>
-          <Scene2>
-            <BigText2>
-              Enviromental
-              <br />
-              Responsibility
-            </BigText2>
-            <MiddleText2>
-              What sets us apart is our commitment to sustainability.
-              <br />
-              We specialize in clothing fabrics, offering a diverse
-              <br />
-              range of materials to meet your needs.
-            </MiddleText2>
-          </Scene2>
-        </SceneContainer>
-      </SceneContainer1>
-      {/** 3씬 */}
-      <SceneContainer>
+
+        <BigText1>
+          Enviromental
+          <br />
+          Responsibility
+        </BigText1>
+        <MiddleText1>
+          What sets us apart is our commitment to sustainability.
+          <br />
+          We specialize in clothing fabrics, offering a diverse
+          <br />
+          range of materials to meet your needs.
+        </MiddleText1>
+
+        {/** 3씬 */}
         <Scene3>
           <FlexWrapper>
             <TextWrapper>
@@ -175,178 +198,230 @@ export default function Home() {
               </MiddleText3>
             </TextWrapper>
           </FlexWrapper>
-        </Scene3>
-        <NatureCircle observe={observe1} ref={ref1}>
-          <Video id="video" key={""} loop={true} autoPlay muted>
+          <NatureCircle
+            scroll={scroll}
+            x={x}
+            y={natureCirceY}
+            url={nature_large.src}
+            ref={ref1}
+            id="natureCircle"
+          >
+            {/* <ImageWrapperCircle>
+            <Image src={nature_large} objectFit="fill" />
+          </ImageWrapperCircle> */}
+            {/* <Video id="video" key={""} loop={true} autoPlay muted>
             <source src={require("../public/nature.mp4")} type="video/mp4" />
-          </Video>
-        </NatureCircle>
+          </Video> */}
+          </NatureCircle>
+          <LimeCircle
+            scroll={scroll}
+            x={x}
+            y={natureCirceY}
+            url={nature_large.src}
+            ref={ref2}
+            id="limeCircle"
+          />
+        </Scene3>
 
         {/* <GrayCircle /> */}
-        <LimeCircle observe={observe2} ref={ref2} />
-      </SceneContainer>
-      {/** 4씬 */}
-      <SceneContainer4>
-        <Scene4>
-          <BigText4>
-            Our
-            <br />
-            solution
-          </BigText4>
-          <MiddleText4>
-            What sets us apart is our commitment
-            <br />
-            to sustainability.
-          </MiddleText4>
-          <InfoContainer>
-            <InfoWrapper>
-              <IconWrapper>
-                <Image src={cube} width={16.54} height={18.45} alt="cube" />
-              </IconWrapper>
-              <SmallText>
-                We stock up on as much recyclable fabric as possible.
-              </SmallText>
-            </InfoWrapper>
-            <InfoWrapper>
-              <IconWrapper>
-                <Image src={square} width={21.2} height={21.2} alt="square" />
-              </IconWrapper>
-              <SmallText>We provide you with access to old fabrics.</SmallText>
-            </InfoWrapper>
-            <InfoWrapper>
-              <IconWrapper>
-                <Image src={cube} width={16.54} height={18.45} alt="cube" />
-              </IconWrapper>
-              <SmallText>We create new products from old fabrics.</SmallText>
-            </InfoWrapper>
-          </InfoContainer>
-          <SolutionImageWrapperDesk>
-            <VideoSolution id="video" key={""} loop={true} autoPlay muted>
-              <source src={require("../public/silk.mp4")} type="video/mp4" />
-            </VideoSolution>
-          </SolutionImageWrapperDesk>
+
+        {/** 4씬 */}
+
+        <BigText4>
+          Our
+          <br />
+          solution
+        </BigText4>
+        <MiddleText4>
+          What sets us apart is our commitment
+          <br />
+          to sustainability.
+        </MiddleText4>
+        <InfoContainer>
+          <InfoWrapper>
+            <IconWrapper>
+              <Image src={cube} width={100} height={100} alt="cube" />
+            </IconWrapper>
+            <SmallText>
+              We stock up on as much recyclable fabric as possible.
+            </SmallText>
+          </InfoWrapper>
+          <InfoWrapper>
+            <IconWrapper>
+              <Image src={square} width={100} height={100} alt="square" />
+            </IconWrapper>
+            <SmallText>We provide you with access to old fabrics.</SmallText>
+          </InfoWrapper>
+          <InfoWrapper>
+            <IconWrapper>
+              <Image src={aperture} width={100} height={100} alt="cube" />
+            </IconWrapper>
+            <SmallText>We create new products from old fabrics.</SmallText>
+          </InfoWrapper>
+        </InfoContainer>
+        <SolutionImageWrapperDesk>
+          <VideoSolution id="video" key={""} loop={true} autoPlay muted>
+            <source src={require("../public/silk.mp4")} type="video/mp4" />
+          </VideoSolution>
+        </SolutionImageWrapperDesk>
+        {/* 
           <SolutionImageWrapperMobile>
             <VideoSolution id="video" key={""} loop={true} autoPlay muted>
               <source src={require("../public/silk.mp4")} type="video/mp4" />
             </VideoSolution>
-          </SolutionImageWrapperMobile>
-        </Scene4>
-      </SceneContainer4>
-      {/** 5씬 */}
-      <SceneContainer5>
-        <Scene5>
-          <BigText5>
-            10,000+
-            <br />
-            Products
-          </BigText5>
-          <MiddleText5>
-            What sets us apart is our commitment
-            <br />
-            to sustainability.
-          </MiddleText5>
-          {/** 여기에 상품 목록 */}
-          <ProductWrapperDesk>
-            {productList &&
-              productList.map((el: any, index: number) => {
-                return (
-                  <Product
-                    product={el}
-                    setColorNo={0}
-                    key={`asdf-=9${index}`}
-                  />
-                );
-              })}
-          </ProductWrapperDesk>
-          <ProductWrapperMobile>
-            {productList &&
-              productList.map((el: any, index: number) => {
-                return index !== 2 ? (
-                  <Product
-                    product={el}
-                    setColorNo={0}
-                    key={`asdf-=9${index}`}
-                  />
-                ) : (
-                  ""
-                );
-              })}
-          </ProductWrapperMobile>
-          <ShopButtonWrapper>
-            <Link href={`/shop`} style={{ textDecoration: "none" }}>
-              <ShopButton>
-                <ShopIconWrapper>
-                  <Image src={arrowShop} width={18} height={13} />
-                </ShopIconWrapper>
-                <ShopText>Shop Products</ShopText>
-              </ShopButton>
-            </Link>
-          </ShopButtonWrapper>
-        </Scene5>
-        <LogoImageWrapperDesk scroll={scroll} windowY={windowY}>
-          <Image src={logo_lime} width={733.134} height={966.418} />
-        </LogoImageWrapperDesk>
-        <LogoImageWrapperMobile scroll={scroll}>
-          <Image src={logo_lime} width={386.567} height={483.209} />
-        </LogoImageWrapperMobile>
-      </SceneContainer5>
-      {/** 6씬 */}
-      <SceneContainer>
-        <Scene6>
-          <BigText6>
-            On-line
-            <br />
-            meeting request
-          </BigText6>
+          </SolutionImageWrapperMobile> */}
 
-          <MiddleText6>
-            We will contact you to schedule
-            <br />
-            an online meeting whenever possible.
-          </MiddleText6>
-          <FlexWrapper6>
-            <Number>1</Number>
-            <TextWrapper6>
-              <MiddleText6_1>Inquary</MiddleText6_1>
-              <SmallText2>
-                Please let us know what you are curious about, such
-                <br />
-                as production, fabric swatches, etc.
-              </SmallText2>
-            </TextWrapper6>
-          </FlexWrapper6>
-          <FlexWrapper6>
-            <Number>2</Number>
-            <TextWrapper6>
-              <MiddleText6_1>Business industry and detail</MiddleText6_1>
-              <SmallText2>
-                If you tell us about your business, we can prepare in
-                <br />
-                advance and provide you with detailed information.
-              </SmallText2>
-            </TextWrapper6>
-          </FlexWrapper6>
-          <FlexWrapper6>
-            <Number>3</Number>
-            <TextWrapper6>
-              <MiddleText6_1>Arrange meeting</MiddleText6_1>
-              <SmallText2>
-                please let us know the date and time when the
-                <br />
-                meeting can be held online and we will contact you.
-              </SmallText2>
-            </TextWrapper6>
-          </FlexWrapper6>
+        {/** 5씬 */}
+        <Scene5>
+          <ContentWrapper>
+            <BigText5>
+              10,000+
+              <br />
+              Products
+            </BigText5>
+            <MiddleText5>
+              What sets us apart is our commitment
+              <br />
+              to sustainability.
+            </MiddleText5>
+            {/** 여기에 상품 목록 */}
+            <ProductWrapperDesk>
+              {productList &&
+                productList.map((el: any, index: number) => {
+                  return (
+                    <Product
+                      product={el}
+                      setColorNo={0}
+                      key={`asdf-=9${index}`}
+                    />
+                  );
+                })}
+            </ProductWrapperDesk>
+            <ProductWrapperMobile>
+              {productList &&
+                productList.map((el: any, index: number) => {
+                  return index !== 2 ? (
+                    <Product
+                      product={el}
+                      setColorNo={0}
+                      key={`asdf-=9${index}`}
+                    />
+                  ) : (
+                    ""
+                  );
+                })}
+            </ProductWrapperMobile>
+            <ShopButtonWrapper>
+              <Link href={`/shop`} style={{ textDecoration: "none" }}>
+                <ShopButton>
+                  <ShopIconWrapper>
+                    <Image src={arrowShop} width={18} height={13} />
+                  </ShopIconWrapper>
+                  <ShopText>Shop Products</ShopText>
+                </ShopButton>
+              </Link>
+            </ShopButtonWrapper>
+          </ContentWrapper>
+
+          <LogoImageWrapperDesk>
+            <Image src={logo_lime} width={2000} height={2000} />
+          </LogoImageWrapperDesk>
+        </Scene5>
+        {/** 6씬 */}
+        <Scene6>
+          <ContentWrapper>
+            <BigText6>
+              On-line
+              <br />
+              meeting request
+            </BigText6>
+
+            <MiddleText6>
+              We will contact you to schedule
+              <br />
+              an online meeting whenever possible.
+            </MiddleText6>
+            <FlexWrapper6>
+              <Number>1</Number>
+              <TextWrapper6>
+                <MiddleText6_1>Inquary</MiddleText6_1>
+                <SmallText2>
+                  Please let us know what you are curious about, such
+                  <br />
+                  as production, fabric swatches, etc.
+                </SmallText2>
+              </TextWrapper6>
+            </FlexWrapper6>
+            <FlexWrapper6>
+              <Number>2</Number>
+              <TextWrapper6>
+                <MiddleText6_1>Business industry and detail</MiddleText6_1>
+                <SmallText2>
+                  If you tell us about your business, we can prepare in
+                  <br />
+                  advance and provide you with detailed information.
+                </SmallText2>
+              </TextWrapper6>
+            </FlexWrapper6>
+            <FlexWrapper6>
+              <Number>3</Number>
+              <TextWrapper6>
+                <MiddleText6_1>Arrange meeting</MiddleText6_1>
+                <SmallText2>
+                  please let us know the date and time when the
+                  <br />
+                  meeting can be held online and we will contact you.
+                </SmallText2>
+              </TextWrapper6>
+            </FlexWrapper6>
+          </ContentWrapper>
+          <SwatchContainer
+            scroll={
+              scroll === 0
+                ? 0
+                : ((document.body.clientHeight - scroll) / x / y) * 50000
+            }
+            id="swatch"
+            ref={ref1}
+          >
+            <SwatchImageWrapper>
+              <Image
+                src={swatch}
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+              />
+            </SwatchImageWrapper>
+            <SwatchFlexWrapper>
+              <SwatchText>Swatch</SwatchText>
+              <SwatchLogoWrapper>
+                <Image src={logo} width={107.152} height={133.888} />
+              </SwatchLogoWrapper>
+            </SwatchFlexWrapper>
+          </SwatchContainer>
+          {/** 너비가 커질수록 커짐 높이가 커질수록 커짐  */}
         </Scene6>
-      </SceneContainer>
-    </Container>
+      </Container>
+      <TempHeaderBar></TempHeaderBar>
+    </>
   );
 }
+const TempHeaderBar = styled.div`
+  position: absolute;
 
+  width: 100%;
+  top: 0px;
+  height: 64px;
+  background-color: #fafafa;
+`;
 const Container = styled.div`
+  padding-top: 90px;
+  top: 0px;
   color: #121822;
   background-color: #fafafa;
-  contain: paint;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 `;
 const SceneContainer1 = styled.div`
   contain: paint;
@@ -389,13 +464,16 @@ const Scene2 = styled.div`
   top: 199px;
 `;
 const Scene3 = styled.div`
-  position: sticky;
+  position: relative;
+
+  margin-bottom: 23.1vw;
+  /* position: sticky;
   top: 50%;
   transform: translate(0, -50%);
   @media screen and (max-width: 768px) {
     top: 50%;
     transform: translate(0, -50%);
-  }
+  } */
 `;
 const Scene4 = styled.div`
   position: sticky;
@@ -403,16 +481,21 @@ const Scene4 = styled.div`
   height: 100vh;
 `;
 const Scene5 = styled.div`
+  position: relative;
+
+  margin-bottom: 25.9vw;
+`;
+const ContentWrapper = styled.div`
+  position: relative;
   z-index: 1;
-  position: sticky;
-  top: 124px;
-  @media screen and (max-width: 768px) {
-    top: 101px;
-  }
 `;
 const Scene6 = styled.div`
-  position: sticky;
-  top: 154px;
+  position: relative;
+
+  padding-bottom: 200px;
+  @media screen and (max-width: 768px) {
+    padding-bottom: 56vw;
+  }
 `;
 const ImageWrapperMobile = styled.div<{ scroll: number }>`
   display: none;
@@ -429,23 +512,65 @@ const ImageWrapperMobile = styled.div<{ scroll: number }>`
     }};
   }
 `;
-const ImageWrapperDesk = styled.div<{ scroll: number }>`
-  position: sticky;
-  top: 80vh;
-  width: 762px;
-  height: 76.2px;
+const ImageWrapper = styled.div<{ scroll: number }>`
+  position: absolute;
+
+  width: 99vw;
+  height: 9.895vw;
+  top: 40vw;
+  left: 40vw;
   transform-origin: top left;
-  transition: all 1s;
   transform: ${(props) => {
-    return `translateX(calc(100vw - ${props.scroll / 25}vw)) rotate(-30deg)`;
+    return `rotate(-30deg) translateX(${-props.scroll * 2}vw)`;
   }};
   @media screen and (max-width: 768px) {
-    display: none;
+    top: 90vw;
+    transform: ${(props) => {
+      return `rotate(-30deg) translateX(${-props.scroll}vw)`;
+    }};
+  }
+`;
+const ImageWrapper2 = styled.div<{ scroll: number }>`
+  position: absolute;
+
+  width: 99vw;
+  height: 9.895vw;
+  top: 40vw;
+  left: 40vw;
+  transform-origin: top left;
+  transform: ${(props) => {
+    return `rotate(-30deg) translateX(${-props.scroll * 2 - 105}vw)`;
+  }};
+  @media screen and (max-width: 768px) {
+    top: 90vw;
+    transform: ${(props) => {
+      return `rotate(-30deg) translateX(${-props.scroll - 105}vw)`;
+    }};
+  }
+`;
+const ImageWrapper3 = styled.div<{ scroll: number }>`
+  position: absolute;
+
+  width: 99vw;
+  height: 9.895vw;
+  top: 40vw;
+  left: 40vw;
+  transform-origin: top left;
+  transform: ${(props) => {
+    return `rotate(-30deg) translateX(${-props.scroll * 2 + 105}vw)`;
+  }};
+  @media screen and (max-width: 768px) {
+    top: 90vw;
+    transform: ${(props) => {
+      return `rotate(-30deg) translateX(${-props.scroll + 105}vw)`;
+    }};
   }
 `;
 const FlexWrapper = styled.div`
+  position: relative;
+  z-index: 1;
   display: flex;
-  gap: 40px;
+  gap: 5vw;
   align-items: center;
   justify-content: center;
   @media screen and (max-width: 768px) {
@@ -458,22 +583,25 @@ const TextWrapper = styled.div`
   }
 `;
 const BigText1 = styled.div`
+  position: relative;
+
+  padding-left: 8.2vw;
   font-family: "Kaiti TC";
-  font-size: 25.898px;
+  font-size: 6.7vw;
   font-weight: 400;
-  line-height: 20.718px;
-  padding-left: 63px;
-  margin-bottom: 26px;
+  line-height: 80%;
+  margin-bottom: 3.3vw;
   @media screen and (max-width: 768px) {
-    padding-left: 41px;
+    padding-left: 12.8vw;
     margin-bottom: 20px;
+    font-size: 8vw;
   }
 `;
 const BigText2 = styled.div`
   font-family: "Kaiti TC";
-  font-size: 25.898px;
+  font-size: 6.7vw;
   font-weight: 400;
-  line-height: 20.718px;
+  line-height: 80%;
   padding-left: 63px;
   margin-bottom: 26px;
   @media screen and (max-width: 768px) {
@@ -484,77 +612,74 @@ const BigText2 = styled.div`
 const BigText3 = styled.div`
   text-align: center;
   font-family: "Kaiti TC";
-  font-size: 38.847px;
+  font-size: 5vw;
   font-weight: 400;
-  line-height: 36.904px;
-  margin-bottom: 14px;
+  line-height: 95%;
+  margin-bottom: 1.8vw;
   @media screen and (max-width: 768px) {
-    font-size: 25.898px;
+    margin-bottom: 1.8vw;
+    font-size: 8vw;
     font-weight: 400;
-    line-height: 24.603px;
-    margin-bottom: 6px;
   }
 `;
 const BigText4 = styled.div`
-  z-index: 1;
-  padding-top: 108px;
   font-family: "Kaiti TC";
-  font-size: 47.866px;
+  font-size: 6.2vw;
   font-weight: 400;
-  line-height: 47.866px;
-  margin-bottom: 13px;
-  padding-left: 54px;
+  margin-bottom: 1.69vw;
+  padding-left: 7vw;
   @media screen and (max-width: 768px) {
-    margin-top: 101px;
-    margin-bottom: 12px;
-    padding-left: 25px;
-    font-size: 25.898px;
-    line-height: 25.898px;
+    margin-bottom: 3.7vw;
+    padding-left: 7.8;
+    font-size: 8vw;
   }
 `;
 const BigText5 = styled.div`
-  margin-bottom: 8px;
-  padding-left: 54px;
+  margin-bottom: 1vw;
+  padding-left: 7vw;
   font-family: "Kaiti TC";
-  font-size: 47.866px;
+  font-size: 6.1vw;
   font-weight: 400;
-  line-height: 47.866px;
   @media screen and (max-width: 768px) {
-    padding-left: 25px;
-    margin-bottom: 2px;
-    font-size: 25.898px;
-    line-height: 20.718px;
+    padding-left: 7.8vw;
+    margin-bottom: 0.62vw;
+    font-size: 8vw;
+    line-height: 6.25vw;
   }
 `;
 const BigText6 = styled.div`
   font-family: "Kaiti TC";
-  font-size: 47.866px;
+  font-size: 6.2vw;
   font-weight: 400;
-  line-height: 38.293px;
-  margin-bottom: 13px;
-  padding-left: 54px;
+  line-height: 4.9vw;
+  margin-bottom: 1.6vw;
+  padding-left: 7vw;
   @media screen and (max-width: 768px) {
-    padding-left: 25px;
-    font-size: 25.898px;
+    padding-left: 7.8vw;
+    font-size: 8vw;
     font-weight: 400;
-    line-height: 25.898px;
-    margin-bottom: 2px;
+    margin-bottom: 0.6vw;
+    line-height: 100%;
   }
 `;
 const MiddleText1 = styled.div`
+  position: relative;
+
+  margin-bottom: 30vw;
+  padding-left: 8.2vw;
   color: #000000; // 이거 의도한 색깔 ?
   font-family: Inter;
-  font-size: 10px;
+  font-size: 2.2vw;
   font-weight: 400;
-  padding-left: 63px;
   @media screen and (max-width: 768px) {
-    padding-left: 40px;
+    margin-bottom: 60vw;
+    padding-left: 12.8vw;
   }
 `;
 const MiddleText2 = styled.div`
   color: #000000; // 이거 의도한 색깔 ?
   font-family: Inter;
-  font-size: 10px;
+  font-size: 2.2vw;
   font-weight: 400;
   padding-left: 63px;
   @media screen and (max-width: 768px) {
@@ -573,123 +698,132 @@ const MiddleText2 = styled.div`
 const MiddleText3 = styled.div`
   color: #000000; // 이거 의도한 색깔 ?
   font-family: Inter;
-  font-size: 10px;
+  font-size: 1.6vw;
   font-weight: 400;
   text-align: center;
   @media screen and (max-width: 768px) {
-    margin-bottom: 29px;
+    margin-bottom: 8.1vw;
+    font-size: 2.5vw;
   }
 `;
 const MiddleText4 = styled.div`
   z-index: 1;
   font-family: Inter;
-  font-size: 15.955px;
+  font-size: 2vw;
   font-weight: 400;
-  padding-left: 54px;
+  padding-left: 7vw;
   margin-bottom: 28px;
   @media screen and (max-width: 768px) {
-    margin-bottom: 30px;
-    padding-left: 25px;
-    font-size: 8.633px;
+    margin-bottom: 9vw;
+    padding-left: 7.8vw;
+    font-size: 2.6vw;
   }
 `;
 const MiddleText5 = styled.div`
   font-family: Inter;
-  font-size: 15.955px;
+  font-size: 2vw;
   font-weight: 400;
-  margin-bottom: 54px;
-  padding-left: 54px;
+  margin-bottom: 7vw;
+  padding-left: 7vw;
   @media screen and (max-width: 768px) {
-    font-size: 8.633px;
-    padding-left: 25px;
-    margin-bottom: 30px;
+    font-size: 2.6vw;
+    padding-left: 7.8vw;
+    margin-bottom: 9.6vw;
   }
 `;
 const MiddleText6 = styled.div`
   font-family: Inter;
-  font-size: 15.955px;
+  font-size: 2vw;
   font-weight: 400;
-  margin-bottom: 60px;
-  padding-left: 54px;
+  margin-bottom: 7.8vw;
+  padding-left: 7vw;
   @media screen and (max-width: 768px) {
-    padding-left: 25px;
-    font-size: 8.633px;
+    padding-left: 7.8vw;
+    font-size: 2.6vw;
     font-weight: 400;
-    margin-bottom: 44px;
+    margin-bottom: 13vw;
   }
 `;
 const MiddleText6_1 = styled.div`
-  color: #000;
+  color: #000000;
   font-family: Inter;
-  font-size: 15px;
+  font-size: 1.95vw;
   font-weight: 400;
-  margin-bottom: 6px;
+  margin-bottom: 0.78vw;
   @media screen and (max-width: 768px) {
-    margin-bottom: 4px;
-    color: #000;
-    font-family: Inter;
-    font-size: 10px;
+    margin-bottom: 1.2vw;
+    color: #000000;
+    font-size: 3.1vw;
   }
 `;
 
 const InfoContainer = styled.div`
   position: relative;
   z-index: 1;
-  max-width: 338px;
+  max-width: 44vw;
   box-sizing: border-box;
   border-top: 1px solid rgba(0, 0, 0, 0.04);
-  margin-left: 54px;
+  margin-left: 7vw;
+  margin-bottom: 8.4vw;
   @media screen and (max-width: 768px) {
+    margin-bottom: 4.1vw;
     max-width: 100%;
-    margin-left: 25px;
-    margin-right: 25px;
+    margin-left: 7.8vw;
+    margin-right: 7.8vw;
   }
 `;
 const InfoWrapper = styled.div`
   display: flex;
-  gap: 13px;
+  gap: 2.1vw;
   align-items: center;
-  padding-top: 11px;
-  padding-bottom: 11px;
+  padding-top: 1.8vw;
+  padding-bottom: 1.8vw;
   box-sizing: border-box;
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  @media screen and (max-width: 768px) {
+    padding-top: 1.4vw;
+    padding-bottom: 1.4vw;
+  }
 `;
 const IconWrapper = styled.div`
-  margin-left: 4px;
+  margin-left: 0.5vw;
   display: flex;
-  width: 21.2px;
-  height: 21.2px;
+  width: 2.7vw;
+  height: 2.7vw;
   align-items: center;
   justify-content: center;
+  @media screen and (max-width: 768px) {
+    width: 6.6vw;
+    height: 6.6vw;
+  }
 `;
 
 const SmallText = styled.div`
   font-family: Inter;
-  font-size: 11.179px;
+  font-size: 1.45vw;
   font-weight: 400;
   @media screen and (max-width: 768px) {
-    font-size: 8.633px;
-    line-height: 20.718px;
+    font-size: 2.6vw;
   }
 `;
 const SmallText2 = styled.div`
-  color: #000;
+  color: #000000;
   font-family: Inter;
-  font-size: 12px;
+  font-size: 1.5vw;
   font-weight: 400;
   @media screen and (max-width: 768px) {
-    font-size: 8px;
+    font-size: 2.5vw;
     font-weight: 400;
   }
 `;
 
 const ProductWrapperDesk = styled.div`
-  width: 578px;
-  margin-bottom: 40px;
-  margin-left: 54px;
+  width: 75.3vw;
+  margin-bottom: 5.2vw;
+  margin-left: 7vw;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  column-gap: 4px;
+  column-gap: 0.5vw;
   @media screen and (max-width: 768px) {
     display: none;
   }
@@ -698,76 +832,115 @@ const ProductWrapperMobile = styled.div`
   display: none;
   @media screen and (max-width: 768px) {
     display: grid;
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-bottom: 22px;
+    margin-left: 7.8vw;
+    margin-right: 7.8vw;
+    margin-bottom: 6.8vw;
     grid-template-columns: 1fr 1fr;
-    column-gap: 4px;
+    column-gap: 1.2vw;
   }
 `;
 const ShopButtonWrapper = styled.div`
   display: flex;
   justify-content: right;
-  width: 578px;
-  margin-left: 54px;
+  width: 75.3vw;
+  margin-left: 7vw;
+
   @media screen and (max-width: 768px) {
     width: auto;
-    margin-left: 25px;
-    margin-right: 25px;
+    margin-left: 7.8vw;
+    margin-right: 7.8vw;
   }
 `;
 const ShopButton = styled.div`
   display: flex;
   align-items: center;
-  gap: 16.5px;
+  gap: 2.1vw;
   cursor: pointer;
   @media screen and (max-width: 768px) {
-    gap: 11px;
+    gap: 3.4vw;
   }
 `;
 const ShopIconWrapper = styled.div``;
 const ShopText = styled.div`
   font-family: Inter;
-  font-size: 16.769px;
+  font-size: 2.1vw;
   font-weight: 400;
   color: #000000;
   @media screen and (max-width: 768px) {
     font-family: Inter;
-    font-size: 11.179px;
+    font-size: 3.4vw;
   }
 `;
 const FlexWrapper6 = styled.div`
   display: flex;
-  gap: 18px;
-  margin-left: 54px;
-  margin-bottom: 30px;
+  gap: 2.3vw;
+  margin-left: 7vw;
+  margin-bottom: 3.9vw;
   @media screen and (max-width: 768px) {
-    margin-left: 25px;
-    gap: 12px;
-    margin-bottom: 20px;
+    margin-left: 7.8vw;
+    gap: 3.7vw;
+    margin-bottom: 6.2vw;
   }
 `;
 const TextWrapper6 = styled.div``;
 const Number = styled.div`
   font-family: Inter;
-  font-size: 21px;
+  font-size: 2.7vw;
   font-weight: 400;
+  color: #ffffff;
   border-radius: 100%;
-  background-color: #e1ff20;
-  width: 39px;
-  height: 39px;
+  background-color: #000000;
+
+  width: 5vw;
+  height: 5vw;
   display: flex;
   align-items: center;
   justify-content: center;
   @media screen and (max-width: 768px) {
-    width: 26px;
-    height: 26px;
-    font-size: 14px;
+    width: 8.1vw;
+    height: 8.1vw;
+    font-size: 4.3vw;
     font-weight: 400;
   }
 `;
-const NatureCircle = styled.div<{ observe: boolean }>`
-  z-index: 1;
+const NatureCircle = styled.div<{
+  scroll: number;
+  x: number;
+  y: any;
+  url: string;
+}>`
+  position: absolute;
+  width: 30vw;
+  height: 30vw;
+  border-radius: 100%;
+  overflow: hidden;
+  top: -27.9vw;
+  left: -9.5vw;
+
+  background-image: ${(props) => {
+    return `url(${props.url})`;
+  }};
+  background-size: 75vw 75vw;
+  background-position: ${(props) => {
+    return props.scroll - props.y + props.x < 0
+      ? ""
+      : `0% ${((props.scroll - props.y + props.x) / props.x) * 20}%`;
+  }};
+  background-repeat: no-repeat;
+
+  transform: ${(props) => {
+    return `translateY(${
+      ((props.scroll - props.y + props.x) / props.x) * 10
+    }vw)`;
+  }};
+
+  @media screen and (max-width: 768px) {
+    top: -30vw;
+    left: -7.8vw;
+    width: 36.8vw;
+    height: 36.8vw;
+  }
+  /* z-index: 1;
   position: sticky;
   width: 236px;
   height: 236px;
@@ -776,20 +949,18 @@ const NatureCircle = styled.div<{ observe: boolean }>`
   transform: translateX(-73px);
   transition: all 7s;
 
-  top: ${(props) => {
-    return props.observe ? `0px` : `500px`;
-  }};
+
 
   @media screen and (max-width: 768px) {
     width: 118px;
     height: 118px;
     transform: translateX(-25px);
-  }
+  } */
 `;
+
 const Video = styled.video`
-  z-index: 1;
   width: auto;
-  height: 236px;
+  height: 30vw;
   @media screen and (max-width: 768px) {
     width: auto;
     height: 118px;
@@ -805,33 +976,45 @@ const GrayCircle = styled.div`
   background-color: #dee8ec;
   transform: translateX(-73px);
   @media screen and (max-width: 768px) {
-    width: 118px;
-    height: 118px;
+    width: 36.8vw;
+    height: 36.8vw;
     transform: translateX(-25px);
   }
 `;
-const LimeCircle = styled.div<{ observe: boolean }>`
-  position: sticky;
-  left: 100%;
-  width: 236px;
-  height: 236px;
+const LimeCircle = styled.div<{
+  scroll: number;
+  x: number;
+  y: any;
+  url: string;
+}>`
+  position: absolute;
+  width: 30vw;
+  height: 30vw;
   border-radius: 100%;
+  overflow: hidden;
+  top: 5vw;
+  right: -1.3vw;
   background-color: #e1ff20;
-  transform: translateX(10px);
-  transition: all 7s;
-
-  top: ${(props) => {
-    return props.observe ? `300px` : `500px`;
+  transform: ${(props) => {
+    return `translateY(${
+      ((props.scroll - props.y + props.x) / props.x) * 10
+    }vw)`;
   }};
   @media screen and (max-width: 768px) {
-    width: 118px;
-    height: 118px;
-    transform: translateX(40px);
+    top: 55vw;
+    right: -12.5vw;
+    width: 36.8vw;
+    height: 36.8vw;
   }
 `;
 
 const SolutionImageWrapperDesk = styled.div`
-  position: absolute;
+  position: relative;
+
+  height: 42.9vw;
+  overflow: hidden;
+  margin-bottom: 21vw;
+  /* position: absolute;
   width: 135vw;
   height: 209.022px;
   transform-origin: top left;
@@ -845,7 +1028,7 @@ const SolutionImageWrapperDesk = styled.div`
   background-repeat: no-repeat;
   @media screen and (max-width: 768px) {
     display: none;
-  }
+  } */
 `;
 const SolutionImageWrapperMobile = styled.div`
   display: none;
@@ -868,24 +1051,33 @@ const SolutionImageWrapperMobile = styled.div`
 `;
 const VideoSolution = styled.video`
   position: absolute;
+  width: auto;
+  height: 145vw;
+  transform: rotate(30deg);
+  top: -70vw;
+  left: -30vw;
+  /* position: absolute;
   top: -10vw;
   width: auto;
   height: 150vw;
   @media screen and (max-width: 768px) {
     width: auto;
     height: 917px;
-  }
+  } */
 `;
-const LogoImageWrapperDesk = styled.div<{ scroll: number; windowY: number }>`
-  position: sticky;
-  width: 733px;
-  height: 966px;
-  left: 15vw;
-  top: 40vh;
+const LogoImageWrapperDesk = styled.div`
+  position: absolute;
+  width: 95vw;
+  height: 125vw;
+  left: 10vw;
+  top: 35vw;
   transform-origin: top left;
   transform: rotate(-30deg);
   @media screen and (max-width: 768px) {
-    display: none;
+    top: 38vw;
+    left: 0vw;
+    width: 120vw;
+    height: 150vw;
   }
 `;
 const LogoImageWrapperMobile = styled.div<{ scroll: number }>`
@@ -900,4 +1092,48 @@ const LogoImageWrapperMobile = styled.div<{ scroll: number }>`
     transform-origin: top left;
     transform: rotate(-30deg);
   }
+`;
+const SwatchContainer = styled.div<{ scroll: number }>`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5.3vw;
+  /* top: 70vw; */
+  width: 50vw;
+  height: 20.4vw;
+  border-radius: 16.736px;
+  background-color: #e1ff20;
+  transform-origin: top left;
+  transform: ${(props) => {
+    return `rotate(-30deg) translateX(${props.scroll / 2}vw)`;
+  }};
+`;
+
+const SwatchImageWrapper = styled.div`
+  position: relative;
+  margin-left: 2.1vw;
+  width: 20vw;
+  height: 16.5vw;
+  border-radius: 8.2px;
+  overflow: hidden;
+`;
+const SwatchFlexWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2.7vw;
+  margin-right: 6.1vw;
+`;
+const SwatchText = styled.div`
+  color: #000000;
+  text-align: center;
+  font-family: Inter;
+  font-size: 2.6vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 130%;
+`;
+const SwatchLogoWrapper = styled.div`
+  width: 3.4vw;
+  height: 4.3vw;
 `;

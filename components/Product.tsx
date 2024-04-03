@@ -255,6 +255,7 @@ const Card = styled.div<{ display: boolean }>`
     return props.display ? "block" : "none";
   }};
   border-radius: 4px;
+  overflow: hidden;
   filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.15));
 `;
 const ThumbnailWrapper = styled.div`
