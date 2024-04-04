@@ -1252,9 +1252,7 @@ const useId = () => {
 
             <AvailableText>
               {`${seletedOption.quantity} available`} (
-              <BoldText>{`$ ${priceToDollar(
-                seletedOption.price / seletedOption.length
-              )}`}</BoldText>
+              <BoldText>{`$ ${priceToDollar(seletedOption.price)}`}</BoldText>
               /m)
             </AvailableText>
             <LengthWrapper>
@@ -1280,7 +1278,10 @@ const useId = () => {
                 <ProductPrice>
                   ${" "}
                   {seletedOption.price &&
-                    priceToDollar(seletedOption.price * count)}
+                    seletedOption.length &&
+                    priceToDollar(
+                      seletedOption.price * seletedOption.length * count
+                    )}
                 </ProductPrice>
               </ProductPriceWrapper>
             </LengthWrapper>
