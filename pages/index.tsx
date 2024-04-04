@@ -243,9 +243,9 @@ export default function Home() {
         </MiddleText4>
         <InfoContainer>
           <InfoWrapper>
-            <IconWrapper>
-              <Image src={cube} width={100} height={100} alt="cube" />
-            </IconWrapper>
+            <IconWrapper1>
+              <Image src={cube} width={165.4} height={184.5} alt="cube" />
+            </IconWrapper1>
             <SmallText>
               We stock up on as much recyclable fabric as possible.
             </SmallText>
@@ -294,7 +294,7 @@ export default function Home() {
               Products
             </BigText5>
             <MiddleText5>
-              What sets us apart is our commitment to sustainability.
+              We offer over 10,000 products as solutions for the environment.
             </MiddleText5>
             {/** 여기에 상품 목록 */}
             <ProductWrapperDesk>
@@ -686,14 +686,14 @@ const MiddleText1 = styled.div`
   padding-left: 8.2vw;
   color: #000000; // 이거 의도한 색깔 ?
   font-family: Inter;
-  font-size: 3.1vw;
+  font-size: 2.8vw;
   font-weight: 400;
   max-width: 81vw;
+  line-height: 130%;
   @media screen and (max-width: 768px) {
     margin-bottom: 40vw;
     padding-left: 10vw;
-    font-size: 3.4vw;
-    line-height: 130%;
+    font-size: 3.1vw;
   }
 `;
 const MiddleText2 = styled.div`
@@ -703,15 +703,15 @@ const MiddleText2 = styled.div`
   padding-left: 8.2vw;
   color: #000000; // 이거 의도한 색깔 ?
   font-family: Inter;
-  font-size: 3.1vw;
+  font-size: 2.8vw;
   font-weight: 400;
   max-width: 81vw;
+  line-height: 130%;
   @media screen and (max-width: 768px) {
     max-width: 81vw;
     margin-bottom: 40vw;
     padding-left: 10vw;
-    font-size: 3.4vw;
-    line-height: 130%;
+    font-size: 3.1vw;
   }
 `;
 const Br = styled.br`
@@ -735,9 +735,10 @@ const MiddleText3 = styled.div`
   font-size: 1.6vw;
   font-weight: 400;
   text-align: center;
+  line-height: 130%;
   @media screen and (max-width: 768px) {
     margin-bottom: 8.1vw;
-    font-size: 2.5vw;
+    font-size: 3.1vw;
   }
 `;
 const MiddleText4 = styled.div`
@@ -747,37 +748,38 @@ const MiddleText4 = styled.div`
   font-weight: 400;
   padding-left: 7vw;
   margin-bottom: 3.9vw;
+  line-height: 130%;
 
   @media screen and (max-width: 768px) {
     margin-bottom: 10.6vw;
     padding-left: 10vw;
     font-size: 3.4vw;
-    line-height: 130%;
   }
 `;
 const MiddleText5 = styled.div`
   font-family: Inter;
-  font-size: 3.1vw;
+  font-size: 2.85vw;
   font-weight: 400;
   margin-bottom: 7vw;
   padding-left: 7vw;
-  max-width: 59vw;
+  max-width: 71vw;
+  line-height: 130%;
   @media screen and (max-width: 768px) {
-    max-width: 71vw;
-    font-size: 3.4vw;
+    font-size: 3.1vw;
     padding-left: 10vw;
     margin-bottom: 8.1vw;
   }
 `;
 const MiddleText6 = styled.div`
   font-family: Inter;
-  font-size: 3vw;
+  font-size: 2.9vw;
   font-weight: 400;
   margin-bottom: 11vw;
   padding-left: 7vw;
+  line-height: 130%;
   @media screen and (max-width: 768px) {
     padding-left: 10vw;
-    font-size: 3.4vw;
+    font-size: 3.1vw;
     font-weight: 400;
     margin-bottom: 15vw;
     line-height: 130%;
@@ -787,7 +789,7 @@ const MiddleText6_1 = styled.div`
   color: #000000;
   font-family: Inter;
   font-size: 3.9vw;
-  font-weight: 400;
+  font-weight: 700;
   margin-bottom: 1.14vw;
   @media screen and (max-width: 768px) {
     margin-bottom: 1.2vw;
@@ -824,6 +826,31 @@ const InfoWrapper = styled.div`
     padding-bottom: 3.4vw;
   }
 `;
+const InfoWrapper1 = styled.div`
+  display: flex;
+  gap: 2.1vw;
+  align-items: center;
+  padding-top: 1.8vw;
+  padding-bottom: 1.8vw;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  @media screen and (max-width: 768px) {
+    padding-top: 3.4vw;
+    padding-bottom: 3.4vw;
+  }
+`;
+const IconWrapper1 = styled.div`
+  display: flex;
+  width: 2.7vw;
+  height: 2.7vw;
+  align-items: center;
+  justify-content: center;
+  @media screen and (max-width: 768px) {
+    margin-left: 0.1vw;
+    width: 5.1vw;
+    height: 5.7vw;
+  }
+`;
 const IconWrapper = styled.div`
   margin-left: 0.5vw;
   display: flex;
@@ -842,7 +869,7 @@ const SmallText = styled.div`
   font-size: 2.1vw;
   font-weight: 400;
   @media screen and (max-width: 768px) {
-    font-size: 2.6vw;
+    font-size: 2.735vw;
   }
 `;
 const SmallText2 = styled.div`
@@ -850,6 +877,7 @@ const SmallText2 = styled.div`
   font-family: Inter;
   font-size: 2.2vw;
   font-weight: 400;
+  line-height: 130%;
   @media screen and (max-width: 768px) {
     font-size: 2.5vw;
     font-weight: 400;
