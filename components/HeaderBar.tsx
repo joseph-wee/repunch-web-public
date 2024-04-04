@@ -105,19 +105,19 @@ const useHeaderBar = () => {
   }, [router]);
 
   /** 페이지 첫 접속시 about us 페이지로 */
-  useEffect(() => {
-    const access = document.cookie.match(
-      "(^|;) ?" + "access" + "=([^;]*)(;|$)"
-    );
+  // useEffect(() => {
+  //   const access = document.cookie.match(
+  //     "(^|;) ?" + "access" + "=([^;]*)(;|$)"
+  //   );
 
-    // 첫 접속이 아니면
-    if (!access) {
-      let date = new Date();
-      date.setTime(date.getTime() + 365 * 24 * 60 * 60 * 1000); // 기간 1년
-      document.cookie = `access=true; expires=${date.toUTCString()}; path=/`;
-      router.push("/about_us");
-    }
-  });
+  //   // 첫 접속이 아니면
+  //   if (!access) {
+  //     let date = new Date();
+  //     date.setTime(date.getTime() + 365 * 24 * 60 * 60 * 1000); // 기간 1년
+  //     document.cookie = `access=true; expires=${date.toUTCString()}; path=/`;
+  //     router.push("/about_us");
+  //   }
+  // });
 
   /** 쿠키 값 없으면 로컬스토리지 삭제 */
   // useEffect(() => {
