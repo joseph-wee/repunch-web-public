@@ -447,7 +447,8 @@ const useAdd_product = () => {
 
   /** 상품등록 요청 */
   const productRegisterHandler = () => {
-    validationCheck() && imageUploadRequestHandler();
+    validationCheck();
+    // && imageUploadRequestHandler(); 임시 비활성화
   };
 
   useEffect(() => {
