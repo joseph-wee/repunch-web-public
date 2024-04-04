@@ -243,12 +243,12 @@ export default function Home() {
         </MiddleText4>
         <InfoContainer>
           <InfoWrapper>
-            <IconWrapper1>
-              <Image src={cube} width={165.4} height={184.5} alt="cube" />
-            </IconWrapper1>
-            <SmallText>
-              We stock up on as much recyclable fabric as possible.
-            </SmallText>
+            <IconWrapper>
+              <CubeWrapper>
+                <Image src={cube} width={165.4} height={184.5} alt="cube" />
+              </CubeWrapper>
+            </IconWrapper>
+            <SmallText>We stock up recyclable fabric as possible.</SmallText>
           </InfoWrapper>
           <InfoWrapper>
             <IconWrapper>
@@ -258,7 +258,9 @@ export default function Home() {
           </InfoWrapper>
           <InfoWrapper>
             <IconWrapper>
-              <Image src={aperture} width={100} height={100} alt="cube" />
+              <ApetureWrapper>
+                <Image src={aperture} width={100} height={100} alt="apeture" />
+              </ApetureWrapper>
             </IconWrapper>
             <SmallText>We create new products from old fabrics.</SmallText>
           </InfoWrapper>
@@ -744,7 +746,7 @@ const MiddleText3 = styled.div`
 const MiddleText4 = styled.div`
   z-index: 1;
   font-family: Inter;
-  font-size: 3.1vw;
+  font-size: 2.8vw;
   font-weight: 400;
   padding-left: 7vw;
   margin-bottom: 3.9vw;
@@ -753,7 +755,7 @@ const MiddleText4 = styled.div`
   @media screen and (max-width: 768px) {
     margin-bottom: 10.6vw;
     padding-left: 10vw;
-    font-size: 3.4vw;
+    font-size: 3.1vw;
   }
 `;
 const MiddleText5 = styled.div`
@@ -815,13 +817,14 @@ const InfoContainer = styled.div`
 `;
 const InfoWrapper = styled.div`
   display: flex;
-  gap: 2.1vw;
+  gap: 3.12vw;
   align-items: center;
   padding-top: 1.8vw;
   padding-bottom: 1.8vw;
   box-sizing: border-box;
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   @media screen and (max-width: 768px) {
+    gap: 3.99vw;
     padding-top: 3.4vw;
     padding-bottom: 3.4vw;
   }
@@ -840,6 +843,7 @@ const InfoWrapper1 = styled.div`
   }
 `;
 const IconWrapper1 = styled.div`
+  margin-left: 0.5vw;
   display: flex;
   width: 2.7vw;
   height: 2.7vw;
@@ -851,25 +855,42 @@ const IconWrapper1 = styled.div`
     height: 5.7vw;
   }
 `;
+
 const IconWrapper = styled.div`
-  margin-left: 0.5vw;
   display: flex;
-  width: 2.7vw;
-  height: 2.7vw;
+  margin-left: 0.97vw;
+  width: 5.19vw;
+  height: 5.19vw;
   align-items: center;
   justify-content: center;
   @media screen and (max-width: 768px) {
+    margin-left: 1.25vw;
     width: 6.6vw;
     height: 6.6vw;
   }
 `;
-
+const CubeWrapper = styled.div`
+  width: 4.04vw;
+  height: 4.51vw;
+  @media screen and (max-width: 768px) {
+    width: 5.16vw;
+    height: 5.76vw;
+  }
+`;
+const ApetureWrapper = styled.div`
+  width: 5.28vw;
+  height: 5.28vw;
+  @media screen and (max-width: 768px) {
+    width: 6.25vw;
+    height: 6.25vw;
+  }
+`;
 const SmallText = styled.div`
   font-family: Inter;
   font-size: 2.1vw;
   font-weight: 400;
   @media screen and (max-width: 768px) {
-    font-size: 2.735vw;
+    font-size: 2.8vw;
   }
 `;
 const SmallText2 = styled.div`
