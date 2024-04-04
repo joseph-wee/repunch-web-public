@@ -225,22 +225,24 @@ const Product = ({
           {product.options.map((i: any, j: number) => {
             return (
               <Wrapper key={`${j}asbbhyyyy`}>
-                <Image
-                  src={i.color.imagePath}
-                  alt="colorCircle"
-                  width={16}
-                  height={16}
-                  onMouseOver={() => {
-                    setOptionLength(`${i.length}m`);
-                    setThumnail(i.thumbnailUrl);
-                    setSelectNo(i.productOptionNo);
-                  }}
-                  onTouchEnd={() => {
-                    setOptionLength(`${i.length}m`);
-                    setThumnail(i.thumbnailUrl);
-                    setSelectNo(i.productOptionNo);
-                  }}
-                />
+                {i.color && (
+                  <Image
+                    src={i.color.imagePath}
+                    alt="colorCircle"
+                    width={16}
+                    height={16}
+                    onMouseOver={() => {
+                      setOptionLength(`${i.length}m`);
+                      setThumnail(i.thumbnailUrl);
+                      setSelectNo(i.productOptionNo);
+                    }}
+                    onTouchEnd={() => {
+                      setOptionLength(`${i.length}m`);
+                      setThumnail(i.thumbnailUrl);
+                      setSelectNo(i.productOptionNo);
+                    }}
+                  />
+                )}
               </Wrapper>
             );
           })}
