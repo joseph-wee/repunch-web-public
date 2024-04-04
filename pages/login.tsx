@@ -141,7 +141,7 @@ const useLogin = () => {
         }
 
         // error case : id, pw 맞지만 이메일 인증 안한 상태
-        if (res?.response.status == 403) {
+        if (res?.response.code == 1005) {
           setAuthPageIsActive(true);
           return;
         }
