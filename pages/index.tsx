@@ -358,7 +358,7 @@ export default function Home() {
             <FlexWrapper6>
               <Number>1</Number>
               <TextWrapper6>
-                <MiddleText6_1>Inquary</MiddleText6_1>
+                <MiddleText6_1>Inquiry</MiddleText6_1>
                 <SmallText2>
                   Please let us know what you are curious about, such
                   <br />
