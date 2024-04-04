@@ -7,6 +7,7 @@ import {
   cube,
   home_repunch_image,
   logo,
+  logoWhite,
   logo_lime,
   nature_image,
   nature_large,
@@ -114,7 +115,7 @@ export default function Home() {
     <>
       <Container>
         <Head>
-          <title>Repunch-dev</title>
+          <title>Repunch</title>
           <meta name="description" content="repunch 웹개발 테스트 사이트" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
@@ -129,11 +130,9 @@ export default function Home() {
           marketplace.
         </BigText1>
         <MiddleText1>
-          What sets us apart is our commitment to sustainability.
-          <br />
-          We specialize in clothing fabrics, offering a diverse
-          <br />
-          range of materials to meet your needs.
+          What sets us apart is our commitment to sustainability. We specialize
+          in clothing fabrics, offering a diverse range of materials to meet
+          your needs.
         </MiddleText1>
         <ImageWrapper scroll={scroll === 0 ? 0 : (scroll / x) * 180}>
           <Image src={home_repunch_image} objectFit="fill" />
@@ -151,13 +150,14 @@ export default function Home() {
           <br />
           Responsibility
         </BigText1>
-        <MiddleText1>
-          What sets us apart is our commitment to sustainability.
-          <br />
-          We specialize in clothing fabrics, offering a diverse
-          <br />
-          range of materials to meet your needs.
-        </MiddleText1>
+        <MiddleText2>
+          The textile industry is notorious for its environmental footprint,
+          with vast amounts of fabric waste discarded annually.
+          <Br />
+          We recognize the need for change. By repurposing surplus materials, we
+          contribute to a greener planet by reducing fabric waste and minimizing
+          the harmful impact on our environment.
+        </MiddleText2>
 
         {/** 3씬 */}
         <Scene3>
@@ -165,7 +165,8 @@ export default function Home() {
             <TextWrapper>
               <BigText3>
                 +370,000t
-                <br />/ year
+                <br />
+                /year
               </BigText3>
               <MiddleText3>
                 Clothing waste is thrown
@@ -209,9 +210,12 @@ export default function Home() {
             {/* <ImageWrapperCircle>
             <Image src={nature_large} objectFit="fill" />
           </ImageWrapperCircle> */}
-            {/* <Video id="video" key={""} loop={true} autoPlay muted>
-            <source src={require("../public/nature.mp4")} type="video/mp4" />
-          </Video> */}
+            <Video id="video" key={""} loop={true} autoPlay muted playsInline>
+              <source
+                src={require("../public/natureVideo.mp4")}
+                type="video/mp4"
+              />
+            </Video>
           </NatureCircle>
           <LimeCircle
             scroll={scroll}
@@ -260,9 +264,19 @@ export default function Home() {
           </InfoWrapper>
         </InfoContainer>
         <SolutionImageWrapperDesk>
-          <VideoSolution id="video" key={""} loop={true} autoPlay muted>
-            <source src={require("../public/silk.mp4")} type="video/mp4" />
+          <VideoSolution
+            id="video"
+            key={""}
+            loop={true}
+            autoPlay
+            muted
+            playsInline
+          >
+            <source src={require("../public/silkVideo.mp4")} type="video/mp4" />
           </VideoSolution>
+          <LogoWhiteWrapper>
+            <Image src={logoWhite} width={200} height={200} />
+          </LogoWhiteWrapper>
         </SolutionImageWrapperDesk>
         {/* 
           <SolutionImageWrapperMobile>
@@ -280,9 +294,7 @@ export default function Home() {
               Products
             </BigText5>
             <MiddleText5>
-              What sets us apart is our commitment
-              <br />
-              to sustainability.
+              What sets us apart is our commitment to sustainability.
             </MiddleText5>
             {/** 여기에 상품 목록 */}
             <ProductWrapperDesk>
@@ -324,7 +336,7 @@ export default function Home() {
           </ContentWrapper>
 
           <LogoImageWrapperDesk>
-            <Image src={logo_lime} width={2000} height={2000} />
+            <Image src={logo_lime} width={1950} height={2420} />
           </LogoImageWrapperDesk>
         </Scene5>
         {/** 6씬 */}
@@ -474,6 +486,9 @@ const Scene3 = styled.div`
     top: 50%;
     transform: translate(0, -50%);
   } */
+  @media screen and (max-width: 768px) {
+    margin-bottom: 35.6vw;
+  }
 `;
 const Scene4 = styled.div`
   position: sticky;
@@ -484,6 +499,9 @@ const Scene5 = styled.div`
   position: relative;
 
   margin-bottom: 25.9vw;
+  @media screen and (max-width: 768px) {
+    margin-bottom: 31vw;
+  }
 `;
 const ContentWrapper = styled.div`
   position: relative;
@@ -539,12 +557,12 @@ const ImageWrapper2 = styled.div<{ scroll: number }>`
   left: 40vw;
   transform-origin: top left;
   transform: ${(props) => {
-    return `rotate(-30deg) translateX(${-props.scroll * 2 - 105}vw)`;
+    return `rotate(-30deg) translateX(${-props.scroll * 2 - 102.5}vw)`;
   }};
   @media screen and (max-width: 768px) {
     top: 90vw;
     transform: ${(props) => {
-      return `rotate(-30deg) translateX(${-props.scroll - 105}vw)`;
+      return `rotate(-30deg) translateX(${-props.scroll - 102.5}vw)`;
     }};
   }
 `;
@@ -557,12 +575,12 @@ const ImageWrapper3 = styled.div<{ scroll: number }>`
   left: 40vw;
   transform-origin: top left;
   transform: ${(props) => {
-    return `rotate(-30deg) translateX(${-props.scroll * 2 + 105}vw)`;
+    return `rotate(-30deg) translateX(${-props.scroll * 2 + 102.5}vw)`;
   }};
   @media screen and (max-width: 768px) {
     top: 90vw;
     transform: ${(props) => {
-      return `rotate(-30deg) translateX(${-props.scroll + 105}vw)`;
+      return `rotate(-30deg) translateX(${-props.scroll + 102.5}vw)`;
     }};
   }
 `;
@@ -587,14 +605,14 @@ const BigText1 = styled.div`
 
   padding-left: 8.2vw;
   font-family: "Kaiti TC";
-  font-size: 6.7vw;
+  font-size: 9.4vw;
   font-weight: 400;
   line-height: 80%;
-  margin-bottom: 3.3vw;
+  margin-bottom: 4.4vw;
   @media screen and (max-width: 768px) {
-    padding-left: 12.8vw;
-    margin-bottom: 20px;
-    font-size: 8vw;
+    padding-left: 10vw;
+    margin-bottom: 3.7vw;
+    font-size: 9.3vw;
   }
 `;
 const BigText2 = styled.div`
@@ -617,73 +635,89 @@ const BigText3 = styled.div`
   line-height: 95%;
   margin-bottom: 1.8vw;
   @media screen and (max-width: 768px) {
-    margin-bottom: 1.8vw;
-    font-size: 8vw;
+    margin-bottom: 3.7vw;
+    font-size: 9.3vw;
     font-weight: 400;
   }
 `;
 const BigText4 = styled.div`
   font-family: "Kaiti TC";
-  font-size: 6.2vw;
+  font-size: 9.4vw;
   font-weight: 400;
-  margin-bottom: 1.69vw;
+  margin-bottom: 2.6vw;
   padding-left: 7vw;
   @media screen and (max-width: 768px) {
     margin-bottom: 3.7vw;
-    padding-left: 7.8;
-    font-size: 8vw;
+    padding-left: 10vw;
+    font-size: 9.3vw;
   }
 `;
 const BigText5 = styled.div`
-  margin-bottom: 1vw;
+  margin-bottom: 1.7vw;
   padding-left: 7vw;
   font-family: "Kaiti TC";
-  font-size: 6.1vw;
+  font-size: 9.3vw;
   font-weight: 400;
   @media screen and (max-width: 768px) {
-    padding-left: 7.8vw;
-    margin-bottom: 0.62vw;
-    font-size: 8vw;
-    line-height: 6.25vw;
+    padding-left: 10vw;
+    margin-bottom: 3.75vw;
+    font-size: 9vw;
   }
 `;
 const BigText6 = styled.div`
   font-family: "Kaiti TC";
-  font-size: 6.2vw;
+  font-size: 9.1vw;
   font-weight: 400;
-  line-height: 4.9vw;
-  margin-bottom: 1.6vw;
+  line-height: 80%;
+  margin-bottom: 2.4vw;
   padding-left: 7vw;
   @media screen and (max-width: 768px) {
-    padding-left: 7.8vw;
-    font-size: 8vw;
+    padding-left: 10vw;
+    font-size: 9.3vw;
     font-weight: 400;
-    margin-bottom: 0.6vw;
+    margin-bottom: 3.75vw;
     line-height: 100%;
   }
 `;
 const MiddleText1 = styled.div`
   position: relative;
   z-index: 1;
-  margin-bottom: 30vw;
+  margin-bottom: 15vw;
   padding-left: 8.2vw;
   color: #000000; // 이거 의도한 색깔 ?
   font-family: Inter;
-  font-size: 2.2vw;
+  font-size: 3.1vw;
   font-weight: 400;
+  max-width: 81vw;
   @media screen and (max-width: 768px) {
-    margin-bottom: 60vw;
-    padding-left: 12.8vw;
+    margin-bottom: 40vw;
+    padding-left: 10vw;
+    font-size: 3.4vw;
+    line-height: 130%;
   }
 `;
 const MiddleText2 = styled.div`
+  position: relative;
+  z-index: 1;
+  margin-bottom: 25vw;
+  padding-left: 8.2vw;
   color: #000000; // 이거 의도한 색깔 ?
   font-family: Inter;
-  font-size: 2.2vw;
+  font-size: 3.1vw;
   font-weight: 400;
-  padding-left: 63px;
+  max-width: 81vw;
   @media screen and (max-width: 768px) {
-    padding-left: 40px;
+    max-width: 81vw;
+    margin-bottom: 40vw;
+    padding-left: 10vw;
+    font-size: 3.4vw;
+    line-height: 130%;
+  }
+`;
+const Br = styled.br`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: inline;
   }
 `;
 // const MiddleText2 = styled.div`
@@ -709,67 +743,72 @@ const MiddleText3 = styled.div`
 const MiddleText4 = styled.div`
   z-index: 1;
   font-family: Inter;
-  font-size: 2vw;
+  font-size: 3.1vw;
   font-weight: 400;
   padding-left: 7vw;
-  margin-bottom: 28px;
+  margin-bottom: 3.9vw;
+
   @media screen and (max-width: 768px) {
-    margin-bottom: 9vw;
-    padding-left: 7.8vw;
-    font-size: 2.6vw;
+    margin-bottom: 10.6vw;
+    padding-left: 10vw;
+    font-size: 3.4vw;
+    line-height: 130%;
   }
 `;
 const MiddleText5 = styled.div`
   font-family: Inter;
-  font-size: 2vw;
+  font-size: 3.1vw;
   font-weight: 400;
   margin-bottom: 7vw;
   padding-left: 7vw;
+  max-width: 59vw;
   @media screen and (max-width: 768px) {
-    font-size: 2.6vw;
-    padding-left: 7.8vw;
-    margin-bottom: 9.6vw;
+    max-width: 71vw;
+    font-size: 3.4vw;
+    padding-left: 10vw;
+    margin-bottom: 8.1vw;
   }
 `;
 const MiddleText6 = styled.div`
   font-family: Inter;
-  font-size: 2vw;
+  font-size: 3vw;
   font-weight: 400;
-  margin-bottom: 7.8vw;
+  margin-bottom: 11vw;
   padding-left: 7vw;
   @media screen and (max-width: 768px) {
-    padding-left: 7.8vw;
-    font-size: 2.6vw;
+    padding-left: 10vw;
+    font-size: 3.4vw;
     font-weight: 400;
-    margin-bottom: 13vw;
+    margin-bottom: 15vw;
+    line-height: 130%;
   }
 `;
 const MiddleText6_1 = styled.div`
   color: #000000;
   font-family: Inter;
-  font-size: 1.95vw;
+  font-size: 3.9vw;
   font-weight: 400;
-  margin-bottom: 0.78vw;
+  margin-bottom: 1.14vw;
   @media screen and (max-width: 768px) {
     margin-bottom: 1.2vw;
     color: #000000;
-    font-size: 3.1vw;
+    font-size: 3.7vw;
   }
 `;
 
 const InfoContainer = styled.div`
   position: relative;
   z-index: 1;
-  max-width: 44vw;
+  max-width: 64vw;
   box-sizing: border-box;
   border-top: 1px solid rgba(0, 0, 0, 0.04);
   margin-left: 7vw;
   margin-bottom: 8.4vw;
   @media screen and (max-width: 768px) {
-    margin-bottom: 4.1vw;
+    margin-bottom: 9.3vw;
     max-width: 100%;
-    margin-left: 7.8vw;
-    margin-right: 7.8vw;
+    margin-left: 10vw;
+    margin-right: 10vw;
   }
 `;
 const InfoWrapper = styled.div`
@@ -781,8 +820,8 @@ const InfoWrapper = styled.div`
   box-sizing: border-box;
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   @media screen and (max-width: 768px) {
-    padding-top: 1.4vw;
-    padding-bottom: 1.4vw;
+    padding-top: 3.4vw;
+    padding-bottom: 3.4vw;
   }
 `;
 const IconWrapper = styled.div`
@@ -800,7 +839,7 @@ const IconWrapper = styled.div`
 
 const SmallText = styled.div`
   font-family: Inter;
-  font-size: 1.45vw;
+  font-size: 2.1vw;
   font-weight: 400;
   @media screen and (max-width: 768px) {
     font-size: 2.6vw;
@@ -809,7 +848,7 @@ const SmallText = styled.div`
 const SmallText2 = styled.div`
   color: #000000;
   font-family: Inter;
-  font-size: 1.5vw;
+  font-size: 2.2vw;
   font-weight: 400;
   @media screen and (max-width: 768px) {
     font-size: 2.5vw;
@@ -825,6 +864,7 @@ const ProductWrapperDesk = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   column-gap: 0.5vw;
   @media screen and (max-width: 768px) {
+    margin-bottom: 6.8vw;
     display: none;
   }
 `;
@@ -873,11 +913,11 @@ const ShopText = styled.div`
 `;
 const FlexWrapper6 = styled.div`
   display: flex;
-  gap: 2.3vw;
+  gap: 3.3vw;
   margin-left: 7vw;
-  margin-bottom: 3.9vw;
+  margin-bottom: 5.7vw;
   @media screen and (max-width: 768px) {
-    margin-left: 7.8vw;
+    margin-left: 10vw;
     gap: 3.7vw;
     margin-bottom: 6.2vw;
   }
@@ -885,7 +925,7 @@ const FlexWrapper6 = styled.div`
 const TextWrapper6 = styled.div``;
 const Number = styled.div`
   font-family: Inter;
-  font-size: 2.7vw;
+  font-size: 3.9vw;
   font-weight: 400;
   color: #ffffff;
   border-radius: 100%;
@@ -916,17 +956,6 @@ const NatureCircle = styled.div<{
   overflow: hidden;
   top: -27.9vw;
   left: -9.5vw;
-
-  background-image: ${(props) => {
-    return `url(${props.url})`;
-  }};
-  background-size: 75vw 75vw;
-  background-position: ${(props) => {
-    return props.scroll - props.y + props.x < 0
-      ? ""
-      : `0% ${((props.scroll - props.y + props.x) / props.x) * 20}%`;
-  }};
-  background-repeat: no-repeat;
 
   transform: ${(props) => {
     return `translateY(${
@@ -963,7 +992,7 @@ const Video = styled.video`
   height: 30vw;
   @media screen and (max-width: 768px) {
     width: auto;
-    height: 118px;
+    height: 36.8vw;
   }
 `;
 const GrayCircle = styled.div`
@@ -1001,14 +1030,17 @@ const LimeCircle = styled.div<{
     }vw)`;
   }};
   @media screen and (max-width: 768px) {
-    top: 55vw;
-    right: -12.5vw;
+    top: 75vw;
+    right: -19vw;
     width: 36.8vw;
     height: 36.8vw;
   }
 `;
 
 const SolutionImageWrapperDesk = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
 
   height: 42.9vw;
@@ -1025,10 +1057,11 @@ const SolutionImageWrapperDesk = styled.div`
 
   background-size: 100%;
   background-position: 0% 42%;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat;*/
   @media screen and (max-width: 768px) {
-    display: none;
-  } */
+    margin-bottom: 26.5vw;
+    height: 55vw;
+  }
 `;
 const SolutionImageWrapperMobile = styled.div`
   display: none;
@@ -1051,11 +1084,9 @@ const SolutionImageWrapperMobile = styled.div`
 `;
 const VideoSolution = styled.video`
   position: absolute;
-  width: auto;
-  height: 145vw;
-  transform: rotate(30deg);
-  top: -70vw;
-  left: -30vw;
+  width: 100vw;
+  height: auto;
+
   /* position: absolute;
   top: -10vw;
   width: auto;
@@ -1064,6 +1095,12 @@ const VideoSolution = styled.video`
     width: auto;
     height: 917px;
   } */
+`;
+const LogoWhiteWrapper = styled.div`
+  position: relative;
+  z-index: 1;
+  width: 8.7vw;
+  height: 10.9vw;
 `;
 const LogoImageWrapperDesk = styled.div`
   position: absolute;
@@ -1074,8 +1111,8 @@ const LogoImageWrapperDesk = styled.div`
   transform-origin: top left;
   transform: rotate(-30deg);
   @media screen and (max-width: 768px) {
-    top: 38vw;
-    left: 0vw;
+    top: 69vw;
+    left: -8.5vw;
     width: 120vw;
     height: 150vw;
   }
@@ -1110,7 +1147,8 @@ const SwatchContainer = styled.div<{ scroll: number }>`
   }};
 
   @media screen and (max-width: 768px) {
-    top: 120vw;
+    left: -5vw;
+    top: 130vw;
     transform: ${(props) => {
       return `rotate(-30deg) translateX(${props.scroll / 2}vw)`;
     }};
