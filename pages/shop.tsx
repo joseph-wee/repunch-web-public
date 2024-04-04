@@ -120,7 +120,7 @@ export default function useShop() {
   return (
     <Container>
       <Head>
-        <title>Repunch-dev</title>
+        <title>Repunch</title>
         <meta name="description" content="repunch 웹개발 테스트 사이트" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
