@@ -1186,7 +1186,9 @@ const useId = () => {
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Contry of origin</InfoTitle>
-              <InfoContent>{info && `${info.origin.name}`}</InfoContent>
+              <InfoContent>
+                {info && info.origin && `${info.origin.name}`}
+              </InfoContent>
             </InfoWrapper>
             <InfoWrapper>
               <InfoTitle>Descripttion</InfoTitle>
@@ -1372,7 +1374,9 @@ const useId = () => {
           </InfoWrapper>
           <InfoWrapper>
             <InfoTitle>Contry of origin</InfoTitle>
-            <InfoContent>{info && `${info.origin.name}`}</InfoContent>
+            <InfoContent>
+              {info && info.origin && `${info.origin.name}`}
+            </InfoContent>
           </InfoWrapper>
           <InfoWrapper>
             <InfoTitle>Descripttion</InfoTitle>
