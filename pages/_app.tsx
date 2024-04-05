@@ -16,7 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           property="og:image"
-          content="http://http://test.repunch.io/android-chrome-192x192.png"
+          content="http://test.repunch.io/android-chrome-192x192.png"
         />
         <meta property="og:title" content="Repunch" />
         {/* <meta property="og:description" content="text" />	//카카오톡에 링크를 전송하면 보이는 내용을 text로 설정 */}
