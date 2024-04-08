@@ -98,6 +98,8 @@ const useHeaderBar = () => {
         break;
       case "/shop":
         break;
+      case "/payment/callback":
+        break;
 
       default:
         !loginCheck() && router.push("/login");
