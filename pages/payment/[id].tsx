@@ -19,6 +19,12 @@ import {
 } from "../../utils/api";
 import { priceToDollar } from "../../utils/functions";
 
+declare global {
+  interface Window {
+    sendToPaymentCompletePage: any;
+  }
+}
+
 /** 국가, 카테고리 객체 타입 */
 export interface List {
   name: string; // 이름
@@ -200,7 +206,14 @@ const usePayment = () => {
     ).then((res) => {
       // 성공 case
       if (res?.data.status == 200) {
-        location.href = res?.data.result.paymentUrl;
+        window.open(
+          `${res?.data.result.paymentUrl}`,
+          "test",
+          "width=500px,height=800px,scrollbars=yes"
+        );
+        window.sendToPaymentCompletePage = () => {
+          router.push("/payment_complete");
+        };
       }
     });
   };
@@ -843,7 +856,7 @@ const Price2 = styled.div`
 const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-itmes: center;
+  align-items: center;
   margin-bottom: 2px;
 `;
 const InfoText = styled.div`

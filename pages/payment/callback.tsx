@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { paymentRequest2 } from "../../utils/api";
+import styled from "styled-components";
 
 const useCallback = () => {
   const router = useRouter();
@@ -10,10 +11,11 @@ const useCallback = () => {
     const PayerID = router.asPath.split("&")[1].split("PayerID=")[1];
 
     paymentRequest2(localStorage.getItem("at"), token, PayerID).then((res) => {
-      console.log(res);
       //성공 case
       if (res?.data.result.status == "COMPLETED") {
-        router.push("/payment_complete");
+        window.parent.sendToPaymentCompletePage();
+        window.close();
+        return;
       }
     });
   };
@@ -21,7 +23,16 @@ const useCallback = () => {
   useEffect(() => {
     paymentHandler();
   }, []);
-  return <div></div>;
+  return <Container></Container>;
 };
+
+const Container = styled.div`
+  z-index: 999;
+  position: fixed;
+  background-color: #ffffff;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+`;
 
 export default useCallback;
