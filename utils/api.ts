@@ -938,7 +938,7 @@ export const paymentRequest1 = async (
 export const paymentRequest2 = async (
   accessToken: string | null,
   token: string,
-  PayerID: string
+  payerID: string
 ) => {
   try {
     const res = await axios({
@@ -949,7 +949,7 @@ export const paymentRequest2 = async (
       },
       data: {
         token: token,
-        PayerID: PayerID,
+        payerID: payerID,
       },
     });
     return res;
