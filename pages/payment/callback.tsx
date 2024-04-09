@@ -10,13 +10,16 @@ const useCallback = () => {
     const token = router.asPath.split("&")[0].split("token=")[1];
     const PayerID = router.asPath.split("&")[1].split("PayerID=")[1];
 
-    paymentRequest2(localStorage.getItem("at"), token, PayerID).then((res) => {
+    paymentRequest2(localStorage.getItem("at"), token, PayerID).then((res?) => {
+      console.log(res);
       //성공 case
       if (res?.data.result.status == "COMPLETED") {
         window.parent.sendToPaymentCompletePage();
+        alert("결제된거임");
         window.close();
         return;
       }
+      alert("결제안되었음");
     });
   };
 
