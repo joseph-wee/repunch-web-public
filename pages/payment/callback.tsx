@@ -8,16 +8,19 @@ const useCallback = () => {
 
   const paymentHandler = () => {
     const token = router.asPath.split("&")[0].split("token=")[1];
-    const payerID = router.asPath.split("&")[1].split("PayerID=")[1]; // paypal에서는 PayerID로 넘어옴 하지만 api로 넘길 때는 payerID 앞에 소문자임
+    const payerId = router.asPath.split("&")[1].split("PayerID=")[1]; // paypal에서는 PayerID로 넘어옴 하지만 api로 넘길 때는 payerID 앞에 소문자임, 뒤가 대문자
 
-    paymentRequest2(localStorage.getItem("at"), token, payerID).then((res?) => {
-      //성공 case
-      if (res?.data.result.status == "COMPLETED") {
-        window.parent.sendToPaymentCompletePage();
-        window.close();
-        return;
+    paymentRequest2(localStorage.getItem("at"), token, payerId).then(
+      (res: any) => {
+        console.log(res);
+        //성공 case
+        if (res?.data.result.status == "COMPLETED") {
+          window.parent.sendToPaymentCompletePage();
+          window.close();
+          return;
+        }
       }
-    });
+    );
   };
 
   useEffect(() => {
