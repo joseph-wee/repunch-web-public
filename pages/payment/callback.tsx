@@ -15,7 +15,7 @@ const useCallback = () => {
         console.log(res);
         //성공 case
         if (res?.data.result.status == "COMPLETED") {
-          window.parent.sendToPaymentCompletePage();
+          window.opener.parent.sendToPaymentCompletePage();
           window.close();
           return;
         }
