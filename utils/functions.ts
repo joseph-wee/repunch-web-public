@@ -25,6 +25,16 @@ export const valueValidation = (
   }
 };
 
+/** 버튼 활성화 */
+export const disableButton = (ref: any) => {
+  ref.current.disabled = true;
+};
+
+/** 버튼 비활성화 */
+export const enableButton = (ref: any) => {
+  ref.current.disabled = false;
+};
+
 // /** 회원가입: 성 유효성 검사 */
 // export const firstNameValidation = (
 //   firstName: string, // 성

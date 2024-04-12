@@ -17,7 +17,7 @@ import { btn_web_back } from "../assets";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect } from "react";
-import { goBack } from "../utils/functions";
+import { disableButton, enableButton, goBack } from "../utils/functions";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { editInfoRequest, originsRequest, userInfoRequest } from "../utils/api";
 
@@ -49,6 +49,8 @@ const useEdit_account_info = () => {
   const [passwordConfirm, setPasswordConfirm] = useState<string>(""); // 비밀번호 확인
   const [role, setRole] = useState<string>(""); // 유저 권한
   const [companyCategory, setCompanyCategory] = useState("");
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
 
@@ -346,6 +348,9 @@ const useEdit_account_info = () => {
 
   /** 회원 정보 수정 핸들러 */
   const editInfoHandler = () => {
+    // 버튼 비활성화
+    disableButton(buttonRef);
+
     let at: any;
     let rt: string | null;
 
@@ -369,6 +374,10 @@ const useEdit_account_info = () => {
       homepageUrl,
       companyCategory
     ).then((res) => {
+      // 버튼 활성화
+      enableButton(buttonRef);
+      console.log(res);
+
       // 성공 케이스
       if (res?.data.status === 200) {
         router.push("/account_detail");
@@ -554,7 +563,10 @@ const useEdit_account_info = () => {
             </Link>
           </Button>
 
-          <Button onClick={() => validationCheckAndEditInfoRequest()}>
+          <Button
+            ref={buttonRef}
+            onClick={() => validationCheckAndEditInfoRequest()}
+          >
             Done
           </Button>
         </ButtonWrapper>

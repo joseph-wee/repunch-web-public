@@ -27,7 +27,7 @@ import {
   productDetailRequest,
 } from "../../utils/api";
 import { VideoPlayer } from "../../components";
-import { loginCheck } from "../../utils/functions";
+import { disableButton, enableButton, loginCheck } from "../../utils/functions";
 
 const useId = () => {
   const [popUpIsActive, setPopUpIsActive] = useState(0);
@@ -73,6 +73,8 @@ const useId = () => {
   const [v, setV] = useState(false);
 
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setPrice(Number(count) * 10);
@@ -818,6 +820,9 @@ const useId = () => {
 
   /** 미터 장바구니 추가 핸들러 */
   const addCartHandler = () => {
+    // 버튼 비활성화
+    disableButton(buttonRef);
+
     let at;
     let rt: string | null;
 
@@ -843,6 +848,10 @@ const useId = () => {
 
     addCartRequest(at, seletedOption.productOptionNo, "ROLL", count).then(
       (res) => {
+        // 버튼 활성화
+        enableButton(buttonRef);
+        console.log(res);
+
         // 성공 case: 장바구니 추가
         if (res?.data.status == 200) {
           setPopUpIsActive(1);
@@ -1286,7 +1295,7 @@ const useId = () => {
               </ProductPriceWrapper>
             </LengthWrapper>
             <PricePurchaseWrapper>
-              <PurchaseButton onClick={() => addCartHandler()}>
+              <PurchaseButton ref={buttonRef} onClick={() => addCartHandler()}>
                 Add to cart
               </PurchaseButton>
             </PricePurchaseWrapper>

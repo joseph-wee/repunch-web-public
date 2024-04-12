@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -11,7 +11,7 @@ import { btn_web_back, garbage, ic_check_wht } from "../assets";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { goBack } from "../utils/functions";
+import { disableButton, enableButton, goBack } from "../utils/functions";
 import {
   addAddressRequest,
   addressListRequest,
@@ -33,6 +33,8 @@ const useAddress = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isExisted, setIsExisted] = useState<boolean>(false);
   const [addressList, setAddressList] = useState([]);
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
 
@@ -154,6 +156,9 @@ const useAddress = () => {
 
   /** 삭제 버튼 클릭시 */
   const deleteAddressHandler = (addressNo: number) => {
+    // 버튼 비활성화
+    disableButton(buttonRef);
+
     let at;
     let rt: string | null;
 
@@ -166,6 +171,10 @@ const useAddress = () => {
     }
 
     deleteAddress(addressNo, at).then((res) => {
+      console.log(res);
+      // 버튼 활성화
+      enableButton(buttonRef);
+
       // 성공 case
       if (res?.data.status == 200) {
         location.reload();
@@ -248,6 +257,7 @@ const useAddress = () => {
               </Link>
               {/** 임시 코드 팝업으로 해야함 */}
               <DeleteButton
+                ref={buttonRef}
                 onClick={() => {
                   deleteAddressHandler(el.addressNo);
                 }}

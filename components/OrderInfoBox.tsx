@@ -7,13 +7,14 @@ import {
   ic_down_bk,
   ic_up_bk,
   payment_express,
+  paypal_logo,
   test_thumbnail,
 } from "../assets";
 import Image from "next/image";
 import { orderCancelRequest, orderConfirmRequest } from "../utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { priceToDollar } from "../utils/functions";
+import { disableButton, enableButton, priceToDollar } from "../utils/functions";
 
 const useOrderInfoBox = ({
   data,
@@ -34,6 +35,9 @@ const useOrderInfoBox = ({
   const [render, setRender] = useState(true); // 렌더링 유무
   const questionDeliveryRef = useRef<any>();
   const questionTaxRef = useRef<any>();
+
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const confirmButtonRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
 
@@ -85,6 +89,7 @@ const useOrderInfoBox = ({
 
   /** 주문취소후 새로고침 */
   const orderCancelHandler = (orderNo: number) => {
+    disableButton(cancelButtonRef);
     let at;
     let rt: string | null;
 
@@ -97,6 +102,7 @@ const useOrderInfoBox = ({
     }
 
     orderCancelRequest(at, orderNo).then((res) => {
+      enableButton(cancelButtonRef);
       console.log(res);
       if (res?.data.status == 200) {
         location.reload();
@@ -107,6 +113,7 @@ const useOrderInfoBox = ({
 
   /** 주문확정후 주문내역으로 */
   const orderConfirmHandler = (orderNo: number) => {
+    disableButton(confirmButtonRef);
     let at;
     let rt: string | null;
 
@@ -121,6 +128,7 @@ const useOrderInfoBox = ({
     }
 
     orderConfirmRequest(at, orderNo).then((res) => {
+      enableButton(confirmButtonRef);
       console.log(res);
       if (res?.data.status == 200) {
         router.push("/order_history");
@@ -340,7 +348,12 @@ const useOrderInfoBox = ({
                 <Line />
                 <PaymentTitle>Payment</PaymentTitle>
                 <PaymentWrapper>
-                  <Image src={payment_express} alt="payment_express" />
+                  <Image
+                    src={paypal_logo}
+                    alt="paypal_logo"
+                    width={19}
+                    height={19}
+                  />
                   <PaymentNumber>PayPal</PaymentNumber>
                 </PaymentWrapper>
               </>
@@ -639,7 +652,10 @@ const useOrderInfoBox = ({
 
       {/** in review case: 취소 가능 */}
       {data.status == "IN_REVIEW" && (
-        <CancelButton onClick={() => orderCancelHandler(data.orderNo)}>
+        <CancelButton
+          ref={cancelButtonRef}
+          onClick={() => orderCancelHandler(data.orderNo)}
+        >
           Cancel order
         </CancelButton>
       )}
@@ -647,7 +663,10 @@ const useOrderInfoBox = ({
       {/** order confirmed case: 취소, 주문 가능 */}
       {data.status == "ORDER_CONFIRMED" && (
         <Wrapper>
-          <CancelButton onClick={() => orderCancelHandler(data.orderNo)}>
+          <CancelButton
+            ref={cancelButtonRef}
+            onClick={() => orderCancelHandler(data.orderNo)}
+          >
             Cancel order
           </CancelButton>
 
@@ -662,7 +681,10 @@ const useOrderInfoBox = ({
       {/** delivered, pick up case: 주문 확정 가능 */}
       {(data.status == "DELIVERED" || data.status == "PICK_UP") && (
         <>
-          <AccomplishButton onClick={() => orderConfirmHandler(data.orderNo)}>
+          <AccomplishButton
+            ref={confirmButtonRef}
+            onClick={() => orderConfirmHandler(data.orderNo)}
+          >
             Order accomplish
           </AccomplishButton>
           <NoticeText>

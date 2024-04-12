@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
   btn_favorite_inact,
@@ -13,7 +13,12 @@ import Image from "next/legacy/image";
 import Link from "next/link";
 import { keepDeleteReqeust, keepReqeust } from "../utils/api";
 import { useRouter } from "next/router";
-import { loginCheck, priceToDollar } from "../utils/functions";
+import {
+  disableButton,
+  enableButton,
+  loginCheck,
+  priceToDollar,
+} from "../utils/functions";
 
 const Product = ({
   product,
@@ -31,6 +36,8 @@ const Product = ({
   const [price, setPrice] = useState(product.price);
   const [colorList, setColorList] = useState<any>([]);
   const [selectNo, setSelectNo] = useState<number | undefined>();
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
 
@@ -122,6 +129,9 @@ const Product = ({
   };
 
   const keepHandler = () => {
+    // 버튼 비활성화
+    disableButton(buttonRef);
+
     let at = localStorage.getItem("at");
 
     let v = productList;
@@ -133,21 +143,25 @@ const Product = ({
 
     // 찜해제 케이스
     if (favoriteIsActive) {
-      keepDeleteReqeust(at, product.productNo).then(
-        (res) =>
-          res?.data.status == 200 &&
+      keepDeleteReqeust(at, product.productNo).then((res) => {
+        res?.data.status == 200 &&
           (setFavoriteIsActive(!favoriteIsActive),
           (v[index].like = false),
-          setProductList([...v]))
-      );
+          setProductList([...v]));
+        // 버튼 활성화
+        enableButton(buttonRef);
+        console.log(res);
+      });
       return;
     }
     // 찜하기 케이스
     if (!favoriteIsActive) {
-      keepReqeust(at, product.productNo).then(
-        (res) =>
-          res?.data.status == 200 && setFavoriteIsActive(!favoriteIsActive)
-      );
+      keepReqeust(at, product.productNo).then((res: any) => {
+        res?.data.status == 200 && setFavoriteIsActive(!favoriteIsActive);
+        // 버튼 활성화
+        enableButton(buttonRef);
+        console.log(res);
+      });
       return;
     }
   };
@@ -195,7 +209,7 @@ const Product = ({
           })}
         </Link>
 
-        <LikeButton onClick={() => keepHandler()}>
+        <LikeButton ref={buttonRef} onClick={() => keepHandler()}>
           <Image
             src={favoriteIsActive ? btn_review : btn_favorite_inact}
             alt={"logo_favorite"}
@@ -292,7 +306,7 @@ const Soldout = styled.div`
   color: #ffffff;
   background-color: #121822;
 `;
-const LikeButton = styled.div`
+const LikeButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -302,6 +316,12 @@ const LikeButton = styled.div`
   width: 22px;
   height: 22px;
 
+  background: inherit;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  overflow: visible;
   cursor: pointer;
 `;
 const InfoWrapper = styled.div`

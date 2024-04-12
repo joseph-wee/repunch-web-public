@@ -11,7 +11,7 @@ import { btn_web_back, garbage, ic_check_wht } from "../assets";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { goBack } from "../utils/functions";
+import { disableButton, enableButton, goBack } from "../utils/functions";
 import {
   addAddressRequest,
   editAddress,
@@ -48,6 +48,7 @@ const useEdit_shipping_address = () => {
   const router = useRouter();
 
   const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   /** 국가 리스트 */
   const [origins, setOrigins] = useState<any>();
@@ -277,6 +278,9 @@ const useEdit_shipping_address = () => {
 
     let validationAllValue = validationAll();
     if (validationAllValue == true) {
+      // 버튼 비활성화
+      disableButton(buttonRef);
+
       editAddress(
         addressNo,
         at,
@@ -292,8 +296,10 @@ const useEdit_shipping_address = () => {
         postCode,
         phoneNumber
       ).then((res) => {
+        // 버튼 활성화
+        enableButton(buttonRef);
         console.log(res);
-        console.log("여기서에러?");
+
         // 성공 case
         if (res?.data?.status == 200) {
           router.query.backLink
@@ -590,7 +596,9 @@ const useEdit_shipping_address = () => {
                 <LinkStyling>Cancel</LinkStyling>
               </Link>
             </Button>
-            <Button onClick={() => editAddressHandler()}>Confirm</Button>
+            <Button ref={buttonRef} onClick={() => editAddressHandler()}>
+              Confirm
+            </Button>
           </ButtonWrapper>
         </AddressInit>
       </Main>

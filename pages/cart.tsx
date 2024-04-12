@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { SideBar, CartMeterageProduct, CartSampleProduct } from "../components";
 import Link from "next/link";
 import Image from "next/image";
 import { btn_web_back, ic_check_wht, ic_info, ic_logo_gray } from "../assets";
-import { goBack } from "../utils/functions";
+import { disableButton, enableButton, goBack } from "../utils/functions";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setMeterage, setSample } from "../features/login/cartSlice";
@@ -43,6 +43,8 @@ const useCart = () => {
   const { value: tempOrderList } = useAppSelector(
     (state) => state.tempOrderList
   );
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const cartPurchaseHandler = () => {
     if (cartValue == 0) {
@@ -431,6 +433,9 @@ const useCart = () => {
 
   /** 카트 선택 삭제 핸들러 */
   const removeHandler = () => {
+    // 버튼 비활성화
+    disableButton(buttonRef);
+
     let at: any;
     let rt: string | null;
 
@@ -448,7 +453,11 @@ const useCart = () => {
       let deleteCount = 0;
       rollCheckArr.forEach((el: boolean, index: number) => {
         if (el) {
-          cartDelteRequest(at, rollList[index].cartNo);
+          cartDelteRequest(at, rollList[index].cartNo).then((res) => {
+            console.log(res);
+            // 버튼 활성화
+            enableButton(buttonRef);
+          });
           deleteCount++;
           temp[index].display = false;
         }
@@ -633,7 +642,7 @@ const useCart = () => {
       <Line />
       <ButtonContainer>
         <RemovePurchaseButtonWrapper>
-          <RemoveButton onClick={() => removeHandler()}>
+          <RemoveButton ref={buttonRef} onClick={() => removeHandler()}>
             Remove({cartValue == 0 ? rollSelectCount : sampleSelectCount})
           </RemoveButton>
           <PurchaseButton onClick={() => purchaseHandler()}>

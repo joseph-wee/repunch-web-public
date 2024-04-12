@@ -14,7 +14,7 @@ import {
   paymentRequest1,
 } from "../utils/api";
 import { useAppSelector } from "../redux/hooks";
-import { priceToDollar } from "../utils/functions";
+import { disableButton, enableButton, priceToDollar } from "../utils/functions";
 
 /** 국가, 카테고리 객체 타입 */
 export interface List {
@@ -36,6 +36,7 @@ const useOrder_temp1 = () => {
   const [selectAdress, setSelectAddress] = useState<any>();
 
   const ref = useRef<any>();
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
 
@@ -258,6 +259,7 @@ const useOrder_temp1 = () => {
       totalAmount
     ).then((res) => {
       console.log(res);
+      enableButton(buttonRef);
       // 성공 case
       if (res?.data.status == 200) {
         const orderNo = res?.data.result.orderNo;
@@ -325,6 +327,9 @@ const useOrder_temp1 = () => {
 
   /** 주문생성 or 결제 요청 */
   const orderPaymentHandler = () => {
+    // 버튼 비활성화
+    disableButton(buttonRef);
+
     // AIR Case
     if (deliveryIsChecked == 0) {
       createOrderRequestHandler("EXPRESS");
@@ -705,7 +710,7 @@ const useOrder_temp1 = () => {
       <Line />
       <ButtonWrapper>
         <CancelButton onClick={() => router.push("/cart")}>Cancel</CancelButton>
-        <CheckoutButton onClick={() => orderPaymentHandler()}>
+        <CheckoutButton ref={buttonRef} onClick={() => orderPaymentHandler()}>
           {deliveryIsChecked == 2 ? "Checkout" : "Confirm"}
         </CheckoutButton>
       </ButtonWrapper>

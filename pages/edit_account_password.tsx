@@ -16,7 +16,7 @@ import { btn_web_back } from "../assets";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect } from "react";
-import { goBack } from "../utils/functions";
+import { disableButton, enableButton, goBack } from "../utils/functions";
 import { pwResetRequest, userInfoRequest } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
@@ -57,6 +57,7 @@ const useEdit_account_password = () => {
 
   const router = useRouter();
   const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   /** 나라 리스트 숫자 코드는 업데이트 필요 */
   const countryList: ListCountryArray = [
@@ -291,8 +292,14 @@ const useEdit_account_password = () => {
 
   /** 비밀번호 재설정 요청 */
   const pwResetRequestHandler = () => {
+    // 버튼 비활성화
+    disableButton(buttonRef);
+
     const at = localStorage.getItem("at");
     pwResetRequest(at, currentPw, password, passwordConfirm).then((res) => {
+      // 버튼 활성화
+      enableButton(buttonRef);
+
       const status = res?.data.status;
       console.log(res);
 
@@ -405,7 +412,10 @@ const useEdit_account_password = () => {
             </Link>
           </Button>
 
-          <Button onClick={() => validationCheckAndSignupRequest()}>
+          <Button
+            ref={buttonRef}
+            onClick={() => validationCheckAndSignupRequest()}
+          >
             Confirm
           </Button>
         </ButtonWrapper>
