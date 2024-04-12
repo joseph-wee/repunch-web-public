@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import {
   MobileSideBar,
@@ -110,7 +110,7 @@ const useAccount_detail = () => {
     let at = localStorage.getItem("at");
     userInfoRequest(at).then((res: any) => {
       const data = res?.data.result;
-      console.log(data);
+      // console.log(data);
 
       data.firstName && setFirstName(data.firstName);
       data.lastName && setLastName(data.lastName);
@@ -179,15 +179,15 @@ const useAccount_detail = () => {
   useEffect(() => {
     origins && userInfoHandler();
 
-    if (originsCallingCode && countryPhoneNumber) {
-      console.log(originsCallingCode);
-      console.log(countryPhoneNumber);
-      console.log(
-        originsCallingCode
-          .find((x: any) => x.callingCode.includes(countryPhoneNumber))
-          .countryCodeArr.join(", ")
-      );
-    }
+    // if (originsCallingCode && countryPhoneNumber) {
+    //   console.log(originsCallingCode);
+    //   console.log(countryPhoneNumber);
+    //   console.log(
+    //     originsCallingCode
+    //       .find((x: any) => x.callingCode.includes(countryPhoneNumber))
+    //       .countryCodeArr.join(", ")
+    //   );
+    // }
     // console.log(
     //   originsCallingCode.find((x: any) => x.callingCode.includes(countryCode))
     // );
