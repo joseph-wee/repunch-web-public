@@ -87,3 +87,4 @@ export { default as nature_large } from "./nature_large.png";
 export { default as aperture } from "./aperture.svg";
 export { default as swatch } from "./swatch.jpeg";
 export { default as logoWhite } from "./logoWhite.svg";
+export { default as paypal_logo } from "./paypal_logo.svg";
