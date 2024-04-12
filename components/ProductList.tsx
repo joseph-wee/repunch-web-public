@@ -212,6 +212,9 @@ const ProductList = ({
           return (
             <Product
               product={i}
+              index={j}
+              productList={productList}
+              setProductList={setProductList}
               selectedColorNo={selectedColorNo}
               key={`product${j}`}
             />
