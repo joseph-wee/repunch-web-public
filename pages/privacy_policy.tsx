@@ -4,7 +4,203 @@ import styled from "styled-components";
 const privacy_policy = () => {
   return (
     <Container>
-      <Title>Privacy policy</Title>
+      <Title>Privacy Policy</Title>
+      2024.04.12.
+      <br />
+      <br />
+      1. Introduction
+      <br />
+      Welcome to Repunch, an online fabric-selling website located in South
+      Korea. In this Privacy Policy, we, at Repunch, are committed to
+      safeguarding your privacy and protecting your personal data. This Privacy
+      Policy explains how we collect, use, and protect your personal information
+      when you use our website.
+      <br />
+      <br /> 2. What Is Personal Data?
+      <br />
+      Personal Data refers to any information that can identify you directly or
+      indirectly. This includes but is not limited to your name, email address,
+      phone number, and IP address. It may also encompass information related to
+      your professional function or your interactions with our website.
+      <br />
+      <br /> 3. Data Controller
+      <br />
+      Repunch is the data controller responsible for managing and protecting
+      your data. If you have any questions, concerns, or requests related to
+      your personal data, please contact us at:
+      <br />
+      <br />
+      Email: [Your Email Address]
+      <br />
+      Postal Address: [Your Company&aposs Address in South Korea]
+      <br />
+      <br />
+      4. Why and How Do We Use Your Data?
+      <br />
+      Collection of Data
+      <br />
+      <br />
+      We collect your personal data in the following ways:
+      <br />
+      <br />
+      When you provide information directly to us through forms on our website,
+      including order processing, customer inquiries, and after-sale services.
+      Through automated means when you access our website, including the use of
+      cookies, which may collect technical information about your device and
+      browsing activity. From third parties, such as social media platforms,
+      when you interact with us through these platforms.
+      <br />
+      <br />
+      Types of Data We Collect
+      <br />
+      <br />
+      Repunch may collect the following types of personal data:
+      <br />
+      Information required to process your orders, including selected items,
+      delivery and billing addresses, and contact details. Data related to
+      after-sale services, such as returns, exchanges, and repair requests.
+      Information about your preferences, such as liked products and services.
+      Records of your interactions with our customer service, including recorded
+      calls for quality assurance. Please note that fields marked as mandatory
+      in data collection forms must be completed to fulfill your requests or
+      orders.
+      <br />
+      <br />
+      Legal Basis for Data Collection
+      <br />
+      <br />
+      We collect and process personal data based on the following legal grounds:
+      <br />
+      <br />
+      Your consent.
+      <br />
+      The performance of a contract with you.
+      <br />
+      Our legitimate interests.
+      <br />
+      Compliance with legal obligations.
+      <br />
+      Purposes of Data Processing
+      <br />
+      <br />
+      We use your personal data for the following purposes:
+      <br />
+      <br />
+      Managing your requests and inquiries.Sending you commercial and marketing
+      communications, such as product updates and special offers. Processing
+      your orders, including delivery, invoicing, and customer account creation.
+      Providing after-sale services, including handling returns, exchanges, and
+      repairs. Improving the performance of our website and analyzing visitor
+      trends. Communicating with you about your account, changes to our website,
+      or updates to this Privacy Policy. Preventing payment fraud and ensuring
+      the validity of payments. Defending our interests in case of disputes or
+      legal actions.
+      <br />
+      <br />
+      5. Who Has Access to Your Data?
+      <br />
+      <br />
+      Your personal data is accessed by Repunch staff on a need-to-know basis.
+      Certain third parties may also have access to your data, including:
+      <br />
+      <br />
+      Subcontractors and service providers for after-sale services, logistics,
+      website hosting, payment processing, and other technical and logistical
+      needs. Social media platforms when you use social media buttons on our
+      website. Third-party companies in the event of Repunch&aposs
+      restructuring, acquisition, or merger. Authorities, courts, or other third
+      parties when required by law, regulations, or judicial decisions to
+      protect and defend our rights.
+      <br />
+      <br />
+      6. International Data Transfers
+      <br />
+      <br />
+      While Repunch processes data in South Korea, we may rely on service
+      providers located abroad. Data transfers outside the European Union (EU)
+      or South Korea will be subject to strict measures and appropriate
+      safeguards to ensure data confidentiality and security, as required by
+      applicable regulations.
+      <br />
+      <br />
+      7. Data Retention
+      <br />
+      <br />
+      We retain data for as long as necessary for the purpose for which it was
+      collected. The retention period varies depending on the type of data and
+      purpose. In general, data is stored for the duration of our relationship
+      with you and up to three years after its termination. Some data may be
+      archived for legal and administrative reasons for up to 10 years.
+      <br />
+      <br />
+      8. Your Data Protection Rights
+      <br />
+      <br />
+      You have the following rights regarding your personal data:
+      <br />
+      <br />
+      Right to access, rectify, and request data portability.
+      <br />
+      Right to erasure (subject to legal obligations).
+      <br />
+      Right to limit data processing.
+      <br />
+      Right to establish instructions for data management after your death.
+      <br />
+      To exercise your rights or for any questions related to your data, please
+      contact us at [Your Email Address].
+      <br />
+      <br />
+      9. Data Security
+      <br />
+      <br />
+      Repunch employs technical and organizational measures to keep your data
+      secure and confidential. We require our service providers to implement
+      security measures as well.
+      <br />
+      However, please be aware of the inherent risks associated with internet
+      use, and exercise caution when sharing personal information online.
+      <br />
+      <br />
+      10. Protection of Minors
+      <br />
+      <br />
+      Our website is not intended for children under the age of [minimum age].
+      We do not knowingly collect data from minors, except as permitted by law.
+      <br />
+      <br />
+      11. Cookies
+      <br />
+      <br />
+      Our website may use cookies to enhance your browsing experience. You can
+      manage your cookie preferences; please refer to our Cookies Policy for
+      more information.
+      <br />
+      <br />
+      12. Third-Party Websites
+      <br />
+      <br />
+      Our website may contain links to third-party websites with their own
+      privacy policies. This Privacy Policy does not apply to those websites, so
+      please review their policies to understand how they process your data.
+      <br />
+      <br />
+      13. Contact Us
+      <br />
+      <br />
+      If you have any questions, concerns, or complaints related to this Privacy
+      Policy or your personal data, please contact us at [Your Email Address].
+      <br />
+      <br />
+      If you have a complaint about our data processing practices, you may also
+      contact the appropriate data protection authority in South Korea.
+      <br />
+      <br />
+      Please replace [Your Email Address], [Your Company&aposs Address in South
+      Korea], [minimum age], and [Date] with your specific information.
+      Additionally, consider consulting with a legal professional to adapt the
+      policy further to your specific business and legal requirements.
+      {/* <Title>Privacy policy</Title>
       <Text>1. Introduction</Text>
       <Wrapper>
         <DotWrapper>
@@ -216,7 +412,7 @@ const privacy_policy = () => {
           professional to adapt the policy further to your specific business and
           legal requirements.
         </Text>
-      </Wrapper>
+      </Wrapper> */}
     </Container>
   );
 };
@@ -224,8 +420,12 @@ const privacy_policy = () => {
 const Container = styled.div`
   padding-top: 20px;
   padding-bottom: 40px;
-  max-width: 428px;
+  max-width: 427px;
   margin: 0 auto;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.2px;
   color: #121822;
   @media screen and (max-width: 768px) {
     padding-left: 20px;
