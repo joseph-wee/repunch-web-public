@@ -1,6 +1,6 @@
 /* --------------------------- 로그인 페이지 --------------------------- */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { ic_check_wht } from "../assets";
@@ -10,7 +10,11 @@ import { loginRequest, userCheck } from "../utils/api";
 import { PopUp } from "../components";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../features/login/loginSlice";
-import { userIdValidation } from "../utils/functions";
+import {
+  disableButton,
+  enableButton,
+  userIdValidation,
+} from "../utils/functions";
 import { setRole } from "../features/login/roleSlice";
 
 const useLogin = () => {
@@ -22,6 +26,8 @@ const useLogin = () => {
   const [idValidation, setIdValidation] = useState<number>(0);
   const [pwValidation, setPwValidation] = useState<number>(0);
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -87,14 +93,25 @@ const useLogin = () => {
   // document.cookie = `access=true; expires=${date.toUTCString()}; path=/`;
   // router.push("/about_us");
 
+  useEffect(() => {
+    buttonRef && console.log(buttonRef.current?.disabled);
+  }, [buttonRef]);
+
   /** 로그인 api 요청후 결과에 따라 액션 */
   const loginRequestHandler = (userId: string, password: string) => {
     let idValidationValue = idValidationCheck();
 
     if (idValidationValue) {
-      loginRequest(userId, password).then((res?) => {
+      // 버튼 클릭시 버튼 비활성화
+      disableButton(buttonRef);
+
+      loginRequest(userId, password).then((res: any) => {
+        // 응답받으면 버튼 활성화
+        enableButton(buttonRef);
+
         // success case : id, pw 모두 통과
         if (res?.data?.status == 200) {
+          buttonRef.current && (buttonRef.current.disabled = false);
           const atExpire = res.data.result.expires_in;
           const rtExpire = res.data.result.refresh_token_expires_in;
 
@@ -141,7 +158,7 @@ const useLogin = () => {
         }
 
         // error case : id, pw 맞지만 이메일 인증 안한 상태
-        if (res?.response.code == 1005) {
+        if (res?.response.data.code == 1005) {
           setAuthPageIsActive(true);
           return;
         }
@@ -196,7 +213,10 @@ const useLogin = () => {
             <LinkStyling2>Lost Password? </LinkStyling2>
           </Link>
         </Wrapper>
-        <Button onClick={() => loginRequestHandler(userId, password)}>
+        <Button
+          ref={buttonRef}
+          onClick={() => loginRequestHandler(userId, password)}
+        >
           Confirm
         </Button>
         <RegisterContainer>
