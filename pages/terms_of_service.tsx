@@ -2,9 +2,77 @@ import React from "react";
 import styled from "styled-components";
 
 const terms_of_service = () => {
+  const text = `1. Service Introduction
+
+  Repunch (hereinafter referred to as the "Website" or "Service") is an online platform provided by Repunch located in the Republic of Korea, offering the sale of fabrics. By using this website, you agree to and comply with the following Terms and Conditions.
+  
+  2. Acceptance of Terms
+  
+  By using the Repunch website, you are considered to have read and understood all of these Terms and Conditions. If you do not agree to these Terms and Conditions, you should not use the website. Additionally, the use of the website by the user implies acceptance of any changes made to these Terms and Conditions as they use the website. Users are advised to regularly review these Terms and Conditions to stay informed of any updates.
+  
+  3. Use of the Service
+  
+  3.1 User Responsibilities
+  
+  By using the Repunch website, you agree to comply with the laws and regulations of the Republic of Korea. You must not misuse the website for illegal or improper purposes.
+  
+  You are responsible for keeping your Repunch account information (user ID and password) secure and not sharing it with others. All activities carried out from your user account are your responsibility.
+  
+  3.2 Product Purchases
+  
+  Fabric products available through the Repunch website can be purchased after reviewing the product descriptions and prices. Accurate delivery and payment information must be provided when purchasing products.
+
+  4. Intellectual Property
+  
+  4.1 Rights of Repunch
+  
+  All content, logos, trademarks, text, images, and other elements on the Repunch website are protected by intellectual property rights held by Repunch or their respective content owners. You must not reproduce, modify, distribute, transmit, or sell any of this content without the prior written consent of Repunch.
+
+  4.2 User-Generated Content
+  
+  Content posted by users on the Repunch website (reviews, comments, etc.) remains the intellectual property of the respective user. However, by posting content, users grant Repunch a free license to use the content on the website.
+  
+  5. Privacy Protection
+  
+  5.1 Collection and Protection of Personal Information
+  
+  Users are encouraged to review the Repunch Privacy Policy, which provides information on the collection, use, protection, transmission, and storage of personal information.
+
+  6. Service Discontinuation and Liability
+  
+  6.1 Service Discontinuation
+  
+  Repunch reserves the right to discontinue or modify the service without prior notice, and Repunch will not be liable for any losses or damages resulting from such actions.
+
+  6.2 Disclaimer
+  
+  Repunch, its affiliates, partners, and representatives are not responsible for interruptions, data loss, bugs, inaccuracies or omissions in website information, or any direct or indirect damages resulting from the use or access to the website, including unauthorized access or modifications by third parties, regardless of whether users were informed of the possibility of such damages.
+
+  7. Governing Law and Dispute Resolution
+  
+  7.1 Applicable Law
+  
+  The Repunch Terms & Conditions of Use are governed by the laws of the Republic of Korea.
+
+  7.2 Dispute Resolution
+  
+  Users of the Repunch website agree that disputes related to website content and use will be resolved in the courts of the Republic of Korea.
+
+  8. Reporting Illegal Content
+  
+  Users of the Repunch website can report illegal content by contacting contact@repunch.com.
+  Please use this content as a reference to draft the "Terms & Conditions of Use" for the Repunch website. It is advisable to seek legal advice for proper legal compliance`;
+
   return (
     <Container>
-      <Title>Terms of Service</Title>
+      <Title>Repunch Terms & Conditions of Use</Title>
+      2024.04.12.
+      <br />
+      <br />
+      <div
+        dangerouslySetInnerHTML={{ __html: text.replace(/\n/g, "<br/>") }}
+      ></div>
+      {/* <Title>Terms of Service</Title>
       <Line />
       <Text>1. Service Introduction</Text>
       <Wrapper>
@@ -168,7 +236,7 @@ const terms_of_service = () => {
           the &apos;Terms & Conditions of Use&apos; for the Repunch website. It
           is advisable to seek legal advice for proper legal compliance
         </Text>
-      </Wrapper>
+      </Wrapper> */}
     </Container>
   );
 };
@@ -178,7 +246,11 @@ const Container = styled.div`
   padding-bottom: 40px;
   max-width: 428px;
   margin: 0 auto;
+
   color: #121822;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.2px;
   @media screen and (max-width: 768px) {
     padding-left: 20px;
     padding-right: 20px;
