@@ -117,7 +117,7 @@ const NavMobileBar = ({
           </Menu>
 
           {/** seller case */}
-          {role === "SELLER" && (
+          {role === "SELLER" && isLogin && (
             <>
               <Menu>
                 <Button onClick={() => routingHandler("seller_center/home")}>
