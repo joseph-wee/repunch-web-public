@@ -94,13 +94,12 @@ const Container = styled.div<{ isActive: boolean }>`
   }};
   margin-right: 8px;
   box-sizing: border-box;
-  width: 160px;
+  width: 100%;
   flex: 0 0 120px;
   height: 40px;
   cursor: default;
   @media screen and (max-width: 768px) {
     margin-right: 8.5px;
-    width: 77px;
     flex: 0 0 77px;
   }
 `;
@@ -137,6 +136,7 @@ const OptionWrapper = styled.div<{ isActive: boolean }>`
   }};
   overflow-x: hidden;
   border: 1px solid #dee8ec;
+  cursor: pointer;
 `;
 
 const Option = styled.div`
@@ -156,9 +156,12 @@ const Option = styled.div`
   &:last-of-type {
     border: none;
   }
+  &:hover {
+    background-color: #f5f8f9;
+  }
 `;
 const CallingCode = styled.div`
-  width: 35px;
+  width: 55px;
 `;
 
 export default SelectBoxCountryCodeNum;

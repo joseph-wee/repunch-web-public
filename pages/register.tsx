@@ -11,6 +11,8 @@ import {
   userIdValidation,
   passwordValidation,
   passwordConfirmValidation,
+  enableButton,
+  disableButton,
 } from "../utils/functions";
 import { signupRequest, loginRequest, originsRequest } from "../utils/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -79,6 +81,7 @@ const useRegister = () => {
 
   const router = useRouter();
   const ref = useRef<null[] | HTMLDivElement[]>([]); // errorcase div 배열형식으로 담김
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const { value: isLogin } = useAppSelector((state) => state.isLogin);
   const dispatch = useAppDispatch();
@@ -295,7 +298,7 @@ const useRegister = () => {
 
   /** 확인버튼 클릭시 유효성검사 모두 통과했는지 확인 후 가입api요청 아니면 모두 재검사 */
   const validationCheckAndSignupRequest = () => {
-    setLoading(true);
+    disableButton(buttonRef);
     let validationAllValue = validationAll();
     if (validationAllValue == true) {
       signupRequest(
@@ -323,17 +326,22 @@ const useRegister = () => {
               setAuthPageIsActive(true);
             }
           });
-        } else if (res?.data.status == 500) {
-          setUserIdValidationResult(2);
+          enableButton(buttonRef);
+          return;
+        }
+        if (res?.data.status == 500) {
+          setUserIdValidationResult(3);
           ref.current[7]?.focus();
           ref.current[7]?.scrollIntoView({
             block: "center",
             inline: "start",
           });
+          enableButton(buttonRef);
+          return;
         }
-        setLoading(false);
       });
     }
+    enableButton(buttonRef);
   };
 
   /** 국가 선택에따라 국가 전화번호 세팅 */
@@ -476,7 +484,7 @@ const useRegister = () => {
         </InputContainer>
         <InputContainer>
           <InputTitle>Phone number</InputTitle>
-          <Wrapper>
+          <PhoneWrapper>
             <InputContainerCountryCodeNum>
               <SelectBoxCountryCodeNum
                 list={originsCallingCode}
@@ -508,7 +516,7 @@ const useRegister = () => {
                 Please enter your phone number.
               </ErrorCase>
             </InputContainerPhoneNumber>
-          </Wrapper>
+          </PhoneWrapper>
         </InputContainer>
         <Line />
         <InputContainer>
@@ -525,7 +533,9 @@ const useRegister = () => {
             }}
           />
           <ErrorCase isActive={userIdValidationResult}>
-            Please enter a valid email address.
+            {userIdValidationResult === 2
+              ? "Please enter a valid email address."
+              : "This email is already in use."}
           </ErrorCase>
         </InputContainer>
         <InputContainer>
@@ -569,7 +579,10 @@ const useRegister = () => {
               <LinkStyling>Cancel</LinkStyling>
             </Link>
           </Button>
-          <Button onClick={() => !loading && validationCheckAndSignupRequest()}>
+          <Button
+            ref={buttonRef}
+            onClick={() => !loading && validationCheckAndSignupRequest()}
+          >
             Confirm
           </Button>
         </Wrapper>
@@ -670,16 +683,22 @@ const WelcomeText = styled.div`
 `;
 const Wrapper = styled.div`
   display: flex;
+  gap: 8px;
 `;
 const InputContainer = styled.div`
   margin-bottom: 20px;
   width: 100%;
-
-  &:nth-of-type(1) {
-    margin-right: 10px;
+`;
+const PhoneWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
   }
 `;
-const InputContainerCountryCodeNum = styled.div``;
+const InputContainerCountryCodeNum = styled.div`
+  width: 100%;
+`;
 const InputContainerPhoneNumber = styled.div`
   width: 100%;
 `;
@@ -719,7 +738,7 @@ const Input = styled.input`
 `;
 const ErrorCase = styled.div<{ isActive: number }>`
   display: ${(props) => {
-    return props.isActive == 2 ? "block" : "none";
+    return props.isActive === 0 || props.isActive === 1 ? "none" : "block";
   }};
   margin-top: 10px;
   height: ${(props) => {

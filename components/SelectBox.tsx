@@ -279,7 +279,7 @@ const OptionWrapper = styled.div<{ isActive: boolean; resultLength: number }>`
   box-sizing: border-box;
   border: 1px solid #dee8ec;
   border-radius: 2px;
-  cursor: default;
+  cursor: pointer;
 `;
 
 const Option = styled.div<{ index: number; focusIndex: number }>`
@@ -300,9 +300,13 @@ const Option = styled.div<{ index: number; focusIndex: number }>`
   background-color: ${(props) => {
     return props.focusIndex === props.index ? "#F5F8F9" : "#ffffff";
   }};
+  &:hover {
+    background-color: #f5f8f9;
+  }
 `;
 
 const Bold = styled.span`
   font-weight: 700;
+  text-decoration: underline;
 `;
 export default SelectBox;
