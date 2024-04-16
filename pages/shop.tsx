@@ -221,7 +221,7 @@ export default function useShop() {
                 isActive={sortType == "LATEST"}
                 onClick={() => {
                   setSortIsActive(!sortIsActive);
-                  setSortFilterIsActive(true);
+
                   setSortType("LATEST");
                 }}
               >
@@ -236,7 +236,7 @@ export default function useShop() {
                 isActive={sortType == "LOW_PRICE"}
                 onClick={() => {
                   setSortIsActive(!sortIsActive);
-                  setSortFilterIsActive(true);
+
                   setSortType("LOW_PRICE");
                 }}
               >
@@ -251,7 +251,7 @@ export default function useShop() {
                 isActive={sortType == "HIGH_PRICE"}
                 onClick={() => {
                   setSortIsActive(!sortIsActive);
-                  setSortFilterIsActive(true);
+
                   setSortType("HIGH_PRICE");
                 }}
               >
