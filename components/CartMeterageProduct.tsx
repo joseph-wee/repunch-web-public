@@ -20,6 +20,7 @@ const useCartMeterageProduct = ({
   setRollCheckArr,
   index,
   setRollTotalCount,
+  setNoData,
 }: {
   el: any;
   rollList: any;
@@ -28,6 +29,7 @@ const useCartMeterageProduct = ({
   setRollCheckArr: React.Dispatch<React.SetStateAction<Array<boolean>>>;
   index: number;
   setRollTotalCount: React.Dispatch<React.SetStateAction<number>>;
+  setNoData: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [exist, setExist] = useState(true);
 
@@ -95,11 +97,13 @@ const useCartMeterageProduct = ({
     let temp = rollList;
     temp[index].display = false;
     setRollList([...temp]);
+    setNoData(true);
   };
 
   useEffect(() => {
     let temp = rollList;
-    temp[index].totalPrice = Math.floor(el.price * el.count * 100) / 100;
+    temp[index].totalPrice =
+      Math.floor(el.price * el.count * el.length * 100) / 100;
     setRollList([...temp]);
     console.log(el);
   }, [el.count]);
