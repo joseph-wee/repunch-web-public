@@ -18,13 +18,7 @@ import ProductLikeList from "../components/ProductLikeList";
 const useFavorite = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
   const [result, setResult] = useState(0);
-
-  useEffect(() => {
-    const at = localStorage.getItem("at");
-    likeListRequest(at).then((res) => {
-      console.log(res);
-    });
-  }, []);
+  const [noData, setNodata] = useState(false);
 
   return (
     <Container>
@@ -62,24 +56,17 @@ const useFavorite = () => {
           </SortMenuWrapper>
         </ItemSortBar>
         <ProductListGridWrapper>
-          <ProductLikeList sortType={"LATEST"} setResult={setResult} />
+          <ProductLikeList
+            sortType={"LATEST"}
+            setResult={setResult}
+            setNoData={setNodata}
+            result={result}
+          />
         </ProductListGridWrapper>
         {/** 표시할 내용 없을 때 */}
-        <NoDataBox render={result === 0}>
-          <NoDataImageWrapper>
-            <Image
-              src={ic_logo_gray}
-              width={84}
-              height={84}
-              alt="nodata_logo_gray"
-            />
-          </NoDataImageWrapper>
-          <NoDataText>
-            There is no
-            <br />
-            information to display
-          </NoDataText>
-        </NoDataBox>
+        <NoDataText render={noData && result === 0}>
+          There is no item yet
+        </NoDataText>
       </Main>
       <MobileSideBar />
     </Container>
@@ -249,22 +236,18 @@ const ProductListGridWrapper = styled.div`
     column-gap: 15px;
   }
 `;
-const NoDataBox = styled.div<{ render: boolean }>`
+const NoDataText = styled.div<{ render: boolean }>`
   display: ${(props) => {
     return props.render ? "block" : "none";
   }};
-  padding-top: 60px;
-`;
-const NoDataImageWrapper = styled.div`
-  width: 84px;
-  margin: 0 auto;
-  margin-bottom: 20px;
-`;
-const NoDataText = styled.div`
+  padding-top: 98px;
+  padding-bottom: 98px;
+
   text-align: center;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.154px;
   color: #a4b0b2;
 `;
+
 export default useFavorite;

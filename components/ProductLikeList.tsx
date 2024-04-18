@@ -6,13 +6,18 @@ import {
   productsRequest,
 } from "../utils/api";
 import Product from "./Product";
+import ProductLike from "./ProductLike";
 
 const ProductLikeList = ({
   sortType,
   setResult,
+  setNoData,
+  result,
 }: {
   sortType: any;
   setResult: React.Dispatch<React.SetStateAction<number>>;
+  setNoData: React.Dispatch<React.SetStateAction<boolean>>;
+  result: any;
 }) => {
   const [productList, setProductList] = useState<any>([]);
 
@@ -40,6 +45,7 @@ const ProductLikeList = ({
           likeListRequest(at).then((res) => {
             // 데이터 없는경우
             if (res?.data.result.data === null) {
+              setNoData(true);
               return;
             }
             console.log(3);
@@ -61,6 +67,16 @@ const ProductLikeList = ({
     productListRequestInitHandler();
   }, [sortType]);
 
+  /** 카운트 개수 계산 */
+  useEffect(() => {
+    let count = 0;
+    productList &&
+      productList.forEach((el: any) => {
+        el.like === true && count++;
+      });
+    setResult(count);
+  }, [productList]);
+
   // useEffect(() => {
   //   const observer = new IntersectionObserver(([{ isIntersecting }]) => {
   //     isIntersecting && !loading && productListRequestAdditionalHandler();
@@ -78,12 +94,15 @@ const ProductLikeList = ({
           return (
             <>
               {i.like && (
-                <Product
+                <ProductLike
                   product={i}
                   key={`product${j}`}
                   index={j}
                   productList={productList}
                   setProductList={setProductList}
+                  setNoData={setNoData}
+                  setResult={setResult}
+                  result={result}
                 />
               )}
             </>
