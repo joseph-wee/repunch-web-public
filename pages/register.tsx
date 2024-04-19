@@ -900,7 +900,7 @@ const ConfirmWrapper = styled.div`
 `;
 const Id = styled.div`
   display: flex;
-  align-itmes: center;
+  align-items: center;
   justify-content: center;
   font-weight: 400;
   font-size: 14px;
@@ -911,7 +911,7 @@ const Id = styled.div`
 const Email = styled.div`
   display: flex;
   margin-bottom: 12px;
-  align-itmes: center;
+  align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
