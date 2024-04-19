@@ -198,9 +198,9 @@ const useCart = () => {
                     color: el.option.color.name, // 컬러
                     width: el.product.width, // 너비
                     length: el.option.length, // 길이
-                    price: el.product.price, // 가격
+                    price: el.product.price, // 미터당 가격
                     count: el.count, // 담은 개수
-                    totalPrice: el.count * el.price, // 토탈 가격
+                    totalPrice: el.count * el.price * el.option.length, // 토탈 가격 개수*가격*총미터
                     quantity: el.option.quantity, // 판매 가능 개수
                     display: true,
                   });
@@ -216,6 +216,7 @@ const useCart = () => {
 
       // 성공 case
       if (res?.data.status == 200) {
+        console.log(res);
         // 장바구니 개수가 0개이면 리턴
         if (res.data.result.data == null) {
           rollList.length === 0 && setNoRoll(true);
@@ -238,7 +239,7 @@ const useCart = () => {
             length: el.option.length, // 길이
             price: el.product.price, // 가격
             count: el.count, // 담은 개수
-            totalPrice: el.count * el.price, // 토탈 가격
+            totalPrice: el.count * el.price * el.option.length, // 토탈 가격
             quantity: el.option.quantity, // 판매 가능 개수
             display: true,
           });
@@ -358,7 +359,7 @@ const useCart = () => {
             color: el.option.color.name, // 컬러
             width: el.product.width, // 너비
             length: el.option.length, // 길이
-            price: el.option.samplePrice, // 가격
+            price: el.option.samplePrice, // 미터당 가격
             count: el.count, // 담은 개수
             totalPrice: el.count * el.samplePrice, // 토탈 가격
             quantity: el.option.quantity, // 판매 가능 개수
@@ -544,6 +545,7 @@ const useCart = () => {
                       setRollCheckArr={setRollCheckArr}
                       index={index}
                       setRollTotalCount={setRollTotalCount}
+                      setNoData={setNoRoll}
                     />
                   </MeterageProductWrapper>
                 );
@@ -618,25 +620,13 @@ const useCart = () => {
             </>
           )}
           {/** 카트에 담긴거 없을 때 */}
-          <NoDataBox
+          <NoDataText
             render={
               (cartValue === 0 && noRoll) || (cartValue === 1 && noSample)
             }
           >
-            <NoDataImageWrapper>
-              <Image
-                src={ic_logo_gray}
-                width={84}
-                height={84}
-                alt="nodata_logo_gray"
-              />
-            </NoDataImageWrapper>
-            <NoDataText>
-              There is no
-              <br />
-              information to display
-            </NoDataText>
-          </NoDataBox>
+            There is no item yet
+          </NoDataText>
         </Main>
       </Container>
       <Line />
@@ -716,24 +706,19 @@ const Title = styled.div`
     margin-left: 8px;
   }
 `;
-const NoDataBox = styled.div<{ render: boolean }>`
+const NoDataText = styled.div<{ render: boolean }>`
   display: ${(props) => {
     return props.render ? "block" : "none";
   }};
-  padding-top: 60px;
-`;
-const NoDataImageWrapper = styled.div`
-  width: 84px;
-  margin: 0 auto;
-  margin-bottom: 20px;
-`;
-const NoDataText = styled.div`
+  padding-top: 98px;
+
   text-align: center;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.154px;
   color: #a4b0b2;
 `;
+
 const AllMeterSampleButtonWrapper = styled.div<{ isActive: number }>`
   display: flex;
   gap: 8px;
