@@ -24,6 +24,7 @@ const useOrder = () => {
   const [countShipped, setCountShipped] = useState(0);
   const [countDelivered, setCountDelivered] = useState(0);
   const [countPickUp, setCountPickUp] = useState(0);
+  const [noData, setNoData] = useState(false);
 
   /** 주문 요청 핸들러 - ROLL, ALL */
   const ordersRollRequestHandler = () => {
@@ -48,6 +49,7 @@ const useOrder = () => {
 
       // 실패 case
       if (res?.data.result.data === null) {
+        setNoData(true);
         return;
       }
 
@@ -137,6 +139,7 @@ const useOrder = () => {
             (el.items[0].product.orderUnitType == "ROLL" ? (
               <OrderInfoBox
                 data={el}
+                setOrders={setOrders}
                 clicked={clicked}
                 accomplish={false}
                 myAccount={false}
@@ -154,21 +157,9 @@ const useOrder = () => {
           );
         })}
         {/** 카트에 담긴거 없을 때 */}
-        <NoDataBox render={sum === 0}>
-          <NoDataImageWrapper>
-            <Image
-              src={ic_logo_gray}
-              width={84}
-              height={84}
-              alt="nodata_logo_gray"
-            />
-          </NoDataImageWrapper>
-          <NoDataText>
-            There is no
-            <br />
-            information to display
-          </NoDataText>
-        </NoDataBox>
+        <NoDataText render={noData && orders.length === 0}>
+          There is no item yet
+        </NoDataText>
       </Main>
       <MobileSideBar />
     </Container>
@@ -435,18 +426,13 @@ const RecentOrders = styled.div`
   line-height: 12px;
   color: #121822;
 `;
-const NoDataBox = styled.div<{ render: boolean }>`
+const NoDataText = styled.div<{ render: boolean }>`
   display: ${(props) => {
     return props.render ? "block" : "none";
   }};
-  padding-top: 60px;
-`;
-const NoDataImageWrapper = styled.div`
-  width: 84px;
-  margin: 0 auto;
-  margin-bottom: 20px;
-`;
-const NoDataText = styled.div`
+  padding-top: 98px;
+  padding-bottom: 98px;
+
   text-align: center;
   font-size: 14px;
   font-weight: 400;
