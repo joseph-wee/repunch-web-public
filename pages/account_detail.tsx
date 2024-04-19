@@ -201,7 +201,7 @@ const useAccount_detail = () => {
           <ImageWrapper onClick={() => goBack()}>
             <Image src={btn_web_back} alt={"btn_web_back"} />
           </ImageWrapper>
-          <Title>Account detail</Title>
+          <Title>Account Detail</Title>
         </TitleWrapper>
         <Line />
         <Wrapper>
