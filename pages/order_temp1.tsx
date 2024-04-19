@@ -225,7 +225,7 @@ const useOrder_temp1 = () => {
         orderUnitType: "ROLL",
         productNo: el.productNo,
         productOptionNo: el.productOptionNo,
-        amount: el.price,
+        amount: el.price * el.length * el.count,
         count: el.count,
         cartNo: el.cartNo,
       };
@@ -365,7 +365,7 @@ const useOrder_temp1 = () => {
         orderUnitType: "ROLL",
         productNo: el.productNo,
         productOptionNo: el.productOptionNo,
-        amount: el.price,
+        amount: el.price * el.count * el.length,
         count: el.count,
         cartNo: el.cartNo,
       };
