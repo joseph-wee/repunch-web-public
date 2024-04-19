@@ -18,11 +18,13 @@ import { disableButton, enableButton, priceToDollar } from "../utils/functions";
 
 const useOrderInfoBox = ({
   data,
+  setOrders,
   clicked,
   accomplish,
   myAccount,
 }: {
   data: any;
+  setOrders: React.Dispatch<any>;
   clicked: number;
   accomplish: boolean;
   myAccount: boolean;
@@ -130,6 +132,8 @@ const useOrderInfoBox = ({
     orderConfirmRequest(at, orderNo).then((res) => {
       enableButton(confirmButtonRef);
       console.log(res);
+
+      // 성공 case
       if (res?.data.status == 200) {
         router.push("/order_history");
         return;
@@ -147,6 +151,10 @@ const useOrderInfoBox = ({
   useEffect(() => {
     console.log(data.status);
   }, []);
+
+  const accomplishTest = () => {
+    data.status = "CLOSING_ORDER";
+  };
 
   return (
     <Box render={render}>
@@ -691,7 +699,10 @@ const useOrderInfoBox = ({
             After 10 days, it will be automatically checked for completion.
             <br />
             If you have any problems with delivery, please contact us via&nbsp;
-            <u>support@requnch.io</u> or <u>Contact us</u>
+            <Email target="_blank" href="mailto:support@repunch.co.kr">
+              support@requnch.io
+            </Email>{" "}
+            or <u>Contact us</u>
           </NoticeText>
         </>
       )}
@@ -1872,6 +1883,13 @@ const InvoiceButton = styled.button`
   cursor: pointer;
 `;
 const NoticeText = styled.p`
+  margin-bottom: 16px;
+  color: #536c6d;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 12.65px;
+`;
+const Email = styled.a`
   margin-bottom: 16px;
   color: #536c6d;
   font-size: 11px;
