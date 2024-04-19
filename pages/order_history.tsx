@@ -22,6 +22,7 @@ const useOrder_history = () => {
   const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
   const [orders, setOrders] = useState<any>([]); // 주문 리스트
   const [ordersSample, setOrdersSample] = useState<any>([]);
+  const [noData, setNoData] = useState(false);
 
   /** 주문 요청 핸들러 - ALL */
   const ordersAllRequestHandler = () => {
@@ -42,6 +43,7 @@ const useOrder_history = () => {
       console.log(res);
       // 실패 case
       if (res?.data.result.data === null) {
+        setNoData(true);
         return;
       }
 
@@ -100,6 +102,7 @@ const useOrder_history = () => {
             return (
               <OrderInfoBox
                 data={el}
+                setOrders={setOrders}
                 clicked={clicked}
                 accomplish={false}
                 myAccount={false}
@@ -127,21 +130,9 @@ const useOrder_history = () => {
         </SampleOrderWrapper>
         {/* <OrderInfoBox accomplish={true} myAccount={false} /> */}
         {/** 카트에 담긴거 없을 때 */}
-        <NoDataBox render={orders.length === 0}>
-          <NoDataImageWrapper>
-            <Image
-              src={ic_logo_gray}
-              width={84}
-              height={84}
-              alt="nodata_logo_gray"
-            />
-          </NoDataImageWrapper>
-          <NoDataText>
-            There is no
-            <br />
-            information to display
-          </NoDataText>
-        </NoDataBox>
+        <NoDataText render={noData && orders.length === 0}>
+          There is no item yet
+        </NoDataText>
       </Main>
       <MobileSideBar />
     </Container>
@@ -275,18 +266,13 @@ const SampleOrderWrapper = styled.div<{ isActive: number }>`
     return props.isActive == 1 ? "block" : "none";
   }};
 `;
-const NoDataBox = styled.div<{ render: boolean }>`
+const NoDataText = styled.div<{ render: boolean }>`
   display: ${(props) => {
     return props.render ? "block" : "none";
   }};
-  padding-top: 60px;
-`;
-const NoDataImageWrapper = styled.div`
-  width: 84px;
-  margin: 0 auto;
-  margin-bottom: 20px;
-`;
-const NoDataText = styled.div`
+  padding-top: 98px;
+  padding-bottom: 98px;
+
   text-align: center;
   font-size: 14px;
   font-weight: 400;
