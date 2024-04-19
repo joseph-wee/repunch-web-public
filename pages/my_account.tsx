@@ -30,6 +30,7 @@ const useMy_account = () => {
   const [recentOrderCount, setRecentOrderCount] = useState(0); // 최근 주문 개수
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [cartCount, setCartCount] = useState(0);
+  const [noData, setNoData] = useState(false);
 
   /** 주문 요청 핸들러 - ALL */
   const ordersAllRequestHandler = () => {
@@ -49,6 +50,7 @@ const useMy_account = () => {
       // 실패 case: 주문 목록 없을 때
       if (res?.data.result.data === null) {
         console.log("?");
+        setNoData(true);
         return;
       }
 
@@ -244,6 +246,10 @@ const useMy_account = () => {
             ))
           );
         })}
+        <NoDataText render={noData && orders.length === 0}>
+          There is no item yet
+        </NoDataText>
+
         <InfoContainer>
           <InfoWrapper>
             <InfoTitle>Mail Address</InfoTitle>
@@ -251,7 +257,7 @@ const useMy_account = () => {
           </InfoWrapper>
           <InfoWrapper>
             <InfoTitle>Name</InfoTitle>
-            <InfoContent>{`${data.lastName} ${data.firstName}`}</InfoContent>
+            <InfoContent>{`${data.firstName} ${data.lastName}`}</InfoContent>
           </InfoWrapper>
           <InfoWrapper>
             <InfoTitle>Company name</InfoTitle>
@@ -378,6 +384,19 @@ const RecentOrders = styled.div`
   font-size: 12px;
   line-height: 12px;
   color: #121822;
+`;
+const NoDataText = styled.div<{ render: boolean }>`
+  display: ${(props) => {
+    return props.render ? "block" : "none";
+  }};
+  padding-top: 98px;
+  padding-bottom: 98px;
+
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.154px;
+  color: #a4b0b2;
 `;
 const InfoContainer = styled.div`
   margin-top: 10px;
