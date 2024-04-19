@@ -17,7 +17,11 @@ const usePayment_complete = () => {
         contact the <Br2 />
         email below
       </InformText>
-      <EmailRepunch>support@repunch.co.kr</EmailRepunch>
+      <EmailContainer>
+        <EmailRepunch target="_blank" href="mailto:support@repunch.co.kr">
+          support@repunch.co.kr
+        </EmailRepunch>
+      </EmailContainer>
       <ButtonWrapper>
         <Button onClick={() => router.push("/")}>Home</Button>
         <Button onClick={() => router.push("/order")}>Order detail</Button>
@@ -58,7 +62,12 @@ const InformText = styled.div`
   text-align: center;
   color: #536c6d;
 `;
-const EmailRepunch = styled.div`
+const EmailContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const EmailRepunch = styled.a`
   margin-bottom: 40px;
   font-weight: 400;
   font-size: 10px;
@@ -66,6 +75,7 @@ const EmailRepunch = styled.div`
   text-align: center;
   text-decoration-line: underline;
   color: #121822;
+  cursor: pointer;
 `;
 const ButtonWrapper = styled.div`
   display: flex;
