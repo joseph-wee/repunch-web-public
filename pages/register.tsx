@@ -624,7 +624,11 @@ const useRegister = () => {
           <br />
           contact the email below
         </TextInform>
-        <EmailRepunch>support@repunch.co.kr</EmailRepunch>
+        <EmailContainer>
+          <EmailRepunch target="_blank" href="mailto:support@repunch.co.kr">
+            support@repunch.co.kr
+          </EmailRepunch>
+        </EmailContainer>
       </AuthContainer>
       <PopUp
         title={"Not verified yet"}
@@ -963,7 +967,12 @@ const TextInform = styled.div`
 
   color: #8aa1aa;
 `;
-const EmailRepunch = styled.div`
+const EmailContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const EmailRepunch = styled.a`
   font-weight: 400;
   font-size: 10px;
   line-height: 13px;
@@ -972,6 +981,7 @@ const EmailRepunch = styled.div`
   text-decoration-line: underline;
 
   color: #121822;
+  cursor: pointer;
 `;
 
 export default useRegister;
