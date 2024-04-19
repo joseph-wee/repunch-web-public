@@ -16,6 +16,7 @@ import {
   addAddressRequest,
   loginRefreshRequest,
   originsRequest,
+  userInfoRequest,
 } from "../utils/api";
 
 /** 국가, 카테고리 객체 타입 */
@@ -354,10 +355,23 @@ const useAdd_shiping_address = () => {
     }
   };
 
+  /** 국가, 회사이름 초기화 */
+  const countryCompanyInit = () => {
+    let at = localStorage.getItem("at");
+    userInfoRequest(at).then((res: any) => {
+      const data = res?.data.result;
+      console.log(data);
+
+      data.companyName && setCompanyName(data.companyName);
+      // 카테고리 삭제하기로 하지않았나?
+      // 카테고리 삭제하는거 아니면 카테고리 세팅 코드 삽입
+      data.countryCode && setCounryCode(data.countryCode);
+    });
+  };
+
   useEffect(() => {
-    console.log(firstName);
-    console.log(router.query.backLink);
-  }, [firstName]);
+    countryCompanyInit();
+  }, []);
 
   return (
     <Container>
@@ -430,6 +444,7 @@ const useAdd_shiping_address = () => {
               ref={(element) => {
                 ref.current[3] = element;
               }}
+              value={companyName}
             />{" "}
             <ErrorCase isActive={companyNameValidationResult}>
               Please enter your company name.
@@ -555,10 +570,8 @@ const useAdd_shiping_address = () => {
           </InputContainer>
 
           <ButtonWrapper>
-            <Button>
-              <Link href="/address" style={{ textDecoration: "none" }}>
-                <LinkStyling>Cancel</LinkStyling>
-              </Link>
+            <Button onClick={() => sendToLandingPage()}>
+              <LinkStyling>Cancel</LinkStyling>
             </Button>
             <Button onClick={() => addAddressRequestHandler()}>Confirm</Button>
           </ButtonWrapper>
