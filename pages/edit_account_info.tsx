@@ -647,6 +647,7 @@ const Title = styled.div`
 `;
 const Wrapper = styled.div`
   display: flex;
+  gap: 8px;
 `;
 const InputContainer = styled.div`
   margin-bottom: 20px;
@@ -695,7 +696,9 @@ const Input = styled.input`
   }
 `;
 
-const InputContainerCountryCodeNum = styled.div``;
+const InputContainerCountryCodeNum = styled.div`
+  width: 100%;
+`;
 const InputContainerPhoneNumber = styled.div`
   width: 100%;
 `;
