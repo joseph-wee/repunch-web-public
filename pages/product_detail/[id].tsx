@@ -1176,10 +1176,9 @@ const useId = () => {
                   info.options.map((i: any, j: number) => {
                     return (
                       <WidthContent key={`color-${j}`}>
-                        {`${i.color.name} / ${i.length}m(Length)${
-                          j !== info.options.length - 1 ? "," : ""
-                        }`}
-                        &nbsp;
+                        {`${i.color.name} / ${i.length}m(Length)
+                          
+                        `}
                       </WidthContent>
                     );
                   })}
@@ -1365,10 +1364,7 @@ const useId = () => {
                 info.options.map((i: any, j: number) => {
                   return (
                     <WidthContent key={`color-${j}`}>
-                      {`${i.color.name} / ${i.length}m(Length)${
-                        j !== i.length - 1 && `,`
-                      }`}
-                      &nbsp;
+                      {`${i.color.name} / ${i.length}m(Length)`}
                     </WidthContent>
                   );
                 })}
@@ -1691,7 +1687,9 @@ const InfoContent = styled.div`
 
   color: #333333;
 `;
-const WidthContent = styled.div``;
+const WidthContent = styled.div`
+  min-width: 145px;
+`;
 const InfoWidthLengthWrapper = styled.div`
   margin-bottom: 12px;
 `;
