@@ -102,7 +102,6 @@ const useOrder_history = () => {
             return (
               <OrderInfoBox
                 data={el}
-                setOrders={setOrders}
                 clicked={clicked}
                 accomplish={false}
                 myAccount={false}

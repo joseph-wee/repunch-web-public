@@ -18,13 +18,11 @@ import { disableButton, enableButton, priceToDollar } from "../utils/functions";
 
 const useOrderInfoBox = ({
   data,
-  setOrders,
   clicked,
   accomplish,
   myAccount,
 }: {
   data: any;
-  setOrders: React.Dispatch<any>;
   clicked: number;
   accomplish: boolean;
   myAccount: boolean;

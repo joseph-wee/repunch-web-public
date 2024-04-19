@@ -139,7 +139,6 @@ const useOrder = () => {
             (el.items[0].product.orderUnitType == "ROLL" ? (
               <OrderInfoBox
                 data={el}
-                setOrders={setOrders}
                 clicked={clicked}
                 accomplish={false}
                 myAccount={false}
