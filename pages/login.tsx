@@ -257,7 +257,11 @@ const useLogin = () => {
           <br />
           contact the email below
         </TextInform>
-        <EmailRepunch>support@repunch.co.kr</EmailRepunch>
+        <EmailContainer>
+          <EmailRepunch target="_blank" href="mailto:support@repunch.co.kr">
+            support@repunch.co.kr
+          </EmailRepunch>
+        </EmailContainer>
       </AuthContainer>
       <PopUp
         title={"Not verified yet"}
@@ -521,14 +525,13 @@ const AuthContainer = styled.div<{ isActive: boolean }>`
 `;
 const AuthWrapper = styled.div`
   margin: 0 auto;
-  margin-bottom: 29px;
+  margin-bottom: 40px;
   padding-top: 47px;
-  padding-bottom: 26px;
   padding-right: 20px;
   padding-left: 20px;
-  background-color: #f2f6f8;
+
   max-width: 427px;
-  border: 0.79402px solid #dee8ec;
+
   border-radius: 2px;
   box-sizing: border-box;
   @media screen and (max-width: 768px) {
@@ -634,7 +637,12 @@ const TextInform = styled.div`
 
   color: #536c6d;
 `;
-const EmailRepunch = styled.div`
+const EmailContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const EmailRepunch = styled.a`
   font-weight: 400;
   font-size: 10px;
   line-height: 13px;
@@ -643,6 +651,7 @@ const EmailRepunch = styled.div`
   text-decoration-line: underline;
 
   color: #121822;
+  cursor: pointer;
 `;
 
 export default useLogin;
