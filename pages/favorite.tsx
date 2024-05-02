@@ -17,6 +17,7 @@ import ProductLikeList from "../components/ProductLikeList";
 
 const useFavorite = () => {
   const [sortIsActive, setSortIsActive] = useState(true);
+  const [sortType, setSortType] = useState("");
   const [result, setResult] = useState(0);
   const [noData, setNodata] = useState(false);
 
@@ -28,7 +29,7 @@ const useFavorite = () => {
           <ImageWrapper onClick={() => goBack()}>
             <Image src={btn_web_back} alt={"btn_web_back"} />
           </ImageWrapper>
-          <Title>favorite</Title>
+          <Title>Favorite</Title>
         </TitleWrapper>
         <ItemSortBar>
           <Items>
@@ -44,20 +45,35 @@ const useFavorite = () => {
             />
           </SortButton>
           <SortMenuWrapper isActive={sortIsActive}>
-            <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+            <SortMenu
+              onClick={() => {
+                setSortIsActive(!sortIsActive);
+                setSortType("LATEST");
+              }}
+            >
               Latest
             </SortMenu>
-            <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+            <SortMenu
+              onClick={() => {
+                setSortIsActive(!sortIsActive);
+                setSortType("LOW_PRICE");
+              }}
+            >
               Low Price
             </SortMenu>
-            <SortMenu onClick={() => setSortIsActive(!sortIsActive)}>
+            <SortMenu
+              onClick={() => {
+                setSortIsActive(!sortIsActive);
+                setSortType("HIGH_PRICE");
+              }}
+            >
               High Price
             </SortMenu>
           </SortMenuWrapper>
         </ItemSortBar>
         <ProductListGridWrapper>
           <ProductLikeList
-            sortType={"LATEST"}
+            sortType={sortType}
             setResult={setResult}
             setNoData={setNodata}
             result={result}
