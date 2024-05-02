@@ -27,7 +27,7 @@ const Product = ({
   setProductList,
   selectedColorNo,
 }: any) => {
-  const [favoriteIsActive, setFavoriteIsActive] = useState(product.keep);
+  const [favoriteIsActive, setFavoriteIsActive] = useState(product.like);
   const [optionLength, setOptionLength] = useState(
     `${product.options[0].length}m`
   );
@@ -132,6 +132,8 @@ const Product = ({
     // 버튼 비활성화
     disableButton(buttonRef);
 
+    setFavoriteIsActive(!favoriteIsActive);
+
     let at = localStorage.getItem("at");
 
     let v = productList;
@@ -145,9 +147,7 @@ const Product = ({
     if (favoriteIsActive) {
       keepDeleteReqeust(at, product.productNo).then((res) => {
         res?.data.status == 200 &&
-          (setFavoriteIsActive(!favoriteIsActive),
-          (v[index].like = false),
-          setProductList([...v]));
+          ((v[index].like = false), setProductList([...v]));
         // 버튼 활성화
         enableButton(buttonRef);
         console.log(res);
@@ -157,7 +157,6 @@ const Product = ({
     // 찜하기 케이스
     if (!favoriteIsActive) {
       keepReqeust(at, product.productNo).then((res: any) => {
-        res?.data.status == 200 && setFavoriteIsActive(!favoriteIsActive);
         // 버튼 활성화
         enableButton(buttonRef);
         console.log(res);
@@ -195,14 +194,14 @@ const Product = ({
                 isActive={i.thumbnailUrl == thumbnail}
                 key={`${j}asdklcnsdac`}
               >
-                <Image
+                {/* <Image
                   src={`${i.thumbnailUrl}?&w=375&q=75`}
                   alt={"thumbnail"}
                   layout="fill"
                   objectFit="cover"
                   objectPosition="center"
                   priority
-                />
+                /> */}
                 {i.quantity == 0 ? <Soldout>SOLD OUT</Soldout> : ""}
               </Thumbnail>
             );
