@@ -194,14 +194,14 @@ const Product = ({
                 isActive={i.thumbnailUrl == thumbnail}
                 key={`${j}asdklcnsdac`}
               >
-                {/* <Image
+                <Image
                   src={`${i.thumbnailUrl}?&w=375&q=75`}
                   alt={"thumbnail"}
                   layout="fill"
                   objectFit="cover"
                   objectPosition="center"
                   priority
-                /> */}
+                />
                 {i.quantity == 0 ? <Soldout>SOLD OUT</Soldout> : ""}
               </Thumbnail>
             );
