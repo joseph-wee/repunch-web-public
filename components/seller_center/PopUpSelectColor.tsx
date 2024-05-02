@@ -18,7 +18,7 @@ const PopUpSelectColor = ({
   selectOption: number;
 }) => {
   const [colors, setColors] = useState<any>(); // 컬러 리스트
-  const [selectColorNo, setSelectColorNo] = useState(); // 선택한 컬러 번호 값
+  const [selectColorNo, setSelectColorNo] = useState(0); // 선택한 컬러 번호 값
 
   /** 컬러 리스트 세팅, 없으면 불러와서 세팅 */
   useEffect(() => {
@@ -51,12 +51,13 @@ const PopUpSelectColor = ({
     setSelectCategory("");
     productInfo.options[selectOption].colorNo = selectColorNo;
     setProductInfo({ ...productInfo });
+    setSelectColorNo(0);
   };
 
   /** 맨 처음에 선택한 컬러 할당 */
-  useEffect(() => {
-    setSelectColorNo(productInfo.options[selectOption].colorNo);
-  }, [productInfo]);
+  // useEffect(() => {
+  //   setSelectColorNo(productInfo.options[selectOption].colorNo);
+  // }, [productInfo]);
 
   return (
     <Container selectCategory={selectCategory}>
