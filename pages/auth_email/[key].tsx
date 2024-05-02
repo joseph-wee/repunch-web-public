@@ -16,9 +16,11 @@ const useKey = () => {
           router.push("/login");
           return;
         }
+        // TODO: 인증이 안된 케이스에 대한 기획이 필요함
+        // 현재 그냥 인증이 안되도 로그인 화면으로 이동하도록 해놓았음.
         if (res?.data.status == 500) {
           setMessage(res?.data.message);
-          router.push("/");
+          router.push("/login");
           return;
         }
       }
