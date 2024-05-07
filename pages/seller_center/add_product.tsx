@@ -1163,11 +1163,8 @@ const useAdd_product = () => {
                     previewImages[selectOption].map(
                       (el: any, index: number) => {
                         return (
-                          <ImageComponent>
-                            <ImageButton
-                              key={`${index}-298`}
-                              onClick={() => setClickIndex(index)}
-                            >
+                          <ImageComponent key={`${index}-298`}>
+                            <ImageButton onClick={() => setClickIndex(index)}>
                               <RemoveButton
                                 onClick={(e) => {
                                   e.stopPropagation();
