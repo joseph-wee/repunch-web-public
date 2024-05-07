@@ -187,7 +187,7 @@ const useMy_account = () => {
   /** favorite, cart 개수 카운팅 나중에 바꾸기 */
   useEffect(() => {
     const at = localStorage.getItem("at");
-    likeListRequest(at).then((res) => {
+    likeListRequest(at, "LATEST").then((res) => {
       setFavoriteCount(res?.data.result.metadata.totalCount);
     });
     cartListHandler(0);
