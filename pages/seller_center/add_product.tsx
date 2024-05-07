@@ -80,9 +80,13 @@ const useAdd_product = () => {
   const commonInfoRef = useRef<any>([]); // 에러케이스 공통 입력 담길 ref
   const colorInfoLengthRef = useRef<any>([]); // 컬러 옵션의 length 입력 담길 ref
   const [validationRealTime, setValidationRealTime] = useState(false); // 유효성 검사 실시간 렌더링 기준이 되는 값, true면 실시간으로 렌더링됨
+  const [clickIndex, setClickIndex] = useState(-1); // 클릭한 이미지 인덱스
+  const [clickVideoIndex, setClickVideoIndex] = useState(-1); // 클릭한 이미지 인덱스
 
-  const imageRef = useRef<any>();
-  const videoRef = useRef<any>();
+  const imageRef = useRef<any>([]);
+  const videoRef = useRef<any>([]);
+  const lengthRef = useRef<any>([]);
+  const rollRef = useRef<any>([]);
 
   const [validation, setValidation] = useState<{ [key: string]: number }>({
     title: 0,
@@ -174,12 +178,17 @@ const useAdd_product = () => {
 
   /** 컬러 추가 */
   const addColorHandler = () => {
+    // 컬러 개수 10개면 리턴
+    if (productInfo.options.length === 10) {
+      return;
+    }
+
     productInfo.options.push({
       colorNo: 0,
       length: "",
       lengthUnitType: "METER",
       amount: 0,
-      quantity: 0,
+      quantity: "",
       supportSample: false,
       samplePrice: 0,
       sampleQuantity: 0,
@@ -271,7 +280,10 @@ const useAdd_product = () => {
     setContentFiles: React.Dispatch<React.SetStateAction<any>>
   ) {
     // 파일 개수 10개일 경우
-    if (contentFiles[selectOption].length === 10) {
+    if (
+      contentFiles[selectOption] &&
+      contentFiles[selectOption].length === 10
+    ) {
       return;
     }
 
@@ -289,11 +301,6 @@ const useAdd_product = () => {
       // 파일 배열 형태로 세팅 최대 10개
       contentFiles[selectOption] = Array.from(files || []).slice(0, 10);
       setContentFiles([...contentFiles]);
-
-      // 업로드된 파일 개수 10개면 인풋 비활성화
-      if (contentFiles[selectOption].length === 10) {
-        imageRef.current.disabled = true;
-      }
       return;
     }
 
@@ -320,10 +327,6 @@ const useAdd_product = () => {
     );
     setContentFiles([...contentFiles]);
 
-    // 업로드된 파일 개수 10개면 인풋 비활성화
-    if (contentFiles[selectOption].length === 10) {
-      imageRef.current.disabled = true;
-    }
     return;
   }
 
@@ -353,10 +356,6 @@ const useAdd_product = () => {
       // 비디오 파일 세팅
       setContentFiles([...Array.from(files || [])]);
 
-      // 동영상 업로드 되면 인풋 비활성화
-
-      videoRef.current.disabled = true;
-
       return;
     }
   }
@@ -377,6 +376,7 @@ const useAdd_product = () => {
     contentFiles: any,
     setContentFiles: React.Dispatch<React.SetStateAction<any>>
   ) => {
+    console.log("삭제");
     // 미리보기 삭제
     previews[selectOption] = [
       ...previews[selectOption].slice(0, index),
@@ -390,9 +390,24 @@ const useAdd_product = () => {
       ...contentFiles[selectOption].slice(index + 1),
     ];
     setContentFiles([...contentFiles]);
+  };
 
-    // 인풋 활성화
-    imageRef.current.disabled = false;
+  /** 파일 삭제: 동영상 */
+  const deleteFileVideo = (
+    index: number,
+    previews: [string[]],
+    setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
+    contentFiles: any,
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>
+  ) => {
+    console.log("삭제");
+    // 미리보기 삭제
+    previews[selectOption] = [];
+    setPreviews([...previews]);
+
+    // file array 삭제
+    contentFiles[selectOption] = [];
+    setContentFiles([...contentFiles]);
   };
 
   // title: false,
@@ -433,7 +448,7 @@ const useAdd_product = () => {
   };
   /** 유효성 검사 옵션 롤 */
   const checkValidationRoll = (i: number) => {
-    if (productInfo.options[i].quantity === 0) {
+    if (productInfo.options[i].quantity === "") {
       return false;
     }
     return true;
@@ -464,21 +479,24 @@ const useAdd_product = () => {
     if (productInfo.title.length === 0) {
       result = false;
       commonInfoRef.current[0].focus();
+      console.log("title");
       return result;
     }
     // description
     if (productInfo.description.length === 0) {
       result = false;
       commonInfoRef.current[1].focus();
+      console.log("description");
       return result;
     }
     // composition
-    if (checkValidationComposition()) {
+    if (!checkValidationComposition()) {
       result = false;
       commonInfoRef.current[2].scrollIntoView({
         block: "center",
         inline: "start",
       });
+      console.log("composition");
       return result;
     }
     // design
@@ -488,6 +506,7 @@ const useAdd_product = () => {
         block: "center",
         inline: "start",
       });
+      console.log("design");
       return result;
     }
     // project
@@ -497,6 +516,7 @@ const useAdd_product = () => {
         block: "center",
         inline: "start",
       });
+      console.log("project");
       return result;
     }
 
@@ -507,6 +527,7 @@ const useAdd_product = () => {
         block: "center",
         inline: "start",
       });
+      console.log("country");
       return result;
     }
     // width
@@ -539,31 +560,35 @@ const useAdd_product = () => {
     // 컬러 옵션별 유효성
     for (let i = 0; i < productInfo.options.length; i++) {
       // color
-      if (checkValidationColor(i)) {
+      if (!checkValidationColor(i)) {
         result = false;
         return result;
       }
 
       // length
-      if (checkValidationLength(i)) {
+      if (!checkValidationLength(i)) {
         result = false;
+        setSelectOption(i);
+
         return result;
       }
 
       // roll available
-      if (checkValidationRoll(i)) {
+      if (!checkValidationRoll(i)) {
         result = false;
+        setSelectOption(i);
+
         return result;
       }
 
       // image file
-      if (checkValidationImageFiles(i)) {
+      if (!checkValidationImageFiles(i)) {
         result = false;
         return result;
       }
 
       // video file
-      if (checkValidationVideoFiles(i)) {
+      if (!checkValidationVideoFiles(i)) {
         result = false;
         return result;
       }
@@ -677,12 +702,27 @@ const useAdd_product = () => {
 
   /** 롤 숫자만 입력되게 */
   const rollInputHandler = (e: any, i: number) => {
+    if (e.target.value === "0") {
+      return;
+    }
     e.target.value = e.target.value.replace(/[^0-9]/g, "");
+
     productInfo.options[i].quantity = e.target.value;
 
     console.log(productInfo.options[i]);
     setProductInfo({ ...productInfo });
   };
+
+  useEffect(() => {
+    if (lengthRef.current[selectOption].value === "") {
+      lengthRef.current[selectOption].focus();
+      return;
+    }
+    if (rollRef.current[selectOption].value === "") {
+      rollRef.current[selectOption].focus();
+      return;
+    }
+  }, [selectOption]);
 
   /** 숫자만 입력되게 */
   // const inputRollHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1010,6 +1050,7 @@ const useAdd_product = () => {
                     <LengthInput
                       placeholder="0"
                       onChange={(e) => inputLengthHandler(e, index)}
+                      ref={(el) => (lengthRef.current[index] = el)}
                     />
                     <LengthUnit>m</LengthUnit>
                   </LengthUnitWrapper>
@@ -1057,6 +1098,7 @@ const useAdd_product = () => {
                       value={productInfo.options[index].quantity}
                       count={productInfo.options[index].quantity}
                       placeholder="0"
+                      ref={(el) => (rollRef.current[index] = el)}
                     />
                     <PlusMinusButton>
                       <Image
@@ -1088,13 +1130,17 @@ const useAdd_product = () => {
                   </InputContentWrapper2>
                 </SamplePriceWrapper> */}
                 <UploadImageVideoWrapper>
-                  <ImageButton htmlFor="imageUpload">
+                  <ImageButton htmlFor={`imageUpload${index}`}>
                     <ImageVideoInput
-                      id="imageUpload"
+                      id={`imageUpload${index}`}
                       type="file"
                       accept=".jpg, .png"
                       multiple
-                      ref={imageRef}
+                      disabled={
+                        imageFiles[index] && imageFiles[index].length === 10
+                          ? true
+                          : false
+                      }
                       // onChange={(e) => imageFileHandler(e)}
                       onChange={(e) =>
                         uploadFile(
@@ -1115,32 +1161,53 @@ const useAdd_product = () => {
                     previewImages[selectOption].map(
                       (el: any, index: number) => {
                         return (
-                          <ImageButton key={`${index}-298`}>
-                            <RemoveButton
-                              onClick={() =>
-                                deleteFile(
-                                  index,
-                                  previewImages,
-                                  setPreviewImages,
-                                  imageFiles,
-                                  setImageFiles
-                                )
-                              }
+                          <ImageComponent>
+                            <ImageButton
+                              key={`${index}-298`}
+                              onClick={() => setClickIndex(index)}
                             >
+                              <RemoveButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteFile(
+                                    index,
+                                    previewImages,
+                                    setPreviewImages,
+                                    imageFiles,
+                                    setImageFiles
+                                  );
+                                }}
+                              >
+                                <Image
+                                  src={ic_close_wht}
+                                  alt="ic_close_wht"
+                                  width={10}
+                                  height={10}
+                                />
+                              </RemoveButton>
                               <Image
-                                src={ic_close_wht}
-                                alt="ic_close_wht"
-                                width={10}
-                                height={10}
+                                src={el}
+                                alt="ic_image_upload_wht"
+                                width={80}
+                                height={80}
                               />
-                            </RemoveButton>
-                            <Image
-                              src={el}
-                              alt="ic_image_upload_wht"
-                              width={80}
-                              height={80}
-                            />
-                          </ImageButton>
+                            </ImageButton>
+                            <BackGround
+                              index={index}
+                              clickIndex={clickIndex}
+                              onClick={() => setClickIndex(-1)}
+                            >
+                              <BigImage tabIndex={0}>
+                                <Image
+                                  src={el}
+                                  alt="bigImage"
+                                  layout="fill"
+                                  objectFit="cover"
+                                  objectPosition="center"
+                                />
+                              </BigImage>
+                            </BackGround>
+                          </ImageComponent>
                         );
                       }
                     )}
@@ -1157,14 +1224,13 @@ const useAdd_product = () => {
                   Error case
                 </ErrorCase4>
                 <UploadImageVideoWrapper>
-                  <ImageButton htmlFor="videoUpload">
+                  <ImageButton htmlFor={`videoUpload${index}`}>
                     <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
                   </ImageButton>
                   <ImageVideoInput
-                    id="videoUpload"
+                    id={`videoUpload${index}`}
                     type="file"
                     accept=".mp4"
-                    ref={videoRef}
                     onChange={(e) =>
                       uploadVideoFile(
                         e.target.files,
@@ -1174,6 +1240,12 @@ const useAdd_product = () => {
                         setVideoFiles
                       )
                     }
+                    disabled={
+                      videoFiles[selectOption] &&
+                      videoFiles[selectOption].length === 1
+                        ? true
+                        : false
+                    }
                   />
                   {previewVideos[selectOption] &&
                     previewVideos[selectOption].map(
@@ -1182,13 +1254,16 @@ const useAdd_product = () => {
                           <VideoPreview
                             key={`${index}-773`}
                             el={el}
-                            deleteFile={deleteFile}
+                            deleteFile={deleteFileVideo}
                             index={index}
+                            clickVideoIndex={clickVideoIndex}
+                            setClickVideoIndex={setClickVideoIndex}
                             previewVideos={previewVideos}
                             setPreviewVideos={setPreviewVideos}
                             videoFiles={videoFiles}
                             setVideoFiles={setVideoFiles}
                           />
+
                           // <ImageButton onClick={() => videoHandler(index)}>
                           //   <RemoveButton
                           //     onClick={() =>
@@ -1519,6 +1594,7 @@ const ColorButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 30px;
 `;
 const ColorTitle = styled.div`
   font-size: 14px;
@@ -1603,6 +1679,7 @@ const OptionInputContainer = styled.div<{
   display: ${(props) => {
     return (props.index !== props.selectOption || !props.render) && "none";
   }};
+
   margin-bottom: 20px;
   padding-left: 20px;
   padding-right: 20px;
@@ -1789,6 +1866,8 @@ const UploadImageVideoWrapper = styled.div`
   gap: 10px;
   margin-bottom: 12px;
 `;
+const ImageComponent = styled.div``;
+
 const ImageButton = styled.label`
   display: flex;
   align-items: center;
@@ -1818,6 +1897,34 @@ const RemoveButton = styled.div`
 `;
 const PlayButton = styled.div`
   position: absolute;
+`;
+const BackGround = styled.div<{ index: number; clickIndex: number }>`
+  z-index: 3;
+  display: ${(props) => {
+    return props.index === props.clickIndex ? "block" : "none";
+  }};
+  position: fixed;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+`;
+const BigImage = styled.div`
+  position: absolute;
+  width: 50vw;
+  &::after {
+    display: block;
+    content: "";
+
+    padding-bottom: 100%;
+  }
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 const ImageVideoText = styled.div`
   font-size: 12px;
