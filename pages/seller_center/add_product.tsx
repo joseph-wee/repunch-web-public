@@ -56,7 +56,7 @@ const useAdd_product = () => {
         length: "",
         lengthUnitType: "METER",
         amount: 0,
-        quantity: 0,
+        quantity: "",
         supportSample: false,
         samplePrice: 0,
         sampleQuantity: 0,
@@ -77,6 +77,10 @@ const useAdd_product = () => {
   const [amount, setAmount] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
   const [colors, setColors] = useState<any>(); // 컬러 리스트
+  const commonInfoRef = useRef<any>([]); // 에러케이스 공통 입력 담길 ref
+  const colorInfoLengthRef = useRef<any>([]); // 컬러 옵션의 length 입력 담길 ref
+  const [validationRealTime, setValidationRealTime] = useState(false); // 유효성 검사 실시간 렌더링 기준이 되는 값, true면 실시간으로 렌더링됨
+
   const imageRef = useRef<any>();
   const videoRef = useRef<any>();
 
@@ -110,7 +114,14 @@ const useAdd_product = () => {
   }, []);
 
   useEffect(() => {
-    console.log(productInfo);
+    if (productInfo.options[0].colorNo === 0) {
+      return;
+    }
+
+    if (productInfo.options[productInfo.options.length - 1].colorNo === 0) {
+      setSelectCategory("color");
+      setSelectOption(productInfo.options.length - 1);
+    }
   }, [productInfo]);
 
   /** Description 글자수 체크 */
@@ -195,24 +206,42 @@ const useAdd_product = () => {
     }
     productInfo.options.splice(index, 1);
     setProductInfo({ ...productInfo });
+
+    // 선택한 컬러 옵션이랑 삭제하고자하는 컬러 옵션이랑 같으면
+    console.log(selectOption);
+    console.log(index);
+    if (selectOption === index) {
+      console.log(index - 1);
+      setSelectOption(index - 1);
+      console.log(index - 1);
+    }
   };
+
+  useEffect(() => {
+    console.log(selectOption);
+  }, [selectOption]);
 
   /** 상품 개수 빼기 */
   const minusQuantity = (index: number) => {
     // 0이면 리턴
-    if (productInfo.options[index].quantity === 0) {
+    if (productInfo.options[index].quantity === "") {
       return;
     }
-    productInfo.options[index].quantity -= 1;
+    productInfo.options[index].quantity =
+      Number(productInfo.options[index].quantity) - 1;
     setProductInfo({ ...productInfo });
   };
 
   /** 상품 개수 더하기 */
   const plusQuantity = (index: number) => {
-    productInfo.options[index].quantity += 1;
+    productInfo.options[index].quantity =
+      Number(productInfo.options[index].quantity) + 1;
     setProductInfo({ ...productInfo });
   };
 
+  useEffect(() => {
+    console.log(productInfo.options);
+  }, [productInfo]);
   const samplePriceHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     productInfo.options[selectOption].samplePrice = Number(e.target.value);
     setProductInfo({ ...productInfo });
@@ -231,9 +260,6 @@ const useAdd_product = () => {
   const [imageFiles, setImageFiles] = useState<any>([[]]);
   const [videoFiles, setVideoFiles] = useState<any>([[]]);
 
-  useEffect(() => {
-    console.log(imageFiles);
-  }, [imageFiles]);
   // TODO: 파일 추가 기능
 
   /** 파일 업로드 */
@@ -244,34 +270,104 @@ const useAdd_product = () => {
     contentFiles: any,
     setContentFiles: React.Dispatch<React.SetStateAction<any>>
   ) {
+    // 파일 개수 10개일 경우
+    if (contentFiles[selectOption].length === 10) {
+      return;
+    }
+
     // 파일개수 없는 경우
     if (
       previews[selectOption] === undefined ||
       previews[selectOption].length === 0
     ) {
-      // 미리보기 세팅
+      // 미리보기 세팅 최대 10개만
       previews[selectOption] = [];
-      for (let i = 0; i < files.length; i++) {
+      for (let i = 0; i < (files.length > 10 ? 10 : files.length); i++) {
         previews[selectOption].push(URL.createObjectURL(files[i]));
       }
       setPreviews([...previews]);
-      // 파일 배열 형태로 세팅
-      contentFiles[selectOption] = Array.from(files || []);
+      // 파일 배열 형태로 세팅 최대 10개
+      contentFiles[selectOption] = Array.from(files || []).slice(0, 10);
       setContentFiles([...contentFiles]);
+
+      // 업로드된 파일 개수 10개면 인풋 비활성화
+      if (contentFiles[selectOption].length === 10) {
+        imageRef.current.disabled = true;
+      }
       return;
     }
 
     // 파일 개수 있는 경우
-    // 미리보기 세팅
-    for (let i = 0; i < files.length; i++) {
+    // 미리보기 세팅 최대 10개
+    for (
+      let i = 0;
+      i <
+      (files.length + contentFiles[selectOption].length > 10
+        ? 10 - contentFiles[selectOption].length
+        : files.length);
+      i++
+    ) {
+      console.log(i);
       previews[selectOption].push(URL.createObjectURL(files[i]));
     }
     setPreviews([...previews]);
     // 파일 배열 형태로 세팅
-    contentFiles[selectOption] = Array.from(files || []);
+    contentFiles[selectOption].push(
+      ...Array.from(files || []).slice(
+        0,
+        10 - contentFiles[selectOption].length
+      )
+    );
     setContentFiles([...contentFiles]);
+
+    // 업로드된 파일 개수 10개면 인풋 비활성화
+    if (contentFiles[selectOption].length === 10) {
+      imageRef.current.disabled = true;
+    }
     return;
   }
+
+  /** 비디오 업로드 */
+  function uploadVideoFile(
+    files: any,
+    previews: [string[]],
+    setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
+    contentFiles: any,
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>
+  ) {
+    // 파일 1개 있을 경우
+    if (contentFiles[selectOption].lengh === 1) {
+      return;
+    }
+
+    // 파일개수 없는 경우
+    if (
+      previews[selectOption] === undefined ||
+      previews[selectOption].length === 0
+    ) {
+      // 미리보기 세팅 최대 1개만
+      previews[selectOption] = [];
+      previews[selectOption].push(URL.createObjectURL(files[0]));
+
+      setPreviews([...previews]);
+      // 비디오 파일 세팅
+      setContentFiles([...Array.from(files || [])]);
+
+      // 동영상 업로드 되면 인풋 비활성화
+
+      videoRef.current.disabled = true;
+
+      return;
+    }
+  }
+
+  useEffect(() => {
+    console.log(imageFiles);
+  }, [imageFiles]);
+
+  useEffect(() => {
+    console.log(videoFiles);
+  }, [videoFiles]);
 
   /** 파일 삭제 */
   const deleteFile = (
@@ -294,6 +390,9 @@ const useAdd_product = () => {
       ...contentFiles[selectOption].slice(index + 1),
     ];
     setContentFiles([...contentFiles]);
+
+    // 인풋 활성화
+    imageRef.current.disabled = false;
   };
 
   // title: false,
@@ -305,58 +404,173 @@ const useAdd_product = () => {
   // width: false,
   // weight: false,
   // price: false,
-  /** 유효성 검사 */
-  const validationCheck = () => {
-    // title
-    productInfo.title.length > 0
-      ? (validation.title = 2)
-      : (validation.title = 1);
-    // description
-    productInfo.description.length > 0
-      ? (validation.description = 2)
-      : (validation.description = 1);
-    // composition
+
+  /** 유효성 검사 composition */
+  const checkValidationComposition = () => {
     let sum = 0;
     for (const el of productInfo.materials) {
       sum += Number(el.value);
     }
-    sum === 100 ? (validation.composition = 2) : (validation.composition = 1);
-    // design
-    productInfo.designNo !== 0
-      ? (validation.design = 2)
-      : (validation.design = 1);
-    // project
-    productInfo.projectNo !== 0
-      ? (validation.project = 2)
-      : (validation.project = 1);
-    // country
-    productInfo.originNo !== 0
-      ? (validation.country = 2)
-      : (validation.country = 1);
-    // width
-    productInfo.width !== 0 ? (validation.width = 2) : (validation.width = 1);
-    // weight
-    productInfo.weight.length > 0
-      ? (validation.weight = 2)
-      : (validation.weight = 1);
-    // price
-    productInfo.price.length > 0
-      ? (validation.price = 2)
-      : (validation.price = 1);
-
-    setValidation({ ...validation });
-
-    let result = true;
-    for (let key in validation) {
-      validation[key] === 1 && (result = false);
+    if (sum === 100) {
+      return true;
     }
-    console.log(result);
-    return result;
+    return false;
   };
 
-  useEffect(() => {
-    console.log(validation);
-  }, [validation]);
+  /** 유효성 검사 옵션 컬러 */
+  const checkValidationColor = (i: number) => {
+    if (productInfo.options[i].colorNo === 0) {
+      return false;
+    }
+    return true;
+  };
+  /** 유효성 검사 옵션 길이 */
+  const checkValidationLength = (i: number) => {
+    if (productInfo.options[i].length === "") {
+      return false;
+    }
+    return true;
+  };
+  /** 유효성 검사 옵션 롤 */
+  const checkValidationRoll = (i: number) => {
+    if (productInfo.options[i].quantity === 0) {
+      return false;
+    }
+    return true;
+  };
+  /** 유효성 검사 옵션 이미지 파일 */
+  const checkValidationImageFiles = (i: number) => {
+    if (imageFiles[i]?.length === 0 || imageFiles[i] === undefined) {
+      return false;
+    }
+    return true;
+  };
+  /** 유효성 검사 옵션 비디오 파일 */
+  const checkValidationVideoFiles = (i: number) => {
+    if (videoFiles[i]?.length === 0 || videoFiles[i] === undefined) {
+      return false;
+    }
+    return true;
+  };
+
+  /** 전체 유효성 검사 */
+  const validationCheck = () => {
+    // 실시간 유효성 검사 결과 렌더링 시작
+    setValidationRealTime(true);
+
+    let result = true; // 유효성 검사 결과 값
+
+    // title
+    if (productInfo.title.length === 0) {
+      result = false;
+      commonInfoRef.current[0].focus();
+      return result;
+    }
+    // description
+    if (productInfo.description.length === 0) {
+      result = false;
+      commonInfoRef.current[1].focus();
+      return result;
+    }
+    // composition
+    if (checkValidationComposition()) {
+      result = false;
+      commonInfoRef.current[2].scrollIntoView({
+        block: "center",
+        inline: "start",
+      });
+      return result;
+    }
+    // design
+    if (productInfo.designNo === 0) {
+      result = false;
+      commonInfoRef.current[3].scrollIntoView({
+        block: "center",
+        inline: "start",
+      });
+      return result;
+    }
+    // project
+    if (productInfo.projectNo === 0) {
+      result = false;
+      commonInfoRef.current[4].scrollIntoView({
+        block: "center",
+        inline: "start",
+      });
+      return result;
+    }
+
+    // country
+    if (productInfo.originNo === 0) {
+      result = false;
+      commonInfoRef.current[5].scrollIntoView({
+        block: "center",
+        inline: "start",
+      });
+      return result;
+    }
+    // width
+    if (productInfo.width === 0) {
+      result = false;
+      commonInfoRef.current[6].scrollIntoView({
+        block: "center",
+        inline: "start",
+      });
+      return result;
+    }
+    // weight
+    if (productInfo.weight.length === 0) {
+      result = false;
+      commonInfoRef.current[7].scrollIntoView({
+        block: "center",
+        inline: "start",
+      });
+      return result;
+    }
+    // price
+    if (productInfo.price.length === 0) {
+      result = false;
+      commonInfoRef.current[8].scrollIntoView({
+        block: "center",
+        inline: "start",
+      });
+      return result;
+    }
+    // 컬러 옵션별 유효성
+    for (let i = 0; i < productInfo.options.length; i++) {
+      // color
+      if (checkValidationColor(i)) {
+        result = false;
+        return result;
+      }
+
+      // length
+      if (checkValidationLength(i)) {
+        result = false;
+        return result;
+      }
+
+      // roll available
+      if (checkValidationRoll(i)) {
+        result = false;
+        return result;
+      }
+
+      // image file
+      if (checkValidationImageFiles(i)) {
+        result = false;
+        return result;
+      }
+
+      // video file
+      if (checkValidationVideoFiles(i)) {
+        result = false;
+        return result;
+      }
+    }
+
+    return result;
+  };
 
   /** 이미지 서버에 저장 */
   const imageUploadRequestHandler = () => {
@@ -451,10 +665,6 @@ const useAdd_product = () => {
     // && imageUploadRequestHandler(); 임시 비활성화
   };
 
-  useEffect(() => {
-    console.log(productInfo);
-  }, [productInfo]);
-
   const imageUploadTest = () => {
     console.log(imageFiles);
     const data = new FormData();
@@ -464,6 +674,21 @@ const useAdd_product = () => {
       console.log(res);
     });
   };
+
+  /** 롤 숫자만 입력되게 */
+  const rollInputHandler = (e: any, i: number) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    productInfo.options[i].quantity = e.target.value;
+
+    console.log(productInfo.options[i]);
+    setProductInfo({ ...productInfo });
+  };
+
+  /** 숫자만 입력되게 */
+  // const inputRollHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   e.target.value = e.target.value.replace(/[^.0-9]/g, "");
+  //   setProductInfo({ ...productInfo, weight: e.target.value });
+  // };
 
   return (
     <>
@@ -517,52 +742,78 @@ const useAdd_product = () => {
             onChange={(e) =>
               setProductInfo({ ...productInfo, title: e.target.value })
             }
+            ref={(el) => (commonInfoRef.current[0] = el)}
           />
-          <ErrorCase0 error={validation.title}>Error case</ErrorCase0>
+          <ErrorCase0
+            error={validationRealTime && productInfo.title.length === 0}
+          >
+            Error case
+          </ErrorCase0>
           <TitleInputLine />
           <Description>Description</Description>
           <DescriptionInput
             placeholder="(예시: 펜톤컬러, 색상 디테일)"
             onChange={(e) => descriptionCheckHandler(e)}
             value={productInfo.description}
+            ref={(el) => (commonInfoRef.current[1] = el)}
           />
           <DescriptionInputCount>
             {`${productInfo.description.length}`}/1000
           </DescriptionInputCount>
-          <ErrorCase0 error={validation.description}>Error case</ErrorCase0>
+          <ErrorCase0
+            error={validationRealTime && productInfo.description.length === 0}
+          >
+            Error case
+          </ErrorCase0>
         </TitleDescriptionContainer>
         <InputWrapper>
-          <InputTitle>Composition</InputTitle>
+          <InputTitle ref={(el) => (commonInfoRef.current[2] = el)}>
+            Composition
+          </InputTitle>
           <InputContentWrapper onClick={() => setSelectCategory("composition")}>
             <InputContent>Select</InputContent>
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
-        <ErrorCase error={validation.composition}>Error case</ErrorCase>
+        <ErrorCase error={validationRealTime && !checkValidationComposition()}>
+          Error case
+        </ErrorCase>
         <InputWrapper>
-          <InputTitle>Design</InputTitle>
+          <InputTitle ref={(el) => (commonInfoRef.current[3] = el)}>
+            Design
+          </InputTitle>
           <InputContentWrapper onClick={() => setSelectCategory("design")}>
             <InputContent>Select</InputContent>
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
-        <ErrorCase error={validation.design}>Error case</ErrorCase>
+        <ErrorCase error={validationRealTime && productInfo.designNo === 0}>
+          Error case
+        </ErrorCase>
         <InputWrapper onClick={() => setSelectCategory("project")}>
-          <InputTitle>Project</InputTitle>
+          <InputTitle ref={(el) => (commonInfoRef.current[4] = el)}>
+            Project
+          </InputTitle>
           <InputContentWrapper>
             <InputContent>Select</InputContent>
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
-        <ErrorCase error={validation.project}>Error case</ErrorCase>
+        <ErrorCase error={validationRealTime && productInfo.projectNo === 0}>
+          Error case
+        </ErrorCase>
         <InputWrapper onClick={() => setSelectCategory("country")}>
-          <InputTitle>Country of origin</InputTitle>
+          <InputTitle ref={(el) => (commonInfoRef.current[5] = el)}>
+            Country of origin
+          </InputTitle>
           <InputContentWrapper>
             <InputContent>Select</InputContent>
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
-        <ErrorCase error={validation.country}>Error case</ErrorCase>
+        <ErrorCase error={validationRealTime && productInfo.originNo === 0}>
+          Error case
+        </ErrorCase>
         <InputWrapper>
           <InputTitle>Transparent</InputTitle>
           <InputContentWrapper>
@@ -579,7 +830,8 @@ const useAdd_product = () => {
             />
           </InputContentWrapper>
         </InputWrapper>
-        <ErrorCase error={2}></ErrorCase>
+        <ErrorCase error={false}>Error case</ErrorCase>
+
         <InputWrapper>
           <InputTitle>Repunch certification</InputTitle>
           <InputContentWrapper>
@@ -596,17 +848,23 @@ const useAdd_product = () => {
             />
           </InputContentWrapper>
         </InputWrapper>
-        <ErrorCase error={2}></ErrorCase>
+        <ErrorCase error={false}>Error case</ErrorCase>
         <InputWrapper>
-          <InputTitle>Width (Inch)</InputTitle>
+          <InputTitle ref={(el) => (commonInfoRef.current[6] = el)}>
+            Width (Inch)
+          </InputTitle>
           <InputContentWrapper onClick={() => setSelectCategory("width")}>
             <InputContent>Select</InputContent>
             <Image src={ic_link_gray} alt="ic_link_gray" />
           </InputContentWrapper>
         </InputWrapper>
-        <ErrorCase error={validation.width}>Error case</ErrorCase>
+        <ErrorCase error={validationRealTime && productInfo.width === 0}>
+          Error case
+        </ErrorCase>
         <InputWrapper>
-          <InputTitle>Weight (g/m2)</InputTitle>
+          <InputTitle ref={(el) => (commonInfoRef.current[7] = el)}>
+            Weight (g/m2)
+          </InputTitle>
           <InputContentWrapper2>
             <WeightInput
               placeholder="Input weight"
@@ -616,9 +874,15 @@ const useAdd_product = () => {
             <Unit>g/m2</Unit>
           </InputContentWrapper2>
         </InputWrapper>
-        <ErrorCase error={validation.weight}>Error case</ErrorCase>
+        <ErrorCase
+          error={validationRealTime && productInfo.weight.length === 0}
+        >
+          Error case
+        </ErrorCase>
         <InputWrapper>
-          <InputTitle>Price ($)</InputTitle>
+          <InputTitle ref={(el) => (commonInfoRef.current[8] = el)}>
+            Price ($)
+          </InputTitle>
           <InputContentWrapper2>
             <PriceInput
               placeholder="$0"
@@ -627,7 +891,9 @@ const useAdd_product = () => {
             <Unit>/m</Unit>
           </InputContentWrapper2>
         </InputWrapper>
-        <ErrorCase error={validation.price}>Error case</ErrorCase>
+        <ErrorCase error={validationRealTime && productInfo.price.length === 0}>
+          Error case
+        </ErrorCase>
         <InputColorContainer>
           <ColorButtonWrapper>
             <ColorTitle>Color</ColorTitle>
@@ -680,7 +946,12 @@ const useAdd_product = () => {
                         />
                       </IconWrapper>
                     ) : (
-                      <IconWrapper onClick={() => removeColorHandler(index)}>
+                      <IconWrapper
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeColorHandler(index);
+                        }}
+                      >
                         <Image
                           src={ic_x_photo_m}
                           alt="remove_ic"
@@ -695,13 +966,18 @@ const useAdd_product = () => {
           </ColorTabWrapper>
         </InputColorContainer>
 
+        {/** 컬러 옵션 하위 값들 */}
         {productInfo.options &&
           productInfo.options.map((el: any, index: number) => {
             return (
               <OptionInputContainer
                 index={index}
                 selectOption={selectOption}
+                render={el.colorNo > 0 || index !== 0}
                 key={`${index}vbnnbm`}
+                // ref={(el) => {
+                //   validationRef.current[index] = el;
+                // }}
               >
                 <WidthWeightPriceContainer>
                   <ContentWrapper>
@@ -738,6 +1014,11 @@ const useAdd_product = () => {
                     <LengthUnit>m</LengthUnit>
                   </LengthUnitWrapper>
                 </LengthInputWrapper>
+                <ErrorCase2
+                  error={validationRealTime && !checkValidationLength(index)}
+                >
+                  Error case
+                </ErrorCase2>
                 <TotalPriceWrapper>
                   <TotalPriceName>TotalPrice</TotalPriceName>
                   <TotalPriceUnitWrapper>
@@ -763,25 +1044,33 @@ const useAdd_product = () => {
                 </TotalPriceWrapper>
                 <Roll>Roll available</Roll>
                 <RollInputWrapper>
-                  <PlusMinusButton>
-                    <Image
-                      src={ic_minus}
-                      alt="ic_minus"
-                      onClick={() => minusQuantity(index)}
+                  <RollInputBox>
+                    <PlusMinusButton>
+                      <Image
+                        src={ic_minus}
+                        alt="ic_minus"
+                        onClick={() => minusQuantity(index)}
+                      />
+                    </PlusMinusButton>
+                    <RollInput
+                      onChange={(e) => rollInputHandler(e, index)}
+                      value={productInfo.options[index].quantity}
+                      count={productInfo.options[index].quantity}
+                      placeholder="0"
                     />
-                  </PlusMinusButton>
-                  <RollInput
-                    value={productInfo.options[index].quantity}
-                    count={productInfo.options[index].quantity}
-                    disabled
-                  />
-                  <PlusMinusButton>
-                    <Image
-                      src={ic_plus}
-                      alt="ic_minus"
-                      onClick={() => plusQuantity(index)}
-                    />
-                  </PlusMinusButton>
+                    <PlusMinusButton>
+                      <Image
+                        src={ic_plus}
+                        alt="ic_minus"
+                        onClick={() => plusQuantity(index)}
+                      />
+                    </PlusMinusButton>
+                  </RollInputBox>
+                  <ErrorCase3
+                    error={validationRealTime && !checkValidationRoll(index)}
+                  >
+                    Error case
+                  </ErrorCase3>
                 </RollInputWrapper>
                 {/* <SampleButtonWrapper>
                   <SampleButton>Provide sample</SampleButton>
@@ -860,7 +1149,13 @@ const useAdd_product = () => {
                   Please upload clear photos so that buyers can see the details
                   of your products.(max10)
                 </ImageVideoText>
-
+                <ErrorCase4
+                  error={
+                    validationRealTime && !checkValidationImageFiles(index)
+                  }
+                >
+                  Error case
+                </ErrorCase4>
                 <UploadImageVideoWrapper>
                   <ImageButton htmlFor="videoUpload">
                     <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
@@ -871,7 +1166,7 @@ const useAdd_product = () => {
                     accept=".mp4"
                     ref={videoRef}
                     onChange={(e) =>
-                      uploadFile(
+                      uploadVideoFile(
                         e.target.files,
                         previewVideos,
                         setPreviewVideos,
@@ -939,6 +1234,13 @@ const useAdd_product = () => {
                 <ImageVideoText>
                   Uploading at least one video is required.(max1)
                 </ImageVideoText>
+                <ErrorCase5
+                  error={
+                    validationRealTime && !checkValidationVideoFiles(index)
+                  }
+                >
+                  Error case
+                </ErrorCase5>
                 <SellProductButton onClick={() => productRegisterHandler()}>
                   Sell Product
                 </SellProductButton>
@@ -983,15 +1285,15 @@ const TitleInput = styled.input`
     color: #a4b0b2;
   }
 `;
-const ErrorCase0 = styled.div<{ error: number }>`
+const ErrorCase0 = styled.div<{ error: boolean }>`
   visibility: ${(props) => {
-    return props.error === 1 ? "visible" : "hidden";
+    return props.error ? "visible" : "hidden";
   }};
   margin-top: ${(props) => {
-    return props.error === 1 ? "7px" : "4px";
+    return props.error ? "7px" : "4px";
   }};
   height: ${(props) => {
-    return props.error === 1 ? "" : "0px";
+    return props.error ? "" : "0px";
   }};
   margin-bottom: 16px;
   color: #ff2f01;
@@ -1000,23 +1302,93 @@ const ErrorCase0 = styled.div<{ error: number }>`
   line-height: 15.6px;
   &:nth-of-type(2) {
     margin-top: ${(props) => {
-      return props.error === 1 ? "7px" : "0px";
+      return props.error ? "7px" : "0px";
     }};
     margin-bottom: 20px;
   }
 `;
-const ErrorCase = styled.div<{ error: number }>`
+const ErrorCase = styled.div<{ error: boolean }>`
   visibility: ${(props) => {
-    return props.error === 1 ? "visible" : "hidden";
+    return props.error ? "visible" : "hidden";
   }};
   margin-top: ${(props) => {
-    return props.error === 1 ? "10px" : "0px";
+    return props.error ? "10px" : "0px";
   }};
   height: ${(props) => {
-    return props.error === 1 ? "" : "0px";
+    return props.error ? "" : "0px";
   }};
   margin-bottom: 16px;
   padding-left: 20px;
+  color: #ff2f01;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.6px;
+`;
+const ErrorCase2 = styled.div<{ error: boolean }>`
+  visibility: ${(props) => {
+    return props.error ? "visible" : "hidden";
+  }};
+  margin-top: ${(props) => {
+    return props.error ? "10px" : "0px";
+  }};
+  margin-bottom: 16px;
+  height: ${(props) => {
+    return props.error ? "" : "0px";
+  }};
+
+  color: #ff2f01;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.6px;
+`;
+const ErrorCase3 = styled.div<{ error: boolean }>`
+  visibility: ${(props) => {
+    return props.error ? "visible" : "hidden";
+  }};
+  margin-top: ${(props) => {
+    return props.error ? "8.5px" : "0px";
+  }};
+  margin-bottom: ${(props) => {
+    return props.error ? "12px" : "23.5px";
+  }};
+  height: ${(props) => {
+    return props.error ? "" : "0px";
+  }};
+
+  color: #ff2f01;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.6px;
+`;
+const ErrorCase4 = styled.div<{ error: boolean }>`
+  visibility: ${(props) => {
+    return props.error ? "visible" : "hidden";
+  }};
+  margin-top: ${(props) => {
+    return props.error ? "12px" : "0px";
+  }};
+  margin-bottom: 20px;
+  height: ${(props) => {
+    return props.error ? "" : "0px";
+  }};
+
+  color: #ff2f01;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.6px;
+`;
+const ErrorCase5 = styled.div<{ error: boolean }>`
+  visibility: ${(props) => {
+    return props.error ? "visible" : "hidden";
+  }};
+  margin-top: ${(props) => {
+    return props.error ? "12px" : "";
+  }};
+  margin-bottom: 20px;
+  height: ${(props) => {
+    return props.error ? "" : "0px";
+  }};
+
   color: #ff2f01;
   font-size: 12px;
   font-weight: 400;
@@ -1226,9 +1598,10 @@ const IconWrapper = styled.div`
 const OptionInputContainer = styled.div<{
   index: number;
   selectOption: number;
+  render: boolean;
 }>`
   display: ${(props) => {
-    return props.index !== props.selectOption && "none";
+    return (props.index !== props.selectOption || !props.render) && "none";
   }};
   margin-bottom: 20px;
   padding-left: 20px;
@@ -1272,7 +1645,6 @@ const LengthInputWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
   padding-bottom: 11px;
   border-bottom: 1px solid #f2f6f8;
 `;
@@ -1344,12 +1716,13 @@ const Roll = styled.div`
 `;
 const RollInputWrapper = styled.div`
   margin-bottom: 20px;
-  padding-bottom: 23.5px;
+  border-bottom: 1px solid #f2f6f8;
+  box-sizing: border-box;
+`;
+const RollInputBox = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid #f2f6f8;
-  box-sizing: border-box;
 `;
 const RollInput = styled.input<{ count: number }>`
   width: 100%;
@@ -1360,11 +1733,10 @@ const RollInput = styled.input<{ count: number }>`
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  color: ${(props) => {
-    return props.count === 0 ? "#A4B0B2" : "#000000";
-  }};
-  &:disabled {
-    background-color: #ffffff;
+  color: #000000;
+
+  &::placeholder {
+    color: #a4b0b2;
   }
 `;
 const PlusMinusButton = styled.div`
@@ -1448,7 +1820,6 @@ const PlayButton = styled.div`
   position: absolute;
 `;
 const ImageVideoText = styled.div`
-  margin-bottom: 20px;
   font-size: 12px;
   font-weight: 400;
   line-height: 15.6px;

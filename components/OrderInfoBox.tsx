@@ -18,11 +18,17 @@ import { disableButton, enableButton, priceToDollar } from "../utils/functions";
 
 const useOrderInfoBox = ({
   data,
+  orders,
+  setOrders,
+  index,
   clicked,
   accomplish,
   myAccount,
 }: {
   data: any;
+  orders: any;
+  setOrders: React.Dispatch<any>;
+  index: number;
   clicked: number;
   accomplish: boolean;
   myAccount: boolean;
@@ -44,10 +50,10 @@ const useOrderInfoBox = ({
   // 주문 상태 데이터 표시용
   const status = new Map([
     ["IN_REVIEW", "In Review"],
-    ["DENIED", "Cancel"],
-    ["IN_REVIEW_CANCELED", "Cancel"],
+    ["SELLER_DENIED", "Denied"],
+    ["IN_REVIEW_CANCELED", "Canceled"],
     ["ORDER_CONFIRMED", "Order Confirmed"],
-    ["ORDER_CONFIRMED_CANCELED", "Cancel"],
+    ["ORDER_CONFIRMED_CANCELED", "Canceled"],
     ["IN_PRODUCTION", "In Production"],
     ["SHIPPED", "Shipped"],
     ["PICKED_UP_READY", "Picked Up Ready"],
@@ -55,7 +61,7 @@ const useOrderInfoBox = ({
     ["DELIVERED", "Delivered"],
     ["CLOSING_ORDER", "Closing Order"],
     ["RETURNS", "Returns"],
-    ["CANCEL", "Cancel"],
+    ["CANCEL", "Canceled"],
   ]);
 
   useEffect(() => {
@@ -105,8 +111,21 @@ const useOrderInfoBox = ({
       enableButton(cancelButtonRef);
       console.log(res);
       if (res?.data.status == 200) {
-        location.reload();
-        return;
+        // in review 캔슬 case
+        if (data.status === "IN_REVIEW") {
+          orders[index].cancelStatus = "IN_REVIEW_CANCELED";
+          orders[index].status = "CANCELED";
+          setOrders([...orders]);
+          return;
+        }
+
+        // 주문 확정 전 캔슬 case
+        if (data.status === "ORDER_CONFIRMED") {
+          orders[index].cancelStatus = "ORDER_CONFIRMED_CANCELED";
+          orders[index].status = "CANCELED";
+          setOrders([...orders]);
+          return;
+        }
       }
     });
   };
@@ -133,7 +152,8 @@ const useOrderInfoBox = ({
 
       // 성공 case
       if (res?.data.status == 200) {
-        router.push("/order_history");
+        orders[index].status = "CLOSING_ORDER";
+        setOrders([...orders]);
         return;
       }
     });
@@ -153,6 +173,8 @@ const useOrderInfoBox = ({
   const accomplishTest = () => {
     data.status = "CLOSING_ORDER";
   };
+
+  const testMemo = `test\ntest`;
 
   return (
     <Box render={render}>
@@ -232,6 +254,8 @@ const useOrderInfoBox = ({
             <br /> Please adjust the quantity and order again.
           </OrderInfoContent>
         </OrderInfoWrapper> 여기 남겨두고 나중에 지우기*/}
+
+        {/** 인리뷰, 오더 컨펌 이외 케이스 때 렌더링 */}
         {data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED" ? (
           ""
         ) : (
@@ -244,6 +268,22 @@ const useOrderInfoBox = ({
               <OrderInfoTitle>Order time</OrderInfoTitle>
               <OrderInfoContent>{orderTime}</OrderInfoContent>
             </OrderInfoWrapper>
+            {/** 주문취소 case */}
+            {data.status === "CANCELED" && (
+              <OrderInfoWrapperCancel>
+                <OrderInfoTitleCancel>Order canceled</OrderInfoTitleCancel>
+                <OrderInfoContentCancel>{data.memo}</OrderInfoContentCancel>
+              </OrderInfoWrapperCancel>
+            )}
+
+            {/** 배송시작 case */}
+            {data.status === "SHIPPED" && (
+              <OrderInfoWrapperCancel>
+                <OrderInfoTitleCancel>Order canceled</OrderInfoTitleCancel>
+                <OrderInfoContentCancel>{data.memo}</OrderInfoContentCancel>
+              </OrderInfoWrapperCancel>
+            )}
+
             {/** 배달완료 case */}
             {/* {
               data.status == "DELIVERED" && (
@@ -432,107 +472,112 @@ const useOrderInfoBox = ({
         </>
       )}
 
-      {/** 거절, 인리뷰 캔슬 케이스 */}
-      {(data.status == "DENIED" || data.status == "IN_REVIEW_CANCELED") && (
-        <>
-          <DeliveredContainer>
-            <DeliveredTitle>{status.get(data.status)}</DeliveredTitle>
-            <DeliveredProgressWrapper>
-              <TrackBigCircle status={data.status} num={0}>
-                <TrackCircle status={data.status} num={0} />
-              </TrackBigCircle>
-              <TrackLine status={data.status} num={0} />
-              <TrackBigCircle status={data.status} num={1}>
-                <TrackCircle status={data.status} num={1} />
-              </TrackBigCircle>
-            </DeliveredProgressWrapper>
-          </DeliveredContainer>
-          <TrackOrderContainer>
-            <OrderDetailButtonWrapper>
-              <OrderDetailButtonBox
-                onClick={() => setTrackorderIsActive(!trackorderIsActive)}
-              >
-                <OrderDetailButton>Trackorder</OrderDetailButton>
-                <Image
-                  src={trackorderIsActive ? ic_up_bk : ic_down_bk}
-                  alt={"sort_arrow_button"}
-                />
-              </OrderDetailButtonBox>
-            </OrderDetailButtonWrapper>
-            <TrackOrderContent isActive={trackorderIsActive}>
-              <TrackOrderContentWrapper status={data.status}>
-                <TrackOrderCircle status={data.status} num={0} />
-                <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
-              </TrackOrderContentWrapper>
-              <TrackOrderContentWrapper status={data.status}>
-                <TrackOrderCircle status={data.status} num={1} />
-                <TrackOrderContentTitle>
-                  {data.status == "DENIED" ? "Denied" : "Cancel"}
-                </TrackOrderContentTitle>
-              </TrackOrderContentWrapper>
+      {/** 캔슬 케이스: 판매자의 거절, 리뷰 전 사용자가 주문 취소 */}
+      {data.status == "CANCELED" &&
+        (data.cancelStatus == "IN_REVIEW_CANCELED" ||
+          data.cancelStatus == "SELLER_DENIED") && (
+          <>
+            <DeliveredContainer>
+              <DeliveredTitle>{status.get(data.cancelStatus)}</DeliveredTitle>
+              <DeliveredProgressWrapper>
+                <TrackBigCircle status={data.cancelStatus} num={0}>
+                  <TrackCircle status={data.cancelStatus} num={0} />
+                </TrackBigCircle>
+                <TrackLine status={data.cancelStatus} num={0} />
+                <TrackBigCircle status={data.cancelStatus} num={1}>
+                  <TrackCircle status={data.cancelStatus} num={1} />
+                </TrackBigCircle>
+              </DeliveredProgressWrapper>
+            </DeliveredContainer>
+            <TrackOrderContainer>
+              <OrderDetailButtonWrapper>
+                <OrderDetailButtonBox
+                  onClick={() => setTrackorderIsActive(!trackorderIsActive)}
+                >
+                  <OrderDetailButton>Trackorder</OrderDetailButton>
+                  <Image
+                    src={trackorderIsActive ? ic_up_bk : ic_down_bk}
+                    alt={"sort_arrow_button"}
+                  />
+                </OrderDetailButtonBox>
+              </OrderDetailButtonWrapper>
+              <TrackOrderContent isActive={trackorderIsActive}>
+                <TrackOrderContentWrapper status={data.cancelStatus}>
+                  <TrackOrderCircle status={data.cancelStatus} num={0} />
+                  <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
+                </TrackOrderContentWrapper>
+                <TrackOrderContentWrapper status={data.cancelStatus}>
+                  <TrackOrderCircle status={data.cancelStatus} num={1} />
+                  <TrackOrderContentTitle>
+                    {data.cancelStatus == "SELLER_DENIED"
+                      ? "Denied"
+                      : "Canceled"}
+                  </TrackOrderContentTitle>
+                </TrackOrderContentWrapper>
 
-              <TrackorderProgressLine status={data.status} />
-              <TrackorderProgressLineGray status={data.status} />
+                <TrackorderProgressLine status={data.cancelStatus} />
+                <TrackorderProgressLineGray status={data.cancelStatus} />
 
-              <TrackOrderBigCircle status={data.status} />
-            </TrackOrderContent>
-          </TrackOrderContainer>
-        </>
-      )}
+                <TrackOrderBigCircle status={data.cancelStatus} />
+              </TrackOrderContent>
+            </TrackOrderContainer>
+          </>
+        )}
 
-      {/** order confirm 후 결제안하고 캔슬 케이스 */}
-      {data.status == "ORDER_CONFIRMED_CANCELED" && (
-        <>
-          <DeliveredContainer>
-            <DeliveredTitle>{status.get(data.status)}</DeliveredTitle>
-            <DeliveredProgressWrapper>
-              <TrackBigCircle status={data.status} num={0}>
-                <TrackCircle status={data.status} num={0} />
-              </TrackBigCircle>
-              <TrackLine status={data.status} num={0} />
-              <TrackBigCircle status={data.status} num={1}>
-                <TrackCircle status={data.status} num={1} />
-              </TrackBigCircle>
-              <TrackLine status={data.status} num={1} />
-              <TrackBigCircle status={data.status} num={2}>
-                <TrackCircle status={data.status} num={2} />
-              </TrackBigCircle>
-            </DeliveredProgressWrapper>
-          </DeliveredContainer>
-          <TrackOrderContainer>
-            <OrderDetailButtonWrapper>
-              <OrderDetailButtonBox
-                onClick={() => setTrackorderIsActive(!trackorderIsActive)}
-              >
-                <OrderDetailButton>Trackorder</OrderDetailButton>
-                <Image
-                  src={trackorderIsActive ? ic_up_bk : ic_down_bk}
-                  alt={"sort_arrow_button"}
-                />
-              </OrderDetailButtonBox>
-            </OrderDetailButtonWrapper>
-            <TrackOrderContent isActive={trackorderIsActive}>
-              <TrackOrderContentWrapper status={data.status}>
-                <TrackOrderCircle status={data.status} num={0} />
-                <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
-              </TrackOrderContentWrapper>
-              <TrackOrderContentWrapper status={data.status}>
-                <TrackOrderCircle status={data.status} num={1} />
-                <TrackOrderContentTitle>Order Confirm</TrackOrderContentTitle>
-              </TrackOrderContentWrapper>
-              <TrackOrderContentWrapper status={data.status}>
-                <TrackOrderCircle status={data.status} num={2} />
-                <TrackOrderContentTitle>Cacncel</TrackOrderContentTitle>
-              </TrackOrderContentWrapper>
+      {/** 캔슬 케이스 : order confirm 후 결제안하고 캔슬 */}
+      {data.status == "CANCELED" &&
+        data.cancelStatus == "ORDER_CONFIRMED_CANCELED" && (
+          <>
+            <DeliveredContainer>
+              <DeliveredTitle>{status.get(data.cancelStatus)}</DeliveredTitle>
+              <DeliveredProgressWrapper>
+                <TrackBigCircle status={data.cancelStatus} num={0}>
+                  <TrackCircle status={data.cancelStatus} num={0} />
+                </TrackBigCircle>
+                <TrackLine status={data.cancelStatus} num={0} />
+                <TrackBigCircle status={data.cancelStatus} num={1}>
+                  <TrackCircle status={data.cancelStatus} num={1} />
+                </TrackBigCircle>
+                <TrackLine status={data.cancelStatus} num={1} />
+                <TrackBigCircle status={data.cancelStatus} num={2}>
+                  <TrackCircle status={data.cancelStatus} num={2} />
+                </TrackBigCircle>
+              </DeliveredProgressWrapper>
+            </DeliveredContainer>
+            <TrackOrderContainer>
+              <OrderDetailButtonWrapper>
+                <OrderDetailButtonBox
+                  onClick={() => setTrackorderIsActive(!trackorderIsActive)}
+                >
+                  <OrderDetailButton>Trackorder</OrderDetailButton>
+                  <Image
+                    src={trackorderIsActive ? ic_up_bk : ic_down_bk}
+                    alt={"sort_arrow_button"}
+                  />
+                </OrderDetailButtonBox>
+              </OrderDetailButtonWrapper>
+              <TrackOrderContent isActive={trackorderIsActive}>
+                <TrackOrderContentWrapper status={data.cancelStatus}>
+                  <TrackOrderCircle status={data.cancelStatus} num={0} />
+                  <TrackOrderContentTitle>In Review</TrackOrderContentTitle>
+                </TrackOrderContentWrapper>
+                <TrackOrderContentWrapper status={data.cancelStatus}>
+                  <TrackOrderCircle status={data.cancelStatus} num={1} />
+                  <TrackOrderContentTitle>Order Confirm</TrackOrderContentTitle>
+                </TrackOrderContentWrapper>
+                <TrackOrderContentWrapper status={data.cancelStatus}>
+                  <TrackOrderCircle status={data.cancelStatus} num={2} />
+                  <TrackOrderContentTitle>Canceled</TrackOrderContentTitle>
+                </TrackOrderContentWrapper>
 
-              <TrackorderProgressLine status={data.status} />
-              <TrackorderProgressLineGray status={data.status} />
+                <TrackorderProgressLine status={data.cancelStatus} />
+                <TrackorderProgressLineGray status={data.cancelStatus} />
 
-              <TrackOrderBigCircle status={data.status} />
-            </TrackOrderContent>
-          </TrackOrderContainer>
-        </>
-      )}
+                <TrackOrderBigCircle status={data.cancelStatus} />
+              </TrackOrderContent>
+            </TrackOrderContainer>
+          </>
+        )}
 
       {/** 나머지 케이스 */}
       {(data.status == "IN_PRODUCTION" ||
@@ -931,9 +976,26 @@ const OrderInfoWrapper = styled.div`
   align-items: center;
 `;
 const OrderInfoTitle = styled.div`
+  min-width: 90px;
   font-weight: 400;
   font-size: 11px;
   line-height: 14px;
+  letter-spacing: -0.011em;
+  color: #536c6d;
+`;
+const OrderInfoWrapperCancel = styled.div`
+  display: flex;
+  position: relative;
+  margin-top: 6px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  justify-content: space-between;
+`;
+const OrderInfoTitleCancel = styled.div`
+  min-width: 90px;
+  font-weight: 400;
+  font-size: 11px;
   letter-spacing: -0.011em;
   color: #536c6d;
 `;
@@ -948,11 +1010,22 @@ const OrderCanceled = styled.div`
   color: #536c6d;
 `;
 const OrderInfoContent = styled.div`
+  display: flex;
+  align-items: center;
   font-weight: 400;
   font-size: 11px;
   line-height: 17px;
   text-align: right;
   letter-spacing: -0.011em;
+  color: #121822;
+`;
+const OrderInfoContentCancel = styled.div`
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  font-size: 11px;
+  text-align: right;
+  letter-spacing: -0.121px;
   color: #121822;
 `;
 const TotalPriceWrapper = styled.div`
@@ -1529,7 +1602,8 @@ const TrackBigCircle = styled.div<{ status: string; num: number }>`
   ${(props) => {
     return (
       props.num == 1 &&
-      (props.status == "DENIED" || props.status == "IN_REVIEW_CANCELED") &&
+      (props.status == "SELLER_DENIED" ||
+        props.status == "IN_REVIEW_CANCELED") &&
       "width: 11px; height: 11px; border: 1px solid #121822;"
     );
   }};
@@ -1619,7 +1693,8 @@ const TrackOrderContentWrapper = styled.div<{ status: string }>`
   }
   ${(props) => {
     return (
-      (props.status == "DENIED" || props.status == "IN_REVIEW_CANCELED") &&
+      (props.status == "SELLER_DENIED" ||
+        props.status == "IN_REVIEW_CANCELED") &&
       "&:nth-of-type(2) { margin-bottom: 0px;}"
     );
   }};
@@ -1649,7 +1724,7 @@ const TrackOrderCircle = styled.div<{ status: string; num: number }>`
     return (
       props.num <= 1 &&
       (props.status == "ORDER_CONFIRMED" ||
-        props.status == "DENIED" ||
+        props.status == "SELLER_DENIED" ||
         props.status == "IN_REVIEW_CANCELED") &&
       "background-color: #121822;"
     );
@@ -1710,7 +1785,7 @@ const TrackorderProgressLine = styled.div<{ status: string }>`
   ${(props) => {
     return (
       (props.status == "ORDER_CONFIRMED" ||
-        props.status == "DENIED" ||
+        props.status == "SELLER_DENIED" ||
         props.status == "IN_REVIEW_CANCELED") &&
       "height: 40px;"
     );
@@ -1752,7 +1827,8 @@ const TrackorderProgressLineGray = styled.div<{ status: string }>`
 
   ${(props) => {
     return (
-      (props.status == "DENIED" || props.status == "IN_REVIEW_CANCELED") &&
+      (props.status == "SELLER_DENIED" ||
+        props.status == "IN_REVIEW_CANCELED") &&
       "height: 40px;"
     );
   }};
@@ -1778,7 +1854,7 @@ const TrackOrderBigCircle = styled.div<{ status: string }>`
   ${(props) => {
     return (
       (props.status == "ORDER_CONFIRMED" ||
-        props.status == "DENIED" ||
+        props.status == "SELLER_DENIED" ||
         props.status == "IN_REVIEW_CANCELED") &&
       "top: 62.5px;"
     );

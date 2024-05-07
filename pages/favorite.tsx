@@ -96,10 +96,11 @@ const Container = styled.div`
   padding-top: 30px;
   padding-bottom: 40px;
   max-width: 1030px;
-  @media screen and (max-width: 1280px) {
-    max-width: 608px;
+  @media screen and (max-width: 1279px) {
+    max-width: 820px;
   }
   @media screen and (max-width: 768px) {
+    max-width: 608px;
     display: block;
     padding-top: 20px;
     padding-left: 20px;

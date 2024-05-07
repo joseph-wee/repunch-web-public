@@ -19,7 +19,7 @@ import {
 const useOrder_history = () => {
   const [orderCategory, setOrderCategory] = useState(0);
   const [clicked, setClicked] = useState(1); // 클릭 상태
-  const [sum, setSum] = useState(0); // 주문들중 클릭한 상태에 해당하는 개수
+  const [sum, setSum] = useState(""); // 주문들중 클릭한 상태에 해당하는 개수
   const [orders, setOrders] = useState<any>([]); // 주문 리스트
   const [ordersSample, setOrdersSample] = useState<any>([]);
   const [noData, setNoData] = useState(false);
@@ -51,6 +51,7 @@ const useOrder_history = () => {
       res?.data.result.data && (tempOrder = res?.data.result.data);
 
       setOrders([...tempOrder]);
+      setSum(res?.data.result.data ? tempOrder.length : 0);
 
       ordersRequest(at, "SAMPLE", null, true, 20, null).then((res) => {
         console.log(res);
@@ -82,7 +83,7 @@ const useOrder_history = () => {
           </ImageWrapper>
           <Title>Order history</Title>
         </TitleWrapper>
-        <AllMeterSampleButtonWrapper>
+        {/* <AllMeterSampleButtonWrapper>
           <MeterageButton
             isActive={orderCategory}
             onClick={() => setOrderCategory(0)}
@@ -95,13 +96,16 @@ const useOrder_history = () => {
           >
             Sample ({ordersSample.length})
           </SampleButton>
-        </AllMeterSampleButtonWrapper>
+        </AllMeterSampleButtonWrapper> */}
         <RecentOrders>Recent orders {sum}</RecentOrders>
         <MeterageOrderWrapper isActive={orderCategory}>
           {orders.map((el: any, index: number) => {
             return (
               <OrderInfoBox
                 data={el}
+                orders={orders}
+                setOrders={setOrders}
+                index={index}
                 clicked={clicked}
                 accomplish={false}
                 myAccount={false}

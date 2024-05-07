@@ -230,6 +230,9 @@ const useMy_account = () => {
             (el.items[0].product.orderUnitType == "ROLL" ? (
               <OrderInfoBox
                 data={el}
+                orders={orders}
+                setOrders={setOrders}
+                index={index}
                 clicked={1}
                 accomplish={false}
                 myAccount={false}

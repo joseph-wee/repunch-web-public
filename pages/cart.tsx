@@ -500,7 +500,7 @@ const useCart = () => {
             </ImageWrapper>
             <Title>Cart</Title>
           </TitleWrapper>
-          <AllMeterSampleButtonWrapper isActive={cartValue}>
+          {/* <AllMeterSampleButtonWrapper isActive={cartValue}>
             <MeterageButton
               isActive={cartValue}
               onClick={() => dispatch(setMeterage())}
@@ -513,7 +513,7 @@ const useCart = () => {
             >
               Sample ({sampleTotalCount})
             </SampleButton>
-          </AllMeterSampleButtonWrapper>
+          </AllMeterSampleButtonWrapper> */}
 
           {cartValue == 0 ? (
             <>
