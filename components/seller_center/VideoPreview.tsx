@@ -163,13 +163,24 @@ const VideoPreview = ({
           <Image src={ic_camera_play_wht} alt="ic_camera_play_wht" />
         </PlayButtonSmall>
 
-        <Video src={el} width="80px" height="80px" ref={ref}>
+        <Video
+          src={el}
+          width="80px"
+          height="80px"
+          ref={ref}
+          onClick={() => setClickVideoIndex(index)}
+        >
           {/* <source src={el} type="video/mp4" /> */}
         </Video>
       </ImageButton>
       {/* </BackGround> */}
 
-      <VideoContainer ref={containerRef}>
+      <BackGround
+        isActive={index === clickVideoIndex}
+        onClick={() => setClickVideoIndex(-1)}
+      />
+
+      <VideoContainer ref={containerRef} isActive={index === clickVideoIndex}>
         <Video
           id="video"
           ref={ref}
@@ -179,6 +190,8 @@ const VideoPreview = ({
             setShowControl(true);
             addTimeUpdate();
           }}
+          muted
+          autoPlay
           // onMouseOver={() => console.log("마우스오버")}
           // onMouseOut={() => setShowControl(false)}
           onMouseMove={() => setShowControl(true)}
@@ -303,10 +316,10 @@ const VideoPreview = ({
     </>
   );
 };
-const BackGround = styled.div<{ index: number; clickIndex: number }>`
+const BackGround = styled.div<{ isActive: boolean }>`
   z-index: 3;
-  visibility: ${(props) => {
-    return props.index === props.clickIndex ? "visible" : "hidden";
+  display: ${(props) => {
+    return props.isActive ? "block" : "none";
   }};
   position: fixed;
   top: 0;
@@ -318,8 +331,17 @@ const BackGround = styled.div<{ index: number; clickIndex: number }>`
   background: rgba(0, 0, 0, 0.6);
   overflow: hidden;
 `;
-const VideoContainer = styled.div`
-  position: relative;
+const VideoContainer = styled.div<{ isActive: boolean }>`
+  z-index: 3;
+  display: ${(props) => {
+    return props.isActive ? "block" : "none";
+  }};
+  position: fixed;
+  width: 50vw;
+  height: 50vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 const BigImage = styled.div`
   position: absolute;
@@ -343,7 +365,7 @@ const ImageButton = styled.div`
   width: 80px;
   height: 80px;
   border-radius: 2px;
-  background-color: #a4b0b2;
+  /* background-color: #a4b0b2; */
   overflow: hidden;
   cursor: pointer;
 `;
@@ -392,8 +414,9 @@ const SellProductButton = styled.div`
   line-height: 18.2px;
 `;
 const Video = styled.video`
-  width: 80px;
-  height: 80px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 `;
 const BigVideo = styled.video<{ full: boolean }>`
   ${(props) => {

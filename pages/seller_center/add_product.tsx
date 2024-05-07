@@ -339,7 +339,7 @@ const useAdd_product = () => {
     setContentFiles: React.Dispatch<React.SetStateAction<any>>
   ) {
     // 파일 1개 있을 경우
-    if (contentFiles[selectOption].lengh === 1) {
+    if (contentFiles[selectOption] && contentFiles[selectOption].lengh === 1) {
       return;
     }
 
@@ -594,6 +594,8 @@ const useAdd_product = () => {
       }
     }
 
+    console.log(result);
+
     return result;
   };
 
@@ -686,7 +688,7 @@ const useAdd_product = () => {
 
   /** 상품등록 요청 */
   const productRegisterHandler = () => {
-    validationCheck();
+    validationCheck() && console.log("성공");
     // && imageUploadRequestHandler(); 임시 비활성화
   };
 
