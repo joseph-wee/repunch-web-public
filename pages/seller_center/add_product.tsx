@@ -87,6 +87,7 @@ const useAdd_product = () => {
   const videoRef = useRef<any>([]);
   const lengthRef = useRef<any>([]);
   const rollRef = useRef<any>([]);
+  const sellButtonRef = useRef<any>();
 
   const [validation, setValidation] = useState<{ [key: string]: number }>({
     title: 0,
@@ -353,8 +354,9 @@ const useAdd_product = () => {
       previews[selectOption].push(URL.createObjectURL(files[0]));
 
       setPreviews([...previews]);
+      contentFiles[selectOption] = Array.from(files || []);
       // 비디오 파일 세팅
-      setContentFiles([...Array.from(files || [])]);
+      setContentFiles([...contentFiles]);
 
       return;
     }
@@ -441,6 +443,7 @@ const useAdd_product = () => {
   };
   /** 유효성 검사 옵션 길이 */
   const checkValidationLength = (i: number) => {
+    console.log(productInfo.options[i].length);
     if (productInfo.options[i].length === "") {
       return false;
     }
@@ -537,6 +540,7 @@ const useAdd_product = () => {
         block: "center",
         inline: "start",
       });
+      console.log("width");
       return result;
     }
     // weight
@@ -546,6 +550,7 @@ const useAdd_product = () => {
         block: "center",
         inline: "start",
       });
+      console.log("weight");
       return result;
     }
     // price
@@ -555,6 +560,7 @@ const useAdd_product = () => {
         block: "center",
         inline: "start",
       });
+      console.log("price");
       return result;
     }
     // 컬러 옵션별 유효성
@@ -562,6 +568,7 @@ const useAdd_product = () => {
       // color
       if (!checkValidationColor(i)) {
         result = false;
+        console.log("color");
         return result;
       }
 
@@ -569,6 +576,8 @@ const useAdd_product = () => {
       if (!checkValidationLength(i)) {
         result = false;
         setSelectOption(i);
+        lengthRef.current[i].focus();
+        console.log("length");
 
         return result;
       }
@@ -577,6 +586,8 @@ const useAdd_product = () => {
       if (!checkValidationRoll(i)) {
         result = false;
         setSelectOption(i);
+        console.log("roll");
+        rollRef.current[i].focus();
 
         return result;
       }
@@ -584,12 +595,14 @@ const useAdd_product = () => {
       // image file
       if (!checkValidationImageFiles(i)) {
         result = false;
+        console.log("image");
         return result;
       }
 
       // video file
       if (!checkValidationVideoFiles(i)) {
         result = false;
+        console.log("video");
         return result;
       }
     }
@@ -721,6 +734,7 @@ const useAdd_product = () => {
       return;
     }
     if (rollRef.current[selectOption].value === "") {
+      console.log("2동작");
       rollRef.current[selectOption].focus();
       return;
     }
@@ -1315,12 +1329,16 @@ const useAdd_product = () => {
                 >
                   Error case
                 </ErrorCase5>
-                <SellProductButton onClick={() => productRegisterHandler()}>
-                  Sell Product
-                </SellProductButton>
               </OptionInputContainer>
             );
           })}
+        <SellProductButton
+          ref={sellButtonRef}
+          isActive={productInfo.options[0].colorNo > 0}
+          onClick={() => productRegisterHandler()}
+        >
+          Sell Product
+        </SellProductButton>
       </Container>
     </>
   );
@@ -1935,10 +1953,15 @@ const ImageVideoText = styled.div`
     margin: 0;
   }
 `;
-const SellProductButton = styled.div`
-  display: flex;
+const SellProductButton = styled.div<{ isActive: boolean }>`
+  display: ${(props) => {
+    return props.isActive ? "flex" : "none";
+  }};
   align-items: center;
   justify-content: center;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
   border-radius: 2px;
   border-radius: 2px;
   border: 0.794px solid #d4f01e;
