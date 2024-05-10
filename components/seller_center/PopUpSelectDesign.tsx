@@ -34,12 +34,10 @@ const PopUpSelectDesign = ({
   setSelectCategory: any;
   selectOption: number;
 }) => {
-  const [compositionList, setCompositionList] = useState<any>();
-
   const [tempList, setTempList] = useState<any>();
 
   const [selectInput, setSelectInput] = useState(-1);
-  const [percent, setPercent] = useState(0);
+
   const ref = useRef<null[] | HTMLInputElement[]>([]);
 
   const designClickHandler = (index: number) => {
@@ -56,38 +54,19 @@ const PopUpSelectDesign = ({
     console.log(tempList);
   };
 
-  const selectFocusHandler = (index: number) => {
-    setSelectInput(index);
-    ref.current[0]?.focus();
-  };
-
-  const okHandelr = () => {
-    percent <= 100 && setSelectInput(-1);
-  };
-
   const designSave = () => {
-    setSelectCategory("");
-
-    tempList.forEach((el: any) => {
-      el.value > 0 && (productInfo.designNo = el.designNo);
-    });
-
-    setProductInfo({ ...productInfo });
+    for (const el of tempList) {
+      if (el.value === 1) {
+        setSelectCategory("");
+        productInfo.designNo = el.designNo;
+        setProductInfo({ ...productInfo });
+      }
+    }
   };
 
   useEffect(() => {
     ref.current[selectInput]?.focus();
   }, [selectInput]);
-
-  useEffect(() => {
-    if (tempList) {
-      let sum = 0;
-      tempList.forEach((el: any) => {
-        sum += Number(el.value);
-      });
-      setPercent(sum);
-    }
-  }, [tempList]);
 
   useEffect(() => {
     let desgins = sessionStorage.getItem("desgins");
@@ -109,10 +88,7 @@ const PopUpSelectDesign = ({
 
   return (
     <Container selectCategory={selectCategory}>
-      <BackGround
-        onClick={() => setSelectCategory("")}
-        selectInput={selectInput}
-      />
+      <BackGround />
       <ContentWrapper>
         {tempList &&
           tempList.map((el: any, index: number) => {
@@ -192,10 +168,7 @@ const Container = styled.div<{ selectCategory: string }>`
     z-index: 0;
   }
 `;
-const BackGround = styled.div<{ selectInput: number }>`
-  display: ${(props) => {
-    return props.selectInput === -1 ? "block" : "none";
-  }};
+const BackGround = styled.div`
   position: fixed;
   width: 100%;
   height: 100vh;

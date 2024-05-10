@@ -68,18 +68,14 @@ const PopUpSelectCountry = ({
   };
 
   const designSave = () => {
-    setSelectCategory("");
-
-    tempList.forEach((el: any) => {
-      el.value > 0 && (productInfo.originNo = el.originNo);
-    });
-
-    setProductInfo({ ...productInfo });
+    for (const el of tempList) {
+      if (el.value !== 0) {
+        setSelectCategory("");
+        productInfo.originNo = el.originNo;
+        setProductInfo({ ...productInfo });
+      }
+    }
   };
-
-  useEffect(() => {
-    ref.current[selectInput]?.focus();
-  }, [selectInput]);
 
   useEffect(() => {
     if (tempList) {
@@ -111,10 +107,7 @@ const PopUpSelectCountry = ({
 
   return (
     <Container selectCategory={selectCategory}>
-      <BackGround
-        onClick={() => setSelectCategory("")}
-        selectInput={selectInput}
-      />
+      <BackGround />
       <ContentWrapper>
         {tempList &&
           tempList.map((el: any, index: number) => {
@@ -194,10 +187,7 @@ const Container = styled.div<{ selectCategory: string }>`
     z-index: 0;
   }
 `;
-const BackGround = styled.div<{ selectInput: number }>`
-  display: ${(props) => {
-    return props.selectInput === -1 ? "block" : "none";
-  }};
+const BackGround = styled.div`
   position: fixed;
   width: 100%;
   height: 100vh;
@@ -205,7 +195,6 @@ const BackGround = styled.div<{ selectInput: number }>`
 `;
 const ContentWrapper = styled.div`
   position: relative;
-  padding-bottom: 20px;
   box-sizing: border-box;
   background-color: #ffffff;
   width: 460px;
@@ -269,12 +258,16 @@ const Percent = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
+  position: sticky;
+  bottom: 0px;
+  background-color: #ffffff;
   @media screen and (max-width: 768px) {
     position: absolute;
   }
   margin-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
+  padding-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
 `;

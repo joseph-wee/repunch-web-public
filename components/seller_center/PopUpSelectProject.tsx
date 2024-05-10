@@ -67,13 +67,13 @@ const PopUpSelectProject = ({
   };
 
   const designSave = () => {
-    setSelectCategory("");
-
-    tempList.forEach((el: any) => {
-      el.value > 0 && (productInfo.projectNo = el.projectNo);
-    });
-
-    setProductInfo({ ...productInfo });
+    for (const el of tempList) {
+      if (el.value !== 0) {
+        setSelectCategory("");
+        productInfo.projectNo = el.projectNo;
+        setProductInfo({ ...productInfo });
+      }
+    }
   };
 
   useEffect(() => {
@@ -110,10 +110,7 @@ const PopUpSelectProject = ({
 
   return (
     <Container selectCategory={selectCategory}>
-      <BackGround
-        onClick={() => setSelectCategory("")}
-        selectInput={selectInput}
-      />
+      <BackGround />
       <ContentWrapper>
         {tempList &&
           tempList.map((el: any, index: number) => {
@@ -193,10 +190,7 @@ const Container = styled.div<{ selectCategory: string }>`
     z-index: 0;
   }
 `;
-const BackGround = styled.div<{ selectInput: number }>`
-  display: ${(props) => {
-    return props.selectInput === -1 ? "block" : "none";
-  }};
+const BackGround = styled.div`
   position: fixed;
   width: 100%;
   height: 100vh;
