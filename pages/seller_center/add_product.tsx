@@ -140,7 +140,7 @@ const useAdd_product = () => {
 
   /** Description 글자수 체크 */
   const descriptionCheckHandler = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     if (e.target.value.length <= 1000) {
       setProductInfo({ ...productInfo, description: e.target.value });
@@ -179,7 +179,7 @@ const useAdd_product = () => {
   /** length 숫자, . 만 입력되게 */
   const inputLengthHandler = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     e.target.value = e.target.value.replace(/[^.0-9]/g, "");
     productInfo.options[index].length = e.target.value;
@@ -217,10 +217,26 @@ const useAdd_product = () => {
 
   /** 컬러 삭제 */
   const removeColorHandler = (index: number) => {
-    // 컬러 옵션 하나 남아있는 경우 삭제 하지 않고 colorNo를 0으로
+    // 컬러 옵션 하나 남아있는 경우 리셋
     if (productInfo.options.length === 1) {
-      productInfo.options[index].colorNo = 0;
+      productInfo.options[index] = {
+        colorNo: 0,
+        length: "",
+        lengthUnitType: "METER",
+        amount: 0,
+        quantity: "",
+        supportSample: false,
+        samplePrice: 0,
+        sampleQuantity: 0,
+        files: [],
+      };
       setProductInfo({ ...productInfo });
+
+      // preview image, videos 리셋
+      previewImages[index] = [];
+      previewVideos[index] = [];
+      setPreviewImages([...previewImages]);
+      setPreviewVideos([...previewVideos]);
       return;
     }
     productInfo.options.splice(index, 1);
@@ -234,6 +250,12 @@ const useAdd_product = () => {
       setSelectOption(index - 1);
       console.log(index - 1);
     }
+
+    // preview image, videos 리셋
+    previewImages[index] = [];
+    previewVideos[index] = [];
+    setPreviewImages([...previewImages]);
+    setPreviewVideos([...previewVideos]);
   };
 
   useEffect(() => {
@@ -287,7 +309,7 @@ const useAdd_product = () => {
     previews: [string[]],
     setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
     contentFiles: any,
-    setContentFiles: React.Dispatch<React.SetStateAction<any>>
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>,
   ) {
     // 파일 개수 10개일 경우
     if (
@@ -332,8 +354,8 @@ const useAdd_product = () => {
     contentFiles[selectOption].push(
       ...Array.from(files || []).slice(
         0,
-        10 - contentFiles[selectOption].length
-      )
+        10 - contentFiles[selectOption].length,
+      ),
     );
     setContentFiles([...contentFiles]);
 
@@ -346,7 +368,7 @@ const useAdd_product = () => {
     previews: [string[]],
     setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
     contentFiles: any,
-    setContentFiles: React.Dispatch<React.SetStateAction<any>>
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>,
   ) {
     // 파일 1개 있을 경우
     if (contentFiles[selectOption] && contentFiles[selectOption].lengh === 1) {
@@ -385,7 +407,7 @@ const useAdd_product = () => {
     previews: [string[]],
     setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
     contentFiles: any,
-    setContentFiles: React.Dispatch<React.SetStateAction<any>>
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>,
   ) => {
     console.log("삭제");
     // 미리보기 삭제
@@ -409,7 +431,7 @@ const useAdd_product = () => {
     previews: [string[]],
     setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
     contentFiles: any,
-    setContentFiles: React.Dispatch<React.SetStateAction<any>>
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>,
   ) => {
     console.log("삭제");
     // 미리보기 삭제
@@ -628,7 +650,7 @@ const useAdd_product = () => {
     // amount 계산
     for (let i = 0; i < productInfo.options.length; i++) {
       productInfo.options[i].amount = priceToDollar(
-        productInfo.options[i].length * productInfo.price
+        productInfo.options[i].length * productInfo.price,
       );
     }
 
@@ -706,7 +728,7 @@ const useAdd_product = () => {
           index += 1;
         }
       }
-      axios.all(multiImageUploadRequest()).then((res: any) => {
+      axios.all(multipleVideoPreviewUploadRequest()).then((res: any) => {
         console.log(res);
         const resPreview = res;
 
@@ -821,7 +843,11 @@ const useAdd_product = () => {
       let dataStart = dataUri.indexOf(base64Mark) + base64Mark.length;
       let fileData = dataUri.substring(dataStart);
 
-      videoPreview[index] = dataUrlToFile(dataUri, file.name);
+      videoPreview[index] = dataUrlToFile(
+        dataUri,
+        file.name.split(".")[0] + ".png",
+      );
+      console.log(dataUri);
       setVideoPreview([...videoPreview]);
       console.log(videoPreview);
     };
@@ -831,11 +857,13 @@ const useAdd_product = () => {
   const dataUrlToFile = (url: string, fileName: string) => {
     const [mediaType, data] = url.split(",");
 
-    const mime = mediaType.match(/:(.*?);/)?.[0];
+    const mime = mediaType.split(":")[1].split(";")[0];
 
     var n = data.length;
 
     const arr = new Uint8Array(n);
+
+    console.log(data);
 
     while (n--) {
       arr[n] = data.charCodeAt(n);
@@ -1164,6 +1192,7 @@ const useAdd_product = () => {
                     <LengthInput
                       placeholder="0"
                       onChange={(e) => inputLengthHandler(e, index)}
+                      value={productInfo.options[index].length}
                       ref={(el) => (lengthRef.current[index] = el)}
                     />
                     <LengthUnit>m</LengthUnit>
@@ -1181,7 +1210,7 @@ const useAdd_product = () => {
                       {productInfo.options[index].length && productInfo.price
                         ? `$${priceToDollar(
                             Number(productInfo.options[index].length) *
-                              Number(productInfo.price)
+                              Number(productInfo.price),
                           )}`
                         : ""}
                     </TotalPrice>
@@ -1262,7 +1291,7 @@ const useAdd_product = () => {
                           previewImages,
                           setPreviewImages,
                           imageFiles,
-                          setImageFiles
+                          setImageFiles,
                         )
                       }
                     />
@@ -1285,7 +1314,7 @@ const useAdd_product = () => {
                                     previewImages,
                                     setPreviewImages,
                                     imageFiles,
-                                    setImageFiles
+                                    setImageFiles,
                                   );
                                 }}
                               >
@@ -1320,7 +1349,7 @@ const useAdd_product = () => {
                             </BackGround>
                           </ImageComponent>
                         );
-                      }
+                      },
                     )}
                 </UploadImageVideoWrapper>
                 <ImageVideoText>
@@ -1349,7 +1378,7 @@ const useAdd_product = () => {
                         previewVideos,
                         setPreviewVideos,
                         videoFiles,
-                        setVideoFiles
+                        setVideoFiles,
                       );
                     }}
                     disabled={
@@ -1414,7 +1443,7 @@ const useAdd_product = () => {
                           //   </Video>
                           // </ImageButton>
                         );
-                      }
+                      },
                     )}
                 </UploadImageVideoWrapper>
 
