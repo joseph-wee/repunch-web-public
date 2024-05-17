@@ -132,22 +132,32 @@ const useHome = () => {
         </Link>
       </AddProductBox>
       {/** TODO: 상품 등록 없으면 안보이게 */}
-      <TitleBar>
-        <TitleCountWrapper>
-          <Title>My product</Title>
-          <Count>{`${count}`}</Count>
-        </TitleCountWrapper>
-        <More>More</More>
-      </TitleBar>
-      <SellerProductWrapper>
-        {products &&
-          products.map((el: any, index: number) => {
-            return <SellerProduct product={el} key={`${index}a--sdf`} />;
-          })}
-      </SellerProductWrapper>
-      <MoreBigButton>
-        See <Bold>{`${count}`}</Bold> more product
-      </MoreBigButton>
+      {products && (
+        <>
+          <TitleBar>
+            <TitleCountWrapper>
+              <Title>My product</Title>
+              <Count>{`${count}`}</Count>
+            </TitleCountWrapper>
+            <Link
+              href="/seller_center/my_product"
+              style={{ textDecoration: "none" }}
+            >
+              <More>More</More>
+            </Link>
+          </TitleBar>
+          <SellerProductWrapper>
+            {products &&
+              products.map((el: any, index: number) => {
+                return <SellerProduct product={el} key={`${index}a--sdf`} />;
+              })}
+          </SellerProductWrapper>
+          <MoreBigButton>
+            See <Bold>{`${count}`}</Bold> more product
+          </MoreBigButton>
+        </>
+      )}
+
       <TitleBar>
         <Title>Order list</Title>
         <More>More</More>
@@ -255,6 +265,7 @@ const More = styled.div`
   font-size: 12px;
   font-weight: 400;
   line-height: 15.6px;
+  color: #121822;
   cursor: pointer;
 `;
 const MoreBigButton = styled.div`
@@ -272,7 +283,7 @@ const Bold = styled.span`
   font-weight: 600;
 `;
 const SellerProductWrapper = styled.div`
-  display: grid;
+  /* display: grid;
   margin-bottom: 20px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   row-gap: 20px;
@@ -287,6 +298,29 @@ const SellerProductWrapper = styled.div`
     grid-template-columns: 1fr 1fr;
     row-gap: 15px;
     column-gap: 20px;
+  } */
+
+  display: grid;
+  margin-bottom: 20px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  row-gap: 50px;
+  column-gap: 20px;
+
+  @media screen and (max-width: 1080px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    row-gap: 40px;
+    column-gap: 20px;
+  }
+
+  @media screen and (max-width: 860px) {
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: 40px;
+    column-gap: 18px;
+  }
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 15px;
+    column-gap: 15px;
   }
 `;
 
