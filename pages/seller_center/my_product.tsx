@@ -29,7 +29,7 @@ export interface ListCountryArray extends Array<List> {}
 
 export interface ListTempArray extends Array<TempList> {}
 
-const my_product = () => {
+const useMy_product = () => {
   const [sortFilterIsActive, setSortFilterIsActive] = useState(false);
   const [sortIsActive, setSortIsActive] = useState(false);
   const [sortType, setSortType] = useState("LATEST");
@@ -428,4 +428,4 @@ const SellerProductWrapper = styled.div`
   }
 `;
 
-export default my_product;
+export default useMy_product;

@@ -1002,9 +1002,9 @@ const useAdd_product = () => {
             {productInfo.materials[0].value !== 0 &&
               productInfo.materials.map((el: any, index: number) => {
                 return (
-                  <InputInfo>{`${getMaterialsName(el.materialNo)} : ${
-                    el.value
-                  }%`}</InputInfo>
+                  <InputInfo key={`${index}asdfdafz`}>{`${getMaterialsName(
+                    el.materialNo
+                  )} : ${el.value}%`}</InputInfo>
                 );
               })}
 
