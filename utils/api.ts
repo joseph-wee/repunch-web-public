@@ -1269,3 +1269,41 @@ export const productRegisterRequest = async (
     console.log(error);
   }
 };
+
+/** 셀러 - 원단 전시 ON 상태로 변경 */
+export const productDisplayOnRequest = async (
+  accessToken: string | null,
+  productNo: number
+) => {
+  try {
+    const res = await axios({
+      method: "PUT",
+      url: `/products/${productNo}/display-on`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/** 셀러 - 원단 전시 OFF 상태로 변경 */
+export const productDisplayOffRequest = async (
+  accessToken: string | null,
+  productNo: number
+) => {
+  try {
+    const res = await axios({
+      method: "PUT",
+      url: `/products/${productNo}/display-off`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
