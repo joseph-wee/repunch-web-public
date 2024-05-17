@@ -109,6 +109,7 @@ const useAdd_product = () => {
   });
 
   const [loading, setLoading] = useState(false); // 상품 등록 로딩
+  const [time, setTime] = useState(0);
 
   const router = useRouter();
 
@@ -140,7 +141,7 @@ const useAdd_product = () => {
 
   /** Description 글자수 체크 */
   const descriptionCheckHandler = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     if (e.target.value.length <= 1000) {
       setProductInfo({ ...productInfo, description: e.target.value });
@@ -179,7 +180,7 @@ const useAdd_product = () => {
   /** length 숫자, . 만 입력되게 */
   const inputLengthHandler = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
+    index: number
   ) => {
     e.target.value = e.target.value.replace(/[^.0-9]/g, "");
     productInfo.options[index].length = e.target.value;
@@ -281,7 +282,7 @@ const useAdd_product = () => {
   };
 
   useEffect(() => {
-    console.log(productInfo.options);
+    console.log(productInfo);
   }, [productInfo]);
   const samplePriceHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     productInfo.options[selectOption].samplePrice = Number(e.target.value);
@@ -309,7 +310,7 @@ const useAdd_product = () => {
     previews: [string[]],
     setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
     contentFiles: any,
-    setContentFiles: React.Dispatch<React.SetStateAction<any>>,
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>
   ) {
     // 파일 개수 10개일 경우
     if (
@@ -329,6 +330,7 @@ const useAdd_product = () => {
       for (let i = 0; i < (files.length > 10 ? 10 : files.length); i++) {
         previews[selectOption].push(URL.createObjectURL(files[i]));
       }
+      console.log(URL.createObjectURL(files[0]));
       setPreviews([...previews]);
       // 파일 배열 형태로 세팅 최대 10개
       contentFiles[selectOption] = Array.from(files || []).slice(0, 10);
@@ -354,8 +356,8 @@ const useAdd_product = () => {
     contentFiles[selectOption].push(
       ...Array.from(files || []).slice(
         0,
-        10 - contentFiles[selectOption].length,
-      ),
+        10 - contentFiles[selectOption].length
+      )
     );
     setContentFiles([...contentFiles]);
 
@@ -368,7 +370,7 @@ const useAdd_product = () => {
     previews: [string[]],
     setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
     contentFiles: any,
-    setContentFiles: React.Dispatch<React.SetStateAction<any>>,
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>
   ) {
     // 파일 1개 있을 경우
     if (contentFiles[selectOption] && contentFiles[selectOption].lengh === 1) {
@@ -407,7 +409,7 @@ const useAdd_product = () => {
     previews: [string[]],
     setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
     contentFiles: any,
-    setContentFiles: React.Dispatch<React.SetStateAction<any>>,
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>
   ) => {
     console.log("삭제");
     // 미리보기 삭제
@@ -431,7 +433,7 @@ const useAdd_product = () => {
     previews: [string[]],
     setPreviews: React.Dispatch<React.SetStateAction<[string[]]>>,
     contentFiles: any,
-    setContentFiles: React.Dispatch<React.SetStateAction<any>>,
+    setContentFiles: React.Dispatch<React.SetStateAction<any>>
   ) => {
     console.log("삭제");
     // 미리보기 삭제
@@ -645,12 +647,11 @@ const useAdd_product = () => {
 
   /** 이미지 서버에 저장 */
   const imageUploadRequestHandler = () => {
-    console.log("돌아감1");
-
+    setLoading(true);
     // amount 계산
     for (let i = 0; i < productInfo.options.length; i++) {
       productInfo.options[i].amount = priceToDollar(
-        productInfo.options[i].length * productInfo.price,
+        productInfo.options[i].length * productInfo.price
       );
     }
 
@@ -767,14 +768,15 @@ const useAdd_product = () => {
         });
       });
     });
-    setLoading(false);
   };
 
   /** 상품등록 요청 */
   const productRegisterHandler = () => {
-    setLoading(true);
     disableButton(sellButtonRef);
-    validationCheck() && imageUploadRequestHandler();
+    // 유효성 검사 모두 통과하면 등록 요청
+    if (validationCheck()) {
+      imageUploadRequestHandler();
+    }
   };
 
   const imageUploadTest = () => {
@@ -838,26 +840,30 @@ const useAdd_product = () => {
       let ctx = canvas.getContext("2d");
       ctx?.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-      const dataUri = canvas.toDataURL();
-      let base64Mark = "base64,";
-      let dataStart = dataUri.indexOf(base64Mark) + base64Mark.length;
-      let fileData = dataUri.substring(dataStart);
+      const dataURL = canvas.toDataURL("image/png");
 
-      videoPreview[index] = dataUrlToFile(
-        dataUri,
-        file.name.split(".")[0] + ".png",
-      );
-      console.log(dataUri);
+      const blobBin = atob(dataURL.split(",")[1]);
+      const array = [];
+
+      for (let i = 0; i < blobBin.length; i++) {
+        array.push(blobBin.charCodeAt(i));
+      }
+      const blob = new Blob([new Uint8Array(array)], { type: "image/png" });
+      const file = new File([blob], "image.png", { type: blob.type });
+
+      videoPreview[index] = file;
+
       setVideoPreview([...videoPreview]);
-      console.log(videoPreview);
     };
   };
 
   /** base64 -> File */
   const dataUrlToFile = (url: string, fileName: string) => {
     const [mediaType, data] = url.split(",");
+    console.log(mediaType);
 
     const mime = mediaType.split(":")[1].split(";")[0];
+    console.log(mime);
 
     var n = data.length;
 
@@ -870,6 +876,46 @@ const useAdd_product = () => {
     }
 
     return new File([arr], fileName, { type: mime });
+  };
+
+  useEffect(() => {
+    if (loading) {
+      let timerId = setInterval(
+        () => (time === 5 ? setTime(0) : setTime((prev) => prev + 1)),
+        1000
+      );
+      return () => clearInterval(timerId);
+    }
+  }, [loading]);
+
+  const getLoadingText = () => {
+    let dot = "";
+    for (let i = 0; i < time; i++) {
+      dot += ".";
+    }
+    return `loading${dot}`;
+  };
+
+  /** materials 번호에 해당하는 이름 찾기 */
+  const getMaterialsName = (no: number) => {
+    const materials = JSON.parse(sessionStorage.getItem("materials") || "{}");
+    return materials.find((el: any) => el.materialNo === no).name;
+  };
+
+  /** design 이름 얻기 */
+  const getDesignName = (no: number) => {
+    const materials = JSON.parse(sessionStorage.getItem("desgins") || "{}");
+    return materials.find((el: any) => el.designNo === no).name;
+  };
+  /** project 이름 얻기 */
+  const getProjectName = (no: number) => {
+    const materials = JSON.parse(sessionStorage.getItem("projects") || "{}");
+    return materials.find((el: any) => el.projectNo === no).name;
+  };
+  /** country of origin 이름 얻기 */
+  const getOriginName = (no: number) => {
+    const materials = JSON.parse(sessionStorage.getItem("origins") || "{}");
+    return materials.find((el: any) => el.originNo === no).name;
   };
 
   return (
@@ -952,10 +998,23 @@ const useAdd_product = () => {
           <InputTitle ref={(el) => (commonInfoRef.current[2] = el)}>
             Composition
           </InputTitle>
-          <InputContentWrapper onClick={() => setSelectCategory("composition")}>
-            <InputContent>Select</InputContent>
-            <Image src={ic_link_gray} alt="ic_link_gray" />
-          </InputContentWrapper>
+          <InputInfoWrapper>
+            {productInfo.materials[0].value !== 0 &&
+              productInfo.materials.map((el: any, index: number) => {
+                return (
+                  <InputInfo>{`${getMaterialsName(el.materialNo)} : ${
+                    el.value
+                  }%`}</InputInfo>
+                );
+              })}
+
+            <InputContentWrapper
+              onClick={() => setSelectCategory("composition")}
+            >
+              <InputContent>Select</InputContent>
+              <Image src={ic_link_gray} alt="ic_link_gray" />
+            </InputContentWrapper>
+          </InputInfoWrapper>
         </InputWrapper>
         <ErrorCase error={validationRealTime && !checkValidationComposition()}>
           Error case
@@ -964,34 +1023,52 @@ const useAdd_product = () => {
           <InputTitle ref={(el) => (commonInfoRef.current[3] = el)}>
             Design
           </InputTitle>
-          <InputContentWrapper onClick={() => setSelectCategory("design")}>
-            <InputContent>Select</InputContent>
-            <Image src={ic_link_gray} alt="ic_link_gray" />
-          </InputContentWrapper>
+          <InputInfoWrapper>
+            <InputInfo>
+              {productInfo.designNo !== 0 &&
+                `${getDesignName(productInfo.designNo)}`}
+            </InputInfo>
+            <InputContentWrapper onClick={() => setSelectCategory("design")}>
+              <InputContent>Select</InputContent>
+              <Image src={ic_link_gray} alt="ic_link_gray" />
+            </InputContentWrapper>
+          </InputInfoWrapper>
         </InputWrapper>
         <ErrorCase error={validationRealTime && productInfo.designNo === 0}>
           Error case
         </ErrorCase>
-        <InputWrapper onClick={() => setSelectCategory("project")}>
+        <InputWrapper>
           <InputTitle ref={(el) => (commonInfoRef.current[4] = el)}>
             Project
           </InputTitle>
-          <InputContentWrapper>
-            <InputContent>Select</InputContent>
-            <Image src={ic_link_gray} alt="ic_link_gray" />
-          </InputContentWrapper>
+          <InputInfoWrapper>
+            <InputInfo>
+              {productInfo.projectNo !== 0 &&
+                `${getProjectName(productInfo.projectNo)}`}
+            </InputInfo>
+            <InputContentWrapper onClick={() => setSelectCategory("project")}>
+              <InputContent>Select</InputContent>
+              <Image src={ic_link_gray} alt="ic_link_gray" />
+            </InputContentWrapper>
+          </InputInfoWrapper>
         </InputWrapper>
         <ErrorCase error={validationRealTime && productInfo.projectNo === 0}>
           Error case
         </ErrorCase>
-        <InputWrapper onClick={() => setSelectCategory("country")}>
+        <InputWrapper>
           <InputTitle ref={(el) => (commonInfoRef.current[5] = el)}>
             Country of origin
           </InputTitle>
-          <InputContentWrapper>
-            <InputContent>Select</InputContent>
-            <Image src={ic_link_gray} alt="ic_link_gray" />
-          </InputContentWrapper>
+          <InputInfoWrapper>
+            <InputInfo>
+              {productInfo.originNo !== 0 &&
+                `${getOriginName(productInfo.originNo)}`}
+            </InputInfo>
+            <InputContentWrapper onClick={() => setSelectCategory("country")}>
+              <InputContent>Select</InputContent>
+              <Image src={ic_link_gray} alt="ic_link_gray" />
+            </InputContentWrapper>
+          </InputInfoWrapper>
         </InputWrapper>
         <ErrorCase error={validationRealTime && productInfo.originNo === 0}>
           Error case
@@ -1035,10 +1112,15 @@ const useAdd_product = () => {
           <InputTitle ref={(el) => (commonInfoRef.current[6] = el)}>
             Width (Inch)
           </InputTitle>
-          <InputContentWrapper onClick={() => setSelectCategory("width")}>
-            <InputContent>Select</InputContent>
-            <Image src={ic_link_gray} alt="ic_link_gray" />
-          </InputContentWrapper>
+          <InputInfoWrapper>
+            <InputInfo>
+              {productInfo.width !== 0 && `${productInfo.width}`}
+            </InputInfo>
+            <InputContentWrapper onClick={() => setSelectCategory("width")}>
+              <InputContent>Select</InputContent>
+              <Image src={ic_link_gray} alt="ic_link_gray" />
+            </InputContentWrapper>
+          </InputInfoWrapper>
         </InputWrapper>
         <ErrorCase error={validationRealTime && productInfo.width === 0}>
           Error case
@@ -1210,7 +1292,7 @@ const useAdd_product = () => {
                       {productInfo.options[index].length && productInfo.price
                         ? `$${priceToDollar(
                             Number(productInfo.options[index].length) *
-                              Number(productInfo.price),
+                              Number(productInfo.price)
                           )}`
                         : ""}
                     </TotalPrice>
@@ -1291,7 +1373,7 @@ const useAdd_product = () => {
                           previewImages,
                           setPreviewImages,
                           imageFiles,
-                          setImageFiles,
+                          setImageFiles
                         )
                       }
                     />
@@ -1314,7 +1396,7 @@ const useAdd_product = () => {
                                     previewImages,
                                     setPreviewImages,
                                     imageFiles,
-                                    setImageFiles,
+                                    setImageFiles
                                   );
                                 }}
                               >
@@ -1349,7 +1431,7 @@ const useAdd_product = () => {
                             </BackGround>
                           </ImageComponent>
                         );
-                      },
+                      }
                     )}
                 </UploadImageVideoWrapper>
                 <ImageVideoText>
@@ -1378,7 +1460,7 @@ const useAdd_product = () => {
                         previewVideos,
                         setPreviewVideos,
                         videoFiles,
-                        setVideoFiles,
+                        setVideoFiles
                       );
                     }}
                     disabled={
@@ -1443,7 +1525,7 @@ const useAdd_product = () => {
                           //   </Video>
                           // </ImageButton>
                         );
-                      },
+                      }
                     )}
                 </UploadImageVideoWrapper>
 
@@ -1467,6 +1549,10 @@ const useAdd_product = () => {
         >
           Sell Product
         </SellProductButton>
+        {/** 임시 로딩중 텍스트 */}
+        <BackGroundLoading loading={loading}>
+          {getLoadingText()}
+        </BackGroundLoading>
       </Container>
     </>
   );
@@ -1660,6 +1746,13 @@ const InputContent = styled.div`
   font-size: 14px;
   font-weight: 400;
   color: #a4b0b2;
+`;
+const InputInfoWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+const InputInfo = styled.div`
+  font-size: 14px;
 `;
 const Label = styled.label`
   display: flex;
@@ -2104,6 +2197,23 @@ const SellProductButton = styled.div<{ isActive: boolean }>`
 const Video = styled.video`
   width: 80px;
   height: 80px;
+`;
+
+const BackGroundLoading = styled.div<{ loading: boolean }>`
+  z-index: 3;
+  display: ${(props) => {
+    return props.loading ? "flex" : "none";
+  }};
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
 `;
 
 export default useAdd_product;
