@@ -134,6 +134,13 @@ const PopUpSelectComposition = ({
     ref && ref.current[selectIndex]?.focus();
   }, [selectIndex]);
 
+  /** 엔터키 입력시 숫자 확정 */
+  const enterHandelr = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setSelectIndex(-1);
+    }
+  };
+
   return (
     <Container selectCategory={selectCategory}>
       <BackGround />
@@ -166,6 +173,7 @@ const PopUpSelectComposition = ({
                     ref={(element) => {
                       ref.current[index] = element;
                     }}
+                    onKeyDown={(e) => enterHandelr(e)}
                   />
                   <Unit>%</Unit>
                 </PercentInputWrapper>
