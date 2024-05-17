@@ -23,7 +23,7 @@ const SellerProduct = ({
 }: any) => {
   const [favoriteIsActive, setFavoriteIsActive] = useState(product.keep);
   const [optionLength, setOptionLength] = useState(
-    `${product.options[0].length}m`
+    `${product.options[0].length}m`,
   );
   const [thumbnail, setThumnail] = useState(product.options[0].thumbnailUrl);
 
@@ -120,7 +120,7 @@ const SellerProduct = ({
           res?.data.status == 200 &&
           (setFavoriteIsActive(!favoriteIsActive),
           (v[index].like = false),
-          setProductList([...v]))
+          setProductList([...v])),
       );
       return;
     }
@@ -128,7 +128,7 @@ const SellerProduct = ({
     if (!favoriteIsActive) {
       keepReqeust(at, product.productNo).then(
         (res) =>
-          res?.data.status == 200 && setFavoriteIsActive(!favoriteIsActive)
+          res?.data.status == 200 && setFavoriteIsActive(!favoriteIsActive),
       );
       return;
     }
@@ -140,7 +140,7 @@ const SellerProduct = ({
   }, [thumbnail]);
 
   return (
-    <Card display={product.display}>
+    <Card>
       <ThumbnailWrapper>
         {/* <Link
                     href={{
@@ -154,12 +154,12 @@ const SellerProduct = ({
                   > */}
         <Link
           href={{
-            pathname: `/product_detail/${product.productNo}`,
+            pathname: `/seller_center/product_detail/${product.productNo}`,
             query: {
               selectNo: selectNo,
             },
           }}
-          as={`/product_detail/${product.productNo}`}
+          as={`/seller_center/product_detail/${product.productNo}`}
           style={{ textDecoration: "none" }}
         >
           {product.options.map((i: any, j: number) => {
@@ -236,10 +236,7 @@ const SellerProduct = ({
   );
 };
 
-const Card = styled.div<{ display: boolean }>`
-  display: ${(props) => {
-    return props.display ? "block" : "none";
-  }};
+const Card = styled.div`
   border-radius: 4px;
   filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.15));
 `;
