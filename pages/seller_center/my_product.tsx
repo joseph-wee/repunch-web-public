@@ -31,7 +31,7 @@ export interface ListTempArray extends Array<TempList> {}
 
 const my_product = () => {
   const [sortFilterIsActive, setSortFilterIsActive] = useState(false);
-  const [sortIsActive, setSortIsActive] = useState(true);
+  const [sortIsActive, setSortIsActive] = useState(false);
   const [sortType, setSortType] = useState("LATEST");
 
   const [products, setProducts] = useState<any>([]); // 셀러 등록 상품들
@@ -167,92 +167,99 @@ const my_product = () => {
   }, [sortType]);
 
   return (
-    <Container>
-      <ItemSortWrapper>
-        <Items>{count} items</Items>
-        <ButtonWrapper>
-          <ClearButton
-            isActive={sortFilterIsActive}
-            onClick={() => setSortFilterIsActive(false)}
+    <div onClick={() => setSortIsActive(false)}>
+      <Container>
+        <ItemSortWrapper>
+          <Items>{count} items</Items>
+          <ButtonWrapper>
+            <ClearButton
+              isActive={sortFilterIsActive}
+              onClick={() => setSortFilterIsActive(false)}
+            >
+              Clear Filter
+            </ClearButton>
+            <SortButton
+              onClick={(e) => {
+                setSortIsActive(!sortIsActive);
+                e.stopPropagation();
+              }}
+            >
+              <ButtonTextSort>
+                {sortType === "LATEST" && "Sort by latest"}
+                {sortType === "LOW_PRICE" && "Sort by low price"}
+                {sortType === "HIGH_PRICE" && "Sort by high price"}
+              </ButtonTextSort>
+
+              <Image
+                src={sortIsActive ? ic_down_bk_filter : ic_up_bk_filter}
+                alt={"sort_arrow_button"}
+              />
+            </SortButton>
+          </ButtonWrapper>
+        </ItemSortWrapper>
+        <SortMenuWrapper isActive={sortIsActive}>
+          <SortMenu
+            isActive={sortType == "LATEST"}
+            onClick={() => {
+              setSortIsActive(false);
+
+              setSortType("LATEST");
+            }}
           >
-            Clear Filter
-          </ClearButton>
-          <SortButton onClick={() => setSortIsActive(!sortIsActive)}>
-            <ButtonTextSort>
-              {sortType === "LATEST" && "Sort by latest"}
-              {sortType === "LOW_PRICE" && "Sort by low price"}
-              {sortType === "HIGH_PRICE" && "Sort by high price"}
-            </ButtonTextSort>
+            Latest
+            {sortType == "LATEST" ? (
+              <Image src={ic_check_web_status} alt={"ic_check_web"} />
+            ) : (
+              ""
+            )}
+          </SortMenu>
+          <SortMenu
+            isActive={sortType == "LOW_PRICE"}
+            onClick={() => {
+              setSortIsActive(false);
 
-            <Image
-              src={sortIsActive ? ic_down_bk_filter : ic_up_bk_filter}
-              alt={"sort_arrow_button"}
-            />
-          </SortButton>
-        </ButtonWrapper>
-      </ItemSortWrapper>
-      <SortMenuWrapper isActive={sortIsActive}>
-        <SortMenu
-          isActive={sortType == "LATEST"}
-          onClick={() => {
-            setSortIsActive(!sortIsActive);
+              setSortType("LOW_PRICE");
+            }}
+          >
+            Low Price
+            {sortType == "LOW_PRICE" ? (
+              <Image src={ic_check_web_status} alt={"ic_check_web"} />
+            ) : (
+              ""
+            )}
+          </SortMenu>
+          <SortMenu
+            isActive={sortType == "HIGH_PRICE"}
+            onClick={() => {
+              setSortIsActive(false);
 
-            setSortType("LATEST");
-          }}
-        >
-          Latest
-          {sortType == "LATEST" ? (
-            <Image src={ic_check_web_status} alt={"ic_check_web"} />
-          ) : (
-            ""
-          )}
-        </SortMenu>
-        <SortMenu
-          isActive={sortType == "LOW_PRICE"}
-          onClick={() => {
-            setSortIsActive(!sortIsActive);
-
-            setSortType("LOW_PRICE");
-          }}
-        >
-          Low Price
-          {sortType == "LOW_PRICE" ? (
-            <Image src={ic_check_web_status} alt={"ic_check_web"} />
-          ) : (
-            ""
-          )}
-        </SortMenu>
-        <SortMenu
-          isActive={sortType == "HIGH_PRICE"}
-          onClick={() => {
-            setSortIsActive(!sortIsActive);
-
-            setSortType("HIGH_PRICE");
-          }}
-        >
-          High Price
-          {sortType == "HIGH_PRICE" ? (
-            <Image src={ic_check_web_status} alt={"ic_check_web"} />
-          ) : (
-            ""
-          )}
-        </SortMenu>
-      </SortMenuWrapper>
-      <SellerProductWrapper>
-        {products &&
-          products.map((el: any, index: number) => {
-            return <SellerProduct product={el} key={`${index}a--sdf`} />;
-          })}
-        {products && <div ref={ref}></div>}
-      </SellerProductWrapper>
-    </Container>
+              setSortType("HIGH_PRICE");
+            }}
+          >
+            High Price
+            {sortType == "HIGH_PRICE" ? (
+              <Image src={ic_check_web_status} alt={"ic_check_web"} />
+            ) : (
+              ""
+            )}
+          </SortMenu>
+        </SortMenuWrapper>
+        <SellerProductWrapper>
+          {products &&
+            products.map((el: any, index: number) => {
+              return <SellerProduct product={el} key={`${index}a--sdf`} />;
+            })}
+          {products && <div ref={ref}></div>}
+        </SellerProductWrapper>
+      </Container>
+    </div>
   );
 };
 
 const Container = styled.div`
   position: relative;
   margin: 0 auto;
-  padding-top: 10px;
+  padding-top: 20px;
 
   max-width: 1030px;
   color: #121822;
@@ -318,11 +325,11 @@ const ButtonTextSort = styled.div`
 const SortMenuWrapper = styled.div<{ isActive: boolean }>`
   z-index: 1;
   display: ${(props) => {
-    return props.isActive == true ? "none" : "block";
+    return props.isActive ? "block" : "none";
   }};
   position: absolute;
-  right: 0;
-  top: 25px;
+  right: 20px;
+  top: 35px;
   @media screen and (max-width: 1279px) {
     top: 40px;
   }
