@@ -1307,3 +1307,46 @@ export const productDisplayOffRequest = async (
     console.log(error);
   }
 };
+
+/** 셀러 주문 목록 */
+export const sellerOrdersRequest = async (
+  accessToken: string | null,
+  orderUnitType: string | null,
+  orderStatus: string | null,
+  allStatus: boolean,
+  count: number,
+  searchAfter: number | null
+) => {
+  try {
+    // orderStatus 값이 있고 상태값이 있는 경우
+    if (orderStatus && allStatus && searchAfter) {
+      const res = await axios({
+        method: "GET",
+        url: `/seller/orders?${
+          orderUnitType ? `orderUnitType=${orderUnitType}&` : ""
+        }orderStatus=${orderStatus}&allStatus=${allStatus}&count=${count}&searchAfter=${searchAfter}`,
+
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return res;
+    }
+
+    // 기본
+    const res = await axios({
+      method: "GET",
+      url: `/seller/orders?${
+        orderUnitType ? `orderUnitType=${orderUnitType}&` : ""
+      }allStatus=${allStatus}&count=${count}`,
+
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    return error;
+  }
+};

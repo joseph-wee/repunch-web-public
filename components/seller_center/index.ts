@@ -5,3 +5,4 @@ export { default as PopUpSelectDesign } from "./PopUpSelectDesign";
 export { default as PopUpSelectProject } from "./PopUpSelectProject";
 export { default as PopUpSelectWidth } from "./PopUpSelectWidth";
 export { default as VideoPreview } from "./VideoPreview";
+export { default as SellerOrderBox } from "./SellerOrderBox";
