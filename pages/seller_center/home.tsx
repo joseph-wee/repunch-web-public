@@ -168,17 +168,22 @@ const useHome = () => {
             <>
               <OrderListWrapper key={`12-${index}`}>
                 <OrderName>{`${el.status}`}</OrderName>
-                <OrderCountWrapper>
-                  {el.count === 0 ? (
-                    <OrderCountGray>{`${el.count}`}</OrderCountGray>
-                  ) : (
-                    <OrderCount>{`${el.count}`}</OrderCount>
-                  )}
-                  <Image
-                    src={el.count === 0 ? ic_link_gray : ic_link}
-                    alt="ic_link"
-                  />
-                </OrderCountWrapper>
+                <Link
+                  href="/seller_center/in_review"
+                  style={{ textDecoration: "none" }}
+                >
+                  <OrderCountWrapper>
+                    {el.count === 0 ? (
+                      <OrderCountGray>{`${el.count}`}</OrderCountGray>
+                    ) : (
+                      <OrderCount>{`${el.count}`}</OrderCount>
+                    )}
+                    <Image
+                      src={el.count === 0 ? ic_link_gray : ic_link}
+                      alt="ic_link"
+                    />
+                  </OrderCountWrapper>
+                </Link>
               </OrderListWrapper>
             </>
           );
