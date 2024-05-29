@@ -221,7 +221,7 @@ const useSellerOrderBox = ({
 
         {data.status == "IN_REVIEW" && (
           <>
-            <ContentTitle>Shipping Address</ContentTitle>
+            <CategoryTitle>Shipping Address</CategoryTitle>
             <OrderDetailContainer>
               <AddressTitle>{data.items[0].shippingAddress.title}</AddressTitle>
               <AddressText>
@@ -285,7 +285,7 @@ const useSellerOrderBox = ({
               </RadioButtonWrapper>
               <InputContainer>
                 <InputWrapper>
-                  <InputPrice />
+                  <InputPrice placeholder="0" />
                   <InputText>$</InputText>
                 </InputWrapper>
                 <InputWrapper>
@@ -294,21 +294,23 @@ const useSellerOrderBox = ({
               </InputContainer>
             </OrderDetailContainer>
             <CategoryTitle>Total</CategoryTitle>
-            <TotalWrapper>
-              <ItemText>Product</ItemText>
-              <ItemPrice></ItemPrice>
-            </TotalWrapper>
-            <TotalWrapper>
-              <ItemText>
-                Delivery fee
-              </ItemText>
-            </TotalWrapper>
-            <DashLine1 />
-            <TotalWrapper>
-              <TotalText>Total</TotalText>
-              <TotalPrice></TotalPrice>
-            </TotalWrapper>
+            <OrderDetailContainer>
+              <TotalWrapper>
+                <ItemText>Product</ItemText>
+                <ItemPrice>$ 4.06</ItemPrice>
+              </TotalWrapper>
+              <TotalWrapper>
+                <ItemText>Delivery fee</ItemText>
+                <ItemPrice>$ 4.06</ItemPrice>
+              </TotalWrapper>
+              <DashLine1 />
+              <TotalWrapper>
+                <TotalText>Total</TotalText>
+                <TotalPrice>$ 4.06</TotalPrice>
+              </TotalWrapper>
+            </OrderDetailContainer>
           </>
+
           // <OrderInfoWrapper>
           //   <OrderInfoTitle>Delivery</OrderInfoTitle>
           //   <OrderInfoContent>
@@ -398,140 +400,10 @@ const useSellerOrderBox = ({
             </TotalPriceWrapper>
           </>
         )}
-
-        <Line />
-        <OrderDetailContainer>
-          <OrderDetailButtonWrapper>
-            <OrderDetailButtonBox
-              onClick={() => setOrderDetailIsActive(!orderDetailIsActive)}
-            >
-              <OrderDetailButton>Order Summary</OrderDetailButton>
-              <Image
-                src={orderDetailIsActive ? ic_up_bk : ic_down_bk}
-                alt={"sort_arrow_button"}
-              />
-            </OrderDetailButtonBox>
-          </OrderDetailButtonWrapper>
-          <OrderDetailContent isActive={orderDetailIsActive}>
-            <DeliveryQuestionInfoBox
-              isActive={questionDeliveryIsActive}
-              tabIndex={0}
-              onBlur={() => setQuestionDeliveryIsActive(false)}
-              ref={questionDeliveryRef}
-            >
-              <QuestionText>
-                DeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDeliveryDelivery
-              </QuestionText>
-              <ImageBox onClick={() => setQuestionDeliveryIsActive(false)}>
-                <Image
-                  src={ic_close_wht}
-                  width={24}
-                  height={24}
-                  alt="close_wht"
-                />
-              </ImageBox>
-            </DeliveryQuestionInfoBox>
-            <TaxQuestionInfoBox
-              isActive={questionTaxIsActive}
-              tabIndex={0}
-              onBlur={() => setQuestionTaxIsActive(false)}
-              ref={questionTaxRef}
-            >
-              <QuestionText>
-                TaxTaxTaxTaxTaxTaxTaxTaxTaxTaxTaxTaxTaxTax
-              </QuestionText>
-              <ImageBox onClick={() => setQuestionTaxIsActive(false)}>
-                <Image
-                  src={ic_close_wht}
-                  width={24}
-                  height={24}
-                  alt="close_wht"
-                />
-              </ImageBox>
-            </TaxQuestionInfoBox>
-
-            {/** 결제전에는 order summary 노출 안함 */}
-            {(data.status == "IN_PRODUCTION" ||
-              data.status == "SHIPPED" ||
-              data.status == "DELIVERED" ||
-              data.status == "PICK_UP") && (
-              <>
-                <ContentTitle>Order Summary</ContentTitle>
-                <FlexWrapper>
-                  <SummaryPriceTitle>Item subtotal</SummaryPriceTitle>
-                  <SummaryPrice>
-                    ${priceToDollar(data.paymentAmount)}
-                  </SummaryPrice>
-                </FlexWrapper>
-                <FlexWrapper>
-                  <SummaryPriceTitle>
-                    Delivery by ship
-                    <QuestionMark
-                      onClick={() => setQuestionDeliveryIsActive(true)}
-                    >
-                      ?
-                    </QuestionMark>
-                  </SummaryPriceTitle>
-                  <SummaryPrice>
-                    ${priceToDollar(data.deliveryFee)}
-                  </SummaryPrice>
-                </FlexWrapper>
-                <FlexWrapper>
-                  <SummaryPriceTitle>
-                    Tax{" "}
-                    <QuestionMark onClick={() => setQuestionTaxIsActive(true)}>
-                      ?
-                    </QuestionMark>
-                  </SummaryPriceTitle>
-                  <SummaryPrice>$??.??</SummaryPrice>
-                </FlexWrapper>
-                <SummaryTotalPriceWrapper>
-                  <Total>Total</Total>
-                  <Price>${priceToDollar(data.totalAmount)}</Price>
-                </SummaryTotalPriceWrapper>
-                <Line />
-                <PaymentTitle>Payment</PaymentTitle>
-                <PaymentWrapper>
-                  <Image
-                    src={paypal_logo}
-                    alt="paypal_logo"
-                    width={19}
-                    height={19}
-                  />
-                  <PaymentNumber>PayPal</PaymentNumber>
-                </PaymentWrapper>
-              </>
-            )}
-            <Line />
-            <ContentTitle>Delivered to</ContentTitle>
-            <AddressTitle>{data.items[0].shippingAddress.title}</AddressTitle>
-            <AddressText>
-              {data.items[0].shippingAddress.firstName},
-              {data.items[0].shippingAddress.lastName}
-            </AddressText>
-            <CompanyName>
-              {data.items[0].shippingAddress.companyName}
-            </CompanyName>
-            <AddressText>
-              {data.items[0].shippingAddress.streetAddress1}
-            </AddressText>
-            <AddressText>
-              {data.items[0].shippingAddress.streetAddress2}
-            </AddressText>
-            <AddressText>{data.items[0].shippingAddress.state}</AddressText>
-            <AddressText>
-              {data.items[0].shippingAddress.country.name}
-            </AddressText>
-            <AddressText>{data.items[0].shippingAddress.postCode}</AddressText>
-            <AddressPhoneNumber>
-              {data.items[0].shippingAddress.phoneNumber}
-            </AddressPhoneNumber>
-          </OrderDetailContent>
-        </OrderDetailContainer>
       </Container>
 
       {/** 인리뷰, 오더 컨펌 케이스 */}
-      {(data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED") && (
+      {/* {(data.status == "IN_REVIEW" || data.status == "ORDER_CONFIRMED") && (
         <>
           <ProgressContainer>
             <ModelWrapper>
@@ -568,7 +440,7 @@ const useSellerOrderBox = ({
             </Notice>
           )}
         </>
-      )}
+      )} */}
 
       {/** 캔슬 케이스: 판매자의 거절, 리뷰 전 사용자가 주문 취소 */}
       {data.status == "CANCELED" &&
@@ -801,12 +673,18 @@ const useSellerOrderBox = ({
 
       {/** in review case: 취소 가능 */}
       {data.status == "IN_REVIEW" && (
-        <CancelButton
-          ref={cancelButtonRef}
-          onClick={() => orderCancelHandler(data.orderNo)}
-        >
-          Cancel order
-        </CancelButton>
+        <Wrapper>
+          <DenyButton
+            ref={cancelButtonRef}
+            onClick={() => orderCancelHandler(data.orderNo)}
+          >
+            Deny order
+          </DenyButton>
+
+          <OrderButton onClick={() => router.push(`/payment/${data.orderNo}`)}>
+            Order confirm
+          </OrderButton>
+        </Wrapper>
       )}
 
       {/** order confirmed case: 취소, 주문 가능 */}
@@ -885,10 +763,7 @@ const Box = styled.div<{ render: boolean }>`
 const Container = styled.div`
   border: 1px solid #dee8ec;
   border-radius: 2px;
-  margin-bottom: 8px;
-  @media screen and (max-width: 768px) {
-    margin-bottom: 8px;
-  }
+  margin-bottom: 16px;
 `;
 const OrderNoWrapper = styled.div`
   display: flex;
@@ -1119,6 +994,10 @@ const InputPrice = styled.input`
   font-size: 14px;
   font-weight: 400;
   line-height: 18.2px;
+
+  &::placeholder {
+    color: #a4b0b2;
+  }
 `;
 const InputMessage = styled.input`
   display: flex;
@@ -1135,6 +1014,10 @@ const InputMessage = styled.input`
   font-size: 14px;
   font-weight: 400;
   line-height: 18.2px;
+
+  &::placeholder {
+    color: #a4b0b2;
+  }
 `;
 const InputTrackNumber = styled.input`
   display: flex;
@@ -1151,6 +1034,9 @@ const InputTrackNumber = styled.input`
   font-size: 14px;
   font-weight: 400;
   line-height: 18.2px;
+  &::placeholder {
+    color: #a4b0b2;
+  }
 `;
 const InputURL = styled.input`
   display: flex;
@@ -1167,6 +1053,9 @@ const InputURL = styled.input`
   font-size: 14px;
   font-weight: 400;
   line-height: 18.2px;
+  &::placeholder {
+    color: #a4b0b2;
+  }
 `;
 const InputText = styled.div`
   position: absolute;
@@ -1179,26 +1068,25 @@ const InputText = styled.div`
 const TotalWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 
-  color:  #121822;
-font-size: 14px;
-font-weight: 400;
-line-height: 18.2px;
-`
-const ItemText = styled.div`
-
-`
+  color: #121822;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.2px;
+`;
+const ItemText = styled.div``;
 const ItemPrice = styled.div`
+  margin-bottom: 2px;
   font-weight: 700;
-`
+`;
 const TotalText = styled.div`
-font-weight: 600;
-`
+  font-weight: 600;
+`;
 const TotalPrice = styled.div`
-color: #FF2F01;
+  color: #ff2f01;
   font-weight: 700;
-`
+`;
 const MeterageOrSample = styled.div`
   font-weight: 400;
   font-size: 12px;
@@ -1240,10 +1128,8 @@ const LengthPrice = styled.div`
   color: #121822;
 `;
 const DashLine1 = styled.div`
-  margin-top: 16px;
-  margin-left: 16px;
-  margin-right: 16px;
-  margin-bottom: 16px;
+  margin-top: 12px;
+  margin-bottom: 12px;
   border-bottom: 1px dashed #dee8ec;
 `;
 
@@ -2170,10 +2056,8 @@ const TrackOrderBigCircle = styled.div<{ status: string }>`
   }};
 `;
 const CancelButton = styled.button`
-  margin-top: 16px;
-
   width: 100%;
-  height: 40px;
+  height: 48px;
   color: #121822;
   text-align: center;
   font-size: 14px;
@@ -2186,15 +2070,29 @@ const CancelButton = styled.button`
 
   cursor: pointer;
 `;
+const DenyButton = styled.button`
+  width: 100%;
+  height: 48px;
+  color: #121822;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.2px;
+  background-color: #f2f6f8;
+
+  border: 1px solid #dee8ec;
+  border-radius: 2px;
+
+  cursor: pointer;
+`;
+
 const Wrapper = styled.div`
   display: flex;
   gap: 8px;
 `;
 const OrderButton = styled.button`
-  margin-top: 16px;
-
   width: 100%;
-  height: 40px;
+  height: 48px;
   color: #121822;
   text-align: center;
   font-size: 14px;
