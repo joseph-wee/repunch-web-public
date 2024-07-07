@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['16.x']
+        node-version: ['20.x']
 
     steps:
       - name: Checkout source code.
@@ -49,12 +49,12 @@ jobs:
         run: zip ./deploy.zip -r * .[^.]*
           
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v21
+        uses: einaregilsson/beanstalk-deploy@v22
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: repunch-web
-          environment_name: repunch-web-dev
+          application_name: repunch
+          environment_name: Repunch-env
           version_label: '${{ steps.timestamp.outputs.date }}'
-          region: us-west-1
+          region: us-east-1
           deployment_package: deploy.zip
