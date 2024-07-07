@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import { ordersRequest, sellerOrdersRequest } from "../../utils/api";
-import { OrderInfoBox } from "../../components";
-import { SellerOrderBox } from "../../components/seller_center";
 
-const in_review = () => {
+import styled from "styled-components";
+
+import { SellerOrderBox } from "../../components/seller_center";
+import { sellerOrdersRequest } from "../../utils/api";
+
+const useIn_review = () => {
   const [orderCategory, setOrderCategory] = useState(0);
   const [clicked, setClicked] = useState(1); // 클릭 상태
   const [sum, setSum] = useState(""); // 주문들중 클릭한 상태에 해당하는 개수
@@ -98,4 +99,4 @@ const Container = styled.div`
   }
 `;
 
-export default in_review;
+export default useIn_review;
