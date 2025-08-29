@@ -77,8 +77,9 @@
 
 
 # 기술 스택 및 라이브러리
-- Next.js
+- Javascript
 - Typescript
+- Next.js
 - Styled-component
 - Axios
 - Redux-toolkit
