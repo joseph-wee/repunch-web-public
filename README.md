@@ -76,9 +76,14 @@
 [반응형3.webm](https://github.com/user-attachments/assets/142cdc02-8b3e-4577-9078-e81c768760ff)
 
 
-# 기술 스텍 및 라이브러리
+# 기술 스택 및 라이브러리
 - Next.js
 - Typescript
 - Styled-component
 - Axios
 - Redux-toolkit
+
+# 인프라
+
+- AWS Elasticbeanstalk
+- AWS Route53
