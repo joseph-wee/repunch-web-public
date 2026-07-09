@@ -89,4 +89,4 @@
 
 ## CI/CD
 
-![Repunch CI/CD 구조도](Repunch_Architecture.drawio.svg)
+![Repunch CI/CD 구조도](Repunch_CI_CD.drawio.svg)
