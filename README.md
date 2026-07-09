@@ -91,7 +91,7 @@
 
 ## 기술 스택
 - Next.js
-- Typescript
+- TypeScript
 - Axios
 - Redux-toolkit
 - styled-component
