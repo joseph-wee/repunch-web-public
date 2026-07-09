@@ -14,7 +14,8 @@
 
 ### 로그인
 
-[로그인.webm](https://github.com/user-attachments/assets/b43450e7-c58a-49e9-950b-6ee339d98d0f)
+[로그인.webm](https://github.com/user-attachments/assets/e7f3d8fb-3c3f-4c2c-ab0e-c7929021834d)
+
 
 
 ### 상품 목록 및 필터링
